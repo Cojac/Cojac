@@ -320,7 +320,7 @@ public class COJACBenchmark {
 
         File graphFolder = new File(System.getProperty("user.dir"), "graphs");
 
-        if(! (graphFolder.exists() && graphFolder.isDirectory()) || graphFolder.mkdirs()){
+        if(!( (graphFolder.exists() && graphFolder.isDirectory()) || graphFolder.mkdirs() )){
             System.err.println("Unable to create the folder for the graph, use \"user.dir\" as graph folder");
             graphFolder = new File(System.getProperty("user.dir"));
         }
@@ -332,7 +332,8 @@ public class COJACBenchmark {
         InstrumentationStats stats = new InstrumentationStats();
         Args args = new Args();
         args.specify(Arg.ALL);
-        args.specify(Arg.EXCEPTION);
+        args.specify(Arg.PRINT); args.specify(Arg.FILTER);
+        //args.specify(Arg.EXCEPTION);
 
         if (opSize) {
             args.specify(Arg.OP_SIZE);
