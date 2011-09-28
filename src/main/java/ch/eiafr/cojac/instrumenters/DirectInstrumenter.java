@@ -81,16 +81,16 @@ final class DirectInstrumenter implements OpCodeInstrumenter {
         invocations.put(DMUL, new Method(CHECKED_DOUBLES, "checkedDMUL", Signatures.RAW_DOUBLE_BINARY));
         invocations.put(DDIV, new Method(CHECKED_DOUBLES, "checkedDDIV", Signatures.RAW_DOUBLE_BINARY));
         invocations.put(DREM, new Method(CHECKED_DOUBLES, "checkedDREM", Signatures.RAW_DOUBLE_BINARY));
-        invocations.put(DCMPL, new Method(CHECKED_DOUBLES, "checkedDCMP", Signatures.RAW_DOUBLE_CMP));
-        invocations.put(DCMPG, new Method(CHECKED_DOUBLES, "checkedDCMP", Signatures.RAW_DOUBLE_CMP));
+        invocations.put(DCMPL, new Method(CHECKED_DOUBLES, "checkedDCMPL", Signatures.RAW_DOUBLE_CMP));
+        invocations.put(DCMPG, new Method(CHECKED_DOUBLES, "checkedDCMPG", Signatures.RAW_DOUBLE_CMP));
 
         invocations.put(FADD, new Method(CHECKED_FLOATS, "checkedFADD", Signatures.RAW_FLOAT_BINARY));
         invocations.put(FSUB, new Method(CHECKED_FLOATS, "checkedFSUB", Signatures.RAW_FLOAT_BINARY));
         invocations.put(FMUL, new Method(CHECKED_FLOATS, "checkedFMUL", Signatures.RAW_FLOAT_BINARY));
         invocations.put(FREM, new Method(CHECKED_FLOATS, "checkedFREM", Signatures.RAW_FLOAT_BINARY));
         invocations.put(FDIV, new Method(CHECKED_FLOATS, "checkedFDIV", Signatures.RAW_FLOAT_BINARY));
-        invocations.put(FCMPL, new Method(CHECKED_FLOATS, "checkedFCMP", Signatures.RAW_FLOAT_CMP));
-        invocations.put(FCMPG, new Method(CHECKED_FLOATS, "checkedFCMP", Signatures.RAW_FLOAT_CMP));
+        invocations.put(FCMPL, new Method(CHECKED_FLOATS, "checkedFCMPL", Signatures.RAW_FLOAT_CMP));
+        invocations.put(FCMPG, new Method(CHECKED_FLOATS, "checkedFCMPG", Signatures.RAW_FLOAT_CMP));
 
         invocations.put(L2I, new Method(CHECKED_CASTS, "checkedL2I", Signatures.RAW_L2I));
         invocations.put(I2S, new Method(CHECKED_CASTS, "checkedI2S", Signatures.RAW_I2S));

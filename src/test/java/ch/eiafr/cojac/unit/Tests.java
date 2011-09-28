@@ -131,9 +131,14 @@ public class Tests implements MathOperations {
     }
 
     @Override
-    public int dcmp(double a, double b) throws Exception {
-        Method m = object.getClass().getMethod("dcmp", Double.TYPE, Double.TYPE);
+    public int dcmpg(double a, double b) throws Exception {
+        Method m = object.getClass().getMethod("dcmpg", Double.TYPE, Double.TYPE);
+        return this.<Integer>exec(m, new Object[]{a, b});
+    }
 
+    @Override
+    public int dcmpl(double a, double b) throws Exception {
+        Method m = object.getClass().getMethod("dcmpl", Double.TYPE, Double.TYPE);
         return this.<Integer>exec(m, new Object[]{a, b});
     }
 
@@ -143,9 +148,14 @@ public class Tests implements MathOperations {
     }
 
     @Override
-    public int fcmp(float a, float b) throws Exception {
-        Method m = object.getClass().getMethod("fcmp", Float.TYPE, Float.TYPE);
+    public int fcmpl(float a, float b) throws Exception {
+        Method m = object.getClass().getMethod("fcmpl", Float.TYPE, Float.TYPE);
+        return this.<Integer>exec(m, new Object[]{a, b});
+    }
 
+    @Override
+    public int fcmpg(float a, float b) throws Exception {
+        Method m = object.getClass().getMethod("fcmpg", Float.TYPE, Float.TYPE);
         return this.<Integer>exec(m, new Object[]{a, b});
     }
 

@@ -30,13 +30,29 @@ import static ch.eiafr.cojac.models.CheckedDoubles.*;
 
 import static org.objectweb.asm.Opcodes.*;
 
-public final class DCMPInstrumenter implements OpCodeInstrumenter {
+public final class DCMPGInstrumenter implements OpCodeInstrumenter {
     @Override
     public void instrument(MethodVisitor mv, int opCode, String classPath, Methods methods, Reaction reaction, LocalVariablesSorter src) {
         Label l3 = new Label();
+                               // a,b
+        mv.visitInsn(DUP2);    // a,b,b
+        mv.visitInsn(DUP2);    // a,b,b,b
+        mv.visitLdcInsn(new Double(2.0)); // a,b,b,b,2
+        mv.visitInsn(DMUL);   // a,b,b,2b
+        mv.visitInsn(DCMPL);  // a,b,(b?2b)
+        mv.visitJumpInsn(IFEQ, l3);  //a,b
 
-        BytecodeUtils.addDup4(mv);
-        mv.visitInsn(DCMPL);
+        BytecodeUtils.addDup4(mv); // a,b,a,b
+        mv.visitInsn(POP2);    // a,b,a
+        mv.visitInsn(DUP2);    // a,b,a,a
+        mv.visitLdcInsn(new Double(2.0)); // a,b,a,a,2
+        mv.visitInsn(DMUL);   // a,b,a,2a
+        mv.visitInsn(DCMPL);  // a,b,(a?2a)
+        mv.visitJumpInsn(IFEQ, l3);  //a,b
+
+                              // a,b
+        BytecodeUtils.addDup4(mv); //a,b,a,b
+        mv.visitInsn(DCMPG);
         mv.visitJumpInsn(IFEQ, l3);
 
         BytecodeUtils.addDup4(mv);
@@ -56,6 +72,6 @@ public final class DCMPInstrumenter implements OpCodeInstrumenter {
         mv.visitJumpInsn(IFGT, l3);
         reaction.insertReactionCall(mv, VERY_CLOSE_MSG+"DCMP", methods, classPath);
         mv.visitLabel(l3);
-        mv.visitInsn(DCMPL);
+        mv.visitInsn(DCMPG);
     }
 }

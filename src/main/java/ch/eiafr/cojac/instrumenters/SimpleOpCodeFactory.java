@@ -28,7 +28,8 @@ import ch.eiafr.cojac.instrumenters.stack.D2FInstrumenter;
 import ch.eiafr.cojac.instrumenters.stack.D2IInstrumenter;
 import ch.eiafr.cojac.instrumenters.stack.D2LInstrumenter;
 import ch.eiafr.cojac.instrumenters.stack.DADDInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.DCMPInstrumenter;
+import ch.eiafr.cojac.instrumenters.stack.DCMPGInstrumenter;
+import ch.eiafr.cojac.instrumenters.stack.DCMPLInstrumenter;
 import ch.eiafr.cojac.instrumenters.stack.DDIVInstrumenter;
 import ch.eiafr.cojac.instrumenters.stack.DMULInstrumenter;
 import ch.eiafr.cojac.instrumenters.stack.DREMInstrumenter;
@@ -36,7 +37,8 @@ import ch.eiafr.cojac.instrumenters.stack.DSUBInstrumenter;
 import ch.eiafr.cojac.instrumenters.stack.F2IInstrumenter;
 import ch.eiafr.cojac.instrumenters.stack.F2LInstrumenter;
 import ch.eiafr.cojac.instrumenters.stack.FADDInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.FCMPInstrumenter;
+import ch.eiafr.cojac.instrumenters.stack.FCMPGInstrumenter;
+import ch.eiafr.cojac.instrumenters.stack.FCMPLInstrumenter;
 import ch.eiafr.cojac.instrumenters.stack.FDIVInstrumenter;
 import ch.eiafr.cojac.instrumenters.stack.FMULInstrumenter;
 import ch.eiafr.cojac.instrumenters.stack.FREMInstrumenter;
@@ -145,16 +147,16 @@ public final class SimpleOpCodeFactory implements OpCodeInstrumenterFactory {
             instrumenters.put(DDIV, new DDIVInstrumenter());
             instrumenters.put(DMUL, new DMULInstrumenter());
             instrumenters.put(DREM, new DREMInstrumenter());
-            instrumenters.put(DCMPL, new DCMPInstrumenter());
-            instrumenters.put(DCMPG, new DCMPInstrumenter());
+            instrumenters.put(DCMPL, new DCMPLInstrumenter());
+            instrumenters.put(DCMPG, new DCMPGInstrumenter());
 
             instrumenters.put(FADD, new FADDInstrumenter());
             instrumenters.put(FSUB, new FSUBInstrumenter());
             instrumenters.put(FDIV, new FDIVInstrumenter());
             instrumenters.put(FMUL, new FMULInstrumenter());
             instrumenters.put(FREM, new FREMInstrumenter());
-            instrumenters.put(FCMPL, new FCMPInstrumenter());
-            instrumenters.put(FCMPG, new FCMPInstrumenter());
+            instrumenters.put(FCMPL, new FCMPLInstrumenter());
+            instrumenters.put(FCMPG, new FCMPGInstrumenter());
         }
     }
 

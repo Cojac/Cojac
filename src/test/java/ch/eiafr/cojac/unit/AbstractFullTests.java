@@ -925,7 +925,7 @@ public abstract class AbstractFullTests {
         getTests().asin(-2);
     }
 
-    public void exp1() throws Exception {
+    @Test public void exp1() throws Exception {
         double exp = getTests().exp(2);
         assertEquals(StrictMath.exp(2), exp);
     }
@@ -935,7 +935,7 @@ public abstract class AbstractFullTests {
         getTests().exp(Double.POSITIVE_INFINITY);
     }
 
-    public void log1() throws Exception {
+    @Test public void log1() throws Exception {
         double log = getTests().log(2);
         assertEquals(StrictMath.log(2), log);
     }
@@ -945,67 +945,122 @@ public abstract class AbstractFullTests {
         getTests().log(0);
     }
 
-    public void dcmp1() throws Exception {
-        assertEquals(-1, getTests().dcmp(20, 30));
-        assertEquals(-1, getTests().dcmp(Double.NEGATIVE_INFINITY, 30));
-        assertEquals(-1, getTests().dcmp(20, Double.POSITIVE_INFINITY));
-        assertEquals(-1, getTests().dcmp(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY));
+    @Test public void dcmp1() throws Exception {
+        assertEquals(-1, getTests().dcmpg(20, 30));
+        assertEquals(-1, getTests().dcmpl(20, 30));
+        assertEquals(-1, getTests().dcmpg(Double.NEGATIVE_INFINITY, 30));
+        assertEquals(-1, getTests().dcmpl(Double.NEGATIVE_INFINITY, 30));
+        assertEquals(-1, getTests().dcmpg(20, Double.POSITIVE_INFINITY));
+        assertEquals(-1, getTests().dcmpl(20, Double.POSITIVE_INFINITY));
+        assertEquals(-1, getTests().dcmpg(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY));
+        assertEquals(-1, getTests().dcmpl(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY));
     }
 
-    public void dcmp2() throws Exception {
-        assertEquals(1, getTests().dcmp(40, 30));
-        assertEquals(1, getTests().dcmp(30, Double.NEGATIVE_INFINITY));
-        assertEquals(1, getTests().dcmp(Double.POSITIVE_INFINITY,20));
-        assertEquals(1, getTests().dcmp(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY));
+    @Test public void dcmp2() throws Exception {
+        assertEquals(1, getTests().dcmpg(40, 30));
+        assertEquals(1, getTests().dcmpl(40, 30));
+        assertEquals(1, getTests().dcmpg(30, Double.NEGATIVE_INFINITY));
+        assertEquals(1, getTests().dcmpl(30, Double.NEGATIVE_INFINITY));
+        assertEquals(1, getTests().dcmpg(Double.POSITIVE_INFINITY,20));
+        assertEquals(1, getTests().dcmpl(Double.POSITIVE_INFINITY,20));
+        assertEquals(1, getTests().dcmpg(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY));
+        assertEquals(1, getTests().dcmpl(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY));
     }
 
-    public void dcmp3() throws Exception {
-        assertEquals(0, getTests().dcmp(30, 30));
+    @Test public void dcmp3() throws Exception {
+        assertEquals(0, getTests().dcmpg(30, 30));
+        assertEquals(0, getTests().dcmpl(30, 30));
     }
 
-    public void dcmp4() throws Exception {
-        assertEquals(0, getTests().dcmp(1.05, 1.05));
-    }
-
-    @Test(expected = ArithmeticException.class)
-    public void dcmp5() throws Exception {
-        getTests().dcmp(1.05, 1.05 + CLOSENESS_ULP_FACTOR_DOUBLE * Math.ulp(1.05));
-    }
-
-    @Test(expected = ArithmeticException.class)
-    public void dcmp6() throws Exception {
-        getTests().dcmp(1.05 + CLOSENESS_ULP_FACTOR_DOUBLE * Math.ulp(1.05), 1.05);
-    }
-
-    public void fcmp1() throws Exception {
-        assertEquals(-1, getTests().fcmp(20f, 30f));
-        assertEquals(-1, getTests().fcmp(Float.NEGATIVE_INFINITY, 30));
-        assertEquals(-1, getTests().fcmp(20, Float.POSITIVE_INFINITY));
-        assertEquals(-1, getTests().fcmp(Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY));
-    }
-
-    public void fcmp2() throws Exception {
-        assertEquals(1, getTests().fcmp(40f, 30f));
-        assertEquals(1, getTests().fcmp(30, Float.NEGATIVE_INFINITY));
-        assertEquals(1, getTests().fcmp(Float.POSITIVE_INFINITY,20));
-        assertEquals(1, getTests().fcmp(Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY));
-    }
-
-    public void fcmp3() throws Exception {
-        assertEquals(0, getTests().fcmp(30f, 30f));
-    }
-
-    public void fcmp4() throws Exception {
-        assertEquals(0, getTests().fcmp(1.05f, 1.05f));
+    @Test public void dcmp4() throws Exception {
+        assertEquals(0, getTests().dcmpg(1.05, 1.05));
+        assertEquals(0, getTests().dcmpl(1.05, 1.05));
     }
 
     @Test(expected = ArithmeticException.class)
-    public void fcmp5() throws Exception {
-        getTests().fcmp(1.05f, 1.05f + CLOSENESS_ULP_FACTOR_FLOAT * Math.ulp(1.05f));
+    public void dcmpg5() throws Exception {
+        getTests().dcmpg(1.05, 1.05 + CLOSENESS_ULP_FACTOR_DOUBLE * Math.ulp(1.05));
+    }
+    @Test(expected = ArithmeticException.class)
+    public void dcmpl5() throws Exception {
+        getTests().dcmpl(1.05, 1.05 + CLOSENESS_ULP_FACTOR_DOUBLE * Math.ulp(1.05));
     }
 
     @Test(expected = ArithmeticException.class)
-    public void fcmp6() throws Exception {
-        getTests().fcmp(1.05f + CLOSENESS_ULP_FACTOR_FLOAT * Math.ulp(1.05f), 1.05f);
+    public void dcmpg6() throws Exception {
+        getTests().dcmpg(1.05 + CLOSENESS_ULP_FACTOR_DOUBLE * Math.ulp(1.05), 1.05);
     }
+
+    @Test(expected = ArithmeticException.class)
+    public void dcmpl6() throws Exception {
+        getTests().dcmpl(1.05 + CLOSENESS_ULP_FACTOR_DOUBLE * Math.ulp(1.05), 1.05);
+    }
+
+    @Test public void dcmp7() throws Exception {
+      assertEquals( +1, getTests().dcmpg(3.0, Double.NaN));
+      assertEquals( +1, getTests().dcmpg(Double.NaN, 3.0));
+      assertEquals( -1, getTests().dcmpl(3.0, Double.NaN));
+      assertEquals( -1, getTests().dcmpl(Double.NaN, 3.0));
+    }
+
+
+    @Test public void fcmp1() throws Exception {
+        assertEquals(-1, getTests().fcmpg(20f, 30f));
+        assertEquals(-1, getTests().fcmpl(20f, 30f));
+        assertEquals(-1, getTests().fcmpg(Float.NEGATIVE_INFINITY, 30));
+        assertEquals(-1, getTests().fcmpl(Float.NEGATIVE_INFINITY, 30));
+        assertEquals(-1, getTests().fcmpg(20, Float.POSITIVE_INFINITY));
+        assertEquals(-1, getTests().fcmpl(20, Float.POSITIVE_INFINITY));
+        assertEquals(-1, getTests().fcmpg(Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY));
+        assertEquals(-1, getTests().fcmpl(Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY));
+    }
+
+    @Test public void fcmp2() throws Exception {
+        assertEquals(1, getTests().fcmpg(40f, 30f));
+        assertEquals(1, getTests().fcmpl(40f, 30f));
+        assertEquals(1, getTests().fcmpg(30, Float.NEGATIVE_INFINITY));
+        assertEquals(1, getTests().fcmpl(30, Float.NEGATIVE_INFINITY));
+        assertEquals(1, getTests().fcmpg(Float.POSITIVE_INFINITY,20));
+        assertEquals(1, getTests().fcmpl(Float.POSITIVE_INFINITY,20));
+        assertEquals(1, getTests().fcmpg(Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY));
+        assertEquals(1, getTests().fcmpl(Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY));
+    }
+
+    @Test public void fcmp3() throws Exception {
+        assertEquals(0, getTests().fcmpg(30f, 30f));
+        assertEquals(0, getTests().fcmpl(30f, 30f));
+    }
+
+    @Test public void fcmp4() throws Exception {
+        assertEquals(0, getTests().fcmpg(1.05f, 1.05f));
+        assertEquals(0, getTests().fcmpl(1.05f, 1.05f));
+    }
+
+    @Test(expected = ArithmeticException.class)
+    public void fcmp5g() throws Exception {
+        getTests().fcmpg(1.05f, 1.05f + CLOSENESS_ULP_FACTOR_FLOAT * Math.ulp(1.05f));
+    }
+
+    @Test(expected = ArithmeticException.class)
+    public void fcmp5l() throws Exception {
+        getTests().fcmpl(1.05f, 1.05f + CLOSENESS_ULP_FACTOR_FLOAT * Math.ulp(1.05f));
+    }
+
+    @Test(expected = ArithmeticException.class)
+    public void fcmp6g() throws Exception {
+        getTests().fcmpg(1.05f + CLOSENESS_ULP_FACTOR_FLOAT * Math.ulp(1.05f), 1.05f);
+    }
+    
+    @Test(expected = ArithmeticException.class)
+    public void fcmp6l() throws Exception {
+        getTests().fcmpl(1.05f + CLOSENESS_ULP_FACTOR_FLOAT * Math.ulp(1.05f), 1.05f);
+    }
+
+    @Test public void fcmp7() throws Exception {
+      assertEquals( +1, getTests().fcmpg(3.0f, Float.NaN));
+      assertEquals( +1, getTests().fcmpg(Float.NaN, 3.0f));
+      assertEquals( -1, getTests().fcmpl(3.0f, Float.NaN));
+      assertEquals( -1, getTests().fcmpl(Float.NaN, 3.0f));
+    }
+
 }

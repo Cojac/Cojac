@@ -127,13 +127,26 @@ public final class CheckedDoubles {
         return r;
     }
 
-    public static int checkedDCMP(double a, double b, int reaction, String logFileName) {
-        int r = a == b ? 0 : a < b ? -1 : 1;
-
-        if (r != 0 && Math.abs(a - b) <= CLOSENESS_ULP_FACTOR_DOUBLE * Math.ulp(a)){
-            Reactions.react(reaction, VERY_CLOSE_MSG+"DCMP", logFileName);
-        }
-
+    public static int checkedDCMPG(double a, double b, int reaction, String logFileName) {
+      if (Double.isNaN(a) || Double.isNaN(b)) return +1;
+      int r = a == b ? 0 : a < b ? -1 : 1;
+      if (a==2.0*a || b==2.0*b)  // means here: isInfinite(r) (can't be 0 on NaN)
         return r;
+      if (r != 0 && Math.abs(a - b) <= CLOSENESS_ULP_FACTOR_DOUBLE * Math.ulp(a)){
+        Reactions.react(reaction, VERY_CLOSE_MSG+"DCMP", logFileName);
+      }
+      return r;
     }
+    
+    public static int checkedDCMPL(double a, double b, int reaction, String logFileName) {
+      if (Double.isNaN(a) || Double.isNaN(b)) return -1;
+      int r = a == b ? 0 : a < b ? -1 : 1;
+      if (a==2.0*a || b==2.0*b)  // means here: isInfinite(r) (can't be 0 on NaN)
+        return r;
+      if (r != 0 && Math.abs(a - b) <= CLOSENESS_ULP_FACTOR_DOUBLE * Math.ulp(a)){
+          Reactions.react(reaction, VERY_CLOSE_MSG+"DCMP", logFileName);
+      }
+      return r;
+  }
+
 }

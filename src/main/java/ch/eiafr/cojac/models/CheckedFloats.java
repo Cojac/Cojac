@@ -115,17 +115,26 @@ public final class CheckedFloats {
         return r;
     }
 
-    public static int checkedFCMP(float a, float b, int reaction, String logFileName) {
-
+    public static int checkedFCMPG(float a, float b, int reaction, String logFileName) {
+        if (Float.isNaN(a) || Float.isNaN(b)) return +1;
         int r = a == b ? 0 : a < b ? -1 : 1;
-
-        double a1 = a - b;
-        double abs = Math.abs(a1);
-
-        double ulp = Math.ulp(a);
-        if (r != 0 && abs <= CLOSENESS_ULP_FACTOR_FLOAT * ulp) {
-            Reactions.react(reaction, VERY_CLOSE_MSG+"FCMP", logFileName);
-        }
-        return r;
+        if (a==2.0f*a || b==2.0f*b)  // means here: isInfinite(a) (can't be 0 on NaN)
+          return r;
+        if (r != 0 && Math.abs(a - b) <= CLOSENESS_ULP_FACTOR_FLOAT * Math.ulp(a)){
+          Reactions.react(reaction, VERY_CLOSE_MSG+"FCMP", logFileName);
+      }
+      return r;
     }
+    
+    public static int checkedFCMPL(float a, float b, int reaction, String logFileName) {
+      if (Float.isNaN(a) || Float.isNaN(b)) return -1;
+      int r = a == b ? 0 : a < b ? -1 : 1;
+      if (a==2.0f*a || b==2.0f*b)  // means here: isInfinite(a) (can't be 0 on NaN)
+        return r;
+      if (r != 0 && Math.abs(a - b) <= CLOSENESS_ULP_FACTOR_FLOAT * Math.ulp(a)){
+        Reactions.react(reaction, VERY_CLOSE_MSG+"FCMP", logFileName);
+    }
+    return r;
+  }
+
 }

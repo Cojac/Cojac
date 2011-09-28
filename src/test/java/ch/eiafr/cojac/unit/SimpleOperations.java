@@ -185,7 +185,14 @@ public class SimpleOperations implements MathOperations {
     }
 
     @Override
-    public int dcmp(double a, double b) throws Exception {
+    public int dcmpg(double a, double b) throws Exception {
+        if (Double.isNaN(a) || Double.isNaN(b)) return +1;
+        return a == b ? 0 : a < b ? -1 : 1;
+    }
+
+    @Override
+    public int dcmpl(double a, double b) throws Exception {
+        if (Double.isNaN(a) || Double.isNaN(b)) return -1;
         return a == b ? 0 : a < b ? -1 : 1;
     }
 
@@ -195,7 +202,15 @@ public class SimpleOperations implements MathOperations {
     }
 
     @Override
-    public int fcmp(float a, float b) throws Exception {
+    public int fcmpg(float a, float b) throws Exception {
+        if (Float.isNaN(a) || Float.isNaN(b)) return +1;
         return a == b ? 0 : a < b ? -1 : 1;
     }
+
+    @Override
+    public int fcmpl(float a, float b) throws Exception {
+        if (Float.isNaN(a) || Float.isNaN(b)) return -1;
+        return a == b ? 0 : a < b ? -1 : 1;
+    }
+
 }

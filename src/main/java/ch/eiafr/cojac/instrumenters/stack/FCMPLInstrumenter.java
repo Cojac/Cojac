@@ -30,32 +30,50 @@ import static ch.eiafr.cojac.models.CheckedDoubles.VERY_CLOSE_MSG;
 import static ch.eiafr.cojac.models.CheckedDoubles.CLOSENESS_ULP_FACTOR_FLOAT;
 import static org.objectweb.asm.Opcodes.*;
 
-public final class FCMPInstrumenter implements OpCodeInstrumenter {
+public final class FCMPLInstrumenter implements OpCodeInstrumenter {
     @Override
     public void instrument(MethodVisitor mv, int opCode, String classPath, Methods methods, Reaction reaction, LocalVariablesSorter src) {
         Label l3 = new Label();
+        
+                              // a,b
+        mv.visitInsn(DUP);    // a,b,b
+        mv.visitInsn(DUP);    // a,b,b,b
+        mv.visitLdcInsn(new Float(2.0f)); // a,b,b,b,2
+        mv.visitInsn(FMUL);   // a,b,b,2b
+        mv.visitInsn(FCMPL);  // a,b,(b?2b)
+        mv.visitJumpInsn(IFEQ, l3);  //a,b
+        
+        mv.visitInsn(DUP2);    // a,b,a,b
+        mv.visitInsn(POP);    // a,b,a
+        mv.visitInsn(DUP);    // a,b,a,a
+        mv.visitLdcInsn(new Float(2.0f)); // a,b,a,a,2
+        mv.visitInsn(FMUL);   // a,b,a,2a
+        mv.visitInsn(FCMPL);  // a,b,(a?2a)
+        mv.visitJumpInsn(IFEQ, l3);  //a,b
 
-        mv.visitInsn(DUP2);
-        mv.visitInsn(FCMPL);
-        mv.visitJumpInsn(IFEQ, l3);
+                              // a,b
+        mv.visitInsn(DUP2);   // a,b,a,b
+        mv.visitInsn(FCMPL);  // a,b,(a?b)
+        mv.visitJumpInsn(IFEQ, l3);  //a,b
 
-        mv.visitInsn(DUP2);
-        mv.visitInsn(DUP2);
-        mv.visitInsn(FSUB);
+        mv.visitInsn(DUP2);  //a,b,a,b
+        mv.visitInsn(DUP2);  //a,b,a,b,a,b
+        mv.visitInsn(FSUB);  //a,b,a,b,(a-b)
         mv.visitMethodInsn(INVOKESTATIC, "java/lang/Math", "abs", "(F)F");
-
-        mv.visitInsn(SWAP);
-        mv.visitInsn(POP);
-        mv.visitInsn(SWAP);
+                             //a,b,a,b,|a-b|
+        mv.visitInsn(SWAP);  //a,b,a,|a-b|,b
+        mv.visitInsn(POP);   //a,b,a,|a-b|
+        mv.visitInsn(SWAP);  //a,b,|a-b|,a
 
         mv.visitMethodInsn(INVOKESTATIC, "java/lang/Math", "ulp", "(F)F");
+                             //a,b,|a-b|,ulp(a)
         mv.visitLdcInsn(new Float(CLOSENESS_ULP_FACTOR_FLOAT));
-        mv.visitInsn(FMUL);
+        mv.visitInsn(FMUL);  //a,b,|a-b|,ulp(a)*CLOSE
 
-        mv.visitInsn(FCMPG);
-        mv.visitJumpInsn(IFGT, l3);
+        mv.visitInsn(FCMPG); //a,b,|a-b|?ulp(a)*CLOSE
+        mv.visitJumpInsn(IFGT, l3);  //a,b
         reaction.insertReactionCall(mv, VERY_CLOSE_MSG+"FCMP", methods, classPath);
-        mv.visitLabel(l3);
-        mv.visitInsn(FCMPL);
+        mv.visitLabel(l3);   //a,b
+        mv.visitInsn(FCMPL); //a?b
     }
 }

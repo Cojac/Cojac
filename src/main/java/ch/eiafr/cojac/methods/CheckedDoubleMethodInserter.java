@@ -50,7 +50,8 @@ public final class CheckedDoubleMethodInserter implements MethodInserter {
             addDremCheckMethod(cv, methods, reaction, classPath);
         }
         if (args.isOperationEnabled(Arg.DCMP)) {
-            addDCMPCheckMethod(cv, methods, reaction, classPath);
+            addDCMPGCheckMethod(cv, methods, reaction, classPath);
+            addDCMPLCheckMethod(cv, methods, reaction, classPath);
         }
     }
 
@@ -474,8 +475,92 @@ public final class CheckedDoubleMethodInserter implements MethodInserter {
       mv.visitEnd();
   }
 
-    private static void addDCMPCheckMethod(ClassVisitor cv, Methods methods, Reaction reaction, String classPath) {
-        MethodVisitor mv = cv.visitMethod(ACC_PUBLIC + ACC_STATIC, methods.getMethod(DCMPL), Signatures.CHECK_DOUBLE_CMP, null, null);
+    private static void addDCMPGCheckMethod(ClassVisitor cv, Methods methods, Reaction reaction, String classPath) {
+      MethodVisitor mv = cv.visitMethod(ACC_PUBLIC + ACC_STATIC, methods.getMethod(DCMPG), Signatures.CHECK_DOUBLE_CMP, null, null);
+      {
+        mv.visitCode();
+        Label l0 = new Label();
+        mv.visitLabel(l0);
+        mv.visitLineNumber(9, l0);
+        mv.visitVarInsn(DLOAD, 0);
+        mv.visitVarInsn(DLOAD, 2);
+        mv.visitInsn(DCMPL);
+        Label l1 = new Label();
+        mv.visitJumpInsn(IFNE, l1);
+        mv.visitInsn(ICONST_0);
+        Label l2 = new Label();
+        mv.visitJumpInsn(GOTO, l2);
+        mv.visitLabel(l1);
+        mv.visitVarInsn(DLOAD, 0);
+        mv.visitVarInsn(DLOAD, 2);
+        mv.visitInsn(DCMPG);
+        Label l3 = new Label();
+        mv.visitJumpInsn(IFGE, l3);
+        mv.visitInsn(ICONST_M1);
+        mv.visitJumpInsn(GOTO, l2);
+        mv.visitLabel(l3);
+        mv.visitInsn(ICONST_1);
+        mv.visitLabel(l2);
+        mv.visitVarInsn(ISTORE, 6);
+        Label l4 = new Label();
+        mv.visitLabel(l4);
+        mv.visitLineNumber(10, l4);
+        mv.visitVarInsn(DLOAD, 0);
+        mv.visitLdcInsn(new Double("2.0"));
+        mv.visitVarInsn(DLOAD, 0);
+        mv.visitInsn(DMUL);
+        mv.visitInsn(DCMPL);
+        Label l5 = new Label();
+        mv.visitJumpInsn(IFEQ, l5);
+        mv.visitVarInsn(DLOAD, 2);
+        mv.visitLdcInsn(new Double("2.0"));
+        mv.visitVarInsn(DLOAD, 2);
+        mv.visitInsn(DMUL);
+        mv.visitInsn(DCMPL);
+        Label l6 = new Label();
+        mv.visitJumpInsn(IFNE, l6);
+        mv.visitLabel(l5);
+        mv.visitLineNumber(11, l5);
+        mv.visitVarInsn(ILOAD, 6);
+        mv.visitInsn(IRETURN);
+        mv.visitLabel(l6);
+        mv.visitLineNumber(12, l6);
+        mv.visitVarInsn(ILOAD, 6);
+        Label l7 = new Label();
+        mv.visitJumpInsn(IFEQ, l7);
+        mv.visitVarInsn(DLOAD, 0);
+        mv.visitVarInsn(DLOAD, 2);
+        mv.visitInsn(DSUB);
+        mv.visitMethodInsn(INVOKESTATIC, "java/lang/Math", "abs", "(D)D");
+        mv.visitLdcInsn(new Double(CLOSENESS_ULP_FACTOR_DOUBLE));
+        mv.visitVarInsn(DLOAD, 0);
+        mv.visitMethodInsn(INVOKESTATIC, "java/lang/Math", "ulp", "(D)D");
+        mv.visitInsn(DMUL);
+        mv.visitInsn(DCMPG);
+        mv.visitJumpInsn(IFGT, l7);
+        Label l8 = new Label();
+        mv.visitLabel(l8);
+        mv.visitLineNumber(13, l8);
+        reaction.insertReactionCall(mv, VERY_CLOSE_MSG+"DCMP", methods, classPath);
+        mv.visitLabel(l7);
+        mv.visitLineNumber(15, l7);
+        mv.visitVarInsn(ILOAD, 6);
+        mv.visitInsn(IRETURN);
+        Label l9 = new Label();
+        mv.visitLabel(l9);
+        mv.visitLocalVariable("a", "D", null, l0, l9, 0);
+        mv.visitLocalVariable("b", "D", null, l0, l9, 2);
+        mv.visitLocalVariable("reaction", "I", null, l0, l9, 4);
+        mv.visitLocalVariable("logFileName", "Ljava/lang/String;", null, l0, l9, 5);
+        mv.visitLocalVariable("r", "I", null, l4, l9, 6);
+        mv.visitMaxs(6, 7);
+        mv.visitEnd();
+
+      }
+
+      
+      
+      /*
         mv.visitCode();
         mv.visitVarInsn(DLOAD, 0);
         mv.visitVarInsn(DLOAD, 2);
@@ -520,5 +605,89 @@ public final class CheckedDoubleMethodInserter implements MethodInserter {
         mv.visitInsn(IRETURN);
         mv.visitMaxs(6, 7);
         mv.visitEnd();
+        */
     }
+    private static void addDCMPLCheckMethod(ClassVisitor cv, Methods methods, Reaction reaction, String classPath) {
+      MethodVisitor mv = cv.visitMethod(ACC_PUBLIC + ACC_STATIC, methods.getMethod(DCMPL), Signatures.CHECK_DOUBLE_CMP, null, null);
+      {
+        mv.visitCode();
+        Label l0 = new Label();
+        mv.visitLabel(l0);
+        mv.visitLineNumber(9, l0);
+        mv.visitVarInsn(DLOAD, 0);
+        mv.visitVarInsn(DLOAD, 2);
+        mv.visitInsn(DCMPL);
+        Label l1 = new Label();
+        mv.visitJumpInsn(IFNE, l1);
+        mv.visitInsn(ICONST_0);
+        Label l2 = new Label();
+        mv.visitJumpInsn(GOTO, l2);
+        mv.visitLabel(l1);
+        mv.visitVarInsn(DLOAD, 0);
+        mv.visitVarInsn(DLOAD, 2);
+        mv.visitInsn(DCMPG);
+        Label l3 = new Label();
+        mv.visitJumpInsn(IFGE, l3);
+        mv.visitInsn(ICONST_M1);
+        mv.visitJumpInsn(GOTO, l2);
+        mv.visitLabel(l3);
+        mv.visitInsn(ICONST_1);
+        mv.visitLabel(l2);
+        mv.visitVarInsn(ISTORE, 6);
+        Label l4 = new Label();
+        mv.visitLabel(l4);
+        mv.visitLineNumber(10, l4);
+        mv.visitVarInsn(DLOAD, 0);
+        mv.visitLdcInsn(new Double("2.0"));
+        mv.visitVarInsn(DLOAD, 0);
+        mv.visitInsn(DMUL);
+        mv.visitInsn(DCMPL);
+        Label l5 = new Label();
+        mv.visitJumpInsn(IFEQ, l5);
+        mv.visitVarInsn(DLOAD, 2);
+        mv.visitLdcInsn(new Double("2.0"));
+        mv.visitVarInsn(DLOAD, 2);
+        mv.visitInsn(DMUL);
+        mv.visitInsn(DCMPL);
+        Label l6 = new Label();
+        mv.visitJumpInsn(IFNE, l6);
+        mv.visitLabel(l5);
+        mv.visitLineNumber(11, l5);
+        mv.visitVarInsn(ILOAD, 6);
+        mv.visitInsn(IRETURN);
+        mv.visitLabel(l6);
+        mv.visitLineNumber(12, l6);
+        mv.visitVarInsn(ILOAD, 6);
+        Label l7 = new Label();
+        mv.visitJumpInsn(IFEQ, l7);
+        mv.visitVarInsn(DLOAD, 0);
+        mv.visitVarInsn(DLOAD, 2);
+        mv.visitInsn(DSUB);
+        mv.visitMethodInsn(INVOKESTATIC, "java/lang/Math", "abs", "(D)D");
+        mv.visitLdcInsn(new Double(CLOSENESS_ULP_FACTOR_DOUBLE));
+        mv.visitVarInsn(DLOAD, 0);
+        mv.visitMethodInsn(INVOKESTATIC, "java/lang/Math", "ulp", "(D)D");
+        mv.visitInsn(DMUL);
+        mv.visitInsn(DCMPG);
+        mv.visitJumpInsn(IFGT, l7);
+        Label l8 = new Label();
+        mv.visitLabel(l8);
+        mv.visitLineNumber(13, l8);
+        reaction.insertReactionCall(mv, VERY_CLOSE_MSG+"DCMP", methods, classPath);
+        mv.visitLabel(l7);
+        mv.visitLineNumber(15, l7);
+        mv.visitVarInsn(ILOAD, 6);
+        mv.visitInsn(IRETURN);
+        Label l9 = new Label();
+        mv.visitLabel(l9);
+        mv.visitLocalVariable("a", "D", null, l0, l9, 0);
+        mv.visitLocalVariable("b", "D", null, l0, l9, 2);
+        mv.visitLocalVariable("reaction", "I", null, l0, l9, 4);
+        mv.visitLocalVariable("logFileName", "Ljava/lang/String;", null, l0, l9, 5);
+        mv.visitLocalVariable("r", "I", null, l4, l9, 6);
+        mv.visitMaxs(6, 7);
+        mv.visitEnd();
+      }
+    }
+
 }

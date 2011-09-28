@@ -193,8 +193,13 @@ public class CheckedOperations implements MathOperations {
     }
 
     @Override
-    public int fcmp(float a, float b) throws Exception {
-        return CheckedFloats.checkedFCMP(a, b, ReactionType.EXCEPTION.value(), "");
+    public int fcmpl(float a, float b) throws Exception {
+        return CheckedFloats.checkedFCMPL(a, b, ReactionType.EXCEPTION.value(), "");
+    }
+
+    @Override
+    public int fcmpg(float a, float b) throws Exception {
+        return CheckedFloats.checkedFCMPG(a, b, ReactionType.EXCEPTION.value(), "");
     }
 
     @Override
@@ -203,7 +208,12 @@ public class CheckedOperations implements MathOperations {
     }
 
     @Override
-    public int dcmp(double a, double b) throws Exception {
-        return CheckedDoubles.checkedDCMP(a, b, ReactionType.EXCEPTION.value(), "");
+    public int dcmpg(double a, double b) throws Exception {
+        return CheckedDoubles.checkedDCMPG(a, b, ReactionType.EXCEPTION.value(), "");
+    }
+    
+    @Override
+    public int dcmpl(double a, double b) throws Exception {
+        return CheckedDoubles.checkedDCMPL(a, b, ReactionType.EXCEPTION.value(), "");
     }
 }

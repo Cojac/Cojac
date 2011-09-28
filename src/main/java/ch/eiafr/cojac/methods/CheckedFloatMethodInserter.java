@@ -55,7 +55,8 @@ public final class CheckedFloatMethodInserter implements MethodInserter {
         }
 
         if (args.isOperationEnabled(Arg.FCMP)) {
-            addFCMPCheckMethod(cv, methods, reaction, classPath);
+            addFCMPGCheckMethod(cv, methods, reaction, classPath);
+            addFCMPLCheckMethod(cv, methods, reaction, classPath);
         }
     }
 
@@ -489,8 +490,90 @@ public final class CheckedFloatMethodInserter implements MethodInserter {
       mv.visitEnd();
   }
 
-    private static void addFCMPCheckMethod(ClassVisitor cv, Methods methods, Reaction reaction, String classPath) {
-        MethodVisitor mv = cv.visitMethod(ACC_PUBLIC + ACC_STATIC, methods.getMethod(FCMPL), Signatures.CHECK_FLOAT_CMP, null, null);
+    private static void addFCMPGCheckMethod(ClassVisitor cv, Methods methods, Reaction reaction, String classPath) {
+        MethodVisitor mv = cv.visitMethod(ACC_PUBLIC + ACC_STATIC, methods.getMethod(FCMPG), Signatures.CHECK_FLOAT_CMP, null, null);
+        {
+          mv.visitCode();
+          Label l0 = new Label();
+          mv.visitLabel(l0);
+          mv.visitLineNumber(20, l0);
+          mv.visitVarInsn(FLOAD, 0);
+          mv.visitVarInsn(FLOAD, 1);
+          mv.visitInsn(FCMPL);
+          Label l1 = new Label();
+          mv.visitJumpInsn(IFNE, l1);
+          mv.visitInsn(ICONST_0);
+          Label l2 = new Label();
+          mv.visitJumpInsn(GOTO, l2);
+          mv.visitLabel(l1);
+          mv.visitVarInsn(FLOAD, 0);
+          mv.visitVarInsn(FLOAD, 1);
+          mv.visitInsn(FCMPG);
+          Label l3 = new Label();
+          mv.visitJumpInsn(IFGE, l3);
+          mv.visitInsn(ICONST_M1);
+          mv.visitJumpInsn(GOTO, l2);
+          mv.visitLabel(l3);
+          mv.visitInsn(ICONST_1);
+          mv.visitLabel(l2);
+          mv.visitVarInsn(ISTORE, 4);
+          Label l4 = new Label();
+          mv.visitLabel(l4);
+          mv.visitLineNumber(21, l4);
+          mv.visitVarInsn(FLOAD, 0);
+          mv.visitInsn(FCONST_2);
+          mv.visitVarInsn(FLOAD, 0);
+          mv.visitInsn(FMUL);
+          mv.visitInsn(FCMPL);
+          Label l5 = new Label();
+          mv.visitJumpInsn(IFEQ, l5);
+          mv.visitVarInsn(FLOAD, 1);
+          mv.visitInsn(FCONST_2);
+          mv.visitVarInsn(FLOAD, 1);
+          mv.visitInsn(FMUL);
+          mv.visitInsn(FCMPL);
+          Label l6 = new Label();
+          mv.visitJumpInsn(IFNE, l6);
+          mv.visitLabel(l5);
+          mv.visitLineNumber(22, l5);
+          mv.visitVarInsn(ILOAD, 4);
+          mv.visitInsn(IRETURN);
+          mv.visitLabel(l6);
+          mv.visitLineNumber(23, l6);
+          mv.visitVarInsn(ILOAD, 4);
+          Label l7 = new Label();
+          mv.visitJumpInsn(IFEQ, l7);
+          mv.visitVarInsn(FLOAD, 0);
+          mv.visitVarInsn(FLOAD, 1);
+          mv.visitInsn(FSUB);
+          mv.visitMethodInsn(INVOKESTATIC, "java/lang/Math", "abs", "(F)F");
+          mv.visitLdcInsn(new Float(CLOSENESS_ULP_FACTOR_FLOAT));
+          mv.visitVarInsn(FLOAD, 0);
+          mv.visitMethodInsn(INVOKESTATIC, "java/lang/Math", "ulp", "(F)F");
+          mv.visitInsn(FMUL);
+          mv.visitInsn(FCMPG);
+          mv.visitJumpInsn(IFGT, l7);
+          Label l8 = new Label();
+          mv.visitLabel(l8);
+          mv.visitLineNumber(24, l8);
+          reaction.insertReactionCall(mv, VERY_CLOSE_MSG+"FCMP", methods, classPath);
+          mv.visitLabel(l7);
+          mv.visitLineNumber(26, l7);
+          mv.visitVarInsn(ILOAD, 4);
+          mv.visitInsn(IRETURN);
+          Label l9 = new Label();
+          mv.visitLabel(l9);
+          mv.visitLocalVariable("a", "F", null, l0, l9, 0);
+          mv.visitLocalVariable("b", "F", null, l0, l9, 1);
+          mv.visitLocalVariable("reaction", "I", null, l0, l9, 2);
+          mv.visitLocalVariable("logFileName", "Ljava/lang/String;", null, l0, l9, 3);
+          mv.visitLocalVariable("r", "I", null, l4, l9, 4);
+          mv.visitMaxs(3, 5);
+          mv.visitEnd();
+          }
+
+        
+        /*
         mv.visitCode();
         mv.visitVarInsn(FLOAD, 0);
         mv.visitVarInsn(FLOAD, 1);
@@ -535,5 +618,89 @@ public final class CheckedFloatMethodInserter implements MethodInserter {
         mv.visitInsn(IRETURN);
         mv.visitMaxs(3, 5);
         mv.visitEnd();
+        */
+    }
+    
+    private static void addFCMPLCheckMethod(ClassVisitor cv, Methods methods, Reaction reaction, String classPath) {
+      MethodVisitor mv = cv.visitMethod(ACC_PUBLIC + ACC_STATIC, methods.getMethod(FCMPL), Signatures.CHECK_FLOAT_CMP, null, null);
+      {
+        mv.visitCode();
+        Label l0 = new Label();
+        mv.visitLabel(l0);
+        mv.visitLineNumber(20, l0);
+        mv.visitVarInsn(FLOAD, 0);
+        mv.visitVarInsn(FLOAD, 1);
+        mv.visitInsn(FCMPL);
+        Label l1 = new Label();
+        mv.visitJumpInsn(IFNE, l1);
+        mv.visitInsn(ICONST_0);
+        Label l2 = new Label();
+        mv.visitJumpInsn(GOTO, l2);
+        mv.visitLabel(l1);
+        mv.visitVarInsn(FLOAD, 0);
+        mv.visitVarInsn(FLOAD, 1);
+        mv.visitInsn(FCMPG);
+        Label l3 = new Label();
+        mv.visitJumpInsn(IFGE, l3);
+        mv.visitInsn(ICONST_M1);
+        mv.visitJumpInsn(GOTO, l2);
+        mv.visitLabel(l3);
+        mv.visitInsn(ICONST_1);
+        mv.visitLabel(l2);
+        mv.visitVarInsn(ISTORE, 4);
+        Label l4 = new Label();
+        mv.visitLabel(l4);
+        mv.visitLineNumber(21, l4);
+        mv.visitVarInsn(FLOAD, 0);
+        mv.visitInsn(FCONST_2);
+        mv.visitVarInsn(FLOAD, 0);
+        mv.visitInsn(FMUL);
+        mv.visitInsn(FCMPL);
+        Label l5 = new Label();
+        mv.visitJumpInsn(IFEQ, l5);
+        mv.visitVarInsn(FLOAD, 1);
+        mv.visitInsn(FCONST_2);
+        mv.visitVarInsn(FLOAD, 1);
+        mv.visitInsn(FMUL);
+        mv.visitInsn(FCMPL);
+        Label l6 = new Label();
+        mv.visitJumpInsn(IFNE, l6);
+        mv.visitLabel(l5);
+        mv.visitLineNumber(22, l5);
+        mv.visitVarInsn(ILOAD, 4);
+        mv.visitInsn(IRETURN);
+        mv.visitLabel(l6);
+        mv.visitLineNumber(23, l6);
+        mv.visitVarInsn(ILOAD, 4);
+        Label l7 = new Label();
+        mv.visitJumpInsn(IFEQ, l7);
+        mv.visitVarInsn(FLOAD, 0);
+        mv.visitVarInsn(FLOAD, 1);
+        mv.visitInsn(FSUB);
+        mv.visitMethodInsn(INVOKESTATIC, "java/lang/Math", "abs", "(F)F");
+        mv.visitLdcInsn(new Float(CLOSENESS_ULP_FACTOR_FLOAT));
+        mv.visitVarInsn(FLOAD, 0);
+        mv.visitMethodInsn(INVOKESTATIC, "java/lang/Math", "ulp", "(F)F");
+        mv.visitInsn(FMUL);
+        mv.visitInsn(FCMPG);
+        mv.visitJumpInsn(IFGT, l7);
+        Label l8 = new Label();
+        mv.visitLabel(l8);
+        mv.visitLineNumber(24, l8);
+        reaction.insertReactionCall(mv, VERY_CLOSE_MSG+"FCMP", methods, classPath);
+        mv.visitLabel(l7);
+        mv.visitLineNumber(26, l7);
+        mv.visitVarInsn(ILOAD, 4);
+        mv.visitInsn(IRETURN);
+        Label l9 = new Label();
+        mv.visitLabel(l9);
+        mv.visitLocalVariable("a", "F", null, l0, l9, 0);
+        mv.visitLocalVariable("b", "F", null, l0, l9, 1);
+        mv.visitLocalVariable("reaction", "I", null, l0, l9, 2);
+        mv.visitLocalVariable("logFileName", "Ljava/lang/String;", null, l0, l9, 3);
+        mv.visitLocalVariable("r", "I", null, l4, l9, 4);
+        mv.visitMaxs(3, 5);
+        mv.visitEnd();
+        }
     }
 }

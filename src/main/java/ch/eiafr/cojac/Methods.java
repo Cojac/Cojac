@@ -51,8 +51,10 @@ public final class Methods {
             }
         }
 
-        methods.put(Opcodes.DCMPG, uniqueMethodName("cojacCheckDCMP", classMethods));
-        methods.put(Opcodes.FCMPG, uniqueMethodName("cojacCheckFCMP", classMethods));
+        methods.put(Opcodes.DCMPG, uniqueMethodName("cojacCheckDCMPG", classMethods));
+        methods.put(Opcodes.DCMPL, uniqueMethodName("cojacCheckDCMPL", classMethods));
+        methods.put(Opcodes.FCMPG, uniqueMethodName("cojacCheckFCMPG", classMethods));
+        methods.put(Opcodes.FCMPL, uniqueMethodName("cojacCheckFCMPL", classMethods));
     }
 
     private static String uniqueMethodName(String rootName, Collection<String> methods) {

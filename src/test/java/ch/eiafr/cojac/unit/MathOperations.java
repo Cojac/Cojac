@@ -51,7 +51,9 @@ public interface MathOperations {
 
     double drem(double a, double b) throws Exception;
 
-    int dcmp(double a, double b) throws Exception;
+    int dcmpg(double a, double b) throws Exception;
+
+    int dcmpl(double a, double b) throws Exception;
 
     float fadd(float a, float b) throws Exception;
 
@@ -63,7 +65,9 @@ public interface MathOperations {
 
     float frem(float a, float b) throws Exception;
 
-    int fcmp(float a, float b) throws Exception;
+    int fcmpg(float a, float b) throws Exception;
+
+    int fcmpl(float a, float b) throws Exception;
 
     int l2i(long a) throws Exception;
 
