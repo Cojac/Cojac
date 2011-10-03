@@ -37,6 +37,7 @@ public final class DDIVInstrumenter implements OpCodeInstrumenter {
         mv.visitInsn(DUP2);
         mv.visitInsn(DCMPL);
         Label l0 = new Label();
+        Label labelTestUnderflow =new Label();
         mv.visitJumpInsn(IFNE, l0);
         BytecodeUtils.addDup4(mv);
         mv.visitInsn(POP2);
@@ -49,27 +50,27 @@ public final class DDIVInstrumenter implements OpCodeInstrumenter {
         mv.visitInsn(DCMPL);
         mv.visitJumpInsn(IFEQ, l0);
         reaction.insertReactionCall(mv, RESULT_IS_NAN_MSG+"DDIV", methods, classPath);
-        Label l1 = new Label();
-        mv.visitJumpInsn(GOTO, l1);
+        Label labelEnd = new Label();
+        mv.visitJumpInsn(GOTO, labelEnd);
         mv.visitLabel(l0);
         mv.visitInsn(DUP2);
         mv.visitLdcInsn(new Double("Infinity"));
         mv.visitInsn(DCMPL);
-        mv.visitJumpInsn(IFEQ, l1);
+        mv.visitJumpInsn(IFEQ, labelEnd);
         mv.visitInsn(DUP2);
         mv.visitLdcInsn(new Double("-Infinity"));
         mv.visitInsn(DCMPL);
-        mv.visitJumpInsn(IFEQ, l1);
+        mv.visitJumpInsn(IFEQ, labelEnd);
         BytecodeUtils.addDup4(mv);
         mv.visitInsn(POP2);
         mv.visitLdcInsn(new Double("Infinity"));
         mv.visitInsn(DCMPL);
-        mv.visitJumpInsn(IFEQ, l1);
+        mv.visitJumpInsn(IFEQ, labelEnd);
         BytecodeUtils.addDup4(mv);
         mv.visitInsn(POP2);
         mv.visitLdcInsn(new Double("-Infinity"));
         mv.visitInsn(DCMPL);
-        mv.visitJumpInsn(IFEQ, l1);
+        mv.visitJumpInsn(IFEQ, labelEnd);
         BytecodeUtils.addDup4(mv);
         mv.visitInsn(DDIV);
         mv.visitLdcInsn(new Double("Infinity"));
@@ -77,15 +78,32 @@ public final class DDIVInstrumenter implements OpCodeInstrumenter {
         Label l2 = new Label();
         mv.visitJumpInsn(IFNE, l2);
         reaction.insertReactionCall(mv, RESULT_IS_POS_INF_MSG+"DDIV", methods, classPath);
-        mv.visitJumpInsn(GOTO, l1);
+        mv.visitJumpInsn(GOTO, labelEnd);
         mv.visitLabel(l2);
         BytecodeUtils.addDup4(mv);
         mv.visitInsn(DDIV);
         mv.visitLdcInsn(new Double("-Infinity"));
         mv.visitInsn(DCMPL);
-        mv.visitJumpInsn(IFNE, l1);
+        mv.visitJumpInsn(IFNE, labelTestUnderflow);
         reaction.insertReactionCall(mv, RESULT_IS_NEG_INF_MSG+"DDIV", methods, classPath);
-        mv.visitLabel(l1);
+        mv.visitJumpInsn(GOTO, labelEnd);
+
+        
+        mv.visitLabel(labelTestUnderflow);
+        BytecodeUtils.addDup4(mv);
+        mv.visitInsn(DDIV);  //a,b,a/b
+        mv.visitLdcInsn(new Double(0.0)); //a,b,a/b,0
+        mv.visitInsn(DCMPL); //a,b,a/b?0
+        mv.visitJumpInsn(IFNE, labelEnd); //a,b
+        BytecodeUtils.addDup4(mv);
+        mv.visitInsn(POP2);  //a,b,a
+        mv.visitLdcInsn(new Double(0.0)); //a,b,a,0
+        mv.visitInsn(DCMPL); //a,b,a?0
+        mv.visitJumpInsn(IFEQ, labelEnd); //a,b
+        reaction.insertReactionCall(mv, UNDERFLOW_MSG+"DDIV", methods, classPath);
+
+        
+        mv.visitLabel(labelEnd);
         mv.visitInsn(DDIV);
     }
 }

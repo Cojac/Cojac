@@ -29,46 +29,68 @@ import ch.eiafr.cojac.utils.BytecodeUtils;
 
 import static ch.eiafr.cojac.models.CheckedDoubles.RESULT_IS_POS_INF_MSG;
 import static ch.eiafr.cojac.models.CheckedDoubles.RESULT_IS_NEG_INF_MSG;
+import static ch.eiafr.cojac.models.CheckedDoubles.UNDERFLOW_MSG;
 import static org.objectweb.asm.Opcodes.*;
 
 public final class DMULInstrumenter implements OpCodeInstrumenter {
     @Override
     public void instrument(MethodVisitor mv, int opCode, String classPath, Methods methods, Reaction reaction, LocalVariablesSorter src) {
+      Label labelEnd = new Label();
+      Label labelTestResNegInf = new Label();
+      Label labelTestUnderflow=new Label();
         mv.visitInsn(DUP2);
         mv.visitLdcInsn(new Double("Infinity"));
         mv.visitInsn(DCMPL);
-        Label l0 = new Label();
-        mv.visitJumpInsn(IFEQ, l0);
+        mv.visitJumpInsn(IFEQ, labelEnd);
         mv.visitInsn(DUP2);
         mv.visitLdcInsn(new Double("-Infinity"));
         mv.visitInsn(DCMPL);
-        mv.visitJumpInsn(IFEQ, l0);
+        mv.visitJumpInsn(IFEQ, labelEnd);
         BytecodeUtils.addDup4(mv);
         mv.visitInsn(POP2);
         mv.visitLdcInsn(new Double("Infinity"));
         mv.visitInsn(DCMPL);
-        mv.visitJumpInsn(IFEQ, l0);
+        mv.visitJumpInsn(IFEQ, labelEnd);
         BytecodeUtils.addDup4(mv);
         mv.visitInsn(POP2);
         mv.visitLdcInsn(new Double("-Infinity"));
         mv.visitInsn(DCMPL);
-        mv.visitJumpInsn(IFEQ, l0);
+        mv.visitJumpInsn(IFEQ, labelEnd);
         BytecodeUtils.addDup4(mv);
         mv.visitInsn(DMUL);
         mv.visitLdcInsn(new Double("Infinity"));
         mv.visitInsn(DCMPL);
-        Label l1 = new Label();
-        mv.visitJumpInsn(IFNE, l1);
+        mv.visitJumpInsn(IFNE, labelTestResNegInf);
         reaction.insertReactionCall(mv, RESULT_IS_POS_INF_MSG+"DMUL", methods, classPath);
-        mv.visitJumpInsn(GOTO, l0);
-        mv.visitLabel(l1);
+        mv.visitJumpInsn(GOTO, labelEnd);
+        mv.visitLabel(labelTestResNegInf);
         BytecodeUtils.addDup4(mv);
         mv.visitInsn(DMUL);
         mv.visitLdcInsn(new Double("-Infinity"));
         mv.visitInsn(DCMPL);
-        mv.visitJumpInsn(IFNE, l0);
+        mv.visitJumpInsn(IFNE, labelTestUnderflow);
         reaction.insertReactionCall(mv, RESULT_IS_NEG_INF_MSG+"DMUL", methods, classPath);
-        mv.visitLabel(l0);
+        mv.visitJumpInsn(GOTO, labelEnd);
+
+        mv.visitLabel(labelTestUnderflow);
+        BytecodeUtils.addDup4(mv);
+        mv.visitInsn(DMUL);  //a,b,a*b
+        mv.visitLdcInsn(new Double(0.0)); //a,b,a*b,0
+        mv.visitInsn(DCMPL); //a,b,a*b?0
+        mv.visitJumpInsn(IFNE, labelEnd); //a,b
+        mv.visitInsn(DUP2);  //a,b,b
+        mv.visitLdcInsn(new Double(0.0)); //a,b,b,0
+        mv.visitInsn(DCMPL); //a,b,b?0
+        mv.visitJumpInsn(IFEQ, labelEnd); //a,b
+        BytecodeUtils.addDup4(mv);
+        mv.visitInsn(POP2);  //a,b,a
+        mv.visitLdcInsn(new Double(0.0f)); //a,b,a,0
+        mv.visitInsn(DCMPL); //a,b,a?0
+        mv.visitJumpInsn(IFEQ, labelEnd); //a,b
+        reaction.insertReactionCall(mv, UNDERFLOW_MSG+"DMUL", methods, classPath);
+
+        
+        mv.visitLabel(labelEnd);
         mv.visitInsn(DMUL);
     }
 }

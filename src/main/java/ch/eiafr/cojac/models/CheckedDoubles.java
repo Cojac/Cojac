@@ -94,8 +94,8 @@ public final class CheckedDoubles {
                 Reactions.react(reaction, RESULT_IS_POS_INF_MSG+"DMUL", logFileName);
             } else if (r == NEGATIVE_INFINITY) {
                 Reactions.react(reaction, RESULT_IS_NEG_INF_MSG+"DMUL", logFileName);
-//            } else if (r == 0.0 && a!=0.0 && b!=0.0) {
-//                Reactions.react(reaction, UNDERFLOW_MSG+"DMUL", logFileName);
+            } else if (r == 0.0 && a!=0.0 && b!=0.0) {
+                Reactions.react(reaction, UNDERFLOW_MSG+"DMUL", logFileName);
             }
         }
 
@@ -112,8 +112,8 @@ public final class CheckedDoubles {
                 Reactions.react(reaction, RESULT_IS_POS_INF_MSG+"DDIV", logFileName);
             } else if (r == NEGATIVE_INFINITY) {
                 Reactions.react(reaction, RESULT_IS_NEG_INF_MSG+"DDIV", logFileName);
-//            } else if (r == 0.0 && a!=0.0) {
-//                Reactions.react(reaction, UNDERFLOW_MSG+"DDIV", logFileName);
+            } else if (r == 0.0 && a!=0.0) {
+                Reactions.react(reaction, UNDERFLOW_MSG+"DDIV", logFileName);
             }
         }
 

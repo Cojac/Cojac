@@ -32,59 +32,78 @@ import static org.objectweb.asm.Opcodes.*;
 public final class FDIVInstrumenter implements OpCodeInstrumenter {
     @Override
     public void instrument(MethodVisitor mv, int opCode, String classPath, Methods methods, Reaction reaction, LocalVariablesSorter src) {
+      Label labelTestPosInfinity = new Label();
+      Label labelEndOfMethod = new Label();
+      Label labelTestNegInfinity = new Label();
+      Label labelTestUnderflow = new Label();
+      
         mv.visitInsn(DUP);
         mv.visitInsn(DUP);
         mv.visitInsn(FCMPL);
-        Label l0 = new Label();
-        mv.visitJumpInsn(IFNE, l0);
+        mv.visitJumpInsn(IFNE, labelTestPosInfinity);
         mv.visitInsn(DUP2);
         mv.visitInsn(POP);
         mv.visitInsn(DUP);
         mv.visitInsn(FCMPL);
-        mv.visitJumpInsn(IFNE, l0);
+        mv.visitJumpInsn(IFNE, labelTestPosInfinity);
         mv.visitInsn(DUP2);
         mv.visitInsn(FDIV);
         mv.visitInsn(DUP);
         mv.visitInsn(FCMPL);
-        mv.visitJumpInsn(IFEQ, l0);
+        mv.visitJumpInsn(IFEQ, labelTestPosInfinity);
         reaction.insertReactionCall(mv, RESULT_IS_NAN_MSG+"FDIV", methods, classPath);
-        Label l1 = new Label();
-        mv.visitJumpInsn(GOTO, l1);
-        mv.visitLabel(l0);
+        mv.visitJumpInsn(GOTO, labelEndOfMethod);
+        mv.visitLabel(labelTestPosInfinity);
         mv.visitInsn(DUP);
         mv.visitLdcInsn(new Float("Infinity"));
         mv.visitInsn(FCMPL);
-        mv.visitJumpInsn(IFEQ, l1);
+        mv.visitJumpInsn(IFEQ, labelEndOfMethod);
         mv.visitInsn(DUP);
         mv.visitLdcInsn(new Float("-Infinity"));
         mv.visitInsn(FCMPL);
-        mv.visitJumpInsn(IFEQ, l1);
+        mv.visitJumpInsn(IFEQ, labelEndOfMethod);
         mv.visitInsn(DUP2);
         mv.visitInsn(POP);
         mv.visitLdcInsn(new Float("Infinity"));
         mv.visitInsn(FCMPL);
-        mv.visitJumpInsn(IFEQ, l1);
+        mv.visitJumpInsn(IFEQ, labelEndOfMethod);
         mv.visitInsn(DUP2);
         mv.visitInsn(POP);
         mv.visitLdcInsn(new Float("-Infinity"));
         mv.visitInsn(FCMPL);
-        mv.visitJumpInsn(IFEQ, l1);
+        mv.visitJumpInsn(IFEQ, labelEndOfMethod);
         mv.visitInsn(DUP2);
         mv.visitInsn(FDIV);
         mv.visitLdcInsn(new Float("Infinity"));
         mv.visitInsn(FCMPL);
-        Label l2 = new Label();
-        mv.visitJumpInsn(IFNE, l2);
+        mv.visitJumpInsn(IFNE, labelTestNegInfinity);
         reaction.insertReactionCall(mv, RESULT_IS_POS_INF_MSG+"FMUL", methods, classPath);
-        mv.visitJumpInsn(GOTO, l1);
-        mv.visitLabel(l2);
+        mv.visitJumpInsn(GOTO, labelEndOfMethod);
+        mv.visitLabel(labelTestNegInfinity);
         mv.visitInsn(DUP2);
         mv.visitInsn(FDIV);
         mv.visitLdcInsn(new Float("-Infinity"));
         mv.visitInsn(FCMPL);
-        mv.visitJumpInsn(IFNE, l1);
+        mv.visitJumpInsn(IFNE, labelTestUnderflow);
         reaction.insertReactionCall(mv, RESULT_IS_NEG_INF_MSG+"FMUL", methods, classPath);
-        mv.visitLabel(l1);
+        mv.visitJumpInsn(GOTO, labelEndOfMethod);
+
+        mv.visitLabel(labelTestUnderflow);
+        mv.visitInsn(DUP2);  //a,b,a,b
+        mv.visitInsn(FDIV);  //a,b,a/b
+        mv.visitLdcInsn(new Float(0.0f)); //a,b,a/b,0
+        mv.visitInsn(FCMPL); //a,b,a/b?0
+        mv.visitJumpInsn(IFNE, labelEndOfMethod); //a,b
+        mv.visitInsn(DUP2);  //a,b,a,b
+        mv.visitInsn(POP);  //a,b,a
+        mv.visitLdcInsn(new Float(0.0f)); //a,b,a,0
+        mv.visitInsn(FCMPL); //a,b,a?0
+        mv.visitJumpInsn(IFEQ, labelEndOfMethod); //a,b
+        reaction.insertReactionCall(mv, UNDERFLOW_MSG+"FMUL", methods, classPath);
+
+        
+        
+        mv.visitLabel(labelEndOfMethod);
         mv.visitInsn(FDIV);
     }
 }

@@ -80,8 +80,8 @@ public final class CheckedFloats {
                 Reactions.react(reaction, RESULT_IS_POS_INF_MSG+"FMUL", logFileName);
             } else if (r == NEGATIVE_INFINITY) {
                 Reactions.react(reaction, RESULT_IS_NEG_INF_MSG+"FMUL", logFileName);
-//            } else if (r == 0.0f && a!=0.0f && b!=0.0f) {
-//              Reactions.react(reaction, UNDERFLOW_MSG+"FMUL", logFileName);
+            } else if (r == 0.0f && a!=0.0f && b!=0.0f) {
+              Reactions.react(reaction, UNDERFLOW_MSG+"FMUL", logFileName);
             }
         }
 
@@ -98,8 +98,8 @@ public final class CheckedFloats {
                 Reactions.react(reaction, RESULT_IS_POS_INF_MSG+"FDIV", logFileName);
             } else if (r == NEGATIVE_INFINITY) {
                 Reactions.react(reaction, RESULT_IS_NEG_INF_MSG+"FDIV", logFileName);
-//            } else if (r == 0.0f && a!=0.0f) {
-//              Reactions.react(reaction, UNDERFLOW_MSG+"FDIV", logFileName);
+            } else if (r == 0.0f && a!=0.0f) {
+              Reactions.react(reaction, UNDERFLOW_MSG+"FDIV", logFileName);
             }
         }
 
