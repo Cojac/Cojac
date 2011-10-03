@@ -427,6 +427,8 @@ public abstract class AbstractFullTests {
     public void dmul1() throws Exception {
         double r = getTests().dmul(5555.5555, 77777.7777);
         assertEquals(5555.5555 * 77777.7777, r);
+        assertEquals(0.0, getTests().dmul(0.0, 7.7));
+        assertEquals(0.0, getTests().dmul(7.7, 0.0));
     }
 
     @Test
@@ -445,10 +447,16 @@ public abstract class AbstractFullTests {
         getTests().dmul(Double.MAX_VALUE, -1000);
     }
 
+//    @Test(expected = ArithmeticException.class)
+//    public void dmul6() throws Exception {
+//        getTests().dmul(Double.MIN_VALUE, 0.25);
+//    }
+
     @Test
     public void ddiv1() throws Exception {
         double r = getTests().ddiv(5555.5555, 77777.7777);
         assertEquals(5555.5555 / 77777.7777, r);
+        assertEquals(0.0, getTests().ddiv(0.0, 7.7));
     }
 
     @Test
@@ -476,6 +484,11 @@ public abstract class AbstractFullTests {
     public void ddiv7() throws Exception {
         getTests().ddiv(0.0, 0.0);
     }
+
+//    @Test(expected = ArithmeticException.class)
+//    public void ddiv8() throws Exception {
+//        getTests().ddiv(Double.MIN_VALUE, 4);
+//    }
 
     @Test(expected = ArithmeticException.class)
     public void drem1() throws Exception {
@@ -638,6 +651,8 @@ public abstract class AbstractFullTests {
     public void fmul1() throws Exception {
         float r = getTests().fmul(5555.5555F, 77777.7777F);
         assertEquals(5555.5555F * 77777.7777F, r);
+        assertEquals(0.0f, getTests().fmul(0.0f, 7.7f));
+        assertEquals(0.0f, getTests().fmul(7.7f, 0.0f));
     }
 
     @Test
@@ -656,10 +671,16 @@ public abstract class AbstractFullTests {
         getTests().fmul(Float.MAX_VALUE, -1000F);
     }
 
+//    @Test(expected = ArithmeticException.class)
+//    public void fmul6() throws Exception {
+//        getTests().fmul(Float.MIN_VALUE, 0.25f);
+//    }
+
     @Test
     public void fdiv1() throws Exception {
         float r = getTests().fdiv(5555.5555F, 77777.7777F);
         assertEquals(5555.5555F / 77777.7777F, r);
+        assertEquals(0.0f, getTests().fdiv(0.0f, 7.7f));
     }
 
     @Test
@@ -687,6 +708,11 @@ public abstract class AbstractFullTests {
     public void fdiv7() throws Exception {
         getTests().fdiv(0.0F, 0.0F);
     }
+
+//    @Test(expected = ArithmeticException.class)
+//    public void fdiv8() throws Exception {
+//        getTests().fdiv(Float.MIN_VALUE, 4f);
+//    }
 
     @Test(expected = ArithmeticException.class)
     public void frem1() throws Exception {

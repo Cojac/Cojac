@@ -31,6 +31,7 @@ import ch.eiafr.cojac.Arg;
 import ch.eiafr.cojac.Args;
 import ch.eiafr.cojac.CojacClassLoader;
 import ch.eiafr.cojac.InstrumentationStats;
+import ch.eiafr.cojac.perfs.opcodes.DCMPCallable;
 import ch.eiafr.cojac.perfs.opcodes.DADDCallable;
 import ch.eiafr.cojac.perfs.opcodes.DDIVCallable;
 import ch.eiafr.cojac.perfs.opcodes.DMULCallable;
@@ -58,7 +59,6 @@ public class COJACBenchmark {
   
     public static void main(String[] args) throws Exception {
         
-
         //System.exit(0);
 
         bench(52, "IADD Benchmark", new IADDCallable(), "ch.eiafr.cojac.perfs.opcodes.IADDCallable");
@@ -82,6 +82,7 @@ public class COJACBenchmark {
         bench(52, "DMUL Benchmark", new DMULCallable(), "ch.eiafr.cojac.perfs.opcodes.DMULCallable");
         bench(52, "DDIV Benchmark", new DDIVCallable(), "ch.eiafr.cojac.perfs.opcodes.DDIVCallable");
         bench(52, "DREM Benchmark", new DREMCallable(), "ch.eiafr.cojac.perfs.opcodes.DREMCallable");
+        bench(52, "DCMP Benchmark", new DCMPCallable(), "ch.eiafr.cojac.perfs.opcodes.IADDCallable");
 
         bench(1, "Rabin Karp", new StringSearchingRunnable(), "ch.eiafr.cojac.perfs.StringSearchingRunnable");
         bench(1, "Sweeping Plane", new SweepingSorterRunnable(), "ch.eiafr.cojac.perfs.SweepingSorterRunnable");
