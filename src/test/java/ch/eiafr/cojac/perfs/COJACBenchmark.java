@@ -58,12 +58,12 @@ public class COJACBenchmark {
     private static final boolean BENCH_FRAMES=false;
   
     public static void main(String[] args) throws Exception {
-      bench(52, "FMUL Benchmark", new FMULCallable(), "ch.eiafr.cojac.perfs.opcodes.FMULCallable");
-      bench(52, "FDIV Benchmark", new FDIVCallable(), "ch.eiafr.cojac.perfs.opcodes.FDIVCallable");
-      bench(52, "DMUL Benchmark", new DMULCallable(), "ch.eiafr.cojac.perfs.opcodes.DMULCallable");
-      bench(52, "DDIV Benchmark", new DDIVCallable(), "ch.eiafr.cojac.perfs.opcodes.DDIVCallable");
-
-        System.exit(0);
+//      bench(52, "FMUL Benchmark", new FMULCallable(), "ch.eiafr.cojac.perfs.opcodes.FMULCallable");
+//      bench(52, "FDIV Benchmark", new FDIVCallable(), "ch.eiafr.cojac.perfs.opcodes.FDIVCallable");
+//      bench(52, "DMUL Benchmark", new DMULCallable(), "ch.eiafr.cojac.perfs.opcodes.DMULCallable");
+//      bench(52, "DDIV Benchmark", new DDIVCallable(), "ch.eiafr.cojac.perfs.opcodes.DDIVCallable");
+//
+//        System.exit(0);
 
         bench(52, "IADD Benchmark", new IADDCallable(), "ch.eiafr.cojac.perfs.opcodes.IADDCallable");
         bench(52, "ISUB Benchmark", new ISUBCallable(), "ch.eiafr.cojac.perfs.opcodes.ISUBCallable");
