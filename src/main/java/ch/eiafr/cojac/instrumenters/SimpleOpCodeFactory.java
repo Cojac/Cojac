@@ -163,7 +163,7 @@ public final class SimpleOpCodeFactory implements OpCodeInstrumenterFactory {
     @Override
     public OpCodeInstrumenter getInstrumenter(int opCode, Arg arg) {
         if (arg != null && args.isOperationEnabled(arg)) {
-            if (args.isSpecified(Arg.OP_SIZE)) {
+            if (!args.isSpecified(Arg.WASTE_SIZE)) {
                 return opSizeInstrumenter;
             }
 

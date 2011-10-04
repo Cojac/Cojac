@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import ch.eiafr.cojac.utils.ReflectionUtils;
+
 public final class Reactions {
     //Do not inline, used by reflection, do not make final
     private static boolean filtering;
@@ -52,6 +54,9 @@ public final class Reactions {
             case EXCEPTION:
                 throwOverflow(instructionName);
                 break;
+            case CALLBACK:
+                callbackOverflow(instructionName, logFileName);
+                break;
         }
     }
 
@@ -71,7 +76,7 @@ public final class Reactions {
         return true;
     }
 
-    // identifier must match Methods.PRINT_OVERFLOW definition
+    // identifier must match Methods.PRINT definition
     public static void printOverflow(String instructionName) {
         StackTraceElement[] t = new Throwable().getStackTrace();
 
@@ -94,7 +99,7 @@ public final class Reactions {
         }
     }
 
-    // identifier must match Methods.PRINT_OVERFLOW_SMALLER definition
+    // identifier must match Methods.PRINT_SMALLER definition
     public static void printOverflowSmaller(String instructionName) {
         StackTraceElement[] t = new Throwable().getStackTrace();
 
@@ -112,7 +117,7 @@ public final class Reactions {
         }
     }
 
-    // identifier must match Methods.LOG_OVERFLOW definition
+    // identifier must match Methods.LOG definition
     public static void logOverflow(String instructionName, String logFileName) {
         StackTraceElement[] t = new Throwable().getStackTrace();
 
@@ -156,7 +161,7 @@ public final class Reactions {
         }
     }
 
-    // identifier must match Methods.LOG_OVERFLOW_SMALLER definition
+    // identifier must match Methods.LOG_SMALLER definition
     public static void logOverflowSmaller(String instructionName, String logFileName) {
         StackTraceElement[] t = new Throwable().getStackTrace();
 
@@ -183,7 +188,7 @@ public final class Reactions {
         }
     }
 
-    // identifier must match Methods.THROW_OVERFLOW definition
+    // identifier must match Methods.THROW definition
     public static void throwOverflow(String instructionName) {
         StackTraceElement[] t = new Throwable().getStackTrace();
 
@@ -198,4 +203,10 @@ public final class Reactions {
             throw new ArithmeticException("COJAC: " + instructionName);
         }
     }
+    
+    // identifier must match Methods.CALLBACK definition
+    public static void callbackOverflow(String instructionName, String callbackName) {
+      ReflectionUtils.invokeCallback(callbackName, instructionName);
+    }
+
 }

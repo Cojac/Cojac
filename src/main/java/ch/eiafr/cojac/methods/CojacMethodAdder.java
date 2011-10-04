@@ -52,7 +52,7 @@ public final class CojacMethodAdder {
     public void insertMethods(ClassVisitor cv, Methods methods, String classPath) {
         reaction.insertReactionMethod(cv, methods);
 
-        if (args.isSpecified(Arg.OP_SIZE)) {
+        if (!args.isSpecified(Arg.WASTE_SIZE)) {
             for (MethodInserter inserter : INSERTERS) {
                 inserter.insertMethods(cv, args, methods, reaction, classPath);
             }

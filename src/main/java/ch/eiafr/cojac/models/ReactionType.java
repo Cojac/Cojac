@@ -23,7 +23,8 @@ public enum ReactionType {
     PRINT_SMALLER(1),
     LOG(2),
     LOG_SMALLER(3),
-    EXCEPTION(4);
+    EXCEPTION(4),
+    CALLBACK(5);
 
     private final int value;
 

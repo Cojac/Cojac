@@ -55,7 +55,7 @@ public final class CojacClassLoader extends URLClassLoader {
         }
         
         OpCodeInstrumenterFactory factory;
-        if (args.isSpecified(Arg.OP_SIZE)) {
+        if (!args.isSpecified(Arg.WASTE_SIZE)) {
             factory = new ClassLoaderOpSizeInstrumenterFactory(args, stats);
         } else {
             factory = new SimpleOpCodeFactory(args, stats);

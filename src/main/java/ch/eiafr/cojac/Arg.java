@@ -30,7 +30,7 @@ public enum Arg {
                    METHOD("m"),
                      PATH("p"),
                 EXCEPTION("e"),
-                  OP_SIZE("o"),
+               WASTE_SIZE("w"),
              DETAILED_LOG("d"),
             RUNTIME_STATS("s"),
                 CALL_BACK("k"),
@@ -179,9 +179,11 @@ public enum Arg {
       options.addOption(Arg.DETAILED_LOG.shortOpt(),
           "detailed",   false, "logs the full stack trace (combined with -c or -l)");
 
-      options.addOption(Arg.OP_SIZE.shortOpt(),
-          "opsize",     false, "Instruments so that the bytecode size overhead " +
-                               "is limited (but the instrumented code will be slower...)");
+      options.addOption(Arg.WASTE_SIZE.shortOpt(),
+          "withinStack",     false, "Instruments so that the checks lie directly on the stack " +
+                               "instead of via an additional method call. This generally degrades"+
+                               "the RAM & CPU overhead, but occasionnally it could be better." +
+                               "(this option might disappear in future releases)");
       options.addOption(Arg.FRAMES.shortOpt(),
           false, "Compute Java Frames in bytecode (instrumentation will be slower)");
 

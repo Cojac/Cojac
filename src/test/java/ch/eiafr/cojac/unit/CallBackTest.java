@@ -34,28 +34,37 @@ import ch.eiafr.cojac.InstrumentationStats;
 public class CallBackTest {
     @Test
     public void testCallBackMethodCalled() throws ClassNotFoundException, IllegalAccessException, InstantiationException,
+     NoSuchMethodException, InvocationTargetException, NoSuchFieldException {
+      testCallBackMethodCalled(true);
+      testCallBackMethodCalled(false);
+    }
+    
+    public void testCallBackMethodCalled(boolean wasteSize) 
+        throws ClassNotFoundException, IllegalAccessException, InstantiationException,
             NoSuchMethodException, InvocationTargetException, NoSuchFieldException {
-        String logFile = System.getProperty("user.dir") + "/test.log";
 
-        Args args = new Args();
+      String logFile = System.getProperty("user.dir") + "/test.log";
 
-        args.specify(Arg.ALL);
-        args.setValue(Arg.CALL_BACK, "ch/eiafr/cojac/unit/CallBacks/log");
+      Args args = new Args();
 
-        CojacClassLoader classLoader = new CojacClassLoader(new URL[]{}, args, new InstrumentationStats());
+      args.specify(Arg.ALL);
+      args.setValue(Arg.CALL_BACK, "ch/eiafr/cojac/unit/CallBacks/log");
+      if (wasteSize) args.specify(Arg.WASTE_SIZE);
 
-        Class<?> classz = classLoader.loadClass("ch.eiafr.cojac.unit.SimpleOverflows");
+      CojacClassLoader classLoader = new CojacClassLoader(new URL[]{}, args, new InstrumentationStats());
 
-        Object object = classz.newInstance();
+      Class<?> classz = classLoader.loadClass("ch.eiafr.cojac.unit.SimpleOverflows");
 
-        Method m = classz.getMethod("test");
+      Object object = classz.newInstance();
 
-        m.invoke(object);
+      Method m = classz.getMethod("test");
 
-        classz = classLoader.loadClass("ch.eiafr.cojac.unit.CallBacks");
+      m.invoke(object);
 
-        Field field = classz.getField("count");
+      classz = classLoader.loadClass("ch.eiafr.cojac.unit.CallBacks");
 
-        Assert.assertEquals(1, field.get(null));
+      Field field = classz.getField("count");
+
+      Assert.assertEquals(1, field.get(null));
     }
 }
