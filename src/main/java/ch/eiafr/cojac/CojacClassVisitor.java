@@ -68,27 +68,10 @@ final class CojacClassVisitor extends ClassAdapter {
 
         mv.visitEnd();
 
-        if (args.isSpecified(Arg.METHOD)) {
-            String currentMethodID = classPath + '/' + name;
+        return instrumentMethod(mv, access, desc);
 
-            if (currentMethodID.equals(getName(args.getValue(Arg.METHOD))) &&
-                    desc.equals(getSignature(args.getValue(Arg.METHOD)))) {
-                return instrumentMethod(mv, access, desc);
-            }
-        } else {
-            return instrumentMethod(mv, access, desc);
-        }
-
-        return mv;
     }
 
-    private static String getSignature(String method) {
-        return method.substring(method.indexOf(' ') + 1);
-    }
-
-    private static String getName(String fullid) {
-        return fullid.substring(0, fullid.indexOf(' '));
-    }
 
     private MethodVisitor instrumentMethod(MethodVisitor parentMv, int access, String desc) {
         MethodVisitor mv = new CojacCheckerMethodVisitor(access, desc, parentMv, stats, args, methods, reaction, classPath, factory);

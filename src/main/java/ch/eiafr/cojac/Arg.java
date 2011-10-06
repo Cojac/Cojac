@@ -27,7 +27,6 @@ public enum Arg {
                      HELP("h"),
                       ALL("a"),
                     PRINT("c"),
-                   METHOD("m"),
                      PATH("p"),
                 EXCEPTION("e"),
                WASTE_SIZE("w"),
@@ -41,7 +40,7 @@ public enum Arg {
                    BYPASS("b"),
                    FRAMES("Xframes"),
     INSTRUMENTATION_STATS("t"),
-                VARIABLES("Xvariables"),
+                VARIABLES("Xvariables"),  //Deprecated, not maintained
           NO_CANCELLATION("XnoCancellation"),
 
     INTS   ("ints"),
@@ -188,11 +187,13 @@ public enum Arg {
       options.addOption(Arg.FRAMES.shortOpt(),
           false, "Compute Java Frames in bytecode (instrumentation will be slower)");
 
-      options.addOption(Arg.NO_CANCELLATION.shortOpt(),
-          false, "Disable cancellation test in DADD/DSUB/FADD/FSUB");
+      //feature not ready!
+//      options.addOption(Arg.NO_CANCELLATION.shortOpt(),
+//          false, "Disable cancellation test in DADD/DSUB/FADD/FSUB");
 
-      //Disabled temporary
-      //options.addOption("v", false, "Enable COJAC to add variables in instrumented bytecode");
+      //Disabled temporarily, well... definitely!
+      
+//      options.addOption("v", false, "Enable COJAC to add variables in instrumented bytecode");
 
 //      options.addOption(OptionBuilder.
 //          withLongOpt("frames").
@@ -217,18 +218,6 @@ public enum Arg {
                       "Give the fully qualified method identifier, in the form: \n" +
                       "pkgA/myPkg/myClass/myMethod").
                 create(Arg.CALL_BACK.shortOpt()));
-
-      options.addOption(OptionBuilder.
-            withLongOpt("method").
-            withArgName("meth-id").
-                 hasArg().
-        withDescription("Instrument only the specified method." +
-                      "Give the fully qualified method identifier, in the form:\n" +
-                      "pkgA/myPkg/myClass/myMethod\n" +
-                      "Signature conforms to Java format " +
-                      "(as given by javap -s) " +
-                      "eg:\n (I[I)S   for   short a(int b, int [] c)").
-                create(Arg.METHOD.shortOpt()));
 
       options.addOption(OptionBuilder.
             withLongOpt("logfile").
