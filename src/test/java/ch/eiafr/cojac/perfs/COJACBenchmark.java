@@ -57,9 +57,7 @@ public class COJACBenchmark {
     private static final boolean BENCH_FRAMES=false;
   
     public static void main(String[] args) throws Exception {
-        
-
-        //System.exit(0);
+        System.out.println("COJAC Benchmark");
 
         bench(52, "IADD Benchmark", new IADDCallable(), "ch.eiafr.cojac.perfs.opcodes.IADDCallable");
         bench(52, "ISUB Benchmark", new ISUBCallable(), "ch.eiafr.cojac.perfs.opcodes.ISUBCallable");
