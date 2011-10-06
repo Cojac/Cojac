@@ -38,10 +38,10 @@ public enum Arg {
                 CLASSPATH("cp"),
                      NONE("n"),
                    BYPASS("b"),
-                   FRAMES("Xframes"),
+                   FRAMES("Xframes"),     // not official
     INSTRUMENTATION_STATS("t"),
                 VARIABLES("Xvariables"),  //Deprecated, not maintained
-          NO_CANCELLATION("XnoCancellation"),
+          NO_CANCELLATION("XnoCancellation"), //not ready
 
     INTS   ("ints"),
     FLOATS ("floats"),
