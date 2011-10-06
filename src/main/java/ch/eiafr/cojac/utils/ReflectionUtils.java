@@ -20,8 +20,12 @@ package ch.eiafr.cojac.utils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.regex.Pattern;
 
 public final class ReflectionUtils {
+    private static final Class<?> [] CALLBACK_PARAM_TYPES = {String.class};
+    private static final Pattern METHOD_SEPARATOR = Pattern.compile("/");
+
     private ReflectionUtils() {
         throw new AssertionError();
     }
@@ -57,25 +61,24 @@ public final class ReflectionUtils {
 
         return null;
     }
-    
+
+
     // There is a very nasty dependence between the Cojac Eclipse Plugin
     // ch.eiafr.ecojac_core.AnnontationMgr.getRelevantElt()
     // and the precise path leading to the invocation of this method... F. Bapst
     public static void invokeCallback(String callbackName, String callbackParam) {
-      String className, methodName;
-      int a=callbackName.lastIndexOf("/");
+      int a=callbackName.lastIndexOf('/');
       if (a<0) {
         throw new IllegalStateException("bad callback format (should be ab/cd/className/methName)");
       }
-      className= callbackName.substring(0, a).replaceAll("/", ".");
-      methodName= callbackName.substring(a+1);
-      //System.out.println("calling "+className+":"+methodName+"("+callbackParam+")");
-      
+
+      String className= METHOD_SEPARATOR.matcher(callbackName.substring(0, a)).replaceAll(".");
+      String methodName= callbackName.substring(a+1);
+
       try {
         Class<?> clazz = Class.forName(className);
-        Class<?> [] prmTypes= {String.class};
-        Method meth= clazz.getMethod(methodName, prmTypes);
-        meth.invoke(null, callbackParam);
+        Method method = clazz.getMethod(methodName, CALLBACK_PARAM_TYPES);
+        method.invoke(null, callbackParam);
       } catch (Exception e) {
         throw new IllegalStateException(e);
       }    
