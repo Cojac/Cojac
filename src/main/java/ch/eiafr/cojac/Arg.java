@@ -145,7 +145,8 @@ public enum Arg {
       options.addOption(Arg.NONE.shortOpt(),
           "none",       false, "Don't instrument any instruction");
       options.addOption(Arg.BYPASS.shortOpt(),
-          "bypass",     true, "Bypass classes starting with one of these prefixes");
+          "bypass",     true, "Bypass classes starting with one of these prefixes (semi-colon separated list). "+
+                              "Example: -b foo;bar.util skips classes with name foo* or bar.util*");
       options.addOption(Arg.HELP.shortOpt(),
           "help",       false, "Print the help of the program");
       options.addOption(Arg.PRINT.shortOpt(),

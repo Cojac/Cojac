@@ -195,6 +195,8 @@ public final class Reactions {
         int i = 1;
         if (t.length > 1 && t[1].getMethodName().startsWith("cojacCheck")) {
             i = 2;
+        } else if(t.length > 1 && t[1].toString().startsWith("ch.eiafr.cojac.models.")){
+            i = 3;
         }
 
         String location = "COJAC: " + instructionName + ' ' + t[i].toString();
@@ -204,7 +206,9 @@ public final class Reactions {
         }
     }
     
-    // identifier must match Methods.CALLBACK definition
+    // There is a very nasty dependence between the Cojac Eclipse Plugin
+    // ch.eiafr.ecojac_core.AnnontationMgr.getRelevantElt()
+    // and the precise path leading to the invocation of the callback... F. Bapst
     public static void callbackOverflow(String instructionName, String callbackName) {
       ReflectionUtils.invokeCallback(callbackName, instructionName);
     }
