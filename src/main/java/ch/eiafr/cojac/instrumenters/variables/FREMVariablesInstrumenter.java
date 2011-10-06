@@ -18,14 +18,13 @@
 
 package ch.eiafr.cojac.instrumenters.variables;
 
+import ch.eiafr.cojac.Methods;
+import ch.eiafr.cojac.instrumenters.OpCodeInstrumenter;
+import ch.eiafr.cojac.reactions.Reaction;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.LocalVariablesSorter;
-
-import ch.eiafr.cojac.Methods;
-import ch.eiafr.cojac.instrumenters.OpCodeInstrumenter;
-import ch.eiafr.cojac.reactions.Reaction;
 
 import static org.objectweb.asm.Opcodes.*;
 

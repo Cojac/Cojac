@@ -18,61 +18,14 @@
 
 package ch.eiafr.cojac.instrumenters;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import ch.eiafr.cojac.Arg;
 import ch.eiafr.cojac.Args;
 import ch.eiafr.cojac.InstrumentationStats;
-import ch.eiafr.cojac.instrumenters.stack.D2FInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.D2IInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.D2LInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.DADDInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.DCMPGInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.DCMPLInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.DDIVInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.DMULInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.DREMInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.DSUBInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.F2IInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.F2LInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.FADDInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.FCMPGInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.FCMPLInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.FDIVInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.FMULInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.FREMInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.FSUBInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.I2BInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.I2CInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.I2SInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.IADDInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.IDIVInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.IMULInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.INegInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.ISUBInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.L2IInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.LADDInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.LDIVInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.LMULInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.LNEGInstrumenter;
-import ch.eiafr.cojac.instrumenters.stack.LSUBInstrumenter;
-import ch.eiafr.cojac.instrumenters.variables.DADDVariablesInstrumenter;
-import ch.eiafr.cojac.instrumenters.variables.DCMPVariablesInstrumenter;
-import ch.eiafr.cojac.instrumenters.variables.DDIVVariablesInstrumenter;
-import ch.eiafr.cojac.instrumenters.variables.DMULVariablesInstrumenter;
-import ch.eiafr.cojac.instrumenters.variables.DREMVariablesInstrumenter;
-import ch.eiafr.cojac.instrumenters.variables.DSUBVariablesInstrumenter;
-import ch.eiafr.cojac.instrumenters.variables.FADDVariablesInstrumenter;
-import ch.eiafr.cojac.instrumenters.variables.FCMPVariablesInstrumenter;
-import ch.eiafr.cojac.instrumenters.variables.FDIVVariablesInstrumenter;
-import ch.eiafr.cojac.instrumenters.variables.FMULVariablesInstrumenter;
-import ch.eiafr.cojac.instrumenters.variables.FREMVariablesInstrumenter;
-import ch.eiafr.cojac.instrumenters.variables.FSUBVariablesInstrumenter;
-import ch.eiafr.cojac.instrumenters.variables.IMULVariablesInstrumenter;
-import ch.eiafr.cojac.instrumenters.variables.LADDVariablesInstrumenter;
-import ch.eiafr.cojac.instrumenters.variables.LMULVariablesInstrumenter;
-import ch.eiafr.cojac.instrumenters.variables.LSUBVariablesInstrumenter;
+import ch.eiafr.cojac.instrumenters.stack.*;
+import ch.eiafr.cojac.instrumenters.variables.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.objectweb.asm.Opcodes.*;
 

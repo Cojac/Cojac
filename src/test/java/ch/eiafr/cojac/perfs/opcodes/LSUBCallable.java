@@ -28,8 +28,8 @@ public class LSUBCallable implements Callable<Long> {
     @Override
     public Long call() {
         return a - b - c - b - a - b - c - b - a - b - c - a - b - c - b - a - b - c - b - a - b -
-                a - b - c - b - a - b - c - b - a - b - c - a - b - c - b - a - b - c - b - a - b -
-                a - b - c - b - a - b - c - b - a - b - c;
+            a - b - c - b - a - b - c - b - a - b - c - a - b - c - b - a - b - c - b - a - b -
+            a - b - c - b - a - b - c - b - a - b - c;
     }
 
     public void setA(long a) {

@@ -18,8 +18,15 @@
 
 package ch.eiafr.cojac.perfs;
 
-import javax.imageio.ImageIO;
+import ch.eiafr.cojac.Arg;
+import ch.eiafr.cojac.Args;
+import ch.eiafr.cojac.CojacClassLoader;
+import ch.eiafr.cojac.InstrumentationStats;
+import ch.eiafr.cojac.perfs.opcodes.*;
+import ch.eiafr.cojac.perfs.scimark.SciMark;
+import com.wicht.benchmark.utils.Benchs;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.lang.reflect.Method;
@@ -27,36 +34,10 @@ import java.net.URL;
 import java.util.Random;
 import java.util.concurrent.Callable;
 
-import ch.eiafr.cojac.Arg;
-import ch.eiafr.cojac.Args;
-import ch.eiafr.cojac.CojacClassLoader;
-import ch.eiafr.cojac.InstrumentationStats;
-import ch.eiafr.cojac.perfs.opcodes.DCMPCallable;
-import ch.eiafr.cojac.perfs.opcodes.DADDCallable;
-import ch.eiafr.cojac.perfs.opcodes.DDIVCallable;
-import ch.eiafr.cojac.perfs.opcodes.DMULCallable;
-import ch.eiafr.cojac.perfs.opcodes.DREMCallable;
-import ch.eiafr.cojac.perfs.opcodes.DSUBCallable;
-import ch.eiafr.cojac.perfs.opcodes.FADDCallable;
-import ch.eiafr.cojac.perfs.opcodes.FDIVCallable;
-import ch.eiafr.cojac.perfs.opcodes.FMULCallable;
-import ch.eiafr.cojac.perfs.opcodes.FREMCallable;
-import ch.eiafr.cojac.perfs.opcodes.FSUBCallable;
-import ch.eiafr.cojac.perfs.opcodes.IADDCallable;
-import ch.eiafr.cojac.perfs.opcodes.IDIVCallable;
-import ch.eiafr.cojac.perfs.opcodes.IMULCallable;
-import ch.eiafr.cojac.perfs.opcodes.ISUBCallable;
-import ch.eiafr.cojac.perfs.opcodes.LADDCallable;
-import ch.eiafr.cojac.perfs.opcodes.LDIVCallable;
-import ch.eiafr.cojac.perfs.opcodes.LMULCallable;
-import ch.eiafr.cojac.perfs.opcodes.LSUBCallable;
-import ch.eiafr.cojac.perfs.scimark.SciMark;
-import com.wicht.benchmark.utils.Benchs;
-
 public class COJACBenchmark {
-    private static final boolean BENCH_VARIABLES=false;
-    private static final boolean BENCH_FRAMES=false;
-  
+    private static final boolean BENCH_VARIABLES = false;
+    private static final boolean BENCH_FRAMES = false;
+
     public static void main(String[] args) throws Exception {
         System.out.println("COJAC Benchmark");
 
@@ -180,10 +161,10 @@ public class COJACBenchmark {
 
         benchs.bench("Instrumented", COJACBenchmark.<Callable<?>>getFromClassLoader(cls, false, false, false));
         benchs.bench("WASTE_SIZE", COJACBenchmark.<Callable<?>>getFromClassLoader(cls, true, false, false));
-        if (BENCH_FRAMES) 
-          benchs.bench("Frames", COJACBenchmark.<Callable<?>>getFromClassLoader(cls, false, true, false));
+        if (BENCH_FRAMES)
+            benchs.bench("Frames", COJACBenchmark.<Callable<?>>getFromClassLoader(cls, false, true, false));
         if (BENCH_VARIABLES)
-          benchs.bench("Variables", COJACBenchmark.<Callable<?>>getFromClassLoader(cls, false, false, true));
+            benchs.bench("Variables", COJACBenchmark.<Callable<?>>getFromClassLoader(cls, false, false, true));
         benchs.bench("Not instrumented", runnable);
 
         benchs.generateCharts(false);
@@ -197,10 +178,10 @@ public class COJACBenchmark {
 
         benchs.bench("Instrumented", COJACBenchmark.<Runnable>getFromClassLoader(cls, false, false, false));
         benchs.bench("WASTE_SIZE", COJACBenchmark.<Runnable>getFromClassLoader(cls, true, false, false));
-        if (BENCH_FRAMES) 
-          benchs.bench("Frames", COJACBenchmark.<Runnable>getFromClassLoader(cls, false, true, false));
+        if (BENCH_FRAMES)
+            benchs.bench("Frames", COJACBenchmark.<Runnable>getFromClassLoader(cls, false, true, false));
         if (BENCH_VARIABLES)
-          benchs.bench("Variables", COJACBenchmark.<Runnable>getFromClassLoader(cls, false, false, true));
+            benchs.bench("Variables", COJACBenchmark.<Runnable>getFromClassLoader(cls, false, false, true));
         benchs.bench("Not instrumented", runnable);
 
         benchs.generateCharts(false);
@@ -222,15 +203,15 @@ public class COJACBenchmark {
 
         benchs.bench("WASTE_SIZE", run);
         if (BENCH_FRAMES) {
-          run = getFromClassLoader(cls, false, true, false);
-          setArray(generateIntRandomArray(size), run);
-          benchs.bench("Frames", run);
+            run = getFromClassLoader(cls, false, true, false);
+            setArray(generateIntRandomArray(size), run);
+            benchs.bench("Frames", run);
         }
 
         if (BENCH_VARIABLES) {
-          run = getFromClassLoader(cls, false, false, true);
-          setArray(generateIntRandomArray(size), run);
-          benchs.bench("Variables", run);
+            run = getFromClassLoader(cls, false, false, true);
+            setArray(generateIntRandomArray(size), run);
+            benchs.bench("Variables", run);
         }
 
         setArray(generateIntRandomArray(size), runnable);
@@ -258,15 +239,15 @@ public class COJACBenchmark {
 
 
         if (BENCH_FRAMES) {
-          run = getFromClassLoader(cls, false, true, false);
-          setArray(generateIntRandomArray(size), run);
-          benchs.bench("Frames", run);
+            run = getFromClassLoader(cls, false, true, false);
+            setArray(generateIntRandomArray(size), run);
+            benchs.bench("Frames", run);
         }
 
         if (BENCH_VARIABLES) {
-          run = getFromClassLoader(cls, false, false, true);
-          setArray(generateIntRandomArray(size), run);
-          benchs.bench("Variables", run);
+            run = getFromClassLoader(cls, false, false, true);
+            setArray(generateIntRandomArray(size), run);
+            benchs.bench("Variables", run);
         }
 
         setArray(generateIntRandomArray(size), runnable);
@@ -295,15 +276,15 @@ public class COJACBenchmark {
         benchs.bench("WASTE_SIZE", run);
 
         if (BENCH_FRAMES) {
-          run = getFromClassLoader(cls, false, true, false);
-          setImage(bufferedImage, run);
-          benchs.bench("Frames", run);
+            run = getFromClassLoader(cls, false, true, false);
+            setImage(bufferedImage, run);
+            benchs.bench("Frames", run);
         }
 
         if (BENCH_VARIABLES) {
-          run = getFromClassLoader(cls, false, false, true);
-          setImage(bufferedImage, run);
-          benchs.bench("Variables", run);
+            run = getFromClassLoader(cls, false, false, true);
+            setImage(bufferedImage, run);
+            benchs.bench("Variables", run);
         }
         benchs.bench("Not instrumented", runnable);
 
@@ -320,7 +301,7 @@ public class COJACBenchmark {
 
         File graphFolder = new File(System.getProperty("user.dir"), "graphs");
 
-        if(!( (graphFolder.exists() && graphFolder.isDirectory()) || graphFolder.mkdirs() )){
+        if (!((graphFolder.exists() && graphFolder.isDirectory()) || graphFolder.mkdirs())) {
             System.err.println("Unable to create the folder for the graph, use \"user.dir\" as graph folder");
             graphFolder = new File(System.getProperty("user.dir"));
         }
@@ -332,7 +313,8 @@ public class COJACBenchmark {
         InstrumentationStats stats = new InstrumentationStats();
         Args args = new Args();
         args.specify(Arg.ALL);
-        args.specify(Arg.PRINT); args.specify(Arg.FILTER);
+        args.specify(Arg.PRINT);
+        args.specify(Arg.FILTER);
         //args.specify(Arg.EXCEPTION);
 
         if (wasteSize) {

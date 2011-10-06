@@ -23,14 +23,14 @@ import java.lang.reflect.Method;
 import java.util.regex.Pattern;
 
 public final class ReflectionUtils {
-    private static final Class<?> [] CALLBACK_PARAM_TYPES = {String.class};
+    private static final Class<?>[] CALLBACK_PARAM_TYPES = {String.class};
     private static final Pattern METHOD_SEPARATOR = Pattern.compile("/");
 
     private ReflectionUtils() {
         throw new AssertionError();
     }
 
-    public static void setStaticFieldValue(ClassLoader loader, String className, String fieldName, Object value){
+    public static void setStaticFieldValue(ClassLoader loader, String className, String fieldName, Object value) {
         try {
             Class<?> classz = Class.forName(className, true, loader);
             Field field = classz.getDeclaredField(fieldName);
@@ -45,7 +45,7 @@ public final class ReflectionUtils {
         }
     }
 
-    public static <T> T getStaticFieldValue(ClassLoader loader, String className, String fieldName){
+    public static <T> T getStaticFieldValue(ClassLoader loader, String className, String fieldName) {
         try {
             Class<?> reactions = Class.forName(className, true, loader);
             Field field = reactions.getDeclaredField(fieldName);
@@ -67,20 +67,20 @@ public final class ReflectionUtils {
     // ch.eiafr.ecojac_core.AnnontationMgr.getRelevantElt()
     // and the precise path leading to the invocation of this method... F. Bapst
     public static void invokeCallback(String callbackName, String callbackParam) {
-      int a=callbackName.lastIndexOf('/');
-      if (a<0) {
-        throw new IllegalStateException("bad callback format (should be ab/cd/className/methName)");
-      }
+        int a = callbackName.lastIndexOf('/');
+        if (a < 0) {
+            throw new IllegalStateException("bad callback format (should be ab/cd/className/methName)");
+        }
 
-      String className= METHOD_SEPARATOR.matcher(callbackName.substring(0, a)).replaceAll(".");
-      String methodName= callbackName.substring(a+1);
+        String className = METHOD_SEPARATOR.matcher(callbackName.substring(0, a)).replaceAll(".");
+        String methodName = callbackName.substring(a + 1);
 
-      try {
-        Class<?> clazz = Class.forName(className);
-        Method method = clazz.getMethod(methodName, CALLBACK_PARAM_TYPES);
-        method.invoke(null, callbackParam);
-      } catch (Exception e) {
-        throw new IllegalStateException(e);
-      }    
+        try {
+            Class<?> clazz = Class.forName(className);
+            Method method = clazz.getMethod(methodName, CALLBACK_PARAM_TYPES);
+            method.invoke(null, callbackParam);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
     }
 }

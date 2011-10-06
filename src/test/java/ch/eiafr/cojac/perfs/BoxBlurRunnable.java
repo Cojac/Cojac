@@ -18,10 +18,10 @@
 
 package ch.eiafr.cojac.perfs;
 
+import ch.eiafr.cojac.perfs.image.BoxBlurFilter;
+
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
-
-import ch.eiafr.cojac.perfs.image.BoxBlurFilter;
 
 public class BoxBlurRunnable implements Runnable {
     private BufferedImage image;

@@ -18,10 +18,10 @@
 
 package ch.eiafr.cojac.unit;
 
-import java.io.IOException;
-
 import ch.eiafr.cojac.Arg;
 import ch.eiafr.cojac.Args;
+
+import java.io.IOException;
 
 public class WasteSizeFilesTest extends BasicFilesTest {
     public WasteSizeFilesTest() throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {

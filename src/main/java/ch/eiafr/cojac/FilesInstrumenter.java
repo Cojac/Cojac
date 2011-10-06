@@ -60,7 +60,7 @@ public final class FilesInstrumenter {
     // check if jar or class exists
     void checkFiles() {
         for (String arg : args.getFiles()) {
-            files.add(new File(System.getProperty("user.dir") + '/' + arg)); 
+            files.add(new File(System.getProperty("user.dir") + '/' + arg));
         }
 
         if (files.isEmpty()) {

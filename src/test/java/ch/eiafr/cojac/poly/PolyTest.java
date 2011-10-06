@@ -18,11 +18,11 @@
 
 package ch.eiafr.cojac.poly;
 
-import java.net.URL;
-
 import ch.eiafr.cojac.Args;
 import ch.eiafr.cojac.CojacClassLoader;
 import ch.eiafr.cojac.InstrumentationStats;
+
+import java.net.URL;
 
 public class PolyTest {
     public static void main(String[] a) throws Exception {

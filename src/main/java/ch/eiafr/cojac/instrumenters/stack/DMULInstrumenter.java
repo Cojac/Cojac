@@ -18,26 +18,23 @@
 
 package ch.eiafr.cojac.instrumenters.stack;
 
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.commons.LocalVariablesSorter;
-
 import ch.eiafr.cojac.Methods;
 import ch.eiafr.cojac.instrumenters.OpCodeInstrumenter;
 import ch.eiafr.cojac.reactions.Reaction;
 import ch.eiafr.cojac.utils.BytecodeUtils;
+import org.objectweb.asm.Label;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.commons.LocalVariablesSorter;
 
-import static ch.eiafr.cojac.models.CheckedDoubles.RESULT_IS_POS_INF_MSG;
-import static ch.eiafr.cojac.models.CheckedDoubles.RESULT_IS_NEG_INF_MSG;
-import static ch.eiafr.cojac.models.CheckedDoubles.UNDERFLOW_MSG;
+import static ch.eiafr.cojac.models.CheckedDoubles.*;
 import static org.objectweb.asm.Opcodes.*;
 
 public final class DMULInstrumenter implements OpCodeInstrumenter {
     @Override
     public void instrument(MethodVisitor mv, int opCode, String classPath, Methods methods, Reaction reaction, LocalVariablesSorter src) {
-      Label labelEnd = new Label();
-      Label labelTestResNegInf = new Label();
-      Label labelTestUnderflow=new Label();
+        Label labelEnd = new Label();
+        Label labelTestResNegInf = new Label();
+        Label labelTestUnderflow = new Label();
         mv.visitInsn(DUP2);
         mv.visitLdcInsn(new Double("Infinity"));
         mv.visitInsn(DCMPL);
@@ -61,7 +58,7 @@ public final class DMULInstrumenter implements OpCodeInstrumenter {
         mv.visitLdcInsn(new Double("Infinity"));
         mv.visitInsn(DCMPL);
         mv.visitJumpInsn(IFNE, labelTestResNegInf);
-        reaction.insertReactionCall(mv, RESULT_IS_POS_INF_MSG+"DMUL", methods, classPath);
+        reaction.insertReactionCall(mv, RESULT_IS_POS_INF_MSG + "DMUL", methods, classPath);
         mv.visitJumpInsn(GOTO, labelEnd);
         mv.visitLabel(labelTestResNegInf);
         BytecodeUtils.addDup4(mv);
@@ -69,7 +66,7 @@ public final class DMULInstrumenter implements OpCodeInstrumenter {
         mv.visitLdcInsn(new Double("-Infinity"));
         mv.visitInsn(DCMPL);
         mv.visitJumpInsn(IFNE, labelTestUnderflow);
-        reaction.insertReactionCall(mv, RESULT_IS_NEG_INF_MSG+"DMUL", methods, classPath);
+        reaction.insertReactionCall(mv, RESULT_IS_NEG_INF_MSG + "DMUL", methods, classPath);
         mv.visitJumpInsn(GOTO, labelEnd);
 
         mv.visitLabel(labelTestUnderflow);
@@ -87,9 +84,9 @@ public final class DMULInstrumenter implements OpCodeInstrumenter {
         mv.visitLdcInsn(new Double(0.0f)); //a,b,a,0
         mv.visitInsn(DCMPL); //a,b,a?0
         mv.visitJumpInsn(IFEQ, labelEnd); //a,b
-        reaction.insertReactionCall(mv, UNDERFLOW_MSG+"DMUL", methods, classPath);
+        reaction.insertReactionCall(mv, UNDERFLOW_MSG + "DMUL", methods, classPath);
 
-        
+
         mv.visitLabel(labelEnd);
         mv.visitInsn(DMUL);
     }

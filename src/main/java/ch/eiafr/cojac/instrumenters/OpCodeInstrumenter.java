@@ -18,11 +18,10 @@
 
 package ch.eiafr.cojac.instrumenters;
 
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.commons.LocalVariablesSorter;
-
 import ch.eiafr.cojac.Methods;
 import ch.eiafr.cojac.reactions.Reaction;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.commons.LocalVariablesSorter;
 
 public interface OpCodeInstrumenter {
     void instrument(MethodVisitor methodVisitor, int opCode, String classPath, Methods methods, Reaction reaction, LocalVariablesSorter src);

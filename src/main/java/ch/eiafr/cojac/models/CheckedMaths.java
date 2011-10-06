@@ -17,6 +17,7 @@
  */
 
 package ch.eiafr.cojac.models;
+
 import static ch.eiafr.cojac.models.CheckedDoubles.*;
 
 public final class CheckedMaths {
@@ -28,11 +29,11 @@ public final class CheckedMaths {
         double r = StrictMath.pow(a, b);
 
         if (r != r) {
-            Reactions.react(reaction, RESULT_IS_NAN_MSG+"Math.pow()", logFileName);
+            Reactions.react(reaction, RESULT_IS_NAN_MSG + "Math.pow()", logFileName);
         } else if (r == Double.POSITIVE_INFINITY) {
-            Reactions.react(reaction, RESULT_IS_POS_INF_MSG+"Math.pow()", logFileName);
+            Reactions.react(reaction, RESULT_IS_POS_INF_MSG + "Math.pow()", logFileName);
         } else if (r == Double.NEGATIVE_INFINITY) {
-            Reactions.react(reaction, RESULT_IS_NEG_INF_MSG+"Math.pow()", logFileName);
+            Reactions.react(reaction, RESULT_IS_NEG_INF_MSG + "Math.pow()", logFileName);
         }
 
         return r;
@@ -42,11 +43,11 @@ public final class CheckedMaths {
         double r = StrictMath.asin(a);
 
         if (r != r) {
-            Reactions.react(reaction, RESULT_IS_NAN_MSG+"Math.asin()", logFileName);
+            Reactions.react(reaction, RESULT_IS_NAN_MSG + "Math.asin()", logFileName);
         } else if (r == Double.POSITIVE_INFINITY) {
-            Reactions.react(reaction, RESULT_IS_POS_INF_MSG+"Math.asin()", logFileName);
+            Reactions.react(reaction, RESULT_IS_POS_INF_MSG + "Math.asin()", logFileName);
         } else if (r == Double.NEGATIVE_INFINITY) {
-            Reactions.react(reaction, RESULT_IS_NEG_INF_MSG+"Math.asin()", logFileName);
+            Reactions.react(reaction, RESULT_IS_NEG_INF_MSG + "Math.asin()", logFileName);
         }
 
         return r;
@@ -56,11 +57,11 @@ public final class CheckedMaths {
         double r = StrictMath.exp(a);
 
         if (r != r) {
-            Reactions.react(reaction, RESULT_IS_NAN_MSG+"Math.exp()", logFileName);
+            Reactions.react(reaction, RESULT_IS_NAN_MSG + "Math.exp()", logFileName);
         } else if (r == Double.POSITIVE_INFINITY) {
-            Reactions.react(reaction, RESULT_IS_POS_INF_MSG+"Math.exp()", logFileName);
+            Reactions.react(reaction, RESULT_IS_POS_INF_MSG + "Math.exp()", logFileName);
         } else if (r == Double.NEGATIVE_INFINITY) {
-            Reactions.react(reaction, RESULT_IS_NEG_INF_MSG+"Math.exp()", logFileName);
+            Reactions.react(reaction, RESULT_IS_NEG_INF_MSG + "Math.exp()", logFileName);
         }
 
         return r;
@@ -70,11 +71,11 @@ public final class CheckedMaths {
         double r = StrictMath.log(a);
 
         if (r != r) {
-            Reactions.react(reaction, RESULT_IS_NAN_MSG+"Math.log()", logFileName);
+            Reactions.react(reaction, RESULT_IS_NAN_MSG + "Math.log()", logFileName);
         } else if (r == Double.POSITIVE_INFINITY) {
-            Reactions.react(reaction, RESULT_IS_POS_INF_MSG+"Math.log()", logFileName);
+            Reactions.react(reaction, RESULT_IS_POS_INF_MSG + "Math.log()", logFileName);
         } else if (r == Double.NEGATIVE_INFINITY) {
-            Reactions.react(reaction, RESULT_IS_NEG_INF_MSG+"Math.log()", logFileName);
+            Reactions.react(reaction, RESULT_IS_NEG_INF_MSG + "Math.log()", logFileName);
         }
 
         return r;

@@ -18,13 +18,7 @@
 
 package ch.eiafr.cojac.unit;
 
-import ch.eiafr.cojac.models.CheckedCasts;
-import ch.eiafr.cojac.models.CheckedDoubles;
-import ch.eiafr.cojac.models.CheckedFloats;
-import ch.eiafr.cojac.models.CheckedInts;
-import ch.eiafr.cojac.models.CheckedLongs;
-import ch.eiafr.cojac.models.CheckedMaths;
-import ch.eiafr.cojac.models.ReactionType;
+import ch.eiafr.cojac.models.*;
 
 public class CheckedOperations implements MathOperations {
     @Override
@@ -211,7 +205,7 @@ public class CheckedOperations implements MathOperations {
     public int dcmpg(double a, double b) throws Exception {
         return CheckedDoubles.checkedDCMPG(a, b, ReactionType.EXCEPTION.value(), "");
     }
-    
+
     @Override
     public int dcmpl(double a, double b) throws Exception {
         return CheckedDoubles.checkedDCMPL(a, b, ReactionType.EXCEPTION.value(), "");

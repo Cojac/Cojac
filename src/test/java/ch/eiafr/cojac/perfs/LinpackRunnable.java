@@ -320,14 +320,14 @@ public class LinpackRunnable implements Runnable {
      */
 
     final void daxpy(
-            final int n,
-            final double da,
-            final double dx[],
-            final int dx_off,
-            final int incx,
-            double dy[],
-            final int dy_off,
-            final int incy) {
+        final int n,
+        final double da,
+        final double dx[],
+        final int dx_off,
+        final int incx,
+        double dy[],
+        final int dy_off,
+        final int incy) {
         int i, ix, iy;
 
         if ((n > 0) && (da != 0)) {
@@ -367,13 +367,13 @@ public class LinpackRunnable implements Runnable {
      */
 
     final double ddot(
-            final int n,
-            final double dx[],
-            final int dx_off,
-            final int incx,
-            final double dy[],
-            final int dy_off,
-            final int incy) {
+        final int n,
+        final double dx[],
+        final int dx_off,
+        final int incx,
+        final double dy[],
+        final int dy_off,
+        final int incy) {
         double dtemp;
         int i, ix, iy;
 

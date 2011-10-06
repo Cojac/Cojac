@@ -18,24 +18,19 @@
 
 package ch.eiafr.cojac.instrumenters;
 
+import ch.eiafr.cojac.*;
+import ch.eiafr.cojac.models.ReactionType;
+import ch.eiafr.cojac.reactions.Reaction;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.LocalVariablesSorter;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import ch.eiafr.cojac.Arg;
-import ch.eiafr.cojac.Args;
-import ch.eiafr.cojac.InstrumentationStats;
-import ch.eiafr.cojac.Methods;
-import ch.eiafr.cojac.Signatures;
-import ch.eiafr.cojac.models.ReactionType;
-import ch.eiafr.cojac.reactions.Reaction;
-
 import static org.objectweb.asm.Opcodes.*;
 
 final class DirectInstrumenter implements OpCodeInstrumenter {
-  
+
     private final ReactionType reaction;
     private final InstrumentationStats stats;
     private final String logFileName;
@@ -55,11 +50,11 @@ final class DirectInstrumenter implements OpCodeInstrumenter {
 
         reaction = getReactionType(args);
 
-        
-        if(args.isSpecified(Arg.CALL_BACK))
-          logFileName=args.getValue(Arg.CALL_BACK); // No, I'm no proud of that trick...
-        else 
-          logFileName = args.getValue(Arg.LOG_FILE);
+
+        if (args.isSpecified(Arg.CALL_BACK))
+            logFileName = args.getValue(Arg.CALL_BACK); // No, I'm no proud of that trick...
+        else
+            logFileName = args.getValue(Arg.LOG_FILE);
 
         fillMethods();
     }

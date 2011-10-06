@@ -18,15 +18,14 @@
 
 package ch.eiafr.cojac.instrumenters.variables;
 
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.LocalVariablesSorter;
-
 import ch.eiafr.cojac.Methods;
 import ch.eiafr.cojac.instrumenters.OpCodeInstrumenter;
 import ch.eiafr.cojac.reactions.Reaction;
 import ch.eiafr.cojac.utils.BytecodeUtils;
+import org.objectweb.asm.Label;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.LocalVariablesSorter;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -42,7 +41,7 @@ public final class DADDVariablesInstrumenter implements OpCodeInstrumenter {
         src.visitVarInsn(DSTORE, a);
         mv.visitInsn(DADD);
         src.visitVarInsn(DSTORE, r);
-         
+
         src.visitVarInsn(DLOAD, b);
         mv.visitInsn(DCONST_0);
         mv.visitInsn(DCMPL);

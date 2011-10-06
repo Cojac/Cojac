@@ -18,13 +18,13 @@
 
 package ch.eiafr.cojac.models;
 
+import ch.eiafr.cojac.utils.ReflectionUtils;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
-import ch.eiafr.cojac.utils.ReflectionUtils;
 
 public final class Reactions {
     //Do not inline, used by reflection, do not make final
@@ -61,18 +61,18 @@ public final class Reactions {
     }
 
     public static boolean filter(String location) {
-        if(!filtering){
+        if (!filtering) {
             return true;
         }
 
         Long old = EVENTS.putIfAbsent(location, 1L);
 
-        if(old != null){
-            EVENTS.put(location,old + 1);
-            
+        if (old != null) {
+            EVENTS.put(location, old + 1);
+
             return false;
         }
-        
+
         return true;
     }
 
@@ -83,7 +83,7 @@ public final class Reactions {
         int i = 1;
         if (t.length > 1 && t[1].getMethodName().startsWith("cojacCheck")) {
             i = 2;
-        } else if(t.length > 1 && t[1].toString().startsWith("ch.eiafr.cojac.models.")){
+        } else if (t.length > 1 && t[1].toString().startsWith("ch.eiafr.cojac.models.")) {
             i = 3;
         }
 
@@ -106,8 +106,8 @@ public final class Reactions {
         int i = 1;
         if (t.length > 1 && t[1].getMethodName().startsWith("cojacCheck")) {
             i = 2;
-        } else if(t.length > 1 && t[1].toString().startsWith("ch.eiafr.cojac.models.")){
-          i = 3;
+        } else if (t.length > 1 && t[1].toString().startsWith("ch.eiafr.cojac.models.")) {
+            i = 3;
         }
 
         String location = "COJAC: " + instructionName + ' ' + t[i].toString();
@@ -124,8 +124,8 @@ public final class Reactions {
         int i = 1;
         if (t.length > 1 && t[1].getMethodName().startsWith("cojacCheck")) {
             i = 2;
-        } else if(t.length > 1 && t[1].toString().startsWith("ch.eiafr.cojac.models.")){
-          i = 3;
+        } else if (t.length > 1 && t[1].toString().startsWith("ch.eiafr.cojac.models.")) {
+            i = 3;
         }
 
         String location = "COJAC: " + instructionName + ' ' + t[i++].toString();
@@ -168,8 +168,8 @@ public final class Reactions {
         int i = 1;
         if (t.length > 1 && t[1].getMethodName().startsWith("cojacCheck")) {
             i = 2;
-        } else if(t.length > 1 && t[1].toString().startsWith("ch.eiafr.cojac.models.")){
-          i = 3;
+        } else if (t.length > 1 && t[1].toString().startsWith("ch.eiafr.cojac.models.")) {
+            i = 3;
         }
 
         String location = "COJAC: " + instructionName + ' ' + t[i].toString();
@@ -195,22 +195,22 @@ public final class Reactions {
         int i = 1;
         if (t.length > 1 && t[1].getMethodName().startsWith("cojacCheck")) {
             i = 2;
-        } else if(t.length > 1 && t[1].toString().startsWith("ch.eiafr.cojac.models.")){
+        } else if (t.length > 1 && t[1].toString().startsWith("ch.eiafr.cojac.models.")) {
             i = 3;
         }
 
         String location = "COJAC: " + instructionName + ' ' + t[i].toString();
 
-        if(filter(location)){
+        if (filter(location)) {
             throw new ArithmeticException("COJAC: " + instructionName);
         }
     }
-    
+
     // There is a very nasty dependence between the Cojac Eclipse Plugin
     // ch.eiafr.ecojac_core.AnnontationMgr.getRelevantElt()
     // and the precise path leading to the invocation of the callback... F. Bapst
     public static void callbackOverflow(String instructionName, String callbackName) {
-      ReflectionUtils.invokeCallback(callbackName, instructionName);
+        ReflectionUtils.invokeCallback(callbackName, instructionName);
     }
 
 }

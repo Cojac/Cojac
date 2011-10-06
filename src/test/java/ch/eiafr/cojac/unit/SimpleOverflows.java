@@ -19,7 +19,7 @@
 package ch.eiafr.cojac.unit;
 
 public class SimpleOverflows {
-    public int test(){
+    public int test() {
         int a = Integer.MAX_VALUE;
         int b = 1000;
 

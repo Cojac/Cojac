@@ -136,7 +136,6 @@ public class BoxBlurFilter extends AbstractBufferedImageOp {
      * @param a the lower clamp threshold
      * @param b the upper clamp threshold
      * @param x the input parameter
-     *
      * @return the clamped value
      */
     public static int clamp(int x, int a, int b) {

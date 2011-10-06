@@ -18,20 +18,16 @@
 
 package ch.eiafr.cojac;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import ch.eiafr.cojac.instrumenters.SimpleOpCodeFactory;
+import ch.eiafr.cojac.reactions.BasicReaction;
+
+import java.io.*;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
-
-import ch.eiafr.cojac.instrumenters.SimpleOpCodeFactory;
-import ch.eiafr.cojac.reactions.BasicReaction;
 
 public final class JARFileInstrumenter implements FileInstrumenter {
     private static final Pattern PATH_SEPARATOR_PATTERN = Pattern.compile("/");
@@ -42,7 +38,7 @@ public final class JARFileInstrumenter implements FileInstrumenter {
         super();
 
         classInstrumenter = new SimpleClassInstrumenter(args, stats, new BasicReaction(args),
-                new SimpleOpCodeFactory(args, stats));
+            new SimpleOpCodeFactory(args, stats));
     }
 
     @Override
@@ -50,7 +46,7 @@ public final class JARFileInstrumenter implements FileInstrumenter {
         JarFile jarFile = new JarFile(file);
 
         JarOutputStream jos = new JarOutputStream(
-                new BufferedOutputStream(new FileOutputStream(args.getValue(Arg.PATH) + file)));
+            new BufferedOutputStream(new FileOutputStream(args.getValue(Arg.PATH) + file)));
 
         try {
             Enumeration<JarEntry> jarInputEntries = jarFile.entries();
@@ -82,7 +78,7 @@ public final class JARFileInstrumenter implements FileInstrumenter {
             StringBuilder dirs = new StringBuilder(50);
             for (int j = 0; j < s.length - 1; j++) {
                 dirs.append('/');
-                
+
                 new File(args.getValue(Arg.PATH) + dirs).mkdirs();
             }
         }
@@ -92,19 +88,19 @@ public final class JARFileInstrumenter implements FileInstrumenter {
         int size = (int) entry.getSize();
 
         byte[] bytes = new byte[size];
-        
+
         if (size == 0) {
             return bytes;
         }
-        
+
         InputStream stream = jarFile.getInputStream(entry);
 
         int offset = 0;
 
-        while(offset < size){
+        while (offset < size) {
             int read = stream.read(bytes, offset, size - offset);
 
-            if(read == -1){
+            if (read == -1) {
                 break;
             }
 
@@ -112,7 +108,7 @@ public final class JARFileInstrumenter implements FileInstrumenter {
         }
 
         if (offset != bytes.length) {
-            throw new IOException("The entry has not been completely read ("+offset +" of "+bytes.length + ')');
+            throw new IOException("The entry has not been completely read (" + offset + " of " + bytes.length + ')');
         }
 
         return bytes;

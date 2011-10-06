@@ -113,7 +113,7 @@ public class JavaSortRunnable implements Runnable {
      */
     private static int med3(int x[], int a, int b, int c) {
         return (x[a] < x[b] ?
-                (x[b] < x[c] ? b : x[a] < x[c] ? c : a) :
-                (x[b] > x[c] ? b : x[a] > x[c] ? c : a));
+            (x[b] < x[c] ? b : x[a] < x[c] ? c : a) :
+            (x[b] > x[c] ? b : x[a] > x[c] ? c : a));
     }
 }

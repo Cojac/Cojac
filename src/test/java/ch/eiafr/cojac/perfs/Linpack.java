@@ -123,15 +123,15 @@ public class Linpack {
         mflops_result /= 1000;
 
         System.out.println(
-                "Mflops/s: "
-                        + mflops_result
-                        + "  Time: "
-                        + time_result
-                        + " secs"
-                        + "  Norm Res: "
-                        + residn_result
-                        + "  Precision: "
-                        + eps_result);
+            "Mflops/s: "
+                + mflops_result
+                + "  Time: "
+                + time_result
+                + " secs"
+                + "  Norm Res: "
+                + residn_result
+                + "  Precision: "
+                + eps_result);
     }
 
     final double matgen(double a[][], final int n, double b[]) {
@@ -363,14 +363,14 @@ public class Linpack {
      */
 
     final void daxpy(
-            final int n,
-            final double da,
-            final double dx[],
-            final int dx_off,
-            final int incx,
-            double dy[],
-            final int dy_off,
-            final int incy) {
+        final int n,
+        final double da,
+        final double dx[],
+        final int dx_off,
+        final int incx,
+        double dy[],
+        final int dy_off,
+        final int incy) {
         int i, ix, iy;
 
         if ((n > 0) && (da != 0)) {
@@ -410,13 +410,13 @@ public class Linpack {
      */
 
     final double ddot(
-            final int n,
-            final double dx[],
-            final int dx_off,
-            final int incx,
-            final double dy[],
-            final int dy_off,
-            final int incy) {
+        final int n,
+        final double dx[],
+        final int dx_off,
+        final int incx,
+        final double dy[],
+        final int dy_off,
+        final int incy) {
         double dtemp;
         int i, ix, iy;
 

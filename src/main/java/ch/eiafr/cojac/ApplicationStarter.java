@@ -18,6 +18,8 @@
 
 package ch.eiafr.cojac;
 
+import ch.eiafr.cojac.utils.ReflectionUtils;
+
 import java.beans.IntrospectionException;
 import java.io.File;
 import java.io.IOException;
@@ -29,8 +31,6 @@ import java.net.URLClassLoader;
 import java.util.Map;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
-
-import ch.eiafr.cojac.utils.ReflectionUtils;
 
 final class ApplicationStarter {
     private static final Pattern CLASSPATH_PATTERN = Pattern.compile(";");
@@ -56,7 +56,7 @@ final class ApplicationStarter {
             } else {
                 launchClass(applicationFile);
             }
-        } catch (MalformedURLException e){
+        } catch (MalformedURLException e) {
             System.err.println("Unable to start the application");
         } catch (IntrospectionException e) {
             System.err.println("Unable to start the application : Due to " + e.getMessage());
@@ -66,8 +66,8 @@ final class ApplicationStarter {
     private void launchJar(String jarFile) throws IntrospectionException {
         try {
             launchClass(getMainClass(jarFile),
-                    new File(System.getProperty("user.dir")).toURI().toURL(),
-                    new File(jarFile).toURI().toURL());
+                new File(System.getProperty("user.dir")).toURI().toURL(),
+                new File(jarFile).toURI().toURL());
         } catch (IOException e) {
             System.err.println("Unable to run JAR");
         }
@@ -82,7 +82,7 @@ final class ApplicationStarter {
 
         URL[] classpath = parseClassPath(args, urls);
 
-        for(URL url : classpath){
+        for (URL url : classpath) {
             addURLToSystemClassLoader(url);
         }
 
@@ -102,24 +102,24 @@ final class ApplicationStarter {
                 @Override
                 public void run() {
                     InstrumentationStats.printRuntimeStats(args,
-                            ReflectionUtils.<Map<String, Long>>getStaticFieldValue(
+                        ReflectionUtils.<Map<String, Long>>getStaticFieldValue(
                             loader, "ch.eiafr.cojac.models.Reactions", "EVENTS"));
                 }
             });
         }
-        
+
         try {
             Thread.currentThread().setContextClassLoader(loader);
-            
+
             Class<?> launcher = loader.loadClass(className);
-            
+
             Class<?>[] argTypes = {String[].class};
 
             Method method = launcher.getMethod("main", argTypes);
             method.setAccessible(true);
 
             Object[] passedArgv = {args.getAppArgs()};
-            
+
             method.invoke(null, passedArgv);
         } catch (ClassNotFoundException e) {
             System.err.println("The main class of the JAR has not been found. ");
@@ -135,20 +135,20 @@ final class ApplicationStarter {
     }
 
     private static URL[] parseClassPath(Args args, URL[] urls) throws MalformedURLException {
-      if(!args.isSpecified(Arg.CLASSPATH)) {
-          return urls;
-      }
+        if (!args.isSpecified(Arg.CLASSPATH)) {
+            return urls;
+        }
 
-      String[] parsed = CLASSPATH_PATTERN.split(args.getValue(Arg.CLASSPATH));
-      URL[] classpath = new URL[urls.length + parsed.length];
-      int i = 0;
-      for(; i < urls.length; i++){
-        classpath[i] = urls[i];
-      }
-      for(int j = 0; j < parsed.length; j++){
-        classpath[i + j] = new File(parsed[j]).toURI().toURL();
-      }
-      return classpath;
+        String[] parsed = CLASSPATH_PATTERN.split(args.getValue(Arg.CLASSPATH));
+        URL[] classpath = new URL[urls.length + parsed.length];
+        int i = 0;
+        for (; i < urls.length; i++) {
+            classpath[i] = urls[i];
+        }
+        for (int j = 0; j < parsed.length; j++) {
+            classpath[i + j] = new File(parsed[j]).toURI().toURL();
+        }
+        return classpath;
     }
 
     private static String getMainClass(String jarFile) throws IOException {

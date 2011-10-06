@@ -18,6 +18,10 @@
 
 package ch.eiafr.cojac.unit;
 
+import ch.eiafr.cojac.Arg;
+import ch.eiafr.cojac.Args;
+import ch.eiafr.cojac.CojacClassLoader;
+import ch.eiafr.cojac.InstrumentationStats;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -26,49 +30,44 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 
-import ch.eiafr.cojac.Arg;
-import ch.eiafr.cojac.Args;
-import ch.eiafr.cojac.CojacClassLoader;
-import ch.eiafr.cojac.InstrumentationStats;
-
 public class CallBackTest {
     @Test
     public void testCallBackMethodCalled() throws ClassNotFoundException, IllegalAccessException, InstantiationException,
-     NoSuchMethodException, InvocationTargetException, NoSuchFieldException {
-      testCallBackMethodCalled(true);
-      
-      // testCallBackMethodCalled(false); 
-      // It is trickier to test the "inlined" version: currently the callback
-      // is loaded using the system classloader; and in that test,
-      // it will be via the Cojac classloader...
+        NoSuchMethodException, InvocationTargetException, NoSuchFieldException {
+        testCallBackMethodCalled(true);
+
+        // testCallBackMethodCalled(false);
+        // It is trickier to test the "inlined" version: currently the callback
+        // is loaded using the system classloader; and in that test,
+        // it will be via the Cojac classloader...
     }
-    
-    public void testCallBackMethodCalled(boolean wasteSize) 
+
+    public void testCallBackMethodCalled(boolean wasteSize)
         throws ClassNotFoundException, IllegalAccessException, InstantiationException,
-            NoSuchMethodException, InvocationTargetException, NoSuchFieldException {
+        NoSuchMethodException, InvocationTargetException, NoSuchFieldException {
 
-      //String logFile = System.getProperty("user.dir") + "/test.log";
+        //String logFile = System.getProperty("user.dir") + "/test.log";
 
-      Args args = new Args();
+        Args args = new Args();
 
-      args.specify(Arg.ALL);
-      args.setValue(Arg.CALL_BACK, "ch/eiafr/cojac/unit/CallBacks/log");
-      if (wasteSize) args.specify(Arg.WASTE_SIZE);
+        args.specify(Arg.ALL);
+        args.setValue(Arg.CALL_BACK, "ch/eiafr/cojac/unit/CallBacks/log");
+        if (wasteSize) args.specify(Arg.WASTE_SIZE);
 
-      CojacClassLoader classLoader = new CojacClassLoader(new URL[]{}, args, new InstrumentationStats());
+        CojacClassLoader classLoader = new CojacClassLoader(new URL[]{}, args, new InstrumentationStats());
 
-      Class<?> classz = classLoader.loadClass("ch.eiafr.cojac.unit.SimpleOverflows");
+        Class<?> classz = classLoader.loadClass("ch.eiafr.cojac.unit.SimpleOverflows");
 
-      Object object = classz.newInstance();
+        Object object = classz.newInstance();
 
-      Method m = classz.getMethod("test");
+        Method m = classz.getMethod("test");
 
-      m.invoke(object);
+        m.invoke(object);
 
-      classz = classLoader.loadClass("ch.eiafr.cojac.unit.CallBacks");
+        classz = classLoader.loadClass("ch.eiafr.cojac.unit.CallBacks");
 
-      Field field = classz.getField("count");
+        Field field = classz.getField("count");
 
-      Assert.assertEquals(1, field.get(null));
+        Assert.assertEquals(1, field.get(null));
     }
 }

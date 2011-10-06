@@ -18,13 +18,12 @@
 
 package ch.eiafr.cojac.instrumenters.stack;
 
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.commons.LocalVariablesSorter;
-
 import ch.eiafr.cojac.Methods;
 import ch.eiafr.cojac.instrumenters.OpCodeInstrumenter;
 import ch.eiafr.cojac.reactions.Reaction;
+import org.objectweb.asm.Label;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.commons.LocalVariablesSorter;
 
 import static ch.eiafr.cojac.models.CheckedDoubles.*;
 import static org.objectweb.asm.Opcodes.*;
@@ -32,11 +31,11 @@ import static org.objectweb.asm.Opcodes.*;
 public final class FDIVInstrumenter implements OpCodeInstrumenter {
     @Override
     public void instrument(MethodVisitor mv, int opCode, String classPath, Methods methods, Reaction reaction, LocalVariablesSorter src) {
-      Label labelTestPosInfinity = new Label();
-      Label labelEndOfMethod = new Label();
-      Label labelTestNegInfinity = new Label();
-      Label labelTestUnderflow = new Label();
-      
+        Label labelTestPosInfinity = new Label();
+        Label labelEndOfMethod = new Label();
+        Label labelTestNegInfinity = new Label();
+        Label labelTestUnderflow = new Label();
+
         mv.visitInsn(DUP);
         mv.visitInsn(DUP);
         mv.visitInsn(FCMPL);
@@ -51,7 +50,7 @@ public final class FDIVInstrumenter implements OpCodeInstrumenter {
         mv.visitInsn(DUP);
         mv.visitInsn(FCMPL);
         mv.visitJumpInsn(IFEQ, labelTestPosInfinity);
-        reaction.insertReactionCall(mv, RESULT_IS_NAN_MSG+"FDIV", methods, classPath);
+        reaction.insertReactionCall(mv, RESULT_IS_NAN_MSG + "FDIV", methods, classPath);
         mv.visitJumpInsn(GOTO, labelEndOfMethod);
         mv.visitLabel(labelTestPosInfinity);
         mv.visitInsn(DUP);
@@ -77,7 +76,7 @@ public final class FDIVInstrumenter implements OpCodeInstrumenter {
         mv.visitLdcInsn(new Float("Infinity"));
         mv.visitInsn(FCMPL);
         mv.visitJumpInsn(IFNE, labelTestNegInfinity);
-        reaction.insertReactionCall(mv, RESULT_IS_POS_INF_MSG+"FMUL", methods, classPath);
+        reaction.insertReactionCall(mv, RESULT_IS_POS_INF_MSG + "FMUL", methods, classPath);
         mv.visitJumpInsn(GOTO, labelEndOfMethod);
         mv.visitLabel(labelTestNegInfinity);
         mv.visitInsn(DUP2);
@@ -85,7 +84,7 @@ public final class FDIVInstrumenter implements OpCodeInstrumenter {
         mv.visitLdcInsn(new Float("-Infinity"));
         mv.visitInsn(FCMPL);
         mv.visitJumpInsn(IFNE, labelTestUnderflow);
-        reaction.insertReactionCall(mv, RESULT_IS_NEG_INF_MSG+"FMUL", methods, classPath);
+        reaction.insertReactionCall(mv, RESULT_IS_NEG_INF_MSG + "FMUL", methods, classPath);
         mv.visitJumpInsn(GOTO, labelEndOfMethod);
 
         mv.visitLabel(labelTestUnderflow);
@@ -99,10 +98,9 @@ public final class FDIVInstrumenter implements OpCodeInstrumenter {
         mv.visitLdcInsn(new Float(0.0f)); //a,b,a,0
         mv.visitInsn(FCMPL); //a,b,a?0
         mv.visitJumpInsn(IFEQ, labelEndOfMethod); //a,b
-        reaction.insertReactionCall(mv, UNDERFLOW_MSG+"FMUL", methods, classPath);
+        reaction.insertReactionCall(mv, UNDERFLOW_MSG + "FMUL", methods, classPath);
 
-        
-        
+
         mv.visitLabel(labelEndOfMethod);
         mv.visitInsn(FDIV);
     }

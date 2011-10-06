@@ -25,16 +25,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class Methods {
-    private String print     = "cojacNotifyPrint";
-    private String log       = "cojacNotifyLog";
+    private String print = "cojacNotifyPrint";
+    private String log = "cojacNotifyLog";
     private String exception = "cojacNotifyException";
 
     // those definitions must match identifiers in cojac.models.Reactions
-    public static final String PRINT         = "printOverflow";
+    public static final String PRINT = "printOverflow";
     public static final String PRINT_SMALLER = "printOverflowSmaller";
-    public static final String LOG           = "logOverflow";
-    public static final String LOG_SMALLER   = "logOverflowSmaller";
-    public static final String THROW         = "throwOverflow";
+    public static final String LOG = "logOverflow";
+    public static final String LOG_SMALLER = "logOverflowSmaller";
+    public static final String THROW = "throwOverflow";
     //public static final String CALLBACK      = "callbackOverflow";
 
     private final Map<Integer, String> methods = new HashMap<Integer, String>(50);

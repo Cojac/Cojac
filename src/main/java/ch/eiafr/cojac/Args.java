@@ -18,34 +18,27 @@
 
 package ch.eiafr.cojac;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.HelpFormatter;
-//import org.apache.commons.cli.OptionBuilder;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+//import org.apache.commons.cli.OptionBuilder;
 
 public final class Args {
     private final Options options = Arg.createOptions();
     private final Map<Arg, ArgValue> values = new EnumMap<Arg, ArgValue>(Arg.class);
     private final List<String> files = new ArrayList<String>(5);
     private String[] appArgs;
-    
+
     static final String DEFAULT_LOG_FILE_NAME = "COJAC_Report.log";
-    static final String DEFAULT_OUTPUT_DIR    = "."+File.separatorChar+"COJAC_Output"+File.separatorChar;
-    
-    private static String USAGE=
-       "java -jar cojac.jar [OPTIONS] -- YourApp [appArgs]     (run mode)\n"
-          + "or:            [OPTIONS] -i File [Files]          (batch mode)\n"
-     + "The \"--\" is needed when appArgs conflict with Cojac options";
-    
+    static final String DEFAULT_OUTPUT_DIR = "." + File.separatorChar + "COJAC_Output" + File.separatorChar;
+
+    private static String USAGE =
+        "java -jar cojac.jar [OPTIONS] -- YourApp [appArgs]     (run mode)\n"
+            + "or:            [OPTIONS] -i File [Files]          (batch mode)\n"
+            + "The \"--\" is needed when appArgs conflict with Cojac options";
+
     public Args() {
         super();
 
@@ -57,28 +50,28 @@ public final class Args {
     public boolean parse(String[] args) {
         int index = -1;
 
-        for(int i = 0; i < args.length; i++){
-            if("--".equalsIgnoreCase(args[i])){
+        for (int i = 0; i < args.length; i++) {
+            if ("--".equalsIgnoreCase(args[i])) {
                 index = i;
                 break;
             }
         }
 
         String[] cojacArgs;
-        if(index >= 0){
-          //if (index==args.length-1) {
+        if (index >= 0) {
+            //if (index==args.length-1) {
             //System.out.println("Invalid command line.  Reason: " 
             //    + "No jar/class/filename");
             //return false;
-          //}
-          int takeNext= index==args.length-1 ?0:1;
-          cojacArgs = new String[index+takeNext];
-          appArgs = new String[args.length - index-1-takeNext];
-          System.arraycopy(args, 0, cojacArgs, 0, index);
-          if (takeNext==1) {
-              cojacArgs[index] = args[index + 1];
-          }
-          System.arraycopy(args, index+1+takeNext, appArgs, 0, appArgs.length);
+            //}
+            int takeNext = index == args.length - 1 ? 0 : 1;
+            cojacArgs = new String[index + takeNext];
+            appArgs = new String[args.length - index - 1 - takeNext];
+            System.arraycopy(args, 0, cojacArgs, 0, index);
+            if (takeNext == 1) {
+                cojacArgs[index] = args[index + 1];
+            }
+            System.arraycopy(args, index + 1 + takeNext, appArgs, 0, appArgs.length);
         } else {
             cojacArgs = args;
             appArgs = new String[0];
@@ -93,24 +86,24 @@ public final class Args {
                 }
             }
             if (isSpecified(Arg.INSTRUMENT)) {
-              Collections.addAll(files, commandLine.getArgs());
+                Collections.addAll(files, commandLine.getArgs());
                 Collections.addAll(files, appArgs);
-              appArgs=new String[0];
+                appArgs = new String[0];
             } else {
-              String[] remainingArgs = commandLine.getArgs();
-              if(remainingArgs.length>0) {
-                  files.add(remainingArgs[0]);
-              }
-              int nAppArgs = appArgs.length+remainingArgs.length-files.size();
-              String[] auxAppArgs=appArgs;
-              appArgs = new String[nAppArgs];
-              int i=0;
-              for (;i+1<remainingArgs.length; i++) {
-                  appArgs[i] = remainingArgs[i + 1];
-              }
-              for (String auxAppArg : auxAppArgs) {
-                  appArgs[i++] = auxAppArg;
-              }
+                String[] remainingArgs = commandLine.getArgs();
+                if (remainingArgs.length > 0) {
+                    files.add(remainingArgs[0]);
+                }
+                int nAppArgs = appArgs.length + remainingArgs.length - files.size();
+                String[] auxAppArgs = appArgs;
+                appArgs = new String[nAppArgs];
+                int i = 0;
+                for (; i + 1 < remainingArgs.length; i++) {
+                    appArgs[i] = remainingArgs[i + 1];
+                }
+                for (String auxAppArg : auxAppArgs) {
+                    appArgs[i++] = auxAppArg;
+                }
             }
             //Collections.addAll(files, commandLine.getArgs());
         } catch (ParseException e) {
@@ -126,33 +119,33 @@ public final class Args {
             setValue(Arg.PATH, DEFAULT_OUTPUT_DIR);
         }
 
-        if(isSpecified(Arg.NONE)){
+        if (isSpecified(Arg.NONE)) {
             disableAll();
         } else if (!areSomeCategoriesSelected() && !areSomeOpcodesSelected()) {
             specifyDefaultsOpCode();
         }
 
-        if(isSpecified(Arg.LOG_FILE) ) {
+        if (isSpecified(Arg.LOG_FILE)) {
             if (values.get(Arg.LOG_FILE).getValue() == null) {
                 values.get(Arg.LOG_FILE).setValue(DEFAULT_LOG_FILE_NAME);
             }
         }
-          
-        
+
+
         if (!(isSpecified(Arg.LOG_FILE) || isSpecified(Arg.EXCEPTION) || isSpecified(Arg.CALL_BACK))) {
             specify(Arg.PRINT);
         }
-        
+
         if (isSpecified(Arg.NO_CANCELLATION)) {
-          //TODO: consider -XnoCancellation
+            //TODO: consider -XnoCancellation
         }
     }
 
     private void disableAll() {
         for (Arg arg : Arg.values()) {
-          if (arg.isOperator()) {
-              unspecify(arg);
-          }
+            if (arg.isOperator()) {
+                unspecify(arg);
+            }
         }
         unspecify(Arg.ALL);
         unspecify(Arg.INTS);
@@ -175,7 +168,7 @@ public final class Args {
 
     private boolean areSomeCategoriesSelected() {
         return isSpecified(Arg.INTS) || isSpecified(Arg.DOUBLES) || isSpecified(Arg.FLOATS) ||
-                isSpecified(Arg.LONGS) || isSpecified(Arg.MATHS) || isSpecified(Arg.CASTS);
+            isSpecified(Arg.LONGS) || isSpecified(Arg.MATHS) || isSpecified(Arg.CASTS);
     }
 
     private boolean areSomeOpcodesSelected() {

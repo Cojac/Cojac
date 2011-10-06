@@ -18,13 +18,12 @@
 
 package ch.eiafr.cojac.instrumenters;
 
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.commons.LocalVariablesSorter;
-
 import ch.eiafr.cojac.Arg;
 import ch.eiafr.cojac.Methods;
 import ch.eiafr.cojac.Signatures;
 import ch.eiafr.cojac.reactions.Reaction;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.commons.LocalVariablesSorter;
 
 import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 
@@ -36,7 +35,7 @@ final class OpSizeInstrumenter implements OpCodeInstrumenter {
         if (arg == null || !arg.isOperator()) {
             throw new IllegalArgumentException("opCode is not a valid arg");
         }
-        
+
         methodVisitor.visitMethodInsn(INVOKESTATIC, classPath, methods.getMethod(opCode), Signatures.getSignature(arg));
     }
 }

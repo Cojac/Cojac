@@ -21,7 +21,8 @@ package ch.eiafr.cojac;
 import java.io.IOException;
 import java.text.ParseException;
 
-import static ch.eiafr.cojac.Arg.*;
+import static ch.eiafr.cojac.Arg.HELP;
+import static ch.eiafr.cojac.Arg.INSTRUMENT;
 
 public final class Cojac {
     public static void main(String[] strArgs) throws IOException, ParseException, InterruptedException {

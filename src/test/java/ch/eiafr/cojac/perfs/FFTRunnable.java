@@ -18,10 +18,10 @@
 
 package ch.eiafr.cojac.perfs;
 
-import java.awt.image.BufferedImage;
-
 import ch.eiafr.cojac.perfs.image.FFTException;
 import ch.eiafr.cojac.perfs.image.ImageFFT;
+
+import java.awt.image.BufferedImage;
 
 public class FFTRunnable implements Runnable {
     private BufferedImage image;

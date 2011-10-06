@@ -18,12 +18,12 @@
 
 package ch.eiafr.cojac.unit;
 
-import java.net.URL;
-
 import ch.eiafr.cojac.Arg;
 import ch.eiafr.cojac.Args;
 import ch.eiafr.cojac.CojacClassLoader;
 import ch.eiafr.cojac.InstrumentationStats;
+
+import java.net.URL;
 
 public class WasteSizeClassloaderTest extends ClassLoaderTest {
     public WasteSizeClassloaderTest() throws ClassNotFoundException, IllegalAccessException, InstantiationException {

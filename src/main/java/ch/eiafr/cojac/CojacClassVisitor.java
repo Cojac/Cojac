@@ -18,13 +18,12 @@
 
 package ch.eiafr.cojac;
 
-import org.objectweb.asm.ClassAdapter;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.MethodVisitor;
-
 import ch.eiafr.cojac.instrumenters.OpCodeInstrumenterFactory;
 import ch.eiafr.cojac.methods.CojacMethodAdder;
 import ch.eiafr.cojac.reactions.Reaction;
+import org.objectweb.asm.ClassAdapter;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.MethodVisitor;
 
 final class CojacClassVisitor extends ClassAdapter {
     private final CojacMethodAdder methodAdder;

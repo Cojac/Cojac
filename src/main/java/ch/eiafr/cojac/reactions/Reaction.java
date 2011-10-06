@@ -18,10 +18,9 @@
 
 package ch.eiafr.cojac.reactions;
 
+import ch.eiafr.cojac.Methods;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
-
-import ch.eiafr.cojac.Methods;
 
 public interface Reaction {
     void insertReactionMethod(ClassVisitor cv, Methods methods);

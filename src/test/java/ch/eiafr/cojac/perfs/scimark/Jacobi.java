@@ -45,7 +45,7 @@ public class Jacobi {
                 double[] Gip1 = G[i + 1];
                 for (int j = 1; j < Nm1; j++) {
                     Gi[j] = omega_over_four * (Gim1[j] + Gip1[j] + Gi[j - 1]
-                            + Gi[j + 1]) + one_minus_omega * Gi[j];
+                        + Gi[j + 1]) + one_minus_omega * Gi[j];
                 }
             }
         }

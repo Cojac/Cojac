@@ -88,7 +88,6 @@ public class ImageFFT {
      *
      * @param r    distance from centre of data
      * @param rmax maximum distance
-     *
      * @return function value.
      */
 
@@ -101,7 +100,6 @@ public class ImageFFT {
      *
      * @param r    distance from centre of data
      * @param rmax maximum distance
-     *
      * @return function value.
      */
 
@@ -115,7 +113,6 @@ public class ImageFFT {
      *
      * @param r    distance from centre of data
      * @param rmax maximum distance
-     *
      * @return function value.
      */
 
@@ -128,7 +125,6 @@ public class ImageFFT {
      * Creates an ImageFFT for the specified image. There will be no windowing of image data.
      *
      * @param image input image
-     *
      * @throws FFTException if the image is not 8-bit greyscale.
      */
 
@@ -141,7 +137,6 @@ public class ImageFFT {
      *
      * @param image input image
      * @param win   windowing function
-     *
      * @throws FFTException if the image is not 8-bit greyscale.
      */
 
@@ -176,7 +171,7 @@ public class ImageFFT {
                     for (int x = 0; x < image.getWidth(); ++x) {
                         r = Math.sqrt((x - xc) * (x - xc) + (y - yc) * (y - yc));
                         data[y * width + x].re = (float) (hammingWindow(r, rmax) * raster
-                                .getSample(x, y, 0));
+                            .getSample(x, y, 0));
                     }
                 }
                 break;
@@ -186,7 +181,7 @@ public class ImageFFT {
                     for (int x = 0; x < image.getWidth(); ++x) {
                         r = Math.sqrt((x - xc) * (x - xc) + (y - yc) * (y - yc));
                         data[y * width + x].re = (float) (hanningWindow(r, rmax) * raster
-                                .getSample(x, y, 0));
+                            .getSample(x, y, 0));
                     }
                 }
                 break;
@@ -196,7 +191,7 @@ public class ImageFFT {
                     for (int x = 0; x < image.getWidth(); ++x) {
                         r = Math.sqrt((x - xc) * (x - xc) + (y - yc) * (y - yc));
                         data[y * width + x].re = (float) (bartlettWindow(r, rmax) * raster
-                                .getSample(x, y, 0));
+                            .getSample(x, y, 0));
                     }
                 }
                 break;
@@ -219,7 +214,7 @@ public class ImageFFT {
 
     public String toString() {
         String s = new String(getClass().getName() + ": " + width + "x" + height
-                + (spectral ? ", frequency domain" : ", spatial domain"));
+            + (spectral ? ", frequency domain" : ", spatial domain"));
         return s;
     }
 
@@ -291,7 +286,6 @@ public class ImageFFT {
      * low-amplitude detail is visible.
      *
      * @return shifted spectrum, as an image.
-     *
      * @throws FFTException if spectral data are not available (e.g. because last transform was in the inverse
      *                      direction).
      */
@@ -306,7 +300,7 @@ public class ImageFFT {
         float[] magData = new float[width * height];
         float maximum = calculateMagnitudes(magData);
         BufferedImage image = new BufferedImage(width, height,
-                BufferedImage.TYPE_BYTE_GRAY);
+            BufferedImage.TYPE_BYTE_GRAY);
         WritableRaster raster = image.getRaster();
 
         // Shift, rescale and copy to image
@@ -333,7 +327,6 @@ public class ImageFFT {
      * Computes the power of two for which the corresponding value equals or exceeds the specified integer.
      *
      * @param n integer value
-     *
      * @return power of two
      */
 
@@ -426,7 +419,6 @@ public class ImageFFT {
      *
      * @param d  coordinate
      * @param d2 centre point
-     *
      * @return shifted coordinate.
      */
 
@@ -438,7 +430,6 @@ public class ImageFFT {
      * Collects magnitudes from spectral data, storing them in the specified array.
      *
      * @param mag destination for magnitudes
-     *
      * @return maximum magnitude.
      */
 

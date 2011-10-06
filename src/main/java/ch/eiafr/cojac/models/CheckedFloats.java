@@ -18,9 +18,9 @@
 
 package ch.eiafr.cojac.models;
 
+import static ch.eiafr.cojac.models.CheckedDoubles.*;
 import static java.lang.Float.NEGATIVE_INFINITY;
 import static java.lang.Float.POSITIVE_INFINITY;
-import static ch.eiafr.cojac.models.CheckedDoubles.*;
 
 public final class CheckedFloats {
     private CheckedFloats() {
@@ -31,20 +31,20 @@ public final class CheckedFloats {
         float r = a + b;
 
         if (b != 0 && r == a || a != 0 && r == b) {
-          if (r!=2.0*r)  // means here: isInfinite(r) (can't be 0 on NaN)
-          {
-              Reactions.react(reaction, PRECISION_MSG + "FADD", logFileName);
-          }
-        } else if (a != POSITIVE_INFINITY && a != NEGATIVE_INFINITY 
-                && b != POSITIVE_INFINITY && b != NEGATIVE_INFINITY
-                && r != 0.0f) {
-          if (r == POSITIVE_INFINITY) {
-            Reactions.react(reaction, RESULT_IS_POS_INF_MSG+"FADD", logFileName);
-          } else if (r == NEGATIVE_INFINITY) {
-            Reactions.react(reaction, RESULT_IS_NEG_INF_MSG+"FADD", logFileName);
-          } else if (Math.abs(r) <= CANCELLATION_ULP_FACTOR_FLOAT * Math.ulp(a)) {
-            Reactions.react(reaction, CANCELLATION_MSG+"FADD", logFileName);
-          }
+            if (r != 2.0 * r)  // means here: isInfinite(r) (can't be 0 on NaN)
+            {
+                Reactions.react(reaction, PRECISION_MSG + "FADD", logFileName);
+            }
+        } else if (a != POSITIVE_INFINITY && a != NEGATIVE_INFINITY
+            && b != POSITIVE_INFINITY && b != NEGATIVE_INFINITY
+            && r != 0.0f) {
+            if (r == POSITIVE_INFINITY) {
+                Reactions.react(reaction, RESULT_IS_POS_INF_MSG + "FADD", logFileName);
+            } else if (r == NEGATIVE_INFINITY) {
+                Reactions.react(reaction, RESULT_IS_NEG_INF_MSG + "FADD", logFileName);
+            } else if (Math.abs(r) <= CANCELLATION_ULP_FACTOR_FLOAT * Math.ulp(a)) {
+                Reactions.react(reaction, CANCELLATION_MSG + "FADD", logFileName);
+            }
         }
         return r;
     }
@@ -52,20 +52,20 @@ public final class CheckedFloats {
     public static float checkedFSUB(float a, float b, int reaction, String logFileName) {
         float r = a - b;
 
-        if (b != 0 && r == a  || a != 0 && r == -b) {
-          if (r!=2.0*r)  // means here: isInfinite(r) (can't be 0 on NaN)
-          {
-              Reactions.react(reaction, PRECISION_MSG + "FSUB", logFileName);
-          }
-        } else if (a != POSITIVE_INFINITY && a != NEGATIVE_INFINITY 
-                && b != POSITIVE_INFINITY && b != NEGATIVE_INFINITY
-                && r != 0.0f) {
+        if (b != 0 && r == a || a != 0 && r == -b) {
+            if (r != 2.0 * r)  // means here: isInfinite(r) (can't be 0 on NaN)
+            {
+                Reactions.react(reaction, PRECISION_MSG + "FSUB", logFileName);
+            }
+        } else if (a != POSITIVE_INFINITY && a != NEGATIVE_INFINITY
+            && b != POSITIVE_INFINITY && b != NEGATIVE_INFINITY
+            && r != 0.0f) {
             if (r == POSITIVE_INFINITY) {
-                Reactions.react(reaction, RESULT_IS_POS_INF_MSG+"FSUB", logFileName);
+                Reactions.react(reaction, RESULT_IS_POS_INF_MSG + "FSUB", logFileName);
             } else if (r == NEGATIVE_INFINITY) {
-                Reactions.react(reaction, RESULT_IS_NEG_INF_MSG+"FSUB", logFileName);
+                Reactions.react(reaction, RESULT_IS_NEG_INF_MSG + "FSUB", logFileName);
             } else if (Math.abs(r) <= CANCELLATION_ULP_FACTOR_FLOAT * Math.ulp(a)) {
-              Reactions.react(reaction, CANCELLATION_MSG+"FSUB", logFileName);
+                Reactions.react(reaction, CANCELLATION_MSG + "FSUB", logFileName);
             }
         }
 
@@ -77,11 +77,11 @@ public final class CheckedFloats {
 
         if (a != POSITIVE_INFINITY && a != NEGATIVE_INFINITY && b != POSITIVE_INFINITY && b != NEGATIVE_INFINITY) {
             if (r == POSITIVE_INFINITY) {
-                Reactions.react(reaction, RESULT_IS_POS_INF_MSG+"FMUL", logFileName);
+                Reactions.react(reaction, RESULT_IS_POS_INF_MSG + "FMUL", logFileName);
             } else if (r == NEGATIVE_INFINITY) {
-                Reactions.react(reaction, RESULT_IS_NEG_INF_MSG+"FMUL", logFileName);
-            } else if (r == 0.0f && a!=0.0f && b!=0.0f) {
-              Reactions.react(reaction, UNDERFLOW_MSG+"FMUL", logFileName);
+                Reactions.react(reaction, RESULT_IS_NEG_INF_MSG + "FMUL", logFileName);
+            } else if (r == 0.0f && a != 0.0f && b != 0.0f) {
+                Reactions.react(reaction, UNDERFLOW_MSG + "FMUL", logFileName);
             }
         }
 
@@ -92,14 +92,14 @@ public final class CheckedFloats {
         float r = a / b;
 
         if (a == a && b == b && r != r) {
-            Reactions.react(reaction, RESULT_IS_NAN_MSG+"FDIV", logFileName);
+            Reactions.react(reaction, RESULT_IS_NAN_MSG + "FDIV", logFileName);
         } else if (a != POSITIVE_INFINITY && a != NEGATIVE_INFINITY && b != POSITIVE_INFINITY && b != NEGATIVE_INFINITY) {
             if (r == POSITIVE_INFINITY) {
-                Reactions.react(reaction, RESULT_IS_POS_INF_MSG+"FDIV", logFileName);
+                Reactions.react(reaction, RESULT_IS_POS_INF_MSG + "FDIV", logFileName);
             } else if (r == NEGATIVE_INFINITY) {
-                Reactions.react(reaction, RESULT_IS_NEG_INF_MSG+"FDIV", logFileName);
-            } else if (r == 0.0f && a!=0.0f) {
-              Reactions.react(reaction, UNDERFLOW_MSG+"FDIV", logFileName);
+                Reactions.react(reaction, RESULT_IS_NEG_INF_MSG + "FDIV", logFileName);
+            } else if (r == 0.0f && a != 0.0f) {
+                Reactions.react(reaction, UNDERFLOW_MSG + "FDIV", logFileName);
             }
         }
 
@@ -110,10 +110,10 @@ public final class CheckedFloats {
         float r = a % b;
 
         if (a == a && b == b && r != r) {
-            Reactions.react(reaction, RESULT_IS_NAN_MSG+"FREM", logFileName);
+            Reactions.react(reaction, RESULT_IS_NAN_MSG + "FREM", logFileName);
         }
-        if (Math.ulp(a)>Math.abs(b)) {
-          Reactions.react(reaction, PRECISION_MSG+"FREM", logFileName);
+        if (Math.ulp(a) > Math.abs(b)) {
+            Reactions.react(reaction, PRECISION_MSG + "FREM", logFileName);
         }
 
         return r;
@@ -122,23 +122,23 @@ public final class CheckedFloats {
     public static int checkedFCMPG(float a, float b, int reaction, String logFileName) {
         if (Float.isNaN(a) || Float.isNaN(b)) return +1;
         int r = a == b ? 0 : a < b ? -1 : 1;
-        if (a==2.0f*a || b==2.0f*b)  // means here: isInfinite(a) (can't be 0 on NaN)
-          return r;
-        if (r != 0 && Math.abs(a - b) <= CLOSENESS_ULP_FACTOR_FLOAT * Math.ulp(a)){
-          Reactions.react(reaction, VERY_CLOSE_MSG+"FCMP", logFileName);
-      }
-      return r;
-    }
-    
-    public static int checkedFCMPL(float a, float b, int reaction, String logFileName) {
-      if (Float.isNaN(a) || Float.isNaN(b)) return -1;
-      int r = a == b ? 0 : a < b ? -1 : 1;
-      if (a==2.0f*a || b==2.0f*b)  // means here: isInfinite(a) (can't be 0 on NaN)
+        if (a == 2.0f * a || b == 2.0f * b)  // means here: isInfinite(a) (can't be 0 on NaN)
+            return r;
+        if (r != 0 && Math.abs(a - b) <= CLOSENESS_ULP_FACTOR_FLOAT * Math.ulp(a)) {
+            Reactions.react(reaction, VERY_CLOSE_MSG + "FCMP", logFileName);
+        }
         return r;
-      if (r != 0 && Math.abs(a - b) <= CLOSENESS_ULP_FACTOR_FLOAT * Math.ulp(a)){
-        Reactions.react(reaction, VERY_CLOSE_MSG+"FCMP", logFileName);
     }
-    return r;
-  }
+
+    public static int checkedFCMPL(float a, float b, int reaction, String logFileName) {
+        if (Float.isNaN(a) || Float.isNaN(b)) return -1;
+        int r = a == b ? 0 : a < b ? -1 : 1;
+        if (a == 2.0f * a || b == 2.0f * b)  // means here: isInfinite(a) (can't be 0 on NaN)
+            return r;
+        if (r != 0 && Math.abs(a - b) <= CLOSENESS_ULP_FACTOR_FLOAT * Math.ulp(a)) {
+            Reactions.react(reaction, VERY_CLOSE_MSG + "FCMP", logFileName);
+        }
+        return r;
+    }
 
 }

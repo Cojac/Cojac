@@ -138,7 +138,6 @@ public class LU {
      * Solve a linear system, with pre-computed factorization.
      *
      * @param b (in) the right-hand side.
-     *
      * @return solution vector.
      */
     public double[] solve(double b[]) {
@@ -154,7 +153,6 @@ public class LU {
      *
      * @param A     (in/out) On input, the matrix to be factored. On output, the compact LU factorization.
      * @param pivit (out) The pivot vector records the reordering of the rows of A during factorization.
-     *
      * @return 0, if OK, nozero value, othewise.
      */
     public static int factor(double A[][], int pivot[]) {

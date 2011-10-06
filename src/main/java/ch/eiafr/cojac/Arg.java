@@ -23,32 +23,32 @@ import org.apache.commons.cli.Options;
 import org.objectweb.asm.Opcodes;
 
 public enum Arg {
-               INSTRUMENT("i"),
-                     HELP("h"),
-                      ALL("a"),
-                    PRINT("c"),
-                     PATH("p"),
-                EXCEPTION("e"),
-               WASTE_SIZE("w"),
-             DETAILED_LOG("d"),
-            RUNTIME_STATS("s"),
-                CALL_BACK("k"),
-                 LOG_FILE("l"),
-                   FILTER("f"),
-                CLASSPATH("cp"),
-                     NONE("n"),
-                   BYPASS("b"),
-                   FRAMES("Xframes"),     // not official
+    INSTRUMENT("i"),
+    HELP("h"),
+    ALL("a"),
+    PRINT("c"),
+    PATH("p"),
+    EXCEPTION("e"),
+    WASTE_SIZE("w"),
+    DETAILED_LOG("d"),
+    RUNTIME_STATS("s"),
+    CALL_BACK("k"),
+    LOG_FILE("l"),
+    FILTER("f"),
+    CLASSPATH("cp"),
+    NONE("n"),
+    BYPASS("b"),
+    FRAMES("Xframes"),     // not official
     INSTRUMENTATION_STATS("t"),
-                VARIABLES("Xvariables"),  //Deprecated, not maintained
-          NO_CANCELLATION("XnoCancellation"), //not ready
+    VARIABLES("Xvariables"),  //Deprecated, not maintained
+    NO_CANCELLATION("XnoCancellation"), //not ready
 
-    INTS   ("ints"),
-    FLOATS ("floats"),
+    INTS("ints"),
+    FLOATS("floats"),
     DOUBLES("doubles"),
-    LONGS  ("longs"),
-    CASTS  ("casts"),
-    MATHS  ("maths"),
+    LONGS("longs"),
+    CASTS("casts"),
+    MATHS("maths"),
 
     IADD("iadd", Opcodes.IADD, INTS),
     IDIV("idiv", Opcodes.IDIV, INTS),
@@ -126,114 +126,114 @@ public enum Arg {
             }
         }
 
-        if(opCode == Opcodes.FCMPG){
+        if (opCode == Opcodes.FCMPG) {
             return Arg.FCMP;
-        } else if(opCode == Opcodes.DCMPG){
+        } else if (opCode == Opcodes.DCMPG) {
             return Arg.DCMP;
         }
 
         return null;
     }
-    
+
     @SuppressWarnings("static-access")
     static Options createOptions() {
-      Options options = new Options();
+        Options options = new Options();
 
-      options.addOption(Arg.INSTRUMENT.shortOpt(),
-          "instrument", false, "Instrument the files (batch mode). Several options cannot be used in this mode");
-      options.addOption(Arg.NONE.shortOpt(),
-          "none",       false, "Don't instrument any instruction");
-      options.addOption(Arg.BYPASS.shortOpt(),
-          "bypass",     true, "Bypass classes starting with one of these prefixes (semi-colon separated list). "+
-                              "Example: -b foo;bar.util skips classes with name foo* or bar.util*");
-      options.addOption(Arg.HELP.shortOpt(),
-          "help",       false, "Print the help of the program");
-      options.addOption(Arg.PRINT.shortOpt(),
-          "console",    false, "Signal overflows with console messages to stderr (default signaling policy)");
-      options.addOption(Arg.EXCEPTION.shortOpt(),
-          "exception",  false, "Signal overflows by throwing an ArithmeticException");
-      options.addOption(Arg.ALL.shortOpt(),
-          "all",        false, "Instrument every operation (int, long, cast)");
-      options.addOption(Arg.FILTER.shortOpt(),
-          "filter",     false, "Report each problem only once per faulty line");
-      options.addOption(Arg.CLASSPATH.shortOpt(),
-          "classpath",  true,  "Specify the classpath");
-      options.addOption(Arg.INSTRUMENTATION_STATS.shortOpt(),
-          "stats",      false, "Print instrumentation statistics");
-      options.addOption(Arg.RUNTIME_STATS.shortOpt(),
-          "summary",    false, "Print runtime statistics");
+        options.addOption(Arg.INSTRUMENT.shortOpt(),
+            "instrument", false, "Instrument the files (batch mode). Several options cannot be used in this mode");
+        options.addOption(Arg.NONE.shortOpt(),
+            "none", false, "Don't instrument any instruction");
+        options.addOption(Arg.BYPASS.shortOpt(),
+            "bypass", true, "Bypass classes starting with one of these prefixes (semi-colon separated list). " +
+            "Example: -b foo;bar.util skips classes with name foo* or bar.util*");
+        options.addOption(Arg.HELP.shortOpt(),
+            "help", false, "Print the help of the program");
+        options.addOption(Arg.PRINT.shortOpt(),
+            "console", false, "Signal overflows with console messages to stderr (default signaling policy)");
+        options.addOption(Arg.EXCEPTION.shortOpt(),
+            "exception", false, "Signal overflows by throwing an ArithmeticException");
+        options.addOption(Arg.ALL.shortOpt(),
+            "all", false, "Instrument every operation (int, long, cast)");
+        options.addOption(Arg.FILTER.shortOpt(),
+            "filter", false, "Report each problem only once per faulty line");
+        options.addOption(Arg.CLASSPATH.shortOpt(),
+            "classpath", true, "Specify the classpath");
+        options.addOption(Arg.INSTRUMENTATION_STATS.shortOpt(),
+            "stats", false, "Print instrumentation statistics");
+        options.addOption(Arg.RUNTIME_STATS.shortOpt(),
+            "summary", false, "Print runtime statistics");
 
-      options.addOption(Arg.MATHS.shortOpt(),
-          false, "Detect problems in (Strict)Math.XXX() methods");
-      options.addOption(Arg.INTS.shortOpt(),
-          false, "Activate all the ints opcodes");
-      options.addOption(Arg.LONGS.shortOpt(),
-          false, "Activate all the longs opcodes");
-      options.addOption(Arg.CASTS.shortOpt(),
-          false, "Activate all the casts opcodes");
-      options.addOption(Arg.DOUBLES.shortOpt(),
-          false, "Activate all the doubles opcodes");
-      options.addOption(Arg.FLOATS.shortOpt(),
-          false, "Activate all the floats opcodes");
+        options.addOption(Arg.MATHS.shortOpt(),
+            false, "Detect problems in (Strict)Math.XXX() methods");
+        options.addOption(Arg.INTS.shortOpt(),
+            false, "Activate all the ints opcodes");
+        options.addOption(Arg.LONGS.shortOpt(),
+            false, "Activate all the longs opcodes");
+        options.addOption(Arg.CASTS.shortOpt(),
+            false, "Activate all the casts opcodes");
+        options.addOption(Arg.DOUBLES.shortOpt(),
+            false, "Activate all the doubles opcodes");
+        options.addOption(Arg.FLOATS.shortOpt(),
+            false, "Activate all the floats opcodes");
 
-      options.addOption(Arg.DETAILED_LOG.shortOpt(),
-          "detailed",   false, "logs the full stack trace (combined with -c or -l)");
+        options.addOption(Arg.DETAILED_LOG.shortOpt(),
+            "detailed", false, "logs the full stack trace (combined with -c or -l)");
 
-      options.addOption(Arg.WASTE_SIZE.shortOpt(),
-          "withinStack",     false, "Instruments so that the checks lie directly on the stack " +
-                               "instead of via an additional method call. This generally degrades"+
-                               "the RAM & CPU overhead, but occasionnally it could be better." +
-                               "(this option might disappear in future releases)");
-      options.addOption(Arg.FRAMES.shortOpt(),
-          false, "Compute Java Frames in bytecode (instrumentation will be slower)");
+        options.addOption(Arg.WASTE_SIZE.shortOpt(),
+            "withinStack", false, "Instruments so that the checks lie directly on the stack " +
+            "instead of via an additional method call. This generally degrades" +
+            "the RAM & CPU overhead, but occasionnally it could be better." +
+            "(this option might disappear in future releases)");
+        options.addOption(Arg.FRAMES.shortOpt(),
+            false, "Compute Java Frames in bytecode (instrumentation will be slower)");
 
-      //feature not ready!
+        //feature not ready!
 //      options.addOption(Arg.NO_CANCELLATION.shortOpt(),
 //          false, "Disable cancellation test in DADD/DSUB/FADD/FSUB");
 
-      //Disabled temporarily, well... definitely!
-      
+        //Disabled temporarily, well... definitely!
+
 //      options.addOption("v", false, "Enable COJAC to add variables in instrumented bytecode");
 
 //      options.addOption(OptionBuilder.
 //          withLongOpt("frames").
 //          withDescription("Compute Java Frames in bytecode (instrumentation will be slower)").
 //          create());  // no short opt
-      
-      
-      options.addOption(OptionBuilder.
+
+
+        options.addOption(OptionBuilder.
             withLongOpt("path").
             withArgName("path").
-                 hasArg().
-        withDescription("Path where the instrumented code will be written. Default is "+Args.DEFAULT_OUTPUT_DIR).
-                 create(Arg.PATH.shortOpt()));
+            hasArg().
+            withDescription("Path where the instrumented code will be written. Default is " + Args.DEFAULT_OUTPUT_DIR).
+            create(Arg.PATH.shortOpt()));
 
-      options.addOption(OptionBuilder.
+        options.addOption(OptionBuilder.
             withLongOpt("callback").
             withArgName("meth-id").
-                 hasArg().
-        withDescription("Signal overflows by calling " +
-                      "a particular user-defined method whose definition " +
-                      "matches the following:\n public static void f(String msg) \n" +
-                      "Give the fully qualified method identifier, in the form: \n" +
-                      "pkgA/myPkg/myClass/myMethod").
-                create(Arg.CALL_BACK.shortOpt()));
+            hasArg().
+            withDescription("Signal overflows by calling " +
+                "a particular user-defined method whose definition " +
+                "matches the following:\n public static void f(String msg) \n" +
+                "Give the fully qualified method identifier, in the form: \n" +
+                "pkgA/myPkg/myClass/myMethod").
+            create(Arg.CALL_BACK.shortOpt()));
 
-      options.addOption(OptionBuilder.
+        options.addOption(OptionBuilder.
             withLongOpt("logfile").
             withArgName("path").
-         hasOptionalArg().
-        withDescription("Signal overflows by writing to a log file. " +
-                      "Default filename is: "+Args.DEFAULT_LOG_FILE_NAME+ '.').
-                 create(Arg.LOG_FILE.shortOpt()));
-      
-      for (Arg arg : Arg.values()) {
-          if (arg.isOperator()) {
-              options.addOption(arg.shortOpt(), false, "Instrument the " + arg.shortOpt() + " operation");
-          }
-      }
+            hasOptionalArg().
+            withDescription("Signal overflows by writing to a log file. " +
+                "Default filename is: " + Args.DEFAULT_LOG_FILE_NAME + '.').
+            create(Arg.LOG_FILE.shortOpt()));
 
-      return options;
-  }
+        for (Arg arg : Arg.values()) {
+            if (arg.isOperator()) {
+                options.addOption(arg.shortOpt(), false, "Instrument the " + arg.shortOpt() + " operation");
+            }
+        }
+
+        return options;
+    }
 
 }

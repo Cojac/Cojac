@@ -18,15 +18,14 @@
 
 package ch.eiafr.cojac.reactions;
 
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
-
 import ch.eiafr.cojac.Arg;
 import ch.eiafr.cojac.Args;
 import ch.eiafr.cojac.Methods;
 import ch.eiafr.cojac.Signatures;
 import ch.eiafr.cojac.utils.BytecodeUtils;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.Label;
+import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -67,9 +66,9 @@ public final class BasicReaction implements Reaction {
             BytecodeUtils.callUserCallBack(mv, args.getValue(Arg.CALL_BACK));
         } else {
             mv.visitMethodInsn(INVOKESTATIC,
-                    classPath,
-                    getCurrentMethodReaction(methods),
-                    Signatures.REACT);
+                classPath,
+                getCurrentMethodReaction(methods),
+                Signatures.REACT);
         }
     }
 

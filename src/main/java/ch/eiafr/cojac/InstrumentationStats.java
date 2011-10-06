@@ -21,16 +21,11 @@ package ch.eiafr.cojac;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 public final class InstrumentationStats {
-  
+
     private final Map<Arg, Counter> counters = new EnumMap<Arg, Counter>(Arg.class);
     private long startTime;
 
@@ -92,7 +87,7 @@ public final class InstrumentationStats {
 
             for (Map.Entry<String, Long> instructions : sortedEvents) {
                 builder.append('\t').append(instructions.getValue()).
-                        append(" times -> ").append(instructions.getKey()).append('\n');
+                    append(" times -> ").append(instructions.getKey()).append('\n');
             }
         }
 
@@ -109,7 +104,7 @@ public final class InstrumentationStats {
         }
     }
 
-    public static void writeToFile(StringBuilder builder, String logFileName){
+    public static void writeToFile(StringBuilder builder, String logFileName) {
         BufferedWriter out = null;
         try {
             out = new BufferedWriter(new FileWriter(logFileName, true));

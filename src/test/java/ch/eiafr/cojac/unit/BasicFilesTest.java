@@ -18,21 +18,16 @@
 
 package ch.eiafr.cojac.unit;
 
+import ch.eiafr.cojac.Arg;
+import ch.eiafr.cojac.Args;
+import ch.eiafr.cojac.FilesInstrumenter;
+
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Arrays;
-
-import ch.eiafr.cojac.Arg;
-import ch.eiafr.cojac.Args;
-import ch.eiafr.cojac.FilesInstrumenter;
 
 public class BasicFilesTest extends AbstractFullTests {
     private final Tests tests;
@@ -52,9 +47,9 @@ public class BasicFilesTest extends AbstractFullTests {
 
         File dstdir = new File(System.getProperty("java.io.tmpdir"), "java-dst");
         dstdir.mkdirs();
-        
+
         Iterable<? extends JavaFileObject> compilationUnits = fileManager
-                .getJavaFileObjectsFromStrings(Arrays.asList("src/test/java/ch/eiafr/cojac/unit/SimpleOperations.java"));
+            .getJavaFileObjectsFromStrings(Arrays.asList("src/test/java/ch/eiafr/cojac/unit/SimpleOperations.java"));
 
         JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, null, Arrays.asList("-d", srcdir.getAbsolutePath()), null, compilationUnits);
 

@@ -20,7 +20,7 @@ package ch.eiafr.cojac.perfs.scimark;
 
 /**
  * Estimate Pi by approximating the area of a circle.
- *
+ * <p/>
  * How: generate N random numbers in the unit square, (0,0) to (1,1) and see how are within a radius of 1 or less, i.e.
  * <pre>
  *

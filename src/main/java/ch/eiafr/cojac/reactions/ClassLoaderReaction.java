@@ -18,14 +18,13 @@
 
 package ch.eiafr.cojac.reactions;
 
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.MethodVisitor;
-
 import ch.eiafr.cojac.Arg;
 import ch.eiafr.cojac.Args;
 import ch.eiafr.cojac.Methods;
 import ch.eiafr.cojac.Signatures;
 import ch.eiafr.cojac.utils.BytecodeUtils;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 
@@ -58,9 +57,9 @@ public final class ClassLoaderReaction implements Reaction {
             BytecodeUtils.callUserCallBack(mv, args.getValue(Arg.CALL_BACK));
         } else {
             mv.visitMethodInsn(INVOKESTATIC,
-                    "ch/eiafr/cojac/models/Reactions",
-                    getCurrentMethodReaction(),
-                    getCurrentSignatureReaction());
+                "ch/eiafr/cojac/models/Reactions",
+                getCurrentMethodReaction(),
+                getCurrentSignatureReaction());
         }
     }
 

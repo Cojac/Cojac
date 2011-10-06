@@ -18,14 +18,10 @@
 
 package ch.eiafr.cojac;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 import ch.eiafr.cojac.instrumenters.SimpleOpCodeFactory;
 import ch.eiafr.cojac.reactions.BasicReaction;
+
+import java.io.*;
 
 public final class ClassFileInstrumenter implements FileInstrumenter {
     private final ClassInstrumenter classInstrumenter;
@@ -34,7 +30,7 @@ public final class ClassFileInstrumenter implements FileInstrumenter {
         super();
 
         classInstrumenter = new SimpleClassInstrumenter(args, stats, new BasicReaction(args),
-                new SimpleOpCodeFactory(args, stats));
+            new SimpleOpCodeFactory(args, stats));
     }
 
     @Override

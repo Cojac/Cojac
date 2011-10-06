@@ -18,6 +18,8 @@
 
 package ch.eiafr.cojac;
 
+import ch.eiafr.cojac.instrumenters.OpCodeInstrumenterFactory;
+import ch.eiafr.cojac.reactions.Reaction;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
@@ -25,9 +27,6 @@ import org.objectweb.asm.commons.EmptyVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import ch.eiafr.cojac.instrumenters.OpCodeInstrumenterFactory;
-import ch.eiafr.cojac.reactions.Reaction;
 
 public final class SimpleClassInstrumenter implements ClassInstrumenter {
     private final Args args;

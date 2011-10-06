@@ -18,9 +18,8 @@
 
 package ch.eiafr.cojac.utils;
 
-import org.objectweb.asm.MethodVisitor;
-
 import ch.eiafr.cojac.Signatures;
+import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -43,9 +42,9 @@ public final class BytecodeUtils {
 
     public static void callUserCallBack(MethodVisitor mv, String callBack) {
         mv.visitMethodInsn(INVOKESTATIC,
-                parseQualifierId(callBack),
-                parseMethodId(callBack),
-                Signatures.REACT);
+            parseQualifierId(callBack),
+            parseMethodId(callBack),
+            Signatures.REACT);
     }
 
     private static String parseMethodId(String fullid) {

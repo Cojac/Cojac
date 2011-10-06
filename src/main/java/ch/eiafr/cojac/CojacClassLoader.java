@@ -18,6 +18,12 @@
 
 package ch.eiafr.cojac;
 
+import ch.eiafr.cojac.instrumenters.ClassLoaderOpSizeInstrumenterFactory;
+import ch.eiafr.cojac.instrumenters.OpCodeInstrumenterFactory;
+import ch.eiafr.cojac.instrumenters.SimpleOpCodeFactory;
+import ch.eiafr.cojac.reactions.ClassLoaderReaction;
+import ch.eiafr.cojac.utils.ReflectionUtils;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,37 +31,31 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.regex.Pattern;
 
-import ch.eiafr.cojac.instrumenters.ClassLoaderOpSizeInstrumenterFactory;
-import ch.eiafr.cojac.instrumenters.OpCodeInstrumenterFactory;
-import ch.eiafr.cojac.instrumenters.SimpleOpCodeFactory;
-import ch.eiafr.cojac.reactions.ClassLoaderReaction;
-import ch.eiafr.cojac.utils.ReflectionUtils;
-
 public final class CojacClassLoader extends URLClassLoader {
     private static final Pattern COMMA_PATTERN = Pattern.compile(";");
     private static final int BUFFER_SIZE = 8192;
 
     private static final String[] STANDARD_PACKAGES = {
-      "com.sun.", "java.", "javax.", "sun.", "sunw.", // std trusted packages
-      "ch.eiafr.cojac.models",                        // cojac method to protect
-      "org.slf4j"  //, ...                            // problematic libraries
+        "com.sun.", "java.", "javax.", "sun.", "sunw.", // std trusted packages
+        "ch.eiafr.cojac.models",                        // cojac method to protect
+        "org.slf4j"  //, ...                            // problematic libraries
     };
 
-    private String[] bypassList = {}; 
-                                
+    private String[] bypassList = {};
+
     private final ClassInstrumenter classInstrumenter;
 
     public CojacClassLoader(URL[] urls, Args args, InstrumentationStats stats) {
         super(urls, ClassLoader.getSystemClassLoader());
 
-        if(args.isSpecified(Arg.FILTER)){
+        if (args.isSpecified(Arg.FILTER)) {
             ReflectionUtils.setStaticFieldValue(this, "ch.eiafr.cojac.models.Reactions", "filtering", true);
         }
 
-        if(args.isSpecified(Arg.BYPASS)) {
-          bypassList=parseBypassList(args.getValue(Arg.BYPASS));
+        if (args.isSpecified(Arg.BYPASS)) {
+            bypassList = parseBypassList(args.getValue(Arg.BYPASS));
         }
-        
+
         OpCodeInstrumenterFactory factory;
         if (!args.isSpecified(Arg.WASTE_SIZE)) {
             factory = new ClassLoaderOpSizeInstrumenterFactory(args, stats);
@@ -148,14 +148,14 @@ public final class CojacClassLoader extends URLClassLoader {
     private static String[] parseBypassList(String bypassList) {
         return COMMA_PATTERN.split(bypassList);
     }
-    
+
     private boolean hasToBeInstrumented(String className) {
         for (String standardPackage : STANDARD_PACKAGES) {
             if (className.startsWith(standardPackage)) {
                 return false;
             }
         }
-        for(String prefix:bypassList) {
+        for (String prefix : bypassList) {
             if (className.startsWith(prefix))
                 return false;
         }

@@ -18,56 +18,57 @@
 
 package ch.eiafr.cojac.instrumenters.stack;
 
+import ch.eiafr.cojac.Methods;
+import ch.eiafr.cojac.instrumenters.OpCodeInstrumenter;
+import ch.eiafr.cojac.reactions.Reaction;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.LocalVariablesSorter;
 
-import ch.eiafr.cojac.Methods;
-import ch.eiafr.cojac.instrumenters.OpCodeInstrumenter;
-import ch.eiafr.cojac.reactions.Reaction;
-
-import static ch.eiafr.cojac.models.CheckedDoubles.RESULT_IS_NAN_MSG;
 import static ch.eiafr.cojac.models.CheckedDoubles.PRECISION_MSG;
+import static ch.eiafr.cojac.models.CheckedDoubles.RESULT_IS_NAN_MSG;
 import static org.objectweb.asm.Opcodes.*;
 
 public final class FREMInstrumenter implements OpCodeInstrumenter {
-  @Override
-  public void instrument(MethodVisitor mv, int opCode, String classPath, Methods methods, Reaction reaction, LocalVariablesSorter src) {
-    Label labelFinalFrem = new Label();
-    Label labelCheckPrecision = new Label();
+    @Override
+    public void instrument(MethodVisitor mv, int opCode, String classPath, Methods methods, Reaction reaction, LocalVariablesSorter src) {
+        Label labelFinalFrem = new Label();
+        Label labelCheckPrecision = new Label();
 
-    {
-      mv.visitInsn(DUP);
-      mv.visitInsn(DUP);
-      mv.visitInsn(FCMPL);
-      mv.visitJumpInsn(IFNE, labelCheckPrecision);
-      mv.visitInsn(DUP2);
-      mv.visitInsn(POP);
-      mv.visitInsn(DUP);
-      mv.visitInsn(FCMPL);
-      mv.visitJumpInsn(IFNE, labelCheckPrecision);
-      mv.visitInsn(DUP2);
-      mv.visitInsn(FREM);
-      mv.visitInsn(DUP);
-      mv.visitInsn(FCMPL);
-      mv.visitJumpInsn(IFEQ, labelCheckPrecision);
-      reaction.insertReactionCall(mv, RESULT_IS_NAN_MSG+"FREM", methods, classPath);
-      mv.visitJumpInsn(GOTO, labelFinalFrem);
+        {
+            mv.visitInsn(DUP);
+            mv.visitInsn(DUP);
+            mv.visitInsn(FCMPL);
+            mv.visitJumpInsn(IFNE, labelCheckPrecision);
+            mv.visitInsn(DUP2);
+            mv.visitInsn(POP);
+            mv.visitInsn(DUP);
+            mv.visitInsn(FCMPL);
+            mv.visitJumpInsn(IFNE, labelCheckPrecision);
+            mv.visitInsn(DUP2);
+            mv.visitInsn(FREM);
+            mv.visitInsn(DUP);
+            mv.visitInsn(FCMPL);
+            mv.visitJumpInsn(IFEQ, labelCheckPrecision);
+            reaction.insertReactionCall(mv, RESULT_IS_NAN_MSG + "FREM", methods, classPath);
+            mv.visitJumpInsn(GOTO, labelFinalFrem);
+        }
+        mv.visitLabel(labelCheckPrecision);
+        {
+            mv.visitInsn(DUP2);
+            mv.visitMethodInsn(INVOKESTATIC, "java/lang/Math", "abs", "(F)F");
+            mv.visitInsn(DUP_X1);
+            mv.visitInsn(POP);
+            mv.visitMethodInsn(INVOKESTATIC, "java/lang/Math", "ulp", "(F)F");
+            mv.visitInsn(FCMPL);
+            mv.visitJumpInsn(IFGE, labelFinalFrem);
+            reaction.insertReactionCall(mv, PRECISION_MSG + "FREM", methods, classPath);
+        }
+        mv.visitLabel(labelFinalFrem);
+        {
+            mv.visitInsn(FREM);
+        }
+
     }
-    mv.visitLabel(labelCheckPrecision); {
-      mv.visitInsn(DUP2);
-      mv.visitMethodInsn(INVOKESTATIC, "java/lang/Math", "abs", "(F)F");
-      mv.visitInsn(DUP_X1);
-      mv.visitInsn(POP);
-      mv.visitMethodInsn(INVOKESTATIC, "java/lang/Math", "ulp", "(F)F");
-      mv.visitInsn(FCMPL);
-      mv.visitJumpInsn(IFGE, labelFinalFrem);
-      reaction.insertReactionCall(mv, PRECISION_MSG+"FREM", methods, classPath);
-    }
-    mv.visitLabel(labelFinalFrem); {
-      mv.visitInsn(FREM);
-    }
-    
-  }
 
 }

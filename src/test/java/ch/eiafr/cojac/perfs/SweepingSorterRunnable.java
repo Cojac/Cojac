@@ -18,15 +18,9 @@
 
 package ch.eiafr.cojac.perfs;
 
-import java.awt.Point;
+import java.awt.*;
 import java.awt.geom.Point2D;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Random;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 public final class SweepingSorterRunnable implements Runnable {
     private final Point[] points = rndPointSet(new Random(), 50000, 100000);

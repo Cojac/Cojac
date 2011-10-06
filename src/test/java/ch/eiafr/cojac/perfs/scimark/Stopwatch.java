@@ -20,11 +20,11 @@ package ch.eiafr.cojac.perfs.scimark;
 
 /**
  * Provides a stopwatch to measure elapsed time.
- *
+ * <p/>
  * <P> <DL> <DT><B>Example of use:</B></DT> <DD> <p>
  * <pre>
  * Stopwatch Q = new Stopwatch;
- * <p>
+ *
  * Q.start();
  * //
  * // code to be timed here ...

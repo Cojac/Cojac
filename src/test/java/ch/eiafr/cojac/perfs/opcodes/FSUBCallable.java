@@ -28,8 +28,8 @@ public class FSUBCallable implements Callable<Float> {
     @Override
     public Float call() {
         return a - b - c - b - a - b - c - b - a - b - c - a - b - c - b - a - b - c - b - a - b -
-                a - b - c - b - a - b - c - b - a - b - c - a - b - c - b - a - b - c - b - a - b -
-                a - b - c - b - a - b - c - b - a - b - c;
+            a - b - c - b - a - b - c - b - a - b - c - a - b - c - b - a - b - c - b - a - b -
+            a - b - c - b - a - b - c - b - a - b - c;
     }
 
     public void setA(float a) {

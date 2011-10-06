@@ -18,11 +18,10 @@
 
 package ch.eiafr.cojac;
 
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
-
 import ch.eiafr.cojac.instrumenters.OpCodeInstrumenterFactory;
 import ch.eiafr.cojac.reactions.Reaction;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
 
 public final class ClassLoaderInstrumenter implements ClassInstrumenter {
     private final Args args;

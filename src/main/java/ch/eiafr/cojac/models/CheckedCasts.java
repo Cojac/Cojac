@@ -64,7 +64,7 @@ public final class CheckedCasts {
     }
 
     public static long checkedD2L(double a, int reaction, String logFileName) {
-        if ( !(a >= Long.MIN_VALUE && a <= Long.MAX_VALUE)) {  // NaN too...
+        if (!(a >= Long.MIN_VALUE && a <= Long.MAX_VALUE)) {  // NaN too...
             Reactions.react(reaction, "Overflow : D2L", logFileName);
         }
 
@@ -72,7 +72,7 @@ public final class CheckedCasts {
     }
 
     public static int checkedF2I(float a, int reaction, String logFileName) {
-      if (!(a >= Integer.MIN_VALUE && a <= Integer.MAX_VALUE)) {  // NaN too...
+        if (!(a >= Integer.MIN_VALUE && a <= Integer.MAX_VALUE)) {  // NaN too...
             Reactions.react(reaction, "Overflow : F2I", logFileName);
         }
 
@@ -80,7 +80,7 @@ public final class CheckedCasts {
     }
 
     public static long checkedF2L(float a, int reaction, String logFileName) {
-      if ( !(a >= Long.MIN_VALUE && a <= Long.MAX_VALUE)) {  // NaN too...
+        if (!(a >= Long.MIN_VALUE && a <= Long.MAX_VALUE)) {  // NaN too...
             Reactions.react(reaction, "Overflow : F2L", logFileName);
         }
 

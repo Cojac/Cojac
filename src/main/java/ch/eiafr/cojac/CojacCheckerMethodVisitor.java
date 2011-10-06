@@ -18,6 +18,9 @@
 
 package ch.eiafr.cojac;
 
+import ch.eiafr.cojac.instrumenters.OpCodeInstrumenter;
+import ch.eiafr.cojac.instrumenters.OpCodeInstrumenterFactory;
+import ch.eiafr.cojac.reactions.Reaction;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
@@ -25,10 +28,6 @@ import org.objectweb.asm.commons.LocalVariablesSorter;
 
 import java.util.Arrays;
 import java.util.List;
-
-import ch.eiafr.cojac.instrumenters.OpCodeInstrumenter;
-import ch.eiafr.cojac.instrumenters.OpCodeInstrumenterFactory;
-import ch.eiafr.cojac.reactions.Reaction;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -41,17 +40,17 @@ final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
     private final String classPath;
 
     private static final List<String> UNARY_METHODS = Arrays.asList(
-            "ceil", "round", "floor",
-            "cos", "sin", "tan",
-            "acos", "asin", "atan",
-            "cosh", "sinh", "tanh",
-            "exp", "expm1",
-            "log", "log10", "log1p",
-            "sqrt", "cbrt",
-            "rint", "nextUp");
+        "ceil", "round", "floor",
+        "cos", "sin", "tan",
+        "acos", "asin", "atan",
+        "cosh", "sinh", "tanh",
+        "exp", "expm1",
+        "log", "log10", "log1p",
+        "sqrt", "cbrt",
+        "rint", "nextUp");
 
     private static final List<String> BINARY_METHODS =
-            Arrays.asList("atan2", "pow", "hypot", "copySign", "nextAfter", "scalb");
+        Arrays.asList("atan2", "pow", "hypot", "copySign", "nextAfter", "scalb");
 
     CojacCheckerMethodVisitor(int access, String desc, MethodVisitor mv, InstrumentationStats stats, Args args, Methods methods, Reaction reaction, String classPath, OpCodeInstrumenterFactory factory) {
         super(access, desc, mv);
@@ -70,7 +69,7 @@ final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
         OpCodeInstrumenter instrumenter = factory.getInstrumenter(opCode, Arg.fromOpCode(opCode));
 
         //Delegate to parent
-        if(instrumenter == null){
+        if (instrumenter == null) {
             super.visitInsn(opCode);
         } else {
             instrumenter.instrument(mv, opCode, classPath, methods, reaction, this);
@@ -86,7 +85,7 @@ final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
                 mv.visitMethodInsn(INVOKESTATIC, classPath, methods.getMethod(IINC), Signatures.CHECK_INTEGER_BINARY);
                 visitVarInsn(ISTORE, index);
             } else {
-                if(args.isSpecified(Arg.VARIABLES)){
+                if (args.isSpecified(Arg.VARIABLES)) {
                     iincWithVariables(index, value);
                 } else {
                     iinc(index, value);
@@ -147,7 +146,7 @@ final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc) {
         if (opcode == INVOKESTATIC && args.isOperationEnabled(Arg.MATHS) &&
-                ("java/lang/Math".equals(owner) || "java/lang/StrictMath".equals(owner))) {
+            ("java/lang/Math".equals(owner) || "java/lang/StrictMath".equals(owner))) {
             if ("(D)D".equals(desc) && UNARY_METHODS.contains(name) || "(DD)D".equals(desc) && BINARY_METHODS.contains(name)) {
                 protectMethodInvocation(owner, name, desc);
             } else {
