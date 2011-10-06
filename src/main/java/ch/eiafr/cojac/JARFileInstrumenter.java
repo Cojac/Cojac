@@ -21,7 +21,11 @@ package ch.eiafr.cojac;
 import ch.eiafr.cojac.instrumenters.SimpleOpCodeFactory;
 import ch.eiafr.cojac.reactions.BasicReaction;
 
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;

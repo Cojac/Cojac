@@ -18,7 +18,11 @@
 
 package ch.eiafr.cojac.instrumenters;
 
-import ch.eiafr.cojac.*;
+import ch.eiafr.cojac.Arg;
+import ch.eiafr.cojac.Args;
+import ch.eiafr.cojac.InstrumentationStats;
+import ch.eiafr.cojac.Methods;
+import ch.eiafr.cojac.Signatures;
 import ch.eiafr.cojac.models.ReactionType;
 import ch.eiafr.cojac.reactions.Reaction;
 import org.objectweb.asm.MethodVisitor;
