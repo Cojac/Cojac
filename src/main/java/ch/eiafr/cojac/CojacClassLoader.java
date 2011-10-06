@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.regex.Pattern;
 
 import ch.eiafr.cojac.instrumenters.ClassLoaderOpSizeInstrumenterFactory;
 import ch.eiafr.cojac.instrumenters.OpCodeInstrumenterFactory;
@@ -31,6 +32,7 @@ import ch.eiafr.cojac.reactions.ClassLoaderReaction;
 import ch.eiafr.cojac.utils.ReflectionUtils;
 
 public final class CojacClassLoader extends URLClassLoader {
+    private static final Pattern COMMA_PATTERN = Pattern.compile(";");
     private static final int BUFFER_SIZE = 8192;
 
     private static final String[] STANDARD_PACKAGES = {
@@ -143,8 +145,8 @@ public final class CojacClassLoader extends URLClassLoader {
         return null;
     }
 
-    private String[] parseBypassList(String bypassList) {
-        return bypassList.split(";");
+    private static String[] parseBypassList(String bypassList) {
+        return COMMA_PATTERN.split(bypassList);
     }
     
     private boolean hasToBeInstrumented(String className) {

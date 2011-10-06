@@ -224,7 +224,7 @@ public enum Arg {
             withArgName("path").
          hasOptionalArg().
         withDescription("Signal overflows by writing to a log file. " +
-                      "Default filename is: "+Args.DEFAULT_LOG_FILE_NAME+".").
+                      "Default filename is: "+Args.DEFAULT_LOG_FILE_NAME+ '.').
                  create(Arg.LOG_FILE.shortOpt()));
       
       for (Arg arg : Arg.values()) {

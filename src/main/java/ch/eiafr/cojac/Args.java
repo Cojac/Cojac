@@ -94,9 +94,7 @@ public final class Args {
             }
             if (isSpecified(Arg.INSTRUMENT)) {
               Collections.addAll(files, commandLine.getArgs());
-              for(String f:appArgs) {
-                  files.add(f);
-              }
+                Collections.addAll(files, appArgs);
               appArgs=new String[0];
             } else {
               String[] remainingArgs = commandLine.getArgs();
