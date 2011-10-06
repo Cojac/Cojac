@@ -25,8 +25,8 @@ import ch.eiafr.cojac.Args;
 import ch.eiafr.cojac.CojacClassLoader;
 import ch.eiafr.cojac.InstrumentationStats;
 
-public class OpSizeClassloaderTest extends ClassLoaderTest {
-    public OpSizeClassloaderTest() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+public class WasteSizeClassloaderTest extends ClassLoaderTest {
+    public WasteSizeClassloaderTest() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         super();
     }
 
@@ -35,7 +35,7 @@ public class OpSizeClassloaderTest extends ClassLoaderTest {
         Args args = new Args();
         args.specify(Arg.ALL);
         args.specify(Arg.EXCEPTION);
-        args.specify(Arg.OP_SIZE);
+        args.specify(Arg.WASTE_SIZE);
 
         return new CojacClassLoader(new URL[0], args, stats);
     }

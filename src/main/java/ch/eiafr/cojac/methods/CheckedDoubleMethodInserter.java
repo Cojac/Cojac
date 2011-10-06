@@ -310,7 +310,94 @@ public final class CheckedDoubleMethodInserter implements MethodInserter {
 
     private static void addDmulCheckMethod(ClassVisitor cv, Methods methods, Reaction reaction, String classPath) {
         MethodVisitor mv = cv.visitMethod(ACC_PUBLIC + ACC_STATIC, methods.getMethod(DMUL), Signatures.CHECK_DOUBLE_BINARY, null, null);
-        mv.visitCode();
+        {
+          mv.visitCode();
+          Label l0 = new Label();
+          mv.visitLabel(l0);
+          mv.visitLineNumber(9, l0);
+          mv.visitVarInsn(DLOAD, 0);
+          mv.visitVarInsn(DLOAD, 2);
+          mv.visitInsn(DMUL);
+          mv.visitVarInsn(DSTORE, 6);
+          Label l1 = new Label();
+          mv.visitLabel(l1);
+          mv.visitLineNumber(11, l1);
+          mv.visitVarInsn(DLOAD, 0);
+          mv.visitLdcInsn(new Double("Infinity"));
+          mv.visitInsn(DCMPL);
+          Label l2 = new Label();
+          mv.visitJumpInsn(IFEQ, l2);
+          mv.visitVarInsn(DLOAD, 0);
+          mv.visitLdcInsn(new Double("-Infinity"));
+          mv.visitInsn(DCMPL);
+          mv.visitJumpInsn(IFEQ, l2);
+          mv.visitVarInsn(DLOAD, 2);
+          mv.visitLdcInsn(new Double("Infinity"));
+          mv.visitInsn(DCMPL);
+          mv.visitJumpInsn(IFEQ, l2);
+          mv.visitVarInsn(DLOAD, 2);
+          mv.visitLdcInsn(new Double("-Infinity"));
+          mv.visitInsn(DCMPL);
+          mv.visitJumpInsn(IFEQ, l2);
+          Label l3 = new Label();
+          mv.visitLabel(l3);
+          mv.visitLineNumber(12, l3);
+          mv.visitVarInsn(DLOAD, 6);
+          mv.visitLdcInsn(new Double("Infinity"));
+          mv.visitInsn(DCMPL);
+          Label l4 = new Label();
+          mv.visitJumpInsn(IFNE, l4);
+          Label l5 = new Label();
+          mv.visitLabel(l5);
+          mv.visitLineNumber(13, l5);
+          reaction.insertReactionCall(mv, RESULT_IS_POS_INF_MSG+"DMUL", methods, classPath);
+          mv.visitJumpInsn(GOTO, l2);
+          mv.visitLabel(l4);
+          mv.visitLineNumber(14, l4);
+          mv.visitVarInsn(DLOAD, 6);
+          mv.visitLdcInsn(new Double("-Infinity"));
+          mv.visitInsn(DCMPL);
+          Label l6 = new Label();
+          mv.visitJumpInsn(IFNE, l6);
+          Label l7 = new Label();
+          mv.visitLabel(l7);
+          mv.visitLineNumber(15, l7);
+          reaction.insertReactionCall(mv, RESULT_IS_NEG_INF_MSG+"DMUL", methods, classPath);
+          mv.visitJumpInsn(GOTO, l2);
+          mv.visitLabel(l6);
+          mv.visitLineNumber(16, l6);
+          mv.visitVarInsn(DLOAD, 6);
+          mv.visitInsn(DCONST_0);
+          mv.visitInsn(DCMPL);
+          mv.visitJumpInsn(IFNE, l2);
+          mv.visitVarInsn(DLOAD, 0);
+          mv.visitInsn(DCONST_0);
+          mv.visitInsn(DCMPL);
+          mv.visitJumpInsn(IFEQ, l2);
+          mv.visitVarInsn(DLOAD, 2);
+          mv.visitInsn(DCONST_0);
+          mv.visitInsn(DCMPL);
+          mv.visitJumpInsn(IFEQ, l2);
+          Label l8 = new Label();
+          mv.visitLabel(l8);
+          mv.visitLineNumber(17, l8);
+          reaction.insertReactionCall(mv, UNDERFLOW_MSG+"DDIV", methods, classPath);
+          mv.visitLabel(l2);
+          mv.visitLineNumber(21, l2);
+          mv.visitVarInsn(DLOAD, 6);
+          mv.visitInsn(DRETURN);
+          Label l9 = new Label();
+          mv.visitLabel(l9);
+          mv.visitLocalVariable("a", "D", null, l0, l9, 0);
+          mv.visitLocalVariable("b", "D", null, l0, l9, 2);
+          mv.visitLocalVariable("r", "D", null, l1, l9, 6);
+          mv.visitMaxs(4, 8);
+          mv.visitEnd();
+          }
+
+        /*
+
+         * mv.visitCode();
         mv.visitVarInsn(DLOAD, 0);
         mv.visitVarInsn(DLOAD, 2);
         mv.visitInsn(DMUL);
@@ -352,10 +439,114 @@ public final class CheckedDoubleMethodInserter implements MethodInserter {
         mv.visitInsn(DRETURN);
         mv.visitMaxs(4, 8);
         mv.visitEnd();
+        */
     }
 
     private static void addDdivCheckMethod(ClassVisitor cv, Methods methods, Reaction reaction, String classPath) {
         MethodVisitor mv = cv.visitMethod(ACC_PUBLIC + ACC_STATIC, methods.getMethod(DDIV), Signatures.CHECK_DOUBLE_BINARY, null, null);
+        {
+          mv.visitCode();
+          Label l0 = new Label();
+          mv.visitLabel(l0);
+          mv.visitLineNumber(25, l0);
+          mv.visitVarInsn(DLOAD, 0);
+          mv.visitVarInsn(DLOAD, 2);
+          mv.visitInsn(DDIV);
+          mv.visitVarInsn(DSTORE, 6);
+          Label l1 = new Label();
+          mv.visitLabel(l1);
+          mv.visitLineNumber(27, l1);
+          mv.visitVarInsn(DLOAD, 0);
+          mv.visitVarInsn(DLOAD, 0);
+          mv.visitInsn(DCMPL);
+          Label l2 = new Label();
+          mv.visitJumpInsn(IFNE, l2);
+          mv.visitVarInsn(DLOAD, 2);
+          mv.visitVarInsn(DLOAD, 2);
+          mv.visitInsn(DCMPL);
+          mv.visitJumpInsn(IFNE, l2);
+          mv.visitVarInsn(DLOAD, 6);
+          mv.visitVarInsn(DLOAD, 6);
+          mv.visitInsn(DCMPL);
+          mv.visitJumpInsn(IFEQ, l2);
+          Label l3 = new Label();
+          mv.visitLabel(l3);
+          mv.visitLineNumber(28, l3);
+          reaction.insertReactionCall(mv, RESULT_IS_NAN_MSG+"DDIV", methods, classPath);
+          Label l4 = new Label();
+          mv.visitJumpInsn(GOTO, l4);
+          mv.visitLabel(l2);
+          mv.visitLineNumber(29, l2);
+          mv.visitVarInsn(DLOAD, 0);
+          mv.visitLdcInsn(new Double("Infinity"));
+          mv.visitInsn(DCMPL);
+          mv.visitJumpInsn(IFEQ, l4);
+          mv.visitVarInsn(DLOAD, 0);
+          mv.visitLdcInsn(new Double("-Infinity"));
+          mv.visitInsn(DCMPL);
+          mv.visitJumpInsn(IFEQ, l4);
+          mv.visitVarInsn(DLOAD, 2);
+          mv.visitLdcInsn(new Double("Infinity"));
+          mv.visitInsn(DCMPL);
+          mv.visitJumpInsn(IFEQ, l4);
+          mv.visitVarInsn(DLOAD, 2);
+          mv.visitLdcInsn(new Double("-Infinity"));
+          mv.visitInsn(DCMPL);
+          mv.visitJumpInsn(IFEQ, l4);
+          Label l5 = new Label();
+          mv.visitLabel(l5);
+          mv.visitLineNumber(30, l5);
+          mv.visitVarInsn(DLOAD, 6);
+          mv.visitLdcInsn(new Double("Infinity"));
+          mv.visitInsn(DCMPL);
+          Label l6 = new Label();
+          mv.visitJumpInsn(IFNE, l6);
+          Label l7 = new Label();
+          mv.visitLabel(l7);
+          mv.visitLineNumber(31, l7);
+          reaction.insertReactionCall(mv, RESULT_IS_POS_INF_MSG+"DDIV", methods, classPath);
+          mv.visitJumpInsn(GOTO, l4);
+          mv.visitLabel(l6);
+          mv.visitLineNumber(32, l6);
+          mv.visitVarInsn(DLOAD, 6);
+          mv.visitLdcInsn(new Double("-Infinity"));
+          mv.visitInsn(DCMPL);
+          Label l8 = new Label();
+          mv.visitJumpInsn(IFNE, l8);
+          Label l9 = new Label();
+          mv.visitLabel(l9);
+          mv.visitLineNumber(33, l9);
+          reaction.insertReactionCall(mv, RESULT_IS_NEG_INF_MSG+"DDIV", methods, classPath);
+          mv.visitJumpInsn(GOTO, l4);
+          mv.visitLabel(l8);
+          mv.visitLineNumber(34, l8);
+          mv.visitVarInsn(DLOAD, 6);
+          mv.visitInsn(DCONST_0);
+          mv.visitInsn(DCMPL);
+          mv.visitJumpInsn(IFNE, l4);
+          mv.visitVarInsn(DLOAD, 0);
+          mv.visitInsn(DCONST_0);
+          mv.visitInsn(DCMPL);
+          mv.visitJumpInsn(IFEQ, l4);
+          Label l10 = new Label();
+          mv.visitLabel(l10);
+          mv.visitLineNumber(35, l10);
+          reaction.insertReactionCall(mv, UNDERFLOW_MSG+"DDIV", methods, classPath);
+          mv.visitLabel(l4);
+          mv.visitLineNumber(39, l4);
+          mv.visitVarInsn(DLOAD, 6);
+          mv.visitInsn(DRETURN);
+          Label l11 = new Label();
+          mv.visitLabel(l11);
+          mv.visitLocalVariable("a", "D", null, l0, l11, 0);
+          mv.visitLocalVariable("b", "D", null, l0, l11, 2);
+          mv.visitLocalVariable("r", "D", null, l1, l11, 6);
+          mv.visitMaxs(4, 8);
+          mv.visitEnd();
+        }
+
+        /*
+
         mv.visitCode();
         mv.visitVarInsn(DLOAD, 0);
         mv.visitVarInsn(DLOAD, 2);
@@ -415,6 +606,7 @@ public final class CheckedDoubleMethodInserter implements MethodInserter {
         mv.visitInsn(DRETURN);
         mv.visitMaxs(4, 8);
         mv.visitEnd();
+        */
     }
 
     private static void addDremCheckMethod(ClassVisitor cv, Methods methods, Reaction reaction, String classPath) {

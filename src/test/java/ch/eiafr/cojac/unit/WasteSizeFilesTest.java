@@ -23,13 +23,13 @@ import java.io.IOException;
 import ch.eiafr.cojac.Arg;
 import ch.eiafr.cojac.Args;
 
-public class OpSizeFilesTest extends BasicFilesTest {
-    public OpSizeFilesTest() throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+public class WasteSizeFilesTest extends BasicFilesTest {
+    public WasteSizeFilesTest() throws IOException, ClassNotFoundException, IllegalAccessException, InstantiationException {
         super();
     }
 
     @Override
     protected void specifyArgs(Args args) {
-        args.specify(Arg.OP_SIZE);
+        args.specify(Arg.WASTE_SIZE);
     }
 }

@@ -80,7 +80,7 @@ final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
     @Override
     public void visitIincInsn(int index, int value) {
         if (args.isOperationEnabled(Arg.IINC)) {
-            if (args.isSpecified(Arg.OP_SIZE) && methods != null) {//TODO MAKe better than methods != null
+            if (!args.isSpecified(Arg.WASTE_SIZE) && methods != null) {//TODO MAKe better than methods != null
                 visitVarInsn(ILOAD, index);
                 mv.visitLdcInsn(value);
                 mv.visitMethodInsn(INVOKESTATIC, classPath, methods.getMethod(IINC), Signatures.CHECK_INTEGER_BINARY);

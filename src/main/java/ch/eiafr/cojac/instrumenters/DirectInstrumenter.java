@@ -55,7 +55,11 @@ final class DirectInstrumenter implements OpCodeInstrumenter {
 
         reaction = getReactionType(args);
 
-        logFileName = args.getValue(Arg.LOG_FILE);
+        
+        if(args.isSpecified(Arg.CALL_BACK))
+          logFileName=args.getValue(Arg.CALL_BACK); // No, I'm no proud of that trick...
+        else 
+          logFileName = args.getValue(Arg.LOG_FILE);
 
         fillMethods();
     }
@@ -110,7 +114,8 @@ final class DirectInstrumenter implements OpCodeInstrumenter {
             return args.isSpecified(Arg.DETAILED_LOG) ? ReactionType.LOG : ReactionType.LOG_SMALLER;
         } else if (args.isSpecified(Arg.EXCEPTION)) {
             return ReactionType.EXCEPTION;
-        }
+        } else if (args.isSpecified(Arg.CALL_BACK))
+            return ReactionType.CALLBACK;
 
         throw new RuntimeException("System must be in one of this mode !");
     }

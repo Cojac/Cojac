@@ -25,6 +25,7 @@ public final class CheckedDoubles {
   public static final String PRECISION_MSG        ="Smearing: ";
   public static final String RESULT_IS_POS_INF_MSG="Result is +Infinity: ";
   public static final String RESULT_IS_NEG_INF_MSG="Result is -Infinity: ";
+  public static final String UNDERFLOW_MSG        ="Underflow: ";
   public static final String RESULT_IS_NAN_MSG    ="Result is NaN: ";
   public static final String VERY_CLOSE_MSG       ="Comparing very close: ";
   public static final String CANCELLATION_MSG     ="Cancellation: ";
@@ -93,6 +94,8 @@ public final class CheckedDoubles {
                 Reactions.react(reaction, RESULT_IS_POS_INF_MSG+"DMUL", logFileName);
             } else if (r == NEGATIVE_INFINITY) {
                 Reactions.react(reaction, RESULT_IS_NEG_INF_MSG+"DMUL", logFileName);
+            } else if (r == 0.0 && a!=0.0 && b!=0.0) {
+                Reactions.react(reaction, UNDERFLOW_MSG+"DMUL", logFileName);
             }
         }
 
@@ -109,6 +112,8 @@ public final class CheckedDoubles {
                 Reactions.react(reaction, RESULT_IS_POS_INF_MSG+"DDIV", logFileName);
             } else if (r == NEGATIVE_INFINITY) {
                 Reactions.react(reaction, RESULT_IS_NEG_INF_MSG+"DDIV", logFileName);
+            } else if (r == 0.0 && a!=0.0) {
+                Reactions.react(reaction, UNDERFLOW_MSG+"DDIV", logFileName);
             }
         }
 

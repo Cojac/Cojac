@@ -35,6 +35,7 @@ public final class Methods {
     public static final String LOG           = "logOverflow";
     public static final String LOG_SMALLER   = "logOverflowSmaller";
     public static final String THROW         = "throwOverflow";
+    //public static final String CALLBACK      = "callbackOverflow";
 
     private final Map<Integer, String> methods = new HashMap<Integer, String>(50);
 
