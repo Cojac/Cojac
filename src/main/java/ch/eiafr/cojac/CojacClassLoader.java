@@ -36,9 +36,11 @@ public final class CojacClassLoader extends URLClassLoader {
     private static final int BUFFER_SIZE = 8192;
 
     private static final String[] STANDARD_PACKAGES = {
-        "com.sun.", "java.", "javax.", "sun.", "sunw.", // std trusted packages
-        "ch.eiafr.cojac.models",                        // cojac method to protect
-        "org.slf4j"  //, ...                            // problematic libraries
+        "com.sun.", "java.", "javax.", "sun.", "sunw.",
+        "org.xml.sax.", "org.w3c.dom.", "org.omg.",
+        "org.ietf.jgss.",                            // std trusted packages
+        "ch.eiafr.cojac.models",                     // cojac method to protect
+        "org.slf4j"  //, ...                         // problematic libraries
     };
 
     private String[] bypassList = {};
