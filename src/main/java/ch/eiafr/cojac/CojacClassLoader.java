@@ -35,11 +35,12 @@ public final class CojacClassLoader extends URLClassLoader {
     private static final Pattern COMMA_PATTERN = Pattern.compile(";");
     private static final int BUFFER_SIZE = 8192;
 
-    private static final String[] STANDARD_PACKAGES = {
+    protected static final String[] STANDARD_PACKAGES = {
         "com.sun.", "java.", "javax.", "sun.", "sunw.",
         "org.xml.sax.", "org.w3c.dom.", "org.omg.",
         "org.ietf.jgss.",                            // std trusted packages
-        "ch.eiafr.cojac.models",                     // cojac method to protect
+        "com.apple.", "apple.",                      // awt and swing on Mac
+        "ch.eiafr.cojac.models",                     // cojac methods to protect
         "org.slf4j"  //, ...                         // problematic libraries
     };
 
