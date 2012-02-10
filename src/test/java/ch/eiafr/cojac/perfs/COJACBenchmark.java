@@ -21,7 +21,6 @@ package ch.eiafr.cojac.perfs;
 import ch.eiafr.cojac.Arg;
 import ch.eiafr.cojac.Args;
 import ch.eiafr.cojac.CojacClassLoader;
-import ch.eiafr.cojac.InstrumentationStats;
 import ch.eiafr.cojac.perfs.opcodes.*;
 import ch.eiafr.cojac.perfs.scimark.SciMark;
 import ch.eiafr.cojac.Agent;
@@ -35,7 +34,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.Calendar;
 import java.util.Random;
 import java.util.concurrent.Callable;
 
@@ -185,7 +183,7 @@ public class COJACBenchmark {
 
         benchs.bench("Instrumented", COJACBenchmark.<Runnable>getFromClassLoader(cls, false, false, false));
         benchs.bench("WASTE_SIZE", COJACBenchmark.<Runnable>getFromClassLoader(cls, true, false, false));
-        benchAgentRunnable("Agent", benchs, cls, false, false, false);
+        benchAgentRunnable("Agent",            benchs, cls, false, false, false);
         benchAgentRunnable("Agent WASTE_SIZE", benchs, cls, true, false, false);
         if (BENCH_FRAMES)
             benchs.bench("Frames", COJACBenchmark.<Runnable>getFromClassLoader(cls, false, true, false));

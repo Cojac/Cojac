@@ -34,7 +34,7 @@ public final class CojacClassLoader extends URLClassLoader {
 
     public CojacClassLoader(URL[] urls, CojacReferencesBuilder builder) {
         super(urls, ClassLoader.getSystemClassLoader());
-        builder.setLoader(this);
+        //builder.setLoader(this); //BAPST: I comment this... was it sound?
         references = builder.build();
         classInstrumenter = new ClassLoaderInstrumenter(references);
 /*

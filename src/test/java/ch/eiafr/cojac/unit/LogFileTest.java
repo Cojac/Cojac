@@ -22,7 +22,6 @@ import ch.eiafr.cojac.Arg;
 import ch.eiafr.cojac.Args;
 import ch.eiafr.cojac.CojacClassLoader;
 import ch.eiafr.cojac.CojacReferences.CojacReferencesBuilder;
-import ch.eiafr.cojac.InstrumentationStats;
 import org.junit.Assert;
 import org.junit.Test;
 
