@@ -18,7 +18,7 @@
 
 package ch.eiafr.cojac;
 
-import ch.eiafr.cojac.utils.ReflectionUtils;
+import ch.eiafr.cojac.CojacReferences.CojacReferencesBuilder;
 
 import java.beans.IntrospectionException;
 import java.io.File;
@@ -28,7 +28,6 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Map;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
@@ -78,35 +77,13 @@ final class ApplicationStarter {
     }
 
     private void launchClass(String className, URL... urls) throws MalformedURLException, IntrospectionException {
-        final InstrumentationStats stats = new InstrumentationStats();
-
         URL[] classpath = parseClassPath(args, urls);
 
         for (URL url : classpath) {
             addURLToSystemClassLoader(url);
         }
 
-        final ClassLoader loader = new CojacClassLoader(classpath, args, stats);
-
-        if (args.isSpecified(Arg.INSTRUMENTATION_STATS)) {
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                @Override
-                public void run() {
-                    stats.printInstrumentationStats(args);
-                }
-            });
-        }
-
-        if (args.isSpecified(Arg.RUNTIME_STATS)) {
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                @Override
-                public void run() {
-                    InstrumentationStats.printRuntimeStats(args,
-                        ReflectionUtils.<Map<String, Long>>getStaticFieldValue(
-                            loader, "ch.eiafr.cojac.models.Reactions", "EVENTS"));
-                }
-            });
-        }
+        final ClassLoader loader = new CojacClassLoader(classpath, new CojacReferencesBuilder(args));
 
         try {
             Thread.currentThread().setContextClassLoader(loader);

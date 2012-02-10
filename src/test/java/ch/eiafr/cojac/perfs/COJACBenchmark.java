@@ -24,6 +24,10 @@ import ch.eiafr.cojac.CojacClassLoader;
 import ch.eiafr.cojac.InstrumentationStats;
 import ch.eiafr.cojac.perfs.opcodes.*;
 import ch.eiafr.cojac.perfs.scimark.SciMark;
+import ch.eiafr.cojac.Agent;
+import ch.eiafr.cojac.CojacReferences;
+import ch.eiafr.cojac.CojacReferences.CojacReferencesBuilder;
+import ch.eiafr.cojac.unit.AgentTest;
 import com.wicht.benchmark.utils.Benchs;
 
 import javax.imageio.ImageIO;
@@ -31,6 +35,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.util.Calendar;
 import java.util.Random;
 import java.util.concurrent.Callable;
 
@@ -161,6 +166,8 @@ public class COJACBenchmark {
 
         benchs.bench("Instrumented", COJACBenchmark.<Callable<?>>getFromClassLoader(cls, false, false, false));
         benchs.bench("WASTE_SIZE", COJACBenchmark.<Callable<?>>getFromClassLoader(cls, true, false, false));
+        benchAgentCallable("Agent", benchs, cls, false, false, false);
+        benchAgentCallable("Agent WASTE_SIZE", benchs, cls, true, false, false);
         if (BENCH_FRAMES)
             benchs.bench("Frames", COJACBenchmark.<Callable<?>>getFromClassLoader(cls, false, true, false));
         if (BENCH_VARIABLES)
@@ -178,6 +185,8 @@ public class COJACBenchmark {
 
         benchs.bench("Instrumented", COJACBenchmark.<Runnable>getFromClassLoader(cls, false, false, false));
         benchs.bench("WASTE_SIZE", COJACBenchmark.<Runnable>getFromClassLoader(cls, true, false, false));
+        benchAgentRunnable("Agent", benchs, cls, false, false, false);
+        benchAgentRunnable("Agent WASTE_SIZE", benchs, cls, true, false, false);
         if (BENCH_FRAMES)
             benchs.bench("Frames", COJACBenchmark.<Runnable>getFromClassLoader(cls, false, true, false));
         if (BENCH_VARIABLES)
@@ -195,13 +204,16 @@ public class COJACBenchmark {
 
         Runnable run = getFromClassLoader(cls, false, false, false);
         setArray(generateIntRandomArray(size), run);
-
         benchs.bench("Instrumented", run);
+
+        benchAgentArrayRunnable("Agent", benchs, cls, false, false, false, size);
 
         run = getFromClassLoader(cls, true, false, false);
         setArray(generateIntRandomArray(size), run);
-
         benchs.bench("WASTE_SIZE", run);
+
+        benchAgentArrayRunnable("Agent WASTE_SIZE", benchs, cls, true, false, false, size);
+
         if (BENCH_FRAMES) {
             run = getFromClassLoader(cls, false, true, false);
             setArray(generateIntRandomArray(size), run);
@@ -215,7 +227,6 @@ public class COJACBenchmark {
         }
 
         setArray(generateIntRandomArray(size), runnable);
-
         benchs.bench("Not instrumented", runnable);
 
         benchs.generateCharts(false);
@@ -229,14 +240,15 @@ public class COJACBenchmark {
 
         Callable<?> run = getFromClassLoader(cls, false, false, false);
         setArray(generateIntRandomArray(size), run);
-
         benchs.bench("Instrumented", run);
+
+        benchAgentArrayCallable("Agent", benchs, cls, false, false, false, size);
 
         run = getFromClassLoader(cls, true, false, false);
         setArray(generateIntRandomArray(size), run);
-
         benchs.bench("WASTE_SIZE", run);
 
+        benchAgentArrayCallable("Agent WASTE_SIZE", benchs, cls, true, false, false, size);
 
         if (BENCH_FRAMES) {
             run = getFromClassLoader(cls, false, true, false);
@@ -251,7 +263,6 @@ public class COJACBenchmark {
         }
 
         setArray(generateIntRandomArray(size), runnable);
-
         benchs.bench("Not instrumented", runnable);
 
         benchs.generateCharts(false);
@@ -267,13 +278,15 @@ public class COJACBenchmark {
 
         Runnable run = getFromClassLoader(cls, false, false, false);
         setImage(bufferedImage, run);
-
         benchs.bench("Instrumented", run);
+
+        benchAgentImage("Agent", benchs, cls, false, false, false, bufferedImage);
 
         run = getFromClassLoader(cls, true, false, false);
         setImage(bufferedImage, run);
-
         benchs.bench("WASTE_SIZE", run);
+
+        benchAgentImage("Agent WASTE_SIZE", benchs, cls, true, false, false, bufferedImage);
 
         if (BENCH_FRAMES) {
             run = getFromClassLoader(cls, false, true, false);
@@ -310,12 +323,69 @@ public class COJACBenchmark {
     }
 
     private static <T> T getFromClassLoader(String cls, boolean wasteSize, boolean frames, boolean variables) throws Exception {
-        InstrumentationStats stats = new InstrumentationStats();
+
+        CojacReferencesBuilder builder = new CojacReferencesBuilder(getArgs(wasteSize, frames, variables));
+        ClassLoader classLoader = new CojacClassLoader(new URL[0], builder);
+        Class<?> instanceClass = classLoader.loadClass(cls);
+        return (T) instanceClass.newInstance();
+    }
+
+    private static <T> T getFromAgentClassLoader(String cls, boolean wasteSize, boolean frames, boolean variables) throws Exception {
+        Class<?> instanceClass = ClassLoader.getSystemClassLoader().loadClass(cls);
+        AgentTest.instrumentation.retransformClasses(instanceClass);
+        return (T) instanceClass.newInstance();
+    }
+
+    private static Agent benchAgent(String cls, boolean wasteSize, boolean frames, boolean variables) throws Exception {
+        CojacReferencesBuilder builder = new CojacReferencesBuilder(getArgs(wasteSize, frames, variables));
+        builder.setSplitter(new CojacReferences.AgentSplitter());
+        Agent agent = new Agent(builder.build());
+        AgentTest.instrumentation.addTransformer(agent, true);
+        return agent;
+    }
+
+    private static void benchAgentCallable(String name, Benchs benchs, String cls, boolean wasteSize, boolean frames, boolean variables) throws Exception {
+        Agent agent = benchAgent(cls, wasteSize, frames, variables);
+        benchs.bench(name, COJACBenchmark.<Callable<?>> getFromAgentClassLoader(cls, false, false, false));
+        AgentTest.instrumentation.removeTransformer(agent);
+    }
+
+    private static void benchAgentRunnable(String name, Benchs benchs, String cls, boolean wasteSize, boolean frames, boolean variables) throws Exception {
+        Agent agent = benchAgent(cls, wasteSize, frames, variables);
+        benchs.bench(name, COJACBenchmark.<Runnable> getFromAgentClassLoader(cls, false, false, false));
+        AgentTest.instrumentation.removeTransformer(agent);
+    }
+
+    private static void benchAgentArrayCallable(String name, Benchs benchs, String cls, boolean wasteSize, boolean frames, boolean variables, int size) throws Exception {
+        Agent agent = benchAgent(cls, wasteSize, frames, variables);
+        Callable<?> callable = getFromAgentClassLoader(cls, wasteSize, frames, variables);
+        setArray(generateIntRandomArray(size), callable);
+        benchs.bench(name, callable);
+        AgentTest.instrumentation.removeTransformer(agent);
+    }
+
+    private static void benchAgentArrayRunnable(String name, Benchs benchs, String cls, boolean wasteSize, boolean frames, boolean variables, int size) throws Exception {
+        Agent agent = benchAgent(cls, wasteSize, frames, variables);
+        Runnable run = getFromAgentClassLoader(cls, wasteSize, frames, variables);
+        setArray(generateIntRandomArray(size), run);
+        benchs.bench(name, run);
+        AgentTest.instrumentation.removeTransformer(agent);
+    }
+
+    private static void benchAgentImage(String name, Benchs benchs, String cls, boolean wasteSize, boolean frames, boolean variables, BufferedImage bufferedImage) throws Exception {
+        Agent agent = benchAgent(cls, wasteSize, frames, variables);
+        Runnable run = getFromAgentClassLoader(cls, wasteSize, frames, variables);
+        setImage(bufferedImage, run);
+        benchs.bench(name, run);
+        AgentTest.instrumentation.removeTransformer(agent);
+    }
+
+    private static Args getArgs(boolean wasteSize, boolean frames, boolean variables) {
         Args args = new Args();
         args.specify(Arg.ALL);
-        args.specify(Arg.PRINT);
+        // args.specify(Arg.PRINT);
         args.specify(Arg.FILTER);
-        //args.specify(Arg.EXCEPTION);
+        args.specify(Arg.EXCEPTION);
 
         if (wasteSize) {
             args.specify(Arg.WASTE_SIZE);
@@ -328,12 +398,6 @@ public class COJACBenchmark {
         if (variables) {
             args.specify(Arg.VARIABLES);
         }
-
-        ClassLoader classLoader = new CojacClassLoader(new URL[0], args, stats);
-
-        Class<?> instanceClass = classLoader.loadClass(cls);
-
-        return (T) instanceClass.newInstance();
+        return args;
     }
-
 }

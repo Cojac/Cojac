@@ -42,6 +42,10 @@ public enum Arg {
     INSTRUMENTATION_STATS("t"),
     VARIABLES("Xvariables"),  //Deprecated, not maintained
     NO_CANCELLATION("XnoCancellation"), //not ready
+    JMX_ENABLE("jmxenable"),
+    JMX_HOST("jmxhost"),
+    JMX_PORT("jmxport"),
+    JMX_NAME("jmxname"),
 
     INTS("ints"),
     FLOATS("floats"),
@@ -195,6 +199,8 @@ public enum Arg {
 
 //      options.addOption("v", false, "Enable COJAC to add variables in instrumented bytecode");
 
+        options.addOption(Arg.JMX_ENABLE.shortOpt(), false, "Enable JMX feature.");
+
 //      options.addOption(OptionBuilder.
 //          withLongOpt("frames").
 //          withDescription("Compute Java Frames in bytecode (instrumentation will be slower)").
@@ -226,6 +232,24 @@ public enum Arg {
             withDescription("Signal overflows by writing to a log file. " +
                 "Default filename is: " + Args.DEFAULT_LOG_FILE_NAME + '.').
             create(Arg.LOG_FILE.shortOpt()));
+
+        options.addOption(OptionBuilder.
+            withArgName("host").
+            hasArg().
+            withDescription("Set the host for remote JMX connection (Default is localhost).").
+            create(JMX_HOST.shortOpt()));
+
+        options.addOption(OptionBuilder.
+            withArgName("port").
+            hasArg().
+            withDescription("Set the port for remote JMX connection (Default is 5017).").
+            create(JMX_PORT.shortOpt()));
+
+        options.addOption(OptionBuilder.
+            withArgName("MBean-name").
+            hasArg().
+            withDescription("Set the name of the remote MBean (Default is COJAC).").
+            create(JMX_NAME.shortOpt()));
 
         for (Arg arg : Arg.values()) {
             if (arg.isOperator()) {

@@ -60,19 +60,13 @@ public final class SimpleClassInstrumenter implements ClassInstrumenter {
 
     private byte[] transformBytecode(byte[] byteCode, Methods methods) {
         ClassReader cr = new ClassReader(byteCode);
-        ClassWriter cw = new ClassWriter(cr, getFlags());
+        ClassWriter cw = new ClassWriter(cr, CojacReferences.getFlags(args));
 
-        cr.accept(new CojacClassVisitor(cw, stats, args, methods, reaction, factory), ClassReader.EXPAND_FRAMES);
+        CojacAnnotationVisitor cav = new CojacAnnotationVisitor(stats);
+        cr.accept(cav, ClassReader.EXPAND_FRAMES);
+        cr.accept(new CojacClassVisitor(cw, stats, args, methods, reaction, factory, cav), ClassReader.EXPAND_FRAMES);
 
         return cw.toByteArray();
-    }
-
-    private int getFlags() {
-        if (args.isSpecified(Arg.FRAMES)) {
-            return ClassWriter.COMPUTE_FRAMES;
-        }
-
-        return ClassWriter.COMPUTE_MAXS;
     }
 
     private static final class MethodCollector extends EmptyVisitor {

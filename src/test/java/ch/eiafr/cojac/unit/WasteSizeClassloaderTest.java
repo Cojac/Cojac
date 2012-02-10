@@ -22,6 +22,7 @@ import ch.eiafr.cojac.Arg;
 import ch.eiafr.cojac.Args;
 import ch.eiafr.cojac.CojacClassLoader;
 import ch.eiafr.cojac.InstrumentationStats;
+import ch.eiafr.cojac.CojacReferences.CojacReferencesBuilder;
 
 import java.net.URL;
 
@@ -37,6 +38,6 @@ public class WasteSizeClassloaderTest extends ClassLoaderTest {
         args.specify(Arg.EXCEPTION);
         args.specify(Arg.WASTE_SIZE);
 
-        return new CojacClassLoader(new URL[0], args, stats);
+        return new CojacClassLoader(new URL[0],  new CojacReferencesBuilder(args));
     }
 }

@@ -18,39 +18,26 @@
 
 package ch.eiafr.cojac;
 
-import ch.eiafr.cojac.instrumenters.ClassLoaderOpSizeInstrumenterFactory;
-import ch.eiafr.cojac.instrumenters.OpCodeInstrumenterFactory;
-import ch.eiafr.cojac.instrumenters.SimpleOpCodeFactory;
-import ch.eiafr.cojac.reactions.ClassLoaderReaction;
-import ch.eiafr.cojac.utils.ReflectionUtils;
+import ch.eiafr.cojac.CojacReferences.CojacReferencesBuilder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.regex.Pattern;
 
 public final class CojacClassLoader extends URLClassLoader {
-    private static final Pattern COMMA_PATTERN = Pattern.compile(";");
     private static final int BUFFER_SIZE = 8192;
 
-    protected static final String[] STANDARD_PACKAGES = {
-        "com.sun.", "java.", "javax.", "sun.", "sunw.",
-        "org.xml.sax.", "org.w3c.dom.", "org.omg.",
-        "org.ietf.jgss.",                            // std trusted packages
-        "com.apple.", "apple.",                      // awt and swing on Mac
-        "ch.eiafr.cojac.models",                     // cojac methods to protect
-        "org.slf4j"  //, ...                         // problematic libraries
-    };
+    private transient final ClassInstrumenter classInstrumenter;
+    private transient final CojacReferences references;
 
-    private String[] bypassList = {};
-
-    private final ClassInstrumenter classInstrumenter;
-
-    public CojacClassLoader(URL[] urls, Args args, InstrumentationStats stats) {
+    public CojacClassLoader(URL[] urls, CojacReferencesBuilder builder) {
         super(urls, ClassLoader.getSystemClassLoader());
-
+        builder.setLoader(this);
+        references = builder.build();
+        classInstrumenter = new ClassLoaderInstrumenter(references);
+/*
         if (args.isSpecified(Arg.FILTER)) {
             ReflectionUtils.setStaticFieldValue(this, "ch.eiafr.cojac.models.Reactions", "filtering", true);
         }
@@ -67,7 +54,8 @@ public final class CojacClassLoader extends URLClassLoader {
         }
 
         classInstrumenter = new ClassLoaderInstrumenter(args, stats, new ClassLoaderReaction(args), factory);
-    }
+*/
+      }
 
     @Override
     protected Class<?> loadClass(String className, boolean resolve) throws ClassNotFoundException {
@@ -76,7 +64,7 @@ public final class CojacClassLoader extends URLClassLoader {
             return cls;
         }
 
-        if (!hasToBeInstrumented(className)) {  //BAPST (against AccessibleContext problem under XP ?)
+        if (!references.hasToBeInstrumented(className)) {  //BAPST (against AccessibleContext problem under XP ?)
             return getParent().loadClass(className);
         }
 
@@ -86,7 +74,7 @@ public final class CojacClassLoader extends URLClassLoader {
             throw new ClassNotFoundException("Cannot load class: " + className);
         }
 
-        if (hasToBeInstrumented(className)) {
+        if (references.hasToBeInstrumented(className)) {
             //log("Instrument class " + className);
 
             //long startTime = System.currentTimeMillis();
@@ -146,24 +134,6 @@ public final class CojacClassLoader extends URLClassLoader {
         }
 
         return null;
-    }
-
-    private static String[] parseBypassList(String bypassList) {
-        return COMMA_PATTERN.split(bypassList);
-    }
-
-    private boolean hasToBeInstrumented(String className) {
-        for (String standardPackage : STANDARD_PACKAGES) {
-            if (className.startsWith(standardPackage)) {
-                return false;
-            }
-        }
-        for (String prefix : bypassList) {
-            if (className.startsWith(prefix))
-                return false;
-        }
-
-        return true;
     }
 
     private Class<?> resolve(String className, boolean resolve, byte[] classBytes) throws ClassNotFoundException {

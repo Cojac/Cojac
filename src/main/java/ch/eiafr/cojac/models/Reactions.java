@@ -19,16 +19,23 @@
 package ch.eiafr.cojac.models;
 
 import ch.eiafr.cojac.utils.ReflectionUtils;
+import ch.eiafr.cojac.InstrumentationStats;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class Reactions {
     //Do not inline, used by reflection, do not make final
     private static boolean filtering;
+
+    // Do not inline, used by reflection, do not make final
+    public static InstrumentationStats stats;
+
+    public static final AtomicBoolean react = new AtomicBoolean(true);
 
     private Reactions() {
         throw new AssertionError();
@@ -60,24 +67,35 @@ public final class Reactions {
         }
     }
 
-    public static boolean filter(String location) {
-        if (!filtering) {
-            return true;
-        }
-
+    public static boolean filter(String location) {  //BAPST TODO: review use of 'filtering'
         Long old = EVENTS.putIfAbsent(location, 1L);
 
         if (old != null) {
             EVENTS.put(location, old + 1);
+        }
 
+        if (filtering && old == null) {
+            return true;
+        } else if (filtering) {
             return false;
         }
 
+        stats.notifyChange(location);
+
         return true;
+        //if (!filtering) { return true; }
+        //Long old = EVENTS.putIfAbsent(location, 1L);
+        //if (old != null) {
+        //    EVENTS.put(location, old + 1);
+        //    return false;
+        //}
+        //return true;
     }
 
     // identifier must match Methods.PRINT definition
     public static void printOverflow(String instructionName) {
+        if (!react.get())
+            return;
         StackTraceElement[] t = new Throwable().getStackTrace();
 
         int i = 1;
@@ -101,6 +119,8 @@ public final class Reactions {
 
     // identifier must match Methods.PRINT_SMALLER definition
     public static void printOverflowSmaller(String instructionName) {
+        if (!react.get())
+            return;
         StackTraceElement[] t = new Throwable().getStackTrace();
 
         int i = 1;
@@ -119,6 +139,8 @@ public final class Reactions {
 
     // identifier must match Methods.LOG definition
     public static void logOverflow(String instructionName, String logFileName) {
+        if (!react.get())
+            return;
         StackTraceElement[] t = new Throwable().getStackTrace();
 
         int i = 1;
@@ -163,6 +185,8 @@ public final class Reactions {
 
     // identifier must match Methods.LOG_SMALLER definition
     public static void logOverflowSmaller(String instructionName, String logFileName) {
+        if (!react.get())
+            return;
         StackTraceElement[] t = new Throwable().getStackTrace();
 
         int i = 1;
@@ -190,6 +214,8 @@ public final class Reactions {
 
     // identifier must match Methods.THROW definition
     public static void throwOverflow(String instructionName) {
+        if (!react.get())
+            return;
         StackTraceElement[] t = new Throwable().getStackTrace();
 
         int i = 1;

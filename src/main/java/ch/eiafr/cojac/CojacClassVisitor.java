@@ -36,7 +36,9 @@ final class CojacClassVisitor extends ClassAdapter {
     private boolean first = true;
     private String classPath;
 
-    CojacClassVisitor(ClassVisitor cv, InstrumentationStats stats, Args args, Methods methods, Reaction reaction, OpCodeInstrumenterFactory factory) {
+    private CojacAnnotationVisitor cav;
+
+    CojacClassVisitor(ClassVisitor cv, InstrumentationStats stats, Args args, Methods methods, Reaction reaction, OpCodeInstrumenterFactory factory, CojacAnnotationVisitor cav) {
         super(cv);
 
         this.stats = stats;
@@ -44,6 +46,7 @@ final class CojacClassVisitor extends ClassAdapter {
         this.methods = methods;
         this.reaction = reaction;
         this.factory = factory;
+        this.cav = cav;
 
         methodAdder = methods != null ? new CojacMethodAdder(args, reaction) : null;
     }
@@ -59,6 +62,12 @@ final class CojacClassVisitor extends ClassAdapter {
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
         MethodVisitor mv = cv.visitMethod(access, name, desc, signature, exceptions);
 
+        String currentMethodID = classPath + '/' + name;
+
+        if (cav.isClassAnnoted() || cav.isMethodAnnoted(currentMethodID)) {
+            return mv;
+        }
+
         if (methods != null && first && "<init>".equals(name)) {
             first = false;
 
@@ -71,6 +80,13 @@ final class CojacClassVisitor extends ClassAdapter {
 
     }
 
+    private static String getSignature(String method) {
+        return method.substring(method.indexOf(' ') + 1);
+    }
+
+    private static String getName(String fullid) {
+        return fullid.substring(0, fullid.indexOf(' '));
+    }
 
     private MethodVisitor instrumentMethod(MethodVisitor parentMv, int access, String desc) {
         MethodVisitor mv = new CojacCheckerMethodVisitor(access, desc, parentMv, stats, args, methods, reaction, classPath, factory);

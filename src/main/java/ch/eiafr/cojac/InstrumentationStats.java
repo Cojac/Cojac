@@ -25,14 +25,81 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public final class InstrumentationStats {
+import javax.management.AttributeChangeNotification;
+import javax.management.MBeanNotificationInfo;
+import javax.management.NotificationBroadcasterSupport;
+
+import ch.eiafr.cojac.models.Reactions;
+
+public final class InstrumentationStats extends NotificationBroadcasterSupport implements CojacMXBean {
 
     private final Map<Arg, Counter> counters = new EnumMap<Arg, Counter>(Arg.class);
     private long startTime;
+    private final Object BLACKLIST_LOCK = new Object();
+    private List<String> blacklist = new ArrayList<String>();
+    private long changes = 0;
+
+    public Map<Arg, Counter> getCounters() {
+        return counters;
+    }
+
+    @Override
+    public Map<String, Integer> getCountersMBean() {
+        Map<String, Integer> ctrs = new HashMap<String, Integer>();
+        synchronized (counters) {
+            for (Entry<Arg, Counter> ctr : counters.entrySet()) {
+                ctrs.put(ctr.getKey().name(), ctr.getValue().getValue());
+            }
+        }
+        return ctrs;
+    }
+
+    @Override
+    public List<String> getBlacklist() {
+        synchronized (blacklist) {
+            return blacklist;
+        }
+    }
+
+    @Override
+    public Map<String, Long> getEvent() {
+        return Reactions.EVENTS;
+    }
+
+    @Override
+    public void start() {
+        Reactions.react.set(true);
+    }
+
+    @Override
+    public void stop() {
+        Reactions.react.set(false);
+    }
+
+    @Override
+    public MBeanNotificationInfo[] getNotificationInfo() {
+        String[] ntfTypes = new String[]{AttributeChangeNotification.ATTRIBUTE_CHANGE};
+        String ntfClassName = AttributeChangeNotification.class.getName();
+        String ntfDescription = "A COJAC event occured !";
+        MBeanNotificationInfo ntfInfo = new MBeanNotificationInfo(ntfTypes, ntfClassName, ntfDescription);
+        return new MBeanNotificationInfo[]{ntfInfo};
+    }
+
+    public void notifyChange(String location) {
+        AttributeChangeNotification notification = new AttributeChangeNotification(this, changes++, System.currentTimeMillis(), location, "EVENT", "Map<String, Long>", null, Reactions.EVENTS);
+        sendNotification(notification);
+    }
+
+    protected void addBlackList(String annoted) {
+        synchronized (BLACKLIST_LOCK) {
+            blacklist.add(annoted);
+        }
+    }
 
     int getCounterValue(Arg arg) {
         check(arg);
@@ -58,7 +125,7 @@ public final class InstrumentationStats {
         startTime = System.nanoTime();
     }
 
-    long getDuration() {
+    public long getDuration() {
         return System.nanoTime() - startTime;
     }
 
@@ -134,7 +201,7 @@ public final class InstrumentationStats {
         System.out.println(builder.toString());
     }
 
-    private static final class Counter {
+    protected static final class Counter {
         private int value;
 
         private int getValue() {

@@ -41,10 +41,14 @@ public final class Args {
 
     static final String DEFAULT_LOG_FILE_NAME = "COJAC_Report.log";
     static final String DEFAULT_OUTPUT_DIR = "." + File.separatorChar + "COJAC_Output" + File.separatorChar;
+    static final String DEFAULT_JMX_HOST = "localhost";
+    static final String DEFAULT_JMX_PORT = "5217";
+    static final String DEFAULT_JMX_NAME = "COJAC";
 
     private static String USAGE =
         "java -jar cojac.jar [OPTIONS] -- YourApp [appArgs]     (run mode)\n"
             + "or:            [OPTIONS] -i File [Files]          (batch mode)\n"
+            + "or: java -javaagent:cojac.jar=\"[OPTIONS]\" YourApp [appArgs]\n"
             + "The \"--\" is needed when appArgs conflict with Cojac options";
 
     public Args() {
@@ -147,6 +151,18 @@ public final class Args {
         if (isSpecified(Arg.NO_CANCELLATION)) {
             //TODO: consider -XnoCancellation
         }
+
+        if (isOperationEnabled(Arg.JMX_ENABLE)) {
+            if (values.get(Arg.JMX_HOST).getValue().equals("")) {
+                values.get(Arg.JMX_HOST).setValue(DEFAULT_JMX_HOST);
+            }
+            if (values.get(Arg.JMX_PORT).getValue().equals("")) {
+                values.get(Arg.JMX_PORT).setValue(DEFAULT_JMX_PORT);
+            }
+            if (values.get(Arg.JMX_NAME).getValue().equals("")) {
+                values.get(Arg.JMX_NAME).setValue(DEFAULT_JMX_NAME);
+            }
+        }
     }
 
     private void disableAll() {
@@ -216,7 +232,10 @@ public final class Args {
     }
 
     public boolean isOperationEnabled(Arg arg) {
-        return isSpecified(arg) || isSpecified(Arg.ALL) || arg.getParent() != null && isSpecified(arg.getParent());
+        if (arg.ordinal() >= Arg.INTS.ordinal()) {
+            return isSpecified(arg) || isSpecified(Arg.ALL) || arg.getParent() != null && isSpecified(arg.getParent());
+        } 
+        return isSpecified(arg) || arg.getParent() != null && isSpecified(arg.getParent());
     }
 
     public List<String> getFiles() {

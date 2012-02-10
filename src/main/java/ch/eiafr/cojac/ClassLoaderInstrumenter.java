@@ -29,30 +29,24 @@ public final class ClassLoaderInstrumenter implements ClassInstrumenter {
     private final Reaction reaction;
     private final OpCodeInstrumenterFactory factory;
 
-    public ClassLoaderInstrumenter(Args args, InstrumentationStats stats, Reaction reaction, OpCodeInstrumenterFactory factory) {
+    public ClassLoaderInstrumenter(CojacReferences references) {
         super();
 
-        this.args = args;
-        this.stats = stats;
-        this.reaction = reaction;
-        this.factory = factory;
+        this.args = references.getArgs();
+        this.stats = references.getStats();
+        this.reaction = references.getReaction();
+        this.factory = references.getOpCodeInstrumenterFactory();
     }
 
     @Override
     public byte[] instrument(byte[] byteCode) {
         ClassReader cr = new ClassReader(byteCode);
-        ClassWriter cw = new ClassWriter(cr, getFlags());
+        ClassWriter cw = new ClassWriter(cr, CojacReferences.getFlags(args));
 
-        cr.accept(new CojacClassVisitor(cw, stats, args, null, reaction, factory), ClassReader.EXPAND_FRAMES);
+        CojacAnnotationVisitor cav = new CojacAnnotationVisitor(stats);
+        cr.accept(cav, ClassReader.EXPAND_FRAMES);
+        cr.accept(new CojacClassVisitor(cw, stats, args, null, reaction, factory, cav), ClassReader.EXPAND_FRAMES);
 
         return cw.toByteArray();
-    }
-
-    private int getFlags() {
-        if (args.isSpecified(Arg.FRAMES)) {
-            return ClassWriter.COMPUTE_FRAMES;
-        }
-
-        return ClassWriter.COMPUTE_MAXS;
     }
 }

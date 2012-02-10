@@ -21,6 +21,7 @@ package ch.eiafr.cojac.unit;
 import ch.eiafr.cojac.Arg;
 import ch.eiafr.cojac.Args;
 import ch.eiafr.cojac.CojacClassLoader;
+import ch.eiafr.cojac.CojacReferences.CojacReferencesBuilder;
 import ch.eiafr.cojac.InstrumentationStats;
 
 import java.net.URL;
@@ -37,6 +38,6 @@ public class BasicClassloaderTest extends ClassLoaderTest {
         args.specify(Arg.ALL);
         args.specify(Arg.EXCEPTION);
 
-        return new CojacClassLoader(new URL[0], args, stats);
+        return new CojacClassLoader(new URL[0], new CojacReferencesBuilder(args));
     }
 }

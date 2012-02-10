@@ -18,15 +18,14 @@
 
 package ch.eiafr.cojac.poly;
 
-import ch.eiafr.cojac.Args;
-import ch.eiafr.cojac.CojacClassLoader;
-import ch.eiafr.cojac.InstrumentationStats;
-
 import java.net.URL;
+
+import ch.eiafr.cojac.CojacClassLoader;
+import ch.eiafr.cojac.CojacReferences.CojacReferencesBuilder;
 
 public class PolyTest {
     public static void main(String[] a) throws Exception {
-        CojacClassLoader classLoader = new CojacClassLoader(new URL[]{}, new Args(), new InstrumentationStats());
+        CojacClassLoader classLoader = new CojacClassLoader(new URL[]{}, new CojacReferencesBuilder());
 
         Object instance = classLoader.loadClass("ch.eiafr.cojac.poly.Simple").newInstance();
 

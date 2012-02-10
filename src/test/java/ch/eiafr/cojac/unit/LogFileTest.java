@@ -21,6 +21,7 @@ package ch.eiafr.cojac.unit;
 import ch.eiafr.cojac.Arg;
 import ch.eiafr.cojac.Args;
 import ch.eiafr.cojac.CojacClassLoader;
+import ch.eiafr.cojac.CojacReferences.CojacReferencesBuilder;
 import ch.eiafr.cojac.InstrumentationStats;
 import org.junit.Assert;
 import org.junit.Test;
@@ -41,7 +42,7 @@ public class LogFileTest {
         args.specify(Arg.ALL);
         args.setValue(Arg.LOG_FILE, logFile);
 
-        CojacClassLoader classLoader = new CojacClassLoader(new URL[]{}, args, new InstrumentationStats());
+        CojacClassLoader classLoader = new CojacClassLoader(new URL[]{}, new CojacReferencesBuilder(args));
 
         Class<?> classz = classLoader.loadClass("ch.eiafr.cojac.unit.SimpleOverflows");
 
