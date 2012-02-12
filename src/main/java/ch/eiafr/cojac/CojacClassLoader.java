@@ -34,7 +34,7 @@ public final class CojacClassLoader extends URLClassLoader {
 
     public CojacClassLoader(URL[] urls, CojacReferencesBuilder builder) {
         super(urls, ClassLoader.getSystemClassLoader());
-        //builder.setLoader(this); //BAPST: I comment this... was it sound?
+        builder.setLoader(this); //BAPST: I comment this... was it sound?
         references = builder.build();
         classInstrumenter = new ClassLoaderInstrumenter(references);
 /*
@@ -63,8 +63,10 @@ public final class CojacClassLoader extends URLClassLoader {
         if (cls != null) {
             return cls;
         }
-
-        if (!references.hasToBeInstrumented(className)) {  //BAPST (against AccessibleContext problem under XP ?)
+        
+        if (references==null ||                                //BAPST nasty path  CojacClassLoader()->
+                                                               //  CojacReferencesBuilder.build ->...CojacClassLoader.loadClass
+                !references.hasToBeInstrumented(className)) {  //BAPST (against AccessibleContext problem under XP ?)
             return getParent().loadClass(className);
         }
 
@@ -89,7 +91,7 @@ public final class CojacClassLoader extends URLClassLoader {
             cw.toByteArray();*/
 
             classBytes = classInstrumenter.instrument(classBytes);
-
+            System.out.println("+*+ Cojac instrumented +"+className);
             /*System.out.println("After");
 
             cr = new ClassReader(classBytes);
