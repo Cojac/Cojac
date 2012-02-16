@@ -65,8 +65,8 @@ public class COJACBenchmark {
         bench(52, "DCMP Benchmark", new DCMPCallable(), "ch.eiafr.cojac.perfs.opcodes.IADDCallable");
 
         bench(1, "Rabin Karp", new StringSearchingRunnable(), "ch.eiafr.cojac.perfs.StringSearchingRunnable");
-        bench(1, "Sweeping Plane", new SweepingSorterRunnable(), "ch.eiafr.cojac.perfs.SweepingSorterRunnable");
-        bench(1, "Traveling Salesman", new TravelingSalesmanRunnable(), "ch.eiafr.cojac.perfs.TravelingSalesmanRunnable");
+//        bench(1, "Sweeping Plane", new SweepingSorterRunnable(), "ch.eiafr.cojac.perfs.SweepingSorterRunnable");
+//        bench(1, "Traveling Salesman", new TravelingSalesmanRunnable(), "ch.eiafr.cojac.perfs.TravelingSalesmanRunnable");
 
         BufferedImage image1 = ImageIO.read(COJACBenchmark.class.getResource("/images/matthew2.jpg"));
         benchWithImages(1, "FFT", new FFTRunnable(), "ch.eiafr.cojac.perfs.FFTRunnable", image1);
@@ -156,11 +156,11 @@ public class COJACBenchmark {
     private static void bench(int actions, String title, Callable<?> runnable, String cls) throws Exception {
         Benchs benchs = new Benchs(title);
         initBench(actions, benchs);
+        benchs.bench("Not instrumented", runnable);
         benchs.bench("Instrumented", COJACBenchmark.<Callable<?>>getFromClassLoader(cls, false));
         benchs.bench("WASTE_SIZE", COJACBenchmark.<Callable<?>>getFromClassLoader(cls, true));
         benchAgentVariant("Agent",            benchs, cls, false, false, -1, null);
         benchAgentVariant("Agent WASTE_SIZE", benchs, cls, true, false, -1, null);
-        benchs.bench("Not instrumented", runnable);
         benchs.generateCharts(false);
         benchs.printResults();
     }
@@ -168,11 +168,11 @@ public class COJACBenchmark {
     private static void bench(int actions, String title, Runnable runnable, String cls) throws Exception {
         Benchs benchs = new Benchs(title);
         initBench(actions, benchs);
+        benchs.bench("Not instrumented", runnable);
         benchs.bench("Instrumented", COJACBenchmark.<Runnable>getFromClassLoader(cls, false));
         benchs.bench("WASTE_SIZE", COJACBenchmark.<Runnable>getFromClassLoader(cls, true));
         benchAgentVariant("Agent",            benchs, cls, false, true, -1, null);
         benchAgentVariant("Agent WASTE_SIZE", benchs, cls, true, true, -1, null);
-        benchs.bench("Not instrumented", runnable);
         benchs.generateCharts(false);
         benchs.printResults();
     }
@@ -180,73 +180,52 @@ public class COJACBenchmark {
     private static void benchWithArrays(int actions, String title, Runnable runnable, String cls, int size) throws Exception {
         Benchs benchs = new Benchs(title);
         initBench(actions, benchs);
-        Runnable run =null;
-        {
-            run = getFromClassLoader(cls, false);
-            setArray(generateIntRandomArray(size), run);
-            benchs.bench("Instrumented", run);
-        }
+        benchWithArrays1(benchs, "Not instrumented", runnable, size);
+        benchWithArrays1(benchs, "Instrumented", (Runnable)getFromClassLoader(cls, false), size);
+        benchWithArrays1(benchs, "WASTE_SIZE", (Runnable)getFromClassLoader(cls, true), size);
         benchAgentVariant("Agent", benchs, cls, false, true, size, null);
-        {
-            run = getFromClassLoader(cls, true);
-            setArray(generateIntRandomArray(size), run);
-            benchs.bench("WASTE_SIZE", run);
-        }
-        benchAgentVariant("Agent", benchs, cls, true, true, size, null);
-        {
-            setArray(generateIntRandomArray(size), runnable);
-            benchs.bench("Not instrumented", runnable);
-        }
+        benchAgentVariant("Agent WASTE_SIZE", benchs, cls, true, true, size, null);
         benchs.generateCharts(false);
         benchs.printResults();
+    }
+    
+    private static void benchWithArrays1(Benchs benchs, String item, Runnable runnable, int size) throws Exception {
+        setArray(generateIntRandomArray(size), runnable);
+        benchs.bench(item, runnable);
     }
 
     private static void benchWithArrays(int actions, String title, Callable<?> runnable, String cls, int size) throws Exception {
         Benchs benchs = new Benchs(title);
         initBench(actions, benchs);
-        Callable<?> run = null;
-        {
-            run = getFromClassLoader(cls, false);
-            setArray(generateIntRandomArray(size), run);
-            benchs.bench("Instrumented", run);
-        }
-        benchAgentVariant("Agent", benchs, cls, false, false, size, null);
-        {
-            run = getFromClassLoader(cls, true);
-            setArray(generateIntRandomArray(size), run);
-            benchs.bench("WASTE_SIZE", run);
-        }
-        benchAgentVariant("Agent", benchs, cls, true, false, size, null);
-        {
-            setArray(generateIntRandomArray(size), runnable);
-            benchs.bench("Not instrumented", runnable);
-        }
+        benchWithArrays2(benchs, "Not instrumented", runnable, size);
+        benchWithArrays2(benchs, "Instrumented", (Callable<?>)getFromClassLoader(cls, false), size);
+        benchWithArrays2(benchs, "WASTE_SIZE", (Callable<?>)getFromClassLoader(cls, true), size);
+        benchAgentVariant("Agent", benchs, cls, false, true, size, null);
+        benchAgentVariant("Agent WASTE_SIZE", benchs, cls, true, true, size, null);
         benchs.generateCharts(false);
         benchs.printResults();
+    }
+
+    private static void benchWithArrays2(Benchs benchs, String item, Callable<?>  runnable, int size) throws Exception {
+        setArray(generateIntRandomArray(size), runnable);
+        benchs.bench(item, runnable);
     }
 
     private static void benchWithImages(int actions, String title, Runnable runnable, String cls, BufferedImage bufferedImage) throws Exception {
         Benchs benchs = new Benchs(title);
         initBench(actions, benchs);
-        Runnable run = null;
-        {
-            run = getFromClassLoader(cls, false);
-            setImage(bufferedImage, run);
-            benchs.bench("Instrumented", run);
-        }
+        benchWithImages1(benchs, "Not instrumented", runnable, bufferedImage);
+        benchWithImages1(benchs, "Instrumented", (Runnable)getFromClassLoader(cls, false), bufferedImage);
+        benchWithImages1(benchs, "WASTE_SIZE", (Runnable)getFromClassLoader(cls, true), bufferedImage);
         benchAgentVariant("Agent", benchs, cls, false, true, -1, bufferedImage);
-        {
-            run = getFromClassLoader(cls, true);
-            setImage(bufferedImage, run);
-            benchs.bench("WASTE_SIZE", run);
-        }
         benchAgentVariant("Agent WASTE_SIZE", benchs, cls, true, true, -1, bufferedImage);
-        {
-            setImage(bufferedImage, runnable);
-            benchs.bench("Not instrumented", runnable);
-        }
         benchs.generateCharts(false);
         benchs.printResults();
+    }
+
+    private static void benchWithImages1(Benchs benchs, String item, Runnable runnable, BufferedImage bufferedImage) throws Exception {
+        setImage(bufferedImage, runnable);
+        benchs.bench(item, runnable);
     }
 
     private static void initBench(int actions, Benchs benchs) {
