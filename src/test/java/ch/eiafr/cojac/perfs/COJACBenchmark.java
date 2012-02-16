@@ -65,8 +65,8 @@ public class COJACBenchmark {
         bench(52, "DCMP Benchmark", new DCMPCallable(), "ch.eiafr.cojac.perfs.opcodes.IADDCallable");
 
         bench(1, "Rabin Karp", new StringSearchingRunnable(), "ch.eiafr.cojac.perfs.StringSearchingRunnable");
-//        bench(1, "Sweeping Plane", new SweepingSorterRunnable(), "ch.eiafr.cojac.perfs.SweepingSorterRunnable");
-//        bench(1, "Traveling Salesman", new TravelingSalesmanRunnable(), "ch.eiafr.cojac.perfs.TravelingSalesmanRunnable");
+        bench(1, "Sweeping Plane", new SweepingSorterRunnable(), "ch.eiafr.cojac.perfs.SweepingSorterRunnable");
+        bench(1, "Traveling Salesman", new TravelingSalesmanRunnable(), "ch.eiafr.cojac.perfs.TravelingSalesmanRunnable");
 
         BufferedImage image1 = ImageIO.read(COJACBenchmark.class.getResource("/images/matthew2.jpg"));
         benchWithImages(1, "FFT", new FFTRunnable(), "ch.eiafr.cojac.perfs.FFTRunnable", image1);
@@ -200,8 +200,8 @@ public class COJACBenchmark {
         benchWithArrays2(benchs, "Not instrumented", runnable, size);
         benchWithArrays2(benchs, "Instrumented", (Callable<?>)getFromClassLoader(cls, false), size);
         benchWithArrays2(benchs, "WASTE_SIZE", (Callable<?>)getFromClassLoader(cls, true), size);
-        benchAgentVariant("Agent", benchs, cls, false, true, size, null);
-        benchAgentVariant("Agent WASTE_SIZE", benchs, cls, true, true, size, null);
+        benchAgentVariant("Agent", benchs, cls, false, false, size, null);
+        benchAgentVariant("Agent WASTE_SIZE", benchs, cls, true, false, size, null);
         benchs.generateCharts(false);
         benchs.printResults();
     }
