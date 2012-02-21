@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Premain-Class: ch.eiafr.cojac.models.ReflexionAgent
+Can-Retransform-Classes: True
+Can-Redefine-Classes: True

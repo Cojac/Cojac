@@ -3,6 +3,13 @@ package ch.eiafr.cojac.models;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Field;
 
+/** This class makes the cojac-agent-test.jar, used for 
+ * benchmarks and junit tests.
+ * 
+ * @author Vincent Pasquier, frederic.bapst
+ *
+ */
+
 public class ReflexionAgent {
     public static void premain(String agentArgs, Instrumentation inst) {
         try {
