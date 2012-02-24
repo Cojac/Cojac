@@ -1,0 +1,17 @@
+As is, Cojac is built with jdk6.21, then works well with jvm6 or jvm7.
+It compiles with jdk7, but some of the tests fail ("missing frame").
+
+Updating ASM to 4.0 doesn't directly help, but will be done soon anyway.
+
+Using COMPUTE_FRAMES instead of COMPUTE_MAXS solves the build/test issue, 
+but the result causes sometimes LinkageError at runtime with jvm7. It is
+strange, as with the -javaagent mode, the SystemClassLoader is the only 
+classloader at runtime (ok, except the bootclassloader). So it seems that
+somehow, instrumenting a class C causes another "load class C" event, and that
+such "reentrant" class loadings don't get instrumented, and we get 2 versions
+of the same class. Just a hypothesis (hinted by 
+http://osdir.com/ml/java.objectweb.asm/2007-07/msg00007.html).
+
+I suspect the original problem of failing tests under jdk7 built to have its
+root in the various "inserted methods" (log, print...), which asmified bytecode
+have been gathered quite a long time ago (jvm5 code?). This should be updated.
