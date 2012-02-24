@@ -22,8 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.objectweb.asm.AnnotationVisitor;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.commons.EmptyVisitor;
+import org.objectweb.asm.Opcodes;
 
 import ch.eiafr.cojac.models.NoCojacInstrumentation;
 
@@ -51,7 +53,7 @@ public final class CojacAnnotationVisitor extends EmptyVisitor {
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
         first = false;
         lastVisitedMethod = classPath + "/" + name;
-        return this;
+        return super.visitMethod(access, name, desc, signature, exceptions);
     }
 
     @Override
@@ -66,7 +68,7 @@ public final class CojacAnnotationVisitor extends EmptyVisitor {
                 stats.addBlackList(lastVisitedMethod);
             }
         }
-        return this;
+        return super.visitAnnotation(name, visible);
     }
 
     public boolean isClassAnnoted() {

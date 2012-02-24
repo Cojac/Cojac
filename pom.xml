@@ -156,29 +156,9 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>asm</groupId>
-            <artifactId>asm</artifactId>
-            <version>3.3</version>
-        </dependency>
 
-        <dependency>
-            <groupId>asm</groupId>
-            <artifactId>asm-commons</artifactId>
-            <version>3.3</version>
-        </dependency>
 
-        <dependency>
-            <groupId>asm</groupId>
-            <artifactId>asm-tree</artifactId>
-            <version>3.3</version>
-        </dependency>
 
-        <dependency>
-            <groupId>asm</groupId>
-            <artifactId>asm-analysis</artifactId>
-            <version>3.3</version>
-        </dependency>
 
         <dependency>
             <groupId>commons-cli</groupId>
@@ -234,6 +214,34 @@
             <version>1.0</version>
             <scope>system</scope>
             <systemPath>${basedir}/benchmark-utils/mt-13.jar</systemPath>
+        </dependency>
+        <dependency>
+        	<groupId>org.ow2.asm</groupId>
+        	<artifactId>asm</artifactId>
+        	<version>4.0</version>
+        	<type>jar</type>
+        	<scope>runtime</scope>
+        </dependency>
+        <dependency>
+        	<groupId>org.ow2.asm</groupId>
+        	<artifactId>asm-commons</artifactId>
+        	<version>4.0</version>
+        	<type>jar</type>
+        	<scope>runtime</scope>
+        </dependency>
+        <dependency>
+        	<groupId>org.ow2.asm</groupId>
+        	<artifactId>asm-tree</artifactId>
+        	<version>4.0</version>
+        	<type>jar</type>
+        	<scope>runtime</scope>
+        </dependency>
+        <dependency>
+        	<groupId>org.ow2.asm</groupId>
+        	<artifactId>asm-analysis</artifactId>
+        	<version>4.0</version>
+        	<type>jar</type>
+        	<scope>runtime</scope>
         </dependency>
     </dependencies>
 

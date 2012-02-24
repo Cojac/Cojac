@@ -21,11 +21,11 @@ package ch.eiafr.cojac;
 import ch.eiafr.cojac.instrumenters.OpCodeInstrumenterFactory;
 import ch.eiafr.cojac.methods.CojacMethodAdder;
 import ch.eiafr.cojac.reactions.Reaction;
-import org.objectweb.asm.ClassAdapter;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 
-final class CojacClassVisitor extends ClassAdapter {
+final class CojacClassVisitor extends ClassVisitor {
     private final CojacMethodAdder methodAdder;
     private final OpCodeInstrumenterFactory factory;
     private final InstrumentationStats stats;
@@ -39,7 +39,7 @@ final class CojacClassVisitor extends ClassAdapter {
     private CojacAnnotationVisitor cav;
 
     CojacClassVisitor(ClassVisitor cv, InstrumentationStats stats, Args args, Methods methods, Reaction reaction, OpCodeInstrumenterFactory factory, CojacAnnotationVisitor cav) {
-        super(cv);
+        super(Opcodes.ASM4, cv);
 
         this.stats = stats;
         this.args = args;

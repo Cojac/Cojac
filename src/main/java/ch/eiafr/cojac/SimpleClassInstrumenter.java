@@ -23,7 +23,6 @@ import ch.eiafr.cojac.reactions.Reaction;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.commons.EmptyVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
