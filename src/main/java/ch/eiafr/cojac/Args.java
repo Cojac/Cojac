@@ -46,10 +46,11 @@ public final class Args {
     static final String DEFAULT_JMX_NAME = "COJAC";
 
     private static String USAGE =
-        "java -jar cojac.jar [OPTIONS] -- YourApp [appArgs]     (run mode)\n"
-            + "or:            [OPTIONS] -i File [Files]          (batch mode)\n"
-            + "or: java -javaagent:cojac.jar=\"[OPTIONS]\" YourApp [appArgs]\n"
-            + "The \"--\" is needed when appArgs conflict with Cojac options";
+             "java -javaagent:cojac.jar=\"[OPTIONS]\" YourApp [appArgs]\n"
+           + "... or one of the old modes:\n"
+           + "java -jar cojac.jar [OPTIONS] -- YourApp [appArgs]\n"
+           + "java -jar cojac.jar [OPTIONS] -i File [Files]     \n"
+           + "The \"--\" is needed when appArgs conflict with Cojac options";
 
     public Args() {
         super();

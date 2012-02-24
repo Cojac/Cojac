@@ -38,10 +38,9 @@ public enum Arg {
     CLASSPATH("cp"),
     NONE("n"),
     BYPASS("b"),
-    FRAMES("Xframes"),     // not official
     INSTRUMENTATION_STATS("t"),
     VARIABLES("Xvariables"),  //Deprecated, not maintained
-    NO_CANCELLATION("XnoCancellation"), //not ready
+    NO_CANCELLATION("XnoCancellation"), //not yet ready
     JMX_ENABLE("jmxenable"),
     JMX_HOST("jmxhost"),
     JMX_PORT("jmxport"),
@@ -188,8 +187,6 @@ public enum Arg {
             "instead of via an additional method call. This generally degrades" +
             "the RAM & CPU overhead, but occasionnally it could be better." +
             "(this option might disappear in future releases)");
-        options.addOption(Arg.FRAMES.shortOpt(),
-            false, "Compute Java Frames in bytecode (instrumentation will be slower)");
 
         //feature not ready!
 //      options.addOption(Arg.NO_CANCELLATION.shortOpt(),
@@ -216,7 +213,7 @@ public enum Arg {
 
         options.addOption(OptionBuilder.
             withLongOpt("callback").
-            withArgName("meth-id").
+            withArgName("meth").
             hasArg().
             withDescription("Signal overflows by calling " +
                 "a particular user-defined method whose definition " +
@@ -246,7 +243,7 @@ public enum Arg {
             create(JMX_PORT.shortOpt()));
 
         options.addOption(OptionBuilder.
-            withArgName("MBean-name").
+            withArgName("MBean-id").
             hasArg().
             withDescription("Set the name of the remote MBean (Default is COJAC).").
             create(JMX_NAME.shortOpt()));

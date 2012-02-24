@@ -37,7 +37,7 @@ public final class Agent implements ClassFileTransformer {
         if (!references.hasToBeInstrumented(className)) {
             return classfileBuffer;
         }
-        //System.out.println("*+* Agent instrumented +"+className);
+        //System.out.println("*+* Agent instrumented +"+className +" FROM "+loader.getClass().getName());
         return instrumenter.instrument(classfileBuffer);
     }
 }

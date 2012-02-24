@@ -45,6 +45,7 @@ import ch.eiafr.cojac.reactions.Reaction;
 import ch.eiafr.cojac.utils.ReflectionUtils;
 
 public final class CojacReferences {
+    public static final String BYPASS_SEPARATOR = ";";
 
     private final Args args;
     private final InstrumentationStats stats;
@@ -93,15 +94,11 @@ public final class CojacReferences {
     }
 
     public static int getFlags(Args args) {
-        if (args.isSpecified(Arg.FRAMES)) {
-            return ClassWriter.COMPUTE_FRAMES;
-        }
-
-        return ClassWriter.COMPUTE_FRAMES;//return ClassWriter.COMPUTE_MAXS;
+        return ClassWriter.COMPUTE_MAXS;
+        //return ClassWriter.COMPUTE_FRAMES;//return ClassWriter.COMPUTE_MAXS;
     }
 
     public static final class CojacReferencesBuilder {
-
         private final Args args;
         private ClassLoader loader;
         private InstrumentationStats stats;
@@ -165,7 +162,8 @@ public final class CojacReferences {
                 });
             }
 
-            if (args.isSpecified(Arg.BYPASS)) {
+            if (args.isSpecified(Arg.BYPASS) && args.getValue(Arg.BYPASS).length()>0) {
+                sbBypassList.append(BYPASS_SEPARATOR);
                 sbBypassList.append(args.getValue(Arg.BYPASS));
             }
 
@@ -223,7 +221,7 @@ public final class CojacReferences {
     public static class CojacClassLoaderSplitter implements Splitter {
         @Override
         public String[] split(String list) {
-            return list.split(";");
+            return list.split(BYPASS_SEPARATOR);
         }
     }
 
