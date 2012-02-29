@@ -83,7 +83,7 @@
                         <exclude>ch/eiafr/cojac/unit/Tests.java</exclude>
                         <exclude>ch/eiafr/cojac/poly/PolyTest.java</exclude>
                     </excludes>
-				    <argLine>-javaagent:${basedir}/src/test/resources/cojac-agent-test.jar</argLine>
+				    <argLine>-XX:-UseSplitVerifier -javaagent:${basedir}/src/test/resources/cojac-agent-test.jar</argLine>
 	            </configuration>
             </plugin>
 
