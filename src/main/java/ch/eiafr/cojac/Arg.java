@@ -23,23 +23,19 @@ import org.apache.commons.cli.Options;
 import org.objectweb.asm.Opcodes;
 
 public enum Arg {
-    INSTRUMENT("i"),
     HELP("h"),
     ALL("a"),
     PRINT("c"),
     PATH("p"),
     EXCEPTION("e"),
-    WASTE_SIZE("w"),
     DETAILED_LOG("d"),
     RUNTIME_STATS("s"),
     CALL_BACK("k"),
     LOG_FILE("l"),
     FILTER("f"),
-    CLASSPATH("cp"),
     NONE("n"),
     BYPASS("b"),
     INSTRUMENTATION_STATS("t"),
-    VARIABLES("Xvariables"),  //Deprecated, not maintained
     NO_CANCELLATION("XnoCancellation"), //not yet ready
     JMX_ENABLE("jmxenable"),
     JMX_HOST("jmxhost"),
@@ -142,8 +138,6 @@ public enum Arg {
     static Options createOptions() {
         Options options = new Options();
 
-        options.addOption(Arg.INSTRUMENT.shortOpt(),
-            "instrument", false, "Instrument the files (batch mode). Several options cannot be used in this mode");
         options.addOption(Arg.NONE.shortOpt(),
             "none", false, "Don't instrument any instruction");
         options.addOption(Arg.BYPASS.shortOpt(),
@@ -159,8 +153,6 @@ public enum Arg {
             "all", false, "Instrument every operation (int, long, cast)");
         options.addOption(Arg.FILTER.shortOpt(),
             "filter", false, "Report each problem only once per faulty line");
-        options.addOption(Arg.CLASSPATH.shortOpt(),
-            "classpath", true, "Specify the classpath");
         options.addOption(Arg.INSTRUMENTATION_STATS.shortOpt(),
             "stats", false, "Print instrumentation statistics");
         options.addOption(Arg.RUNTIME_STATS.shortOpt(),
@@ -181,12 +173,6 @@ public enum Arg {
 
         options.addOption(Arg.DETAILED_LOG.shortOpt(),
             "detailed", false, "logs the full stack trace (combined with -c or -l)");
-
-        options.addOption(Arg.WASTE_SIZE.shortOpt(),
-            "withinStack", false, "Instruments so that the checks lie directly on the stack " +
-            "instead of via an additional method call. This generally degrades" +
-            "the RAM & CPU overhead, but occasionnally it could be better." +
-            "(this option might disappear in future releases)");
 
         //feature not ready!
 //      options.addOption(Arg.NO_CANCELLATION.shortOpt(),

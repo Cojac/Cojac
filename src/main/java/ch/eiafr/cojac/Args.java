@@ -98,25 +98,19 @@ public final class Args {
                     values.get(arg).setValue(commandLine.getOptionValue(arg.shortOpt()));
                 }
             }
-            if (isSpecified(Arg.INSTRUMENT)) {
-                Collections.addAll(files, commandLine.getArgs());
-                Collections.addAll(files, appArgs);
-                appArgs = new String[0];
-            } else {
-                String[] remainingArgs = commandLine.getArgs();
-                if (remainingArgs.length > 0) {
-                    files.add(remainingArgs[0]);
-                }
-                int nAppArgs = appArgs.length + remainingArgs.length - files.size();
-                String[] auxAppArgs = appArgs;
-                appArgs = new String[nAppArgs];
-                int i = 0;
-                for (; i + 1 < remainingArgs.length; i++) {
-                    appArgs[i] = remainingArgs[i + 1];
-                }
-                for (String auxAppArg : auxAppArgs) {
-                    appArgs[i++] = auxAppArg;
-                }
+            String[] remainingArgs = commandLine.getArgs();
+            if (remainingArgs.length > 0) {
+                files.add(remainingArgs[0]);
+            }
+            int nAppArgs = appArgs.length + remainingArgs.length - files.size();
+            String[] auxAppArgs = appArgs;
+            appArgs = new String[nAppArgs];
+            int i = 0;
+            for (; i + 1 < remainingArgs.length; i++) {
+                appArgs[i] = remainingArgs[i + 1];
+            }
+            for (String auxAppArg : auxAppArgs) {
+                appArgs[i++] = auxAppArg;
             }
             //Collections.addAll(files, commandLine.getArgs());
         } catch (ParseException e) {

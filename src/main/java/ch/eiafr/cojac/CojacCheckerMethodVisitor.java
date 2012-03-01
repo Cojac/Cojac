@@ -79,17 +79,13 @@ final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
     @Override
     public void visitIincInsn(int index, int value) {
         if (args.isOperationEnabled(Arg.IINC)) {
-            if (!args.isSpecified(Arg.WASTE_SIZE) && methods != null) {//TODO MAKe better than methods != null
+            if ( methods != null) {//TODO MAKe better than methods != null
                 visitVarInsn(ILOAD, index);
                 mv.visitLdcInsn(value);
                 mv.visitMethodInsn(INVOKESTATIC, classPath, methods.getMethod(IINC), Signatures.CHECK_INTEGER_BINARY);
                 visitVarInsn(ISTORE, index);
             } else {
-                if (args.isSpecified(Arg.VARIABLES)) {
-                    iincWithVariables(index, value);
-                } else {
-                    iinc(index, value);
-                }
+                iinc(index, value);
             }
 
             stats.incrementCounterValue(Arg.IINC);
@@ -121,27 +117,6 @@ final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
         visitVarInsn(ISTORE, index);
     }
 
-    private void iincWithVariables(int index, int value) {
-        int r = newLocal(Type.INT_TYPE);
-
-        visitVarInsn(ILOAD, index);
-        mv.visitLdcInsn(value);
-        mv.visitInsn(IADD);
-        visitVarInsn(ISTORE, r);
-        visitVarInsn(ILOAD, index);
-        visitVarInsn(ILOAD, r);
-        mv.visitInsn(IXOR);
-        mv.visitLdcInsn(value);
-        visitVarInsn(ILOAD, r);
-        mv.visitInsn(IXOR);
-        mv.visitInsn(IAND);
-        Label l0 = new Label();
-        mv.visitJumpInsn(IFGE, l0);
-        reaction.insertReactionCall(mv, "Overflow : IINC", methods, classPath);
-        mv.visitLabel(l0);
-        visitVarInsn(ILOAD, r);
-        visitVarInsn(ISTORE, index);
-    }
 
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc) {

@@ -20,7 +20,6 @@ package ch.eiafr.cojac.perfs;
 
 import ch.eiafr.cojac.Arg;
 import ch.eiafr.cojac.Args;
-import ch.eiafr.cojac.CojacClassLoader;
 import ch.eiafr.cojac.perfs.opcodes.*;
 import ch.eiafr.cojac.perfs.scimark.SciMark;
 import ch.eiafr.cojac.Agent;
@@ -108,7 +107,7 @@ public class COJACBenchmark {
         new Linpack().run_benchmark();
 
         System.out.println("Start linpack instrumented");
-        Object linpack = getFromClassLoader("ch.eiafr.cojac.perfs.Linpack", false);
+        Object linpack = null; //TODO getFromClassLoader("ch.eiafr.cojac.perfs.Linpack", false);
         Method m = linpack.getClass().getMethod("run_benchmark");
 
         m.invoke(linpack);
@@ -119,7 +118,7 @@ public class COJACBenchmark {
         new SciMark().run(false);
 
         System.out.println("Start SciMMark2 instrumented");
-        Object scimark = getFromClassLoader("ch.eiafr.cojac.perfs.scimark.SciMark", false);
+        Object scimark = null; //TODO getFromClassLoader("ch.eiafr.cojac.perfs.scimark.SciMark", false);
         Method m = scimark.getClass().getMethod("run", Boolean.TYPE);
 
         m.invoke(scimark, false);
@@ -157,10 +156,7 @@ public class COJACBenchmark {
         Benchs benchs = new Benchs(title);
         initBench(actions, benchs);
         benchs.bench("Not instrumented", runnable);
-        benchs.bench("Instrumented", COJACBenchmark.<Callable<?>>getFromClassLoader(cls, false));
-        benchs.bench("WASTE_SIZE", COJACBenchmark.<Callable<?>>getFromClassLoader(cls, true));
         benchAgentVariant("Agent",            benchs, cls, false, false, -1, null);
-        benchAgentVariant("Agent WASTE_SIZE", benchs, cls, true, false, -1, null);
         benchs.generateCharts(false);
         benchs.printResults();
     }
@@ -169,10 +165,7 @@ public class COJACBenchmark {
         Benchs benchs = new Benchs(title);
         initBench(actions, benchs);
         benchs.bench("Not instrumented", runnable);
-        benchs.bench("Instrumented", COJACBenchmark.<Runnable>getFromClassLoader(cls, false));
-        benchs.bench("WASTE_SIZE", COJACBenchmark.<Runnable>getFromClassLoader(cls, true));
         benchAgentVariant("Agent",            benchs, cls, false, true, -1, null);
-        benchAgentVariant("Agent WASTE_SIZE", benchs, cls, true, true, -1, null);
         benchs.generateCharts(false);
         benchs.printResults();
     }
@@ -181,10 +174,7 @@ public class COJACBenchmark {
         Benchs benchs = new Benchs(title);
         initBench(actions, benchs);
         benchWithArrays1(benchs, "Not instrumented", runnable, size);
-        benchWithArrays1(benchs, "Instrumented", (Runnable)getFromClassLoader(cls, false), size);
-        benchWithArrays1(benchs, "WASTE_SIZE", (Runnable)getFromClassLoader(cls, true), size);
         benchAgentVariant("Agent", benchs, cls, false, true, size, null);
-        benchAgentVariant("Agent WASTE_SIZE", benchs, cls, true, true, size, null);
         benchs.generateCharts(false);
         benchs.printResults();
     }
@@ -198,10 +188,7 @@ public class COJACBenchmark {
         Benchs benchs = new Benchs(title);
         initBench(actions, benchs);
         benchWithArrays2(benchs, "Not instrumented", runnable, size);
-        benchWithArrays2(benchs, "Instrumented", (Callable<?>)getFromClassLoader(cls, false), size);
-        benchWithArrays2(benchs, "WASTE_SIZE", (Callable<?>)getFromClassLoader(cls, true), size);
         benchAgentVariant("Agent", benchs, cls, false, false, size, null);
-        benchAgentVariant("Agent WASTE_SIZE", benchs, cls, true, false, size, null);
         benchs.generateCharts(false);
         benchs.printResults();
     }
@@ -215,10 +202,7 @@ public class COJACBenchmark {
         Benchs benchs = new Benchs(title);
         initBench(actions, benchs);
         benchWithImages1(benchs, "Not instrumented", runnable, bufferedImage);
-        benchWithImages1(benchs, "Instrumented", (Runnable)getFromClassLoader(cls, false), bufferedImage);
-        benchWithImages1(benchs, "WASTE_SIZE", (Runnable)getFromClassLoader(cls, true), bufferedImage);
         benchAgentVariant("Agent", benchs, cls, false, true, -1, bufferedImage);
-        benchAgentVariant("Agent WASTE_SIZE", benchs, cls, true, true, -1, bufferedImage);
         benchs.generateCharts(false);
         benchs.printResults();
     }
@@ -243,15 +227,6 @@ public class COJACBenchmark {
         }
 
         benchs.setFolder(graphFolder.getAbsolutePath());
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T> T getFromClassLoader(String cls, boolean wasteSize) throws Exception {
-
-        CojacReferencesBuilder builder = new CojacReferencesBuilder(getArgs(wasteSize));
-        ClassLoader classLoader = new CojacClassLoader(new URL[0], builder);
-        Class<?> instanceClass = classLoader.loadClass(cls);
-        return (T) instanceClass.newInstance();
     }
 
     @SuppressWarnings("unchecked")
@@ -301,10 +276,6 @@ public class COJACBenchmark {
         args.specify(Arg.PRINT);
         args.specify(Arg.FILTER);
         //args.specify(Arg.EXCEPTION);
-
-        if (wasteSize) {
-            args.specify(Arg.WASTE_SIZE);
-        }
 
         return args;
     }

@@ -34,11 +34,6 @@ public final class CojacMethodAdder {
     private static final Collection<MethodInserter> INSERTERS = new ArrayList<MethodInserter>(3);
 
     static {
-        INSERTERS.add(new CheckedIntMethodInserter());
-        INSERTERS.add(new CheckedCastMethodInserter());
-        INSERTERS.add(new CheckedLongMethodInserter());
-        INSERTERS.add(new CheckedDoubleMethodInserter());
-        INSERTERS.add(new CheckedFloatMethodInserter());
     }
 
     public CojacMethodAdder(Args args, Reaction reaction) {
@@ -51,10 +46,8 @@ public final class CojacMethodAdder {
     public void insertMethods(ClassVisitor cv, Methods methods, String classPath) {
         reaction.insertReactionMethod(cv, methods);
 
-        if (!args.isSpecified(Arg.WASTE_SIZE)) {
-            for (MethodInserter inserter : INSERTERS) {
-                inserter.insertMethods(cv, args, methods, reaction, classPath);
-            }
+        for (MethodInserter inserter : INSERTERS) {
+            inserter.insertMethods(cv, args, methods, reaction, classPath);
         }
     }
 }

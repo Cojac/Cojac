@@ -29,62 +29,6 @@ import static org.junit.Assert.assertTrue;
 
 public class CliParsingTest {
     @Test
-    public void cli01_instr() {
-        String[] args = {"-l", "-i", "-d", "--", "a.jar", "b.jar"};
-        String[] files = {"a.jar", "b.jar"};
-        String[] appArgs = {};
-        Args a = new Args();
-        boolean b = a.parse(args);
-        assertTrue(b);
-        String[] effFiles = a.getFiles().toArray(new String[0]);
-        String[] effAppArgs = a.getAppArgs();
-        assertTrue(Arrays.equals(files, effFiles));
-        assertTrue(Arrays.equals(appArgs, effAppArgs));
-    }
-
-    @Test
-    public void cli02_instr() {
-        String[] args = {"-l", "-i", "-d", "a.jar", "b.jar"};
-        String[] files = {"a.jar", "b.jar"};
-        String[] appArgs = {};
-        Args a = new Args();
-        boolean b = a.parse(args);
-        assertTrue(b);
-        String[] effFiles = a.getFiles().toArray(new String[0]);
-        String[] effAppArgs = a.getAppArgs();
-        assertTrue(Arrays.equals(files, effFiles));
-        assertTrue(Arrays.equals(appArgs, effAppArgs));
-    }
-
-    @Test
-    public void cli03_run() {
-        String[] args = {"-l", "-d", "a.jar", "b.jar"};
-        String[] files = {"a.jar"};
-        String[] appArgs = {"b.jar"};
-        Args a = new Args();
-        boolean b = a.parse(args);
-        assertTrue(b);
-        String[] effFiles = a.getFiles().toArray(new String[0]);
-        String[] effAppArgs = a.getAppArgs();
-        assertTrue(Arrays.equals(files, effFiles));
-        assertTrue(Arrays.equals(appArgs, effAppArgs));
-    }
-
-    @Test
-    public void cli04_run() {
-        String[] args = {"-l", "-d", "--", "a.jar", "b.jar", "-l"};
-        String[] files = {"a.jar"};
-        String[] appArgs = {"b.jar", "-l"};
-        Args a = new Args();
-        boolean b = a.parse(args);
-        assertTrue(b);
-        String[] effFiles = a.getFiles().toArray(new String[0]);
-        String[] effAppArgs = a.getAppArgs();
-        assertTrue(Arrays.equals(files, effFiles));
-        assertTrue(Arrays.equals(appArgs, effAppArgs));
-    }
-
-    @Test
     public void cli05_help() {
         String[] args = {"-h"};
         String[] files = {};

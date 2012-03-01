@@ -138,11 +138,7 @@ public final class CojacReferences {
             this.reaction = new ClassLoaderReaction(args);
             this.sbBypassList = new StringBuilder(STANDARD_PACKAGES);
 
-            if (!args.isSpecified(Arg.WASTE_SIZE)) {
-                this.factory = new ClassLoaderOpSizeInstrumenterFactory(args, stats);
-            } else {
-                this.factory = new SimpleOpCodeFactory(args, stats);
-            }
+            this.factory = new ClassLoaderOpSizeInstrumenterFactory(args, stats);
 
             if (args.isSpecified(Arg.FILTER)) {
                 ReflectionUtils.setStaticFieldValue(loader, "ch.eiafr.cojac.models.Reactions", "filtering", true);

@@ -20,7 +20,6 @@ package ch.eiafr.cojac;
 
 import static ch.eiafr.cojac.Arg.ALL;
 import static ch.eiafr.cojac.Arg.HELP;
-import static ch.eiafr.cojac.Arg.INSTRUMENT;
 
 import java.lang.instrument.Instrumentation;
 
@@ -34,8 +33,7 @@ public final class CojacAgent {
         }
 
         Args args = new Args();
-        if (!args.parse(parsedArgs) || args.isSpecified(HELP) ||
-                args.isSpecified(INSTRUMENT)) {
+        if (!args.parse(parsedArgs) || args.isSpecified(HELP)) {
             args.printHelpAndExit();
         }
 
