@@ -52,11 +52,11 @@ final class DirectInstrumenter implements OpCodeInstrumenter {
 
         this.stats = stats;
 
-        reaction = getReactionType(args);
+        reaction = args.getReactionType();
 
 
         if (args.isSpecified(Arg.CALL_BACK))
-            logFileName = args.getValue(Arg.CALL_BACK); // No, I'm no proud of that trick...
+            logFileName = args.getValue(Arg.CALL_BACK); // No, I'm not proud of that trick...
         else
             logFileName = args.getValue(Arg.LOG_FILE);
 
@@ -104,19 +104,6 @@ final class DirectInstrumenter implements OpCodeInstrumenter {
         invocations.put(D2L, new Method(CHECKED_CASTS, "checkedD2L", Signatures.RAW_D2L));
         invocations.put(F2I, new Method(CHECKED_CASTS, "checkedF2I", Signatures.RAW_F2I));
         invocations.put(F2L, new Method(CHECKED_CASTS, "checkedF2L", Signatures.RAW_F2L));
-    }
-
-    private static ReactionType getReactionType(Args args) {
-        if (args.isSpecified(Arg.PRINT)) {
-            return args.isSpecified(Arg.DETAILED_LOG) ? ReactionType.PRINT : ReactionType.PRINT_SMALLER;
-        } else if (args.isSpecified(Arg.LOG_FILE)) {
-            return args.isSpecified(Arg.DETAILED_LOG) ? ReactionType.LOG : ReactionType.LOG_SMALLER;
-        } else if (args.isSpecified(Arg.EXCEPTION)) {
-            return ReactionType.EXCEPTION;
-        } else if (args.isSpecified(Arg.CALL_BACK))
-            return ReactionType.CALLBACK;
-
-        throw new RuntimeException("System must be in one of this mode !");
     }
 
     @Override

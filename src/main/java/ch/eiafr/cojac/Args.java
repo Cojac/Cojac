@@ -24,6 +24,8 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import ch.eiafr.cojac.models.ReactionType;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -240,6 +242,20 @@ public final class Args {
     public String[] getAppArgs() {
         return appArgs;
     }
+    
+    public ReactionType getReactionType() {
+        if (isSpecified(Arg.PRINT)) {
+            return isSpecified(Arg.DETAILED_LOG) ? ReactionType.PRINT : ReactionType.PRINT_SMALLER;
+        } else if (isSpecified(Arg.LOG_FILE)) {
+            return isSpecified(Arg.DETAILED_LOG) ? ReactionType.LOG : ReactionType.LOG_SMALLER;
+        } else if (isSpecified(Arg.EXCEPTION)) {
+            return ReactionType.EXCEPTION;
+        } else if (isSpecified(Arg.CALL_BACK))
+            return ReactionType.CALLBACK;
+
+        throw new RuntimeException("no reaction is defined!");
+    }
+
 
     private static final class ArgValue {
         private boolean specified;

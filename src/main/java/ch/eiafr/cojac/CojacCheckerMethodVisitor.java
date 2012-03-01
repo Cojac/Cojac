@@ -20,10 +20,10 @@ package ch.eiafr.cojac;
 
 import ch.eiafr.cojac.instrumenters.OpCodeInstrumenter;
 import ch.eiafr.cojac.instrumenters.OpCodeInstrumenterFactory;
+import ch.eiafr.cojac.models.CheckedMaths;
 import ch.eiafr.cojac.reactions.Reaction;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.LocalVariablesSorter;
 
 import java.util.Arrays;
@@ -85,7 +85,7 @@ final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
                 mv.visitMethodInsn(INVOKESTATIC, classPath, methods.getMethod(IINC), Signatures.CHECK_INTEGER_BINARY);
                 visitVarInsn(ISTORE, index);
             } else {
-                iinc(index, value);
+                throw new IllegalStateException(); 
             }
 
             stats.incrementCounterValue(Arg.IINC);
@@ -94,36 +94,20 @@ final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
         }
     }
 
-    private void iinc(int index, int value) {
-        Label fin = new Label();
-
-        visitVarInsn(ILOAD, index);
-        visitVarInsn(ILOAD, index);
-        mv.visitLdcInsn(value);
-        mv.visitInsn(IADD);
-        mv.visitInsn(IXOR);
-        mv.visitLdcInsn(value);
-        visitVarInsn(ILOAD, index);
-        mv.visitLdcInsn(value);
-        mv.visitInsn(IADD);
-        mv.visitInsn(IXOR);
-        mv.visitInsn(IAND);
-        mv.visitJumpInsn(IFGE, fin);
-        reaction.insertReactionCall(mv, "Overflow : IINC", methods, classPath);
-        mv.visitLabel(fin);
-        visitVarInsn(ILOAD, index);
-        mv.visitLdcInsn(value);
-        mv.visitInsn(IADD);
-        visitVarInsn(ISTORE, index);
-    }
-
-
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc) {
         if (opcode == INVOKESTATIC && args.isOperationEnabled(Arg.MATHS) &&
             ("java/lang/Math".equals(owner) || "java/lang/StrictMath".equals(owner))) {
             if ("(D)D".equals(desc) && UNARY_METHODS.contains(name) || "(DD)D".equals(desc) && BINARY_METHODS.contains(name)) {
-                protectMethodInvocation(owner, name, desc);
+                String msg= owner + '.' + name + desc;
+                String logFileName=""; 
+                if (args.isSpecified(Arg.CALL_BACK))
+                    logFileName = args.getValue(Arg.CALL_BACK); // No, I'm not proud of that trick...
+                else
+                    logFileName = args.getValue(Arg.LOG_FILE);
+                int reactionType=args.getReactionType().value();
+                mv.visitMethodInsn(INVOKESTATIC, owner, name, desc);
+                protectMethodInvocation(reactionType, logFileName, msg);
             } else {
                 mv.visitMethodInsn(INVOKESTATIC, owner, name, desc);
             }
@@ -132,35 +116,14 @@ final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
         }
     }
 
-    private void protectMethodInvocation(String owner, String name, String desc) {
-        mv.visitMethodInsn(INVOKESTATIC, owner, name, desc);
-
+    //checkMathMethodResult(double r, int reaction, 
+    //                      String logFileName, String operationName)
+    
+    private void protectMethodInvocation(int reactionType, String logFileName, String msg) {
         mv.visitInsn(DUP2);
-        mv.visitInsn(DUP2);
-        mv.visitInsn(DCMPL);
-        Label l0 = new Label();
-        mv.visitJumpInsn(IFEQ, l0);
-
-        reaction.insertReactionCall(mv, "Maths error (NaN) with " + owner + '.' + name + desc, methods, classPath);
-
-        mv.visitLabel(l0);
-
-        mv.visitInsn(DUP2);
-        mv.visitLdcInsn(new Double("Infinity"));
-        mv.visitInsn(DCMPL);
-        Label l1 = new Label();
-        mv.visitJumpInsn(IFNE, l1);
-
-        reaction.insertReactionCall(mv, "Maths error (Infinity) with " + owner + '.' + name + desc, methods, classPath);
-
-        mv.visitLabel(l1);
-
-        mv.visitInsn(DUP2);
-        mv.visitLdcInsn(new Double("-Infinity"));
-        mv.visitInsn(DCMPL);
-        Label l2 = new Label();
-        mv.visitJumpInsn(IFNE, l2);
-        reaction.insertReactionCall(mv, "Maths error (-Infinity) with " + owner + '.' + name, methods, classPath);
-        mv.visitLabel(l2);
+        mv.visitLdcInsn(new Integer(reactionType));
+        mv.visitLdcInsn(logFileName);
+        mv.visitLdcInsn(msg);
+        mv.visitMethodInsn(INVOKESTATIC, CheckedMaths.CHECK_MATH_RESULT_PATH, CheckedMaths.CHECK_MATH_RESULT_NAME, Signatures.CHECK_MATH_RESULT);
     }
 }
