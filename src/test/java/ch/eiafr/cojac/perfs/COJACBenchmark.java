@@ -38,31 +38,33 @@ import java.util.Random;
 import java.util.concurrent.Callable;
 
 public class COJACBenchmark {
+    public static final int ACTIONS = 52;
+
     public static void main(String[] args) throws Exception {
         System.out.println("COJAC Benchmark");
 
-        bench(52, "IADD Benchmark", new IADDCallable(), "ch.eiafr.cojac.perfs.opcodes.IADDCallable");
-        bench(52, "ISUB Benchmark", new ISUBCallable(), "ch.eiafr.cojac.perfs.opcodes.ISUBCallable");
-        bench(52, "IMUL Benchmark", new IMULCallable(), "ch.eiafr.cojac.perfs.opcodes.IMULCallable");
-        bench(52, "IDIV Benchmark", new IDIVCallable(), "ch.eiafr.cojac.perfs.opcodes.IDIVCallable");
+        bench(ACTIONS, "IADD Benchmark", new IADDCallable(), "ch.eiafr.cojac.perfs.opcodes.IADDCallable");
+        bench(ACTIONS, "ISUB Benchmark", new ISUBCallable(), "ch.eiafr.cojac.perfs.opcodes.ISUBCallable");
+        bench(ACTIONS, "IMUL Benchmark", new IMULCallable(), "ch.eiafr.cojac.perfs.opcodes.IMULCallable");
+        bench(ACTIONS, "IDIV Benchmark", new IDIVCallable(), "ch.eiafr.cojac.perfs.opcodes.IDIVCallable");
 
-        bench(52, "FADD Benchmark", new FADDCallable(), "ch.eiafr.cojac.perfs.opcodes.FADDCallable");
-        bench(52, "FSUB Benchmark", new FSUBCallable(), "ch.eiafr.cojac.perfs.opcodes.FSUBCallable");
-        bench(52, "FMUL Benchmark", new FMULCallable(), "ch.eiafr.cojac.perfs.opcodes.FMULCallable");
-        bench(52, "FDIV Benchmark", new FDIVCallable(), "ch.eiafr.cojac.perfs.opcodes.FDIVCallable");
-        bench(52, "FREM Benchmark", new FREMCallable(), "ch.eiafr.cojac.perfs.opcodes.FREMCallable");
+        bench(ACTIONS, "FADD Benchmark", new FADDCallable(), "ch.eiafr.cojac.perfs.opcodes.FADDCallable");
+        bench(ACTIONS, "FSUB Benchmark", new FSUBCallable(), "ch.eiafr.cojac.perfs.opcodes.FSUBCallable");
+        bench(ACTIONS, "FMUL Benchmark", new FMULCallable(), "ch.eiafr.cojac.perfs.opcodes.FMULCallable");
+        bench(ACTIONS, "FDIV Benchmark", new FDIVCallable(), "ch.eiafr.cojac.perfs.opcodes.FDIVCallable");
+        bench(ACTIONS, "FREM Benchmark", new FREMCallable(), "ch.eiafr.cojac.perfs.opcodes.FREMCallable");
 
-        bench(52, "LADD Benchmark", new LADDCallable(), "ch.eiafr.cojac.perfs.opcodes.LADDCallable");
-        bench(52, "LSUB Benchmark", new LSUBCallable(), "ch.eiafr.cojac.perfs.opcodes.LSUBCallable");
-        bench(29, "LMUL Benchmark", new LMULCallable(), "ch.eiafr.cojac.perfs.opcodes.LMULCallable");
-        bench(52, "LDIV Benchmark", new LDIVCallable(), "ch.eiafr.cojac.perfs.opcodes.LDIVCallable");
+        bench(ACTIONS, "LADD Benchmark", new LADDCallable(), "ch.eiafr.cojac.perfs.opcodes.LADDCallable");
+        bench(ACTIONS, "LSUB Benchmark", new LSUBCallable(), "ch.eiafr.cojac.perfs.opcodes.LSUBCallable");
+        bench(29,      "LMUL Benchmark", new LMULCallable(), "ch.eiafr.cojac.perfs.opcodes.LMULCallable");
+        bench(ACTIONS, "LDIV Benchmark", new LDIVCallable(), "ch.eiafr.cojac.perfs.opcodes.LDIVCallable");
 
-        bench(52, "DADD Benchmark", new DADDCallable(), "ch.eiafr.cojac.perfs.opcodes.DADDCallable");
-        bench(52, "DSUB Benchmark", new DSUBCallable(), "ch.eiafr.cojac.perfs.opcodes.DSUBCallable");
-        bench(52, "DMUL Benchmark", new DMULCallable(), "ch.eiafr.cojac.perfs.opcodes.DMULCallable");
-        bench(52, "DDIV Benchmark", new DDIVCallable(), "ch.eiafr.cojac.perfs.opcodes.DDIVCallable");
-        bench(52, "DREM Benchmark", new DREMCallable(), "ch.eiafr.cojac.perfs.opcodes.DREMCallable");
-        bench(52, "DCMP Benchmark", new DCMPCallable(), "ch.eiafr.cojac.perfs.opcodes.IADDCallable");
+        bench(ACTIONS, "DADD Benchmark", new DADDCallable(), "ch.eiafr.cojac.perfs.opcodes.DADDCallable");
+        bench(ACTIONS, "DSUB Benchmark", new DSUBCallable(), "ch.eiafr.cojac.perfs.opcodes.DSUBCallable");
+        bench(ACTIONS, "DMUL Benchmark", new DMULCallable(), "ch.eiafr.cojac.perfs.opcodes.DMULCallable");
+        bench(ACTIONS, "DDIV Benchmark", new DDIVCallable(), "ch.eiafr.cojac.perfs.opcodes.DDIVCallable");
+        bench(ACTIONS, "DREM Benchmark", new DREMCallable(), "ch.eiafr.cojac.perfs.opcodes.DREMCallable");
+        bench(ACTIONS, "DCMP Benchmark", new DCMPCallable(), "ch.eiafr.cojac.perfs.opcodes.IADDCallable");
 
         bench(1, "Rabin Karp", new StringSearchingRunnable(), "ch.eiafr.cojac.perfs.StringSearchingRunnable");
         bench(1, "Sweeping Plane", new SweepingSorterRunnable(), "ch.eiafr.cojac.perfs.SweepingSorterRunnable");
@@ -181,7 +183,7 @@ public class COJACBenchmark {
         Benchs benchs = new Benchs(title);
         initBench(actions, benchs);
         benchWithArrays1(benchs, "Not instrumented", runnable, size);
-        benchWithArrays1(benchs, "Instrumented", (Runnable)getFromClassLoader(cls, false), size);
+        benchWithArrays1(benchs, "Instrumented", (Runnable) getFromClassLoader(cls, false), size);
         benchWithArrays1(benchs, "WASTE_SIZE", (Runnable)getFromClassLoader(cls, true), size);
         benchAgentVariant("Agent", benchs, cls, false, true, size, null);
         benchAgentVariant("Agent WASTE_SIZE", benchs, cls, true, true, size, null);
@@ -198,8 +200,8 @@ public class COJACBenchmark {
         Benchs benchs = new Benchs(title);
         initBench(actions, benchs);
         benchWithArrays2(benchs, "Not instrumented", runnable, size);
-        benchWithArrays2(benchs, "Instrumented", (Callable<?>)getFromClassLoader(cls, false), size);
-        benchWithArrays2(benchs, "WASTE_SIZE", (Callable<?>)getFromClassLoader(cls, true), size);
+        benchWithArrays2(benchs, "Instrumented", (Callable<?>) getFromClassLoader(cls, false), size);
+        benchWithArrays2(benchs, "WASTE_SIZE", (Callable<?>) getFromClassLoader(cls, true), size);
         benchAgentVariant("Agent", benchs, cls, false, false, size, null);
         benchAgentVariant("Agent WASTE_SIZE", benchs, cls, true, false, size, null);
         benchs.generateCharts(false);
@@ -216,7 +218,7 @@ public class COJACBenchmark {
         initBench(actions, benchs);
         benchWithImages1(benchs, "Not instrumented", runnable, bufferedImage);
         benchWithImages1(benchs, "Instrumented", (Runnable)getFromClassLoader(cls, false), bufferedImage);
-        benchWithImages1(benchs, "WASTE_SIZE", (Runnable)getFromClassLoader(cls, true), bufferedImage);
+        benchWithImages1(benchs, "WASTE_SIZE", (Runnable) getFromClassLoader(cls, true), bufferedImage);
         benchAgentVariant("Agent", benchs, cls, false, true, -1, bufferedImage);
         benchAgentVariant("Agent WASTE_SIZE", benchs, cls, true, true, -1, bufferedImage);
         benchs.generateCharts(false);
@@ -229,7 +231,6 @@ public class COJACBenchmark {
     }
 
     private static void initBench(int actions, Benchs benchs) {
-        //benchs.getParams().setNumberMeasurements(1);
         benchs.getParams().setNumberActions(actions);
         benchs.setExclusionFactor(1000D);
         benchs.setConsoleResults(false);
