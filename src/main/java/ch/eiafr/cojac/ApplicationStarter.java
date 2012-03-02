@@ -118,13 +118,16 @@ final class ApplicationStarter {
 
         String[] parsed = CLASSPATH_PATTERN.split(args.getValue(Arg.CLASSPATH));
         URL[] classpath = new URL[urls.length + parsed.length];
+
         int i = 0;
         for (; i < urls.length; i++) {
             classpath[i] = urls[i];
         }
+
         for (int j = 0; j < parsed.length; j++) {
             classpath[i + j] = new File(parsed[j]).toURI().toURL();
         }
+
         return classpath;
     }
 

@@ -7,7 +7,6 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 class EmptyVisitor extends ClassVisitor {
-
     AnnotationVisitor av = new AnnotationVisitor(Opcodes.ASM4) {
 
         @Override

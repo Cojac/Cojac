@@ -34,8 +34,7 @@ public final class CojacAgent {
         }
 
         Args args = new Args();
-        if (!args.parse(parsedArgs) || args.isSpecified(HELP) ||
-                args.isSpecified(INSTRUMENT)) {
+        if (!args.parse(parsedArgs) || args.isSpecified(HELP) || args.isSpecified(INSTRUMENT)) {
             args.printHelpAndExit();
         }
 

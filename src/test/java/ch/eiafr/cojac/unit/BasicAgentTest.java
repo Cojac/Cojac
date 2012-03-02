@@ -10,9 +10,9 @@ import ch.eiafr.cojac.CojacReferences;
 import ch.eiafr.cojac.CojacReferences.CojacReferencesBuilder;
 
 public class BasicAgentTest extends AgentTest {
-
 	public BasicAgentTest() throws ClassNotFoundException, IllegalAccessException, InstantiationException, UnmodifiableClassException {
 		super();
+
 		super.loadOperationsWithAgent(getClassFileTransformer());
 	}
 
@@ -21,8 +21,10 @@ public class BasicAgentTest extends AgentTest {
 		Args args = new Args();
 		args.specify(Arg.ALL);
 		args.specify(Arg.EXCEPTION);
+
 		CojacReferencesBuilder builder = new CojacReferencesBuilder(args);
 		builder.setSplitter(new CojacReferences.AgentSplitter());
+
 		return new Agent(builder.build());
 	}
 

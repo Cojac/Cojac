@@ -37,7 +37,6 @@ import javax.management.NotificationBroadcasterSupport;
 import ch.eiafr.cojac.models.Reactions;
 
 public final class InstrumentationStats extends NotificationBroadcasterSupport implements CojacMXBean {
-
     private final Map<Arg, Counter> counters = new EnumMap<Arg, Counter>(Arg.class);
     private long startTime;
     private final Object BLACKLIST_LOCK = new Object();
@@ -51,11 +50,13 @@ public final class InstrumentationStats extends NotificationBroadcasterSupport i
     @Override
     public Map<String, Integer> getCountersMBean() {
         Map<String, Integer> ctrs = new HashMap<String, Integer>();
+
         synchronized (counters) {
             for (Entry<Arg, Counter> ctr : counters.entrySet()) {
                 ctrs.put(ctr.getKey().name(), ctr.getValue().getValue());
             }
         }
+
         return ctrs;
     }
 
@@ -86,8 +87,8 @@ public final class InstrumentationStats extends NotificationBroadcasterSupport i
         String[] ntfTypes = new String[]{AttributeChangeNotification.ATTRIBUTE_CHANGE};
         String ntfClassName = AttributeChangeNotification.class.getName();
         String ntfDescription = "A COJAC event occured !";
-        MBeanNotificationInfo ntfInfo = new MBeanNotificationInfo(ntfTypes, ntfClassName, ntfDescription);
-        return new MBeanNotificationInfo[]{ntfInfo};
+
+        return new MBeanNotificationInfo[]{new MBeanNotificationInfo(ntfTypes, ntfClassName, ntfDescription)};
     }
 
     public void notifyChange(String location) {
@@ -95,9 +96,9 @@ public final class InstrumentationStats extends NotificationBroadcasterSupport i
         sendNotification(notification);
     }
 
-    protected void addBlackList(String annoted) {
+    protected void addBlackList(String annotated) {
         synchronized (BLACKLIST_LOCK) {
-            blacklist.add(annoted);
+            blacklist.add(annotated);
         }
     }
 

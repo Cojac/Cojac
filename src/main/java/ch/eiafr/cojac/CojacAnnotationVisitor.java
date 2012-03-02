@@ -30,12 +30,10 @@ import org.objectweb.asm.Opcodes;
 import ch.eiafr.cojac.models.NoCojacInstrumentation;
 
 public final class CojacAnnotationVisitor extends EmptyVisitor {
-
-    private static final String ANNOTATION_NAME =
-            NoCojacInstrumentation.class.getSimpleName() + ";";
+    private static final String ANNOTATION_NAME = NoCojacInstrumentation.class.getSimpleName() + ";";
     private final InstrumentationStats stats;
     private boolean first = true;
-    private boolean classAnnoted = false;
+    private boolean classAnnotated = false;
     private String classPath;
     private List<String> blacklistedMethods = new ArrayList<String>(10);
     private String lastVisitedMethod;
@@ -53,6 +51,7 @@ public final class CojacAnnotationVisitor extends EmptyVisitor {
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
         first = false;
         lastVisitedMethod = classPath + "/" + name;
+
         return super.visitMethod(access, name, desc, signature, exceptions);
     }
 
@@ -60,22 +59,23 @@ public final class CojacAnnotationVisitor extends EmptyVisitor {
     public AnnotationVisitor visitAnnotation(String name, boolean visible) {
         if (first) {
             if (name.endsWith(ANNOTATION_NAME)) {
-                classAnnoted = true;
+                classAnnotated = true;
             }
-        } else if (!classAnnoted) {
+        } else if (!classAnnotated) {
             if (name.endsWith(ANNOTATION_NAME)) {
                 blacklistedMethods.add(lastVisitedMethod);
                 stats.addBlackList(lastVisitedMethod);
             }
         }
+
         return super.visitAnnotation(name, visible);
     }
 
-    public boolean isClassAnnoted() {
-        return classAnnoted;
+    public boolean isClassAnnotated() {
+        return classAnnotated;
     }
 
-    public boolean isMethodAnnoted(String method) {
+    public boolean isMethodAnnotated(String method) {
         return blacklistedMethods.contains(method);
     }
 }
