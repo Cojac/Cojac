@@ -173,7 +173,7 @@
             <artifactId>bb</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${basedir}/benchmark-utils/bb.jar</systemPath>
+            <systemPath>${project.basedir}/benchmark-utils/bb.jar</systemPath>
         </dependency>
 
         <dependency>
