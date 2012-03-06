@@ -80,14 +80,6 @@ final class CojacClassVisitor extends ClassVisitor {
 
     }
 
-    private static String getSignature(String method) {
-        return method.substring(method.indexOf(' ') + 1);
-    }
-
-    private static String getName(String fullid) {
-        return fullid.substring(0, fullid.indexOf(' '));
-    }
-
     private MethodVisitor instrumentMethod(MethodVisitor parentMv, int access, String desc) {
         MethodVisitor mv = new CojacCheckerMethodVisitor(access, desc, parentMv, stats, args, methods, reaction, classPath, factory);
 

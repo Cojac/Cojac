@@ -38,7 +38,6 @@ import org.objectweb.asm.ClassWriter;
 
 import ch.eiafr.cojac.instrumenters.ClassLoaderOpSizeInstrumenterFactory;
 import ch.eiafr.cojac.instrumenters.OpCodeInstrumenterFactory;
-import ch.eiafr.cojac.instrumenters.SimpleOpCodeFactory;
 import ch.eiafr.cojac.models.Reactions;
 import ch.eiafr.cojac.reactions.ClassLoaderReaction;
 import ch.eiafr.cojac.reactions.Reaction;
