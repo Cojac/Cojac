@@ -30,7 +30,6 @@ import org.objectweb.asm.MethodVisitor;
 import static org.objectweb.asm.Opcodes.*;
 
 public final class BasicReaction implements Reaction {
-
     private final Args args;
 
     public BasicReaction(Args args) {

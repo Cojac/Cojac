@@ -34,7 +34,6 @@ import java.util.Map;
 import static org.objectweb.asm.Opcodes.*;
 
 final class DirectInstrumenter implements OpCodeInstrumenter {
-
     private final ReactionType reaction;
     private final InstrumentationStats stats;
     private final String logFileName;

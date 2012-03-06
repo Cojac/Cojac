@@ -228,5 +228,4 @@ public final class CojacReferences {
             return super.split(list);
         }
     }
-
 }

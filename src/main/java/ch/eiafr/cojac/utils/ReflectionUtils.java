@@ -64,7 +64,7 @@ public final class ReflectionUtils {
 
 
     // There is a very nasty dependence between the Cojac Eclipse Plugin
-    // ch.eiafr.ecojac_core.AnnontationMgr.getRelevantElt()
+    // ch.eiafr.ecojac_core.AnnotationMgr.getRelevantElt()
     // and the precise path leading to the invocation of this method... F. Bapst
     public static void invokeCallback(String callbackName, String callbackParam) {
         int a = callbackName.lastIndexOf('/');

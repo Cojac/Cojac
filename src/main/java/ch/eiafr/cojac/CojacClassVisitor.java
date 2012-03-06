@@ -64,7 +64,7 @@ final class CojacClassVisitor extends ClassVisitor {
 
         String currentMethodID = classPath + '/' + name;
 
-        if (cav.isClassAnnoted() || cav.isMethodAnnoted(currentMethodID)) {
+        if (cav.isClassAnnotated() || cav.isMethodAnnotated(currentMethodID)) {
             return mv;
         }
 

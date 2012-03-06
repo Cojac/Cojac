@@ -23,7 +23,6 @@ import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 
 public final class Agent implements ClassFileTransformer {
-
     private final CojacReferences references;
     private final ClassInstrumenter instrumenter;
 
@@ -37,7 +36,7 @@ public final class Agent implements ClassFileTransformer {
         if (!references.hasToBeInstrumented(className)) {
             return classfileBuffer;
         }
-        //System.out.println("*+* Agent instrumented +"+className +" FROM "+loader.getClass().getName());
+
         return instrumenter.instrument(classfileBuffer);
     }
 }
