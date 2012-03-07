@@ -24,7 +24,20 @@ public final class CheckedMaths {
     private CheckedMaths() {
         throw new AssertionError();
     }
-
+    
+    public static final String CHECK_MATH_RESULT_PATH = "ch/eiafr/cojac/models/CheckedMaths";
+    public static final String CHECK_MATH_RESULT_NAME = "checkMathMethodResult";
+    
+    public static void checkMathMethodResult(double r, int reaction, String logFileName, String operationName) {
+        if (r != r) {
+            Reactions.react(reaction, RESULT_IS_NAN_MSG + operationName, logFileName);
+        } else if (r == Double.POSITIVE_INFINITY) {
+            Reactions.react(reaction, RESULT_IS_POS_INF_MSG + operationName, logFileName);
+        } else if (r == Double.NEGATIVE_INFINITY) {
+            Reactions.react(reaction, RESULT_IS_NEG_INF_MSG + operationName, logFileName);
+        }  
+    }
+    
     public static double checkedPow(double a, double b, int reaction, String logFileName) {
         double r = StrictMath.pow(a, b);
 

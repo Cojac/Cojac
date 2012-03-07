@@ -89,6 +89,7 @@ public final class Signatures {
     public static final String CHECK_F2I = "(F)I";
     public static final String CHECK_F2L = "(F)J";
 
+    public static final String CHECK_MATH_RESULT = "(DILjava/lang/String;Ljava/lang/String;)V";
     //Raw methods
 
     public static final String RAW_INTEGER_BINARY = "(IIILjava/lang/String;)I";
