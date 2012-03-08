@@ -85,13 +85,37 @@ final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
                 mv.visitMethodInsn(INVOKESTATIC, classPath, methods.getMethod(IINC), Signatures.CHECK_INTEGER_BINARY);
                 visitVarInsn(ISTORE, index);
             } else {
-                throw new IllegalStateException(); 
+                iinc(index, value);
+                //sthrow new IllegalStateException(); 
             }
 
             stats.incrementCounterValue(Arg.IINC);
         } else {
             super.visitIincInsn(index, value);
         }
+    }
+
+    private void iinc(int index, int value) {
+        Label fin = new Label();
+
+        visitVarInsn(ILOAD, index);
+        visitVarInsn(ILOAD, index);
+        mv.visitLdcInsn(value);
+        mv.visitInsn(IADD);
+        mv.visitInsn(IXOR);
+        mv.visitLdcInsn(value);
+        visitVarInsn(ILOAD, index);
+        mv.visitLdcInsn(value);
+        mv.visitInsn(IADD);
+        mv.visitInsn(IXOR);
+        mv.visitInsn(IAND);
+        mv.visitJumpInsn(IFGE, fin);
+        reaction.insertReactionCall(mv, "Overflow : IINC", methods, classPath);
+        mv.visitLabel(fin);
+        visitVarInsn(ILOAD, index);
+        mv.visitLdcInsn(value);
+        mv.visitInsn(IADD);
+        visitVarInsn(ISTORE, index);
     }
 
     @Override
