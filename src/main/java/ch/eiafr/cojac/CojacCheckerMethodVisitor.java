@@ -24,6 +24,7 @@ import ch.eiafr.cojac.models.CheckedMaths;
 import ch.eiafr.cojac.reactions.Reaction;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.LocalVariablesSorter;
 
 import java.util.Arrays;
@@ -78,44 +79,25 @@ final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
 
     @Override
     public void visitIincInsn(int index, int value) {
+        int opCode=Opcodes.IINC;
+        OpCodeInstrumenter instrumenter = factory.getInstrumenter(opCode, Arg.fromOpCode(opCode));
         if (args.isOperationEnabled(Arg.IINC)) {
-            if ( methods != null) {//TODO MAKe better than methods != null
+            if ( methods != null) {// Maybe make better than methods != null
                 visitVarInsn(ILOAD, index);
                 mv.visitLdcInsn(value);
                 mv.visitMethodInsn(INVOKESTATIC, classPath, methods.getMethod(IINC), Signatures.CHECK_INTEGER_BINARY);
                 visitVarInsn(ISTORE, index);
             } else {
-                iinc(index, value);
-                //sthrow new IllegalStateException(); 
+                visitVarInsn(ILOAD, index);
+                mv.visitLdcInsn(value);
+                instrumenter.instrument(mv, opCode, classPath, methods, reaction, this);
+                visitVarInsn(ISTORE, index);
             }
 
             stats.incrementCounterValue(Arg.IINC);
         } else {
             super.visitIincInsn(index, value);
         }
-    }
-
-    private void iinc(int index, int value) {
-        Label fin = new Label();
-
-        visitVarInsn(ILOAD, index);
-        visitVarInsn(ILOAD, index);
-        mv.visitLdcInsn(value);
-        mv.visitInsn(IADD);
-        mv.visitInsn(IXOR);
-        mv.visitLdcInsn(value);
-        visitVarInsn(ILOAD, index);
-        mv.visitLdcInsn(value);
-        mv.visitInsn(IADD);
-        mv.visitInsn(IXOR);
-        mv.visitInsn(IAND);
-        mv.visitJumpInsn(IFGE, fin);
-        reaction.insertReactionCall(mv, "Overflow : IINC", methods, classPath);
-        mv.visitLabel(fin);
-        visitVarInsn(ILOAD, index);
-        mv.visitLdcInsn(value);
-        mv.visitInsn(IADD);
-        visitVarInsn(ISTORE, index);
     }
 
     @Override
