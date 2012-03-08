@@ -49,10 +49,7 @@ public final class Args {
 
     private static String USAGE =
              "java -javaagent:cojac.jar=\"[OPTIONS]\" YourApp [appArgs]\n"
-           + "... or one of the old modes:\n"
-           + "java -jar cojac.jar [OPTIONS] -- YourApp [appArgs]\n"
-           + "java -jar cojac.jar [OPTIONS] -i File [Files]     \n"
-           + "The \"--\" is needed when appArgs conflict with Cojac options";
+           + "(revision 1.2-only-agent)";
 
     public Args() {
         super();

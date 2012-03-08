@@ -41,6 +41,7 @@ public enum Arg {
     JMX_HOST("jmxhost"),
     JMX_PORT("jmxport"),
     JMX_NAME("jmxname"),
+    VERBOSE("v"),
 
     INTS("ints"),
     FLOATS("floats"),
@@ -173,6 +174,9 @@ public enum Arg {
 
         options.addOption(Arg.DETAILED_LOG.shortOpt(),
             "detailed", false, "logs the full stack trace (combined with -c or -l)");
+
+        options.addOption(Arg.VERBOSE.shortOpt(),
+                "verbose", false, "display some internal traces");
 
         //feature not ready!
 //      options.addOption(Arg.NO_CANCELLATION.shortOpt(),
