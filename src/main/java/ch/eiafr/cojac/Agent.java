@@ -27,16 +27,27 @@ public final class Agent implements ClassFileTransformer {
     private final ClassInstrumenter instrumenter;
 
     public Agent(final CojacReferences references) {
-        this.references = references;
-        this.instrumenter = new ClassLoaderInstrumenter(references);
+        try {
+            this.references = references;
+            this.instrumenter = new ClassLoaderInstrumenter(references); 
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
-        if (!references.hasToBeInstrumented(className)) {
-            return classfileBuffer;
+        try {
+            if (!references.hasToBeInstrumented(className)) {
+                return classfileBuffer;
+            }
+            if (references.getArgs().isSpecified(Arg.VERBOSE))
+                System.out.println("Agent instrumenting "+className +" under "+loader);
+            return instrumenter.instrument(classfileBuffer);
+        } catch (RuntimeException e) {
+            e.printStackTrace();  // Otherwise it'll be hidden!
+            throw e;
         }
-
-        return instrumenter.instrument(classfileBuffer);
     }
 }

@@ -25,6 +25,7 @@ import ch.eiafr.cojac.reactions.Reaction;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.LocalVariablesSorter;
 
 import java.util.Arrays;
@@ -86,10 +87,19 @@ final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
                 mv.visitMethodInsn(INVOKESTATIC, classPath, methods.getMethod(IINC), Signatures.CHECK_INTEGER_BINARY);
                 visitVarInsn(ISTORE, index);
             } else {
-                if (args.isSpecified(Arg.VARIABLES)) {
-                    iincWithVariables(index, value);
+                if (args.isSpecified(Arg.WASTE_SIZE)) {
+                    if (args.isSpecified(Arg.VARIABLES)) {
+                        iincWithVariables(index, value);
+                    } else {
+                        iinc(index, value);
+                    }
                 } else {
-                    iinc(index, value);
+                    int opCode=Opcodes.IINC;
+                    OpCodeInstrumenter instrumenter = factory.getInstrumenter(opCode, Arg.fromOpCode(opCode));
+                    visitVarInsn(ILOAD, index);
+                    mv.visitLdcInsn(value);
+                    instrumenter.instrument(mv, opCode, classPath, methods, reaction, this);
+                    visitVarInsn(ISTORE, index);
                 }
             }
 
