@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import ch.eiafr.cojac.models.Reactions;
+
 public final class FilesInstrumenter {
     private final Collection<File> files = new ArrayList<File>(15);
 
@@ -31,7 +33,7 @@ public final class FilesInstrumenter {
 
     public FilesInstrumenter(Args args) {
         super();
-
+        Reactions.stats=stats;
         this.args = args;
     }
 
