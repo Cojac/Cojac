@@ -24,7 +24,7 @@
 
     <groupId>ch.eiafr</groupId>
     <artifactId>ch.eiafr.cojac</artifactId>
-    <version>1.0</version>
+    <version>1.3</version>
     <name>COJAC</name>
 
     <build>
@@ -219,27 +219,39 @@
         <dependency>
         	<groupId>org.ow2.asm</groupId>
         	<artifactId>asm</artifactId>
-        	<version>4.0</version>
+        	<version>4.1</version>
         </dependency>
         <dependency>
         	<groupId>org.ow2.asm</groupId>
         	<artifactId>asm-commons</artifactId>
-        	<version>4.0</version>
+        	<version>4.1</version>
         </dependency>
         <dependency>
         	<groupId>org.ow2.asm</groupId>
         	<artifactId>asm-tree</artifactId>
-        	<version>4.0</version>
+        	<version>4.1</version>
         </dependency>
         <dependency>
         	<groupId>org.ow2.asm</groupId>
         	<artifactId>asm-analysis</artifactId>
-        	<version>4.0</version>
+        	<version>4.1</version>
         </dependency>
 
+        <dependency>
+        	<groupId>org.ow2.asm</groupId>
+        	<artifactId>asm-all</artifactId>
+        	<version>4.1</version>
+        </dependency>
     </dependencies>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    
+    <repositories>
+    <repository>
+      <id>org.ow2.asm</id>
+      <url>http://repository.ow2.org/nexus/</url>
+    </repository>
+ </repositories>
 </project>
