@@ -21,6 +21,7 @@ package ch.eiafr.cojac.unit;
 public class CallBacks {
     public static int count = 0;
 
+    @SuppressWarnings("unused")
     public static void log(String opCode) {
         count++;
         //new Exception("dummy").printStackTrace();

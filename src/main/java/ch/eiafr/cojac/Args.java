@@ -28,7 +28,6 @@ import ch.eiafr.cojac.models.ReactionType;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;

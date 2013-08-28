@@ -1,7 +1,6 @@
 package ch.eiafr.cojac.unit;
 
 import java.lang.instrument.ClassFileTransformer;
-import java.lang.instrument.UnmodifiableClassException;
 
 import ch.eiafr.cojac.Agent;
 import ch.eiafr.cojac.Arg;
@@ -10,7 +9,7 @@ import ch.eiafr.cojac.CojacReferences;
 import ch.eiafr.cojac.CojacReferences.CojacReferencesBuilder;
 
 public class BasicAgentTest extends AgentTest {
-	public BasicAgentTest() throws ClassNotFoundException, IllegalAccessException, InstantiationException, UnmodifiableClassException {
+	public BasicAgentTest() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
 		super();
 
 		super.loadOperationsWithAgent(getClassFileTransformer());

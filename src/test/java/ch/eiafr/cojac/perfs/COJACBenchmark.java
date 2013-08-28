@@ -32,7 +32,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.Random;
 import java.util.concurrent.Callable;
 

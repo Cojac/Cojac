@@ -11,7 +11,7 @@ import java.lang.reflect.Field;
  */
 
 public class ReflexionAgent {
-    public static void premain(String agentArgs, Instrumentation inst) {
+    public static void premain(@SuppressWarnings("unused") String agentArgs, Instrumentation inst) {
         try {
             Class<?> classz = Class.forName("ch.eiafr.cojac.unit.AgentTest", true, ClassLoader.getSystemClassLoader());
             Field field = classz.getDeclaredField("instrumentation");

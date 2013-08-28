@@ -27,10 +27,12 @@ import org.objectweb.asm.ClassVisitor;
 public final class CojacMethodAdder {
 
 
+    @SuppressWarnings("unused")
     public CojacMethodAdder(Args args, Reaction reaction) {
         super();
     }
 
+    @SuppressWarnings("unused")
     public void insertMethods(ClassVisitor cv, Methods methods, String classPath) {
     }
 }

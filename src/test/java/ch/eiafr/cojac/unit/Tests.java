@@ -286,6 +286,7 @@ public class Tests implements MathOperations {
         return this.<Integer>exec(m, new Object[]{a});
     }
 
+    @SuppressWarnings("unchecked")
     private <T> T exec(Method m, Object[] passedArgv) throws Exception {
         try {
             return (T) m.invoke(object, passedArgv);

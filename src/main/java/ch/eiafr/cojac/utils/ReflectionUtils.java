@@ -45,6 +45,7 @@ public final class ReflectionUtils {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> T getStaticFieldValue(ClassLoader loader, String className, String fieldName) {
         try {
             Class<?> reactions = Class.forName(className, true, loader);

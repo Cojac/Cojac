@@ -20,19 +20,11 @@ package ch.eiafr.cojac.unit;
 
 import ch.eiafr.cojac.Arg;
 import ch.eiafr.cojac.Args;
-import ch.eiafr.cojac.CojacReferences.CojacReferencesBuilder;
-import org.junit.Assert;
 import org.junit.Test;
-
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.URL;
 
 public class LogFileTest {
     @Test
-    public void testLogFileExists() throws ClassNotFoundException, IllegalAccessException, InstantiationException,
-        NoSuchMethodException, InvocationTargetException {
+    public void testLogFileExists() {
         String logFile = System.getProperty("user.dir") + "/test.log";
 
         Args args = new Args();
