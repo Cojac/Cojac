@@ -31,8 +31,10 @@ public final class ClassLoaderOpSizeInstrumenterFactory implements OpCodeInstrum
         super();
 
         this.args = args;
-
-        opCodeInstrumenter = new DirectInstrumenter(args, stats);
+        if (args.isSpecified(Arg.REPLACE_FLOATS))
+            opCodeInstrumenter = new ReplaceFloatsInstrumenter(args, stats);
+        else
+            opCodeInstrumenter = new DirectInstrumenter(args, stats);
 
     }
 

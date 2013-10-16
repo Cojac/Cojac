@@ -48,7 +48,7 @@ public final class Args {
 
     private static String USAGE =
              "java -javaagent:cojac.jar=\"[OPTIONS]\" YourApp [appArgs]\n"
-           + "(revision 1.2-only-agent)";
+           + "(revision 1.3-replace-floats)";
 
     public Args() {
         super();

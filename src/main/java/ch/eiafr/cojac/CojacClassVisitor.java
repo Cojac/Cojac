@@ -21,9 +21,17 @@ package ch.eiafr.cojac;
 import ch.eiafr.cojac.instrumenters.OpCodeInstrumenterFactory;
 import ch.eiafr.cojac.methods.CojacMethodAdder;
 import ch.eiafr.cojac.reactions.Reaction;
+
+//import org.objectweb.asm.AnnotationVisitor;
+//import org.objectweb.asm.Attribute;
 import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+
+import com.sun.xml.internal.ws.org.objectweb.asm.Type;
+
+import ch.eiafr.cojac.models.FloatWrapper;
 
 final class CojacClassVisitor extends ClassVisitor {
     private final CojacMethodAdder methodAdder;
@@ -35,7 +43,11 @@ final class CojacClassVisitor extends ClassVisitor {
 
     private boolean first = true;
     private String classPath;
-
+    
+    public static final String COJAC_FIELD_SUFFIX = "_C$O$J$A$C";
+    public static final String COJAC_FLOAT_WRAPPER = Type.getInternalName(FloatWrapper.class);
+    //TODO the wrapper could be given as a Cojac parameter
+    
     private CojacAnnotationVisitor cav;
 
     CojacClassVisitor(ClassVisitor cv, InstrumentationStats stats, Args args, Methods methods, Reaction reaction, OpCodeInstrumenterFactory factory, CojacAnnotationVisitor cav) {
@@ -87,4 +99,58 @@ final class CojacClassVisitor extends ClassVisitor {
 
         return mv;
     }
+
+
+    @Override
+    public FieldVisitor visitField(int accessFlags, String fieldName, String fieldType, String genericSignature, Object initValStatic) {
+        if (args.isSpecified(Arg.REPLACE_FLOATS)) {
+            if (fieldType.equals("F")) {
+                FieldVisitor fv=cv.visitField(accessFlags, fieldName+COJAC_FIELD_SUFFIX, COJAC_FLOAT_WRAPPER, genericSignature, initValStatic);
+                if (fv!=null) fv.visitEnd();
+                //TODO: replace field (instead of adding a new one...)
+            }
+        }
+        return super.visitField(accessFlags, fieldName, fieldType, genericSignature, initValStatic);
+//        FieldVisitor fv = cv.visitField(accessFlags, fieldName, fieldType, genericSignature, initValStatic);
+//        return instrumentField(fv, accessFlags, fieldName, fieldType, genericSignature, initValStatic);
+    }
+
+    private FieldVisitor instrumentField(FieldVisitor parentFv, int arg0, String arg1, String arg2, String arg3, Object arg4) {
+        FieldVisitor fv = new CojacFieldVisitor(parentFv, arg0, arg1, arg2, arg3, arg4);
+        fv.visitEnd();
+        return fv;
+    }
+
+    
+//  @Override
+//  public AnnotationVisitor visitAnnotation(String arg0, boolean arg1) {
+//      return super.visitAnnotation(arg0, arg1);
+//  }
+
+//  @Override
+//  public void visitAttribute(Attribute arg0) {
+//      super.visitAttribute(arg0);
+//  }
+
+//  @Override
+//  public void visitEnd() {
+//      super.visitEnd();
+//  }
+//
+//    @Override
+//    public void visitInnerClass(String arg0, String arg1, String arg2, int arg3) {
+//        super.visitInnerClass(arg0, arg1, arg2, arg3);
+//    }
+//
+//    @Override
+//    public void visitOuterClass(String arg0, String arg1, String arg2) {
+//        super.visitOuterClass(arg0, arg1, arg2);
+//    }
+//
+//    @Override
+//    public void visitSource(String arg0, String arg1) {
+//        super.visitSource(arg0, arg1);
+//    }
+    
+
 }

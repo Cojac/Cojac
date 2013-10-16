@@ -23,6 +23,7 @@ import org.apache.commons.cli.Options;
 import org.objectweb.asm.Opcodes;
 
 public enum Arg {
+    REPLACE_FLOATS("R"),
     HELP("h"),
     ALL("a"),
     PRINT("c"),
@@ -139,6 +140,8 @@ public enum Arg {
     static Options createOptions() {
         Options options = new Options();
 
+        options.addOption(Arg.REPLACE_FLOATS.shortOpt(),
+                "replacefloats", false, "Replaces floats by CojacFloat objects ");
         options.addOption(Arg.NONE.shortOpt(),
             "none", false, "Don't instrument any instruction");
         options.addOption(Arg.BYPASS.shortOpt(),
