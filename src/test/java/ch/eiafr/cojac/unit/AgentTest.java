@@ -5,7 +5,7 @@ import java.lang.instrument.Instrumentation;
 
 public abstract class AgentTest extends AbstractFullTests {
 
-	private Tests tests;
+	protected Tests tests;
 	public static Instrumentation instrumentation; // Do not make it final or
 													// inline it. Do not
 													// rename it !
