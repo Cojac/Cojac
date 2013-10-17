@@ -22,6 +22,8 @@ import ch.eiafr.cojac.Arg;
 import ch.eiafr.cojac.Args;
 import ch.eiafr.cojac.InstrumentationStats;
 
+import static org.objectweb.asm.Opcodes.*;
+
 public final class ClassLoaderOpSizeInstrumenterFactory implements OpCodeInstrumenterFactory {
     private final OpCodeInstrumenter opCodeInstrumenter;
 
@@ -40,7 +42,13 @@ public final class ClassLoaderOpSizeInstrumenterFactory implements OpCodeInstrum
 
     @Override
     public OpCodeInstrumenter getInstrumenter(int opCode, Arg arg) {
-        if (arg != null && args.isOperationEnabled(arg)) {
+        // TODO: a bit tricky...
+        if (args.isSpecified(Arg.REPLACE_FLOATS)) {
+            if (opCode==FRETURN)
+                return opCodeInstrumenter;
+        }
+        if (arg==null) return null;
+        if (args.isOperationEnabled(arg)) {
             return opCodeInstrumenter;
         }
 

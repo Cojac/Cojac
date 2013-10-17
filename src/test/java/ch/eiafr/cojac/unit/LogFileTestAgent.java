@@ -59,7 +59,7 @@ public class LogFileTestAgent {
             Method m = classz.getMethod("test");
             m.invoke(object);
 
-            Assert.assertTrue(new File(logFile).exists());
+            Assert.assertTrue("logFile not created: "+logFile, new File(logFile).exists());
             Assert.assertTrue(new File(logFile).length() > 0);
 
             new File(logFile).delete();

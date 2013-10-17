@@ -94,7 +94,6 @@ final class ReplaceFloatsInstrumenter implements OpCodeInstrumenter {
             mv.visitInsn(opCode);
             conversionMethod.invokeStatic(mv);
         } else if (opCode==FRETURN) {
-            System.out.println("ohoho");
             mv.visitInsn(ARETURN);
         } else {
             mv.visitInsn(opCode);

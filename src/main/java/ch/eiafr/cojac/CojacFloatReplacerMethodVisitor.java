@@ -78,12 +78,10 @@ final class CojacFloatReplacerMethodVisitor extends LocalVariablesSorter {
     @Override
     public void visitInsn(int opCode) {
         OpCodeInstrumenter instrumenter = factory.getInstrumenter(opCode, Arg.fromOpCode(opCode));
-
-        //Delegate to parent
-        if (instrumenter == null) {
-            super.visitInsn(opCode);
-        } else {
+        if (instrumenter != null) {
             instrumenter.instrument(mv, opCode, classPath, methods, reaction, this);
+        } else { //Delegate to parent
+            super.visitInsn(opCode);
         }
     }
 
