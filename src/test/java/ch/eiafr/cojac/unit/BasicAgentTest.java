@@ -8,7 +8,7 @@ import ch.eiafr.cojac.Args;
 import ch.eiafr.cojac.CojacReferences;
 import ch.eiafr.cojac.CojacReferences.CojacReferencesBuilder;
 
-public class BasicAgentTest extends AgentTest {
+public class BasicAgentTest extends AbstractAgentTest {
 	public BasicAgentTest() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
 		super();
 

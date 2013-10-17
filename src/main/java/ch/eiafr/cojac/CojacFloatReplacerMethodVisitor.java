@@ -20,6 +20,8 @@ package ch.eiafr.cojac;
 
 import ch.eiafr.cojac.instrumenters.OpCodeInstrumenter;
 import ch.eiafr.cojac.instrumenters.OpCodeInstrumenterFactory;
+import ch.eiafr.cojac.instrumenters.InvokableMethod;
+import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
 import ch.eiafr.cojac.models.CheckedMaths;
 import ch.eiafr.cojac.models.FloatWrapper;
 import ch.eiafr.cojac.reactions.Reaction;
@@ -45,9 +47,6 @@ final class CojacFloatReplacerMethodVisitor extends LocalVariablesSorter {
     private final Methods methods;
     private final Reaction reaction;
     private final String classPath;
-    
-    private static final Type REPLACEMENT_FLOAT_TYPE=Type.getType(FloatWrapper.class);
-
 
     private final Map<Integer, Integer> varMap = new HashMap<>();
 
@@ -113,36 +112,21 @@ final class CojacFloatReplacerMethodVisitor extends LocalVariablesSorter {
 
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc) {
-        if (opcode == INVOKESTATIC && args.isOperationEnabled(Arg.MATHS) &&
-            ("java/lang/Math".equals(owner) || "java/lang/StrictMath".equals(owner))) {
-            if ("(D)D".equals(desc) && UNARY_METHODS.contains(name) || "(DD)D".equals(desc) && BINARY_METHODS.contains(name)) {
-                String msg= owner + '.' + name + desc;
-                String logFileName=""; 
-                if (args.isSpecified(Arg.CALL_BACK))
-                    logFileName = args.getValue(Arg.CALL_BACK); // No, I'm not proud of that trick...
-                else
-                    logFileName = args.getValue(Arg.LOG_FILE);
-                int reactionType=args.getReactionType().value();
-                mv.visitMethodInsn(INVOKESTATIC, owner, name, desc);
-                protectMethodInvocation(reactionType, logFileName, msg);
-            } else {
-                mv.visitMethodInsn(INVOKESTATIC, owner, name, desc);
-            }
-        } else {
-            super.visitMethodInsn(opcode, owner, name, desc);
-        }
+        desc=replaceFloatMethodDescription(desc);
+        // TODO: something smarter, taking into account the method call kinds ?
+        super.visitMethodInsn(opcode, owner, name, desc);
     }
 
     //checkMathMethodResult(double r, int reaction, 
     //                      String logFileName, String operationName)
     
-    private void protectMethodInvocation(int reactionType, String logFileName, String msg) {
-        mv.visitInsn(DUP2);
-        mv.visitLdcInsn(new Integer(reactionType));
-        mv.visitLdcInsn(logFileName);
-        mv.visitLdcInsn(msg);
-        mv.visitMethodInsn(INVOKESTATIC, CheckedMaths.CHECK_MATH_RESULT_PATH, CheckedMaths.CHECK_MATH_RESULT_NAME, Signatures.CHECK_MATH_RESULT);
-    }
+//    private void protectMethodInvocation(int reactionType, String logFileName, String msg) {
+//        mv.visitInsn(DUP2);
+//        mv.visitLdcInsn(new Integer(reactionType));
+//        mv.visitLdcInsn(logFileName);
+//        mv.visitLdcInsn(msg);
+//        mv.visitMethodInsn(INVOKESTATIC, CheckedMaths.CHECK_MATH_RESULT_PATH, CheckedMaths.CHECK_MATH_RESULT_NAME, Signatures.CHECK_MATH_RESULT);
+//    }
 
     @Override
     public void visitVarInsn(int opcode, int var) {
@@ -156,33 +140,39 @@ final class CojacFloatReplacerMethodVisitor extends LocalVariablesSorter {
     }
 
     private void instrumentStore(MethodVisitor mv, int opcode, int var) {
-        int rvar=varMap.get(var);
-        if (! varMap.containsKey(var)) {
-            rvar=newLocal(REPLACEMENT_FLOAT_TYPE);
+        int rvar;
+        if (varMap.containsKey(var)) {
+            rvar=varMap.get(var);
+        } else {
+            rvar=newLocal(COJAC_FLOAT_WRAPPER_TYPE);
             varMap.put(var, rvar);
         }
-        mv.visitVarInsn(ASTORE, rvar);        
+        //mv.visitVarInsn(ASTORE, rvar);        
+        mv.visitVarInsn(ASTORE, var);        
     }
 
     private void instrumentLoad(MethodVisitor mv, int opcode, int var) {
-        int rvar=varMap.get(var);
-        if (! varMap.containsKey(var)) {
-            rvar=newLocal(REPLACEMENT_FLOAT_TYPE);
+        int rvar;
+        if (varMap.containsKey(var)) {
+            rvar=varMap.get(var);
+        } else {
+            rvar=newLocal(COJAC_FLOAT_WRAPPER_TYPE);
             varMap.put(var, rvar);
         }
-        mv.visitVarInsn(ALOAD, rvar);                
+        //mv.visitVarInsn(ALOAD, rvar);                
+        mv.visitVarInsn(ALOAD, var);                
     }
 
     
     @Override
     public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index) {
-        // TODO Auto-generated method stub
+        desc=afterFloatReplacement(desc);
         super.visitLocalVariable(name, desc, signature, start, end, index);
     }
 
     @Override
     public void visitFieldInsn(int opcode, String owner, String name, String desc) {
-        // TODO Auto-generated method stub
+        desc=afterFloatReplacement(desc);
         super.visitFieldInsn(opcode, owner, name, desc);
     }
 
@@ -197,7 +187,7 @@ final class CojacFloatReplacerMethodVisitor extends LocalVariablesSorter {
         if (! (cst instanceof Float)) {
             return;
         }
-        
         // Ok, it's a float constant
+        InvokableMethod.FROM_FLOAT.invokeStatic(mv);        
     }
 }

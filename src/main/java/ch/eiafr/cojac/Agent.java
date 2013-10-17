@@ -18,17 +18,23 @@
 
 package ch.eiafr.cojac;
 
+import java.io.PrintWriter;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.util.*;
+
 public final class Agent implements ClassFileTransformer {
     private final CojacReferences references;
     private final ClassInstrumenter instrumenter;
-
+    private final boolean VERBOSE;
+    
     public Agent(final CojacReferences references) {
         try {
             this.references = references;
+            this.VERBOSE = references.getArgs().isSpecified(Arg.VERBOSE);
             this.instrumenter = new ClassLoaderInstrumenter(references); 
         } catch (RuntimeException e) {
             e.printStackTrace();
@@ -42,9 +48,13 @@ public final class Agent implements ClassFileTransformer {
             if (!references.hasToBeInstrumented(className)) {
                 return classfileBuffer;
             }
-            if (references.getArgs().isSpecified(Arg.VERBOSE))
+            if (VERBOSE)
                 System.out.println("Agent instrumenting "+className +" under "+loader);
-            return instrumenter.instrument(classfileBuffer);
+            byte[] instrumented= instrumenter.instrument(classfileBuffer);
+            if (VERBOSE)
+                CheckClassAdapter.verify(new ClassReader(instrumented), false, new PrintWriter(System.out));
+            
+            return instrumented;
         } catch (RuntimeException e) {
             e.printStackTrace();  // Otherwise it'll be hidden!
             throw e;

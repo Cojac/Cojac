@@ -11,8 +11,10 @@ import ch.eiafr.cojac.Arg;
 import ch.eiafr.cojac.Args;
 import ch.eiafr.cojac.CojacReferences;
 import ch.eiafr.cojac.CojacReferences.CojacReferencesBuilder;
+import static ch.eiafr.cojac.unit.AgentTest.*;
 
-public class FloatReplaceTest extends AgentTest {
+public class FloatReplaceTest {
+    protected AgentTest dummyAgentTest=new AgentTest(); // just to ensure AgentTest is loaded
 
     Class<?> tinyExample;
     
@@ -21,12 +23,12 @@ public class FloatReplaceTest extends AgentTest {
         loadOperationsWithAgent(getClassFileTransformer());
     }
 
-    @Override
     protected ClassFileTransformer getClassFileTransformer() {
         Args args = new Args();
         args.specify(Arg.ALL);
         args.specify(Arg.EXCEPTION);
         args.specify(Arg.REPLACE_FLOATS);
+        args.specify(Arg.VERBOSE);
 
         CojacReferencesBuilder builder = new CojacReferencesBuilder(args);
         builder.setSplitter(new CojacReferences.AgentSplitter());
@@ -34,18 +36,15 @@ public class FloatReplaceTest extends AgentTest {
         return new Agent(builder.build());
     }
 
-    @Override
-	public void loadOperationsWithAgent(ClassFileTransformer classFileTransformer) throws ClassNotFoundException,
-			InstantiationException, IllegalAccessException {
-		instrumentation.addTransformer(classFileTransformer, true);
-		ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-		
-		Class<?> operations = classLoader.loadClass("ch.eiafr.cojac.unit.SimpleOperations");
-		super.tests = new Tests(operations.newInstance());
-		
-		tinyExample = classLoader.loadClass("ch.eiafr.cojac.unit.TinyFloatExample");
-		
-		instrumentation.removeTransformer(classFileTransformer);
+	public void loadOperationsWithAgent(ClassFileTransformer classFileTransformer) 
+	         throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+	    instrumentation.addTransformer(classFileTransformer, true);
+	    try {
+	        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+	        tinyExample = classLoader.loadClass("ch.eiafr.cojac.unit.TinyFloatExample");
+	    } finally {
+	        instrumentation.removeTransformer(classFileTransformer);
+	    }
 	}
     
     @Test public void testReplaceFloat() throws Exception {

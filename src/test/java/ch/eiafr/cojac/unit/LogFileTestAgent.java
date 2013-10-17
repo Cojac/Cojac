@@ -51,16 +51,20 @@ public class LogFileTestAgent {
 
         Class<?> classz = ClassLoader.getSystemClassLoader().loadClass("ch.eiafr.cojac.unit.SimpleOverflows");
         AgentTest.instrumentation.retransformClasses(classz);
-
-        Object object = classz.newInstance();
-        Method m = classz.getMethod("test");
-        m.invoke(object);
-
-        Assert.assertTrue(new File(logFile).exists());
-        Assert.assertTrue(new File(logFile).length() > 0);
-
-        new File(logFile).delete();
         
-        AgentTest.instrumentation.removeTransformer(agent);
+        try {
+            Assert.assertFalse(new File(logFile).exists());
+
+            Object object = classz.newInstance();
+            Method m = classz.getMethod("test");
+            m.invoke(object);
+
+            Assert.assertTrue(new File(logFile).exists());
+            Assert.assertTrue(new File(logFile).length() > 0);
+
+            new File(logFile).delete();
+        } finally {
+            AgentTest.instrumentation.removeTransformer(agent);
+        }
     }
 }

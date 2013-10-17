@@ -22,6 +22,7 @@ import ch.eiafr.cojac.instrumenters.OpCodeInstrumenterFactory;
 import ch.eiafr.cojac.methods.CojacMethodAdder;
 import ch.eiafr.cojac.reactions.Reaction;
 
+
 //import org.objectweb.asm.AnnotationVisitor;
 //import org.objectweb.asm.Attribute;
 import org.objectweb.asm.ClassVisitor;
@@ -29,9 +30,10 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-import com.sun.xml.internal.ws.org.objectweb.asm.Type;
+import org.objectweb.asm.Type;
 
 import ch.eiafr.cojac.models.FloatWrapper;
+import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
 
 final class CojacClassVisitor extends ClassVisitor {
     private final CojacMethodAdder methodAdder;
@@ -44,9 +46,7 @@ final class CojacClassVisitor extends ClassVisitor {
     private boolean first = true;
     private String classPath;
     
-    public static final String COJAC_FIELD_SUFFIX = "_C$O$J$A$C";
-    public static final String COJAC_FLOAT_WRAPPER = Type.getInternalName(FloatWrapper.class);
-    //TODO the wrapper could be given as a Cojac parameter
+    //public static final String COJAC_FIELD_SUFFIX = "_C$O$J$A$C";
     
     private CojacAnnotationVisitor cav;
 
@@ -59,7 +59,6 @@ final class CojacClassVisitor extends ClassVisitor {
         this.reaction = reaction;
         this.factory = factory;
         this.cav = cav;
-
         methodAdder = methods != null ? new CojacMethodAdder(args, reaction) : null;
     }
 
@@ -72,6 +71,9 @@ final class CojacClassVisitor extends ClassVisitor {
 
     @Override
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
+        if (args.isSpecified(Arg.REPLACE_FLOATS)) {
+            desc=replaceFloatMethodDescription(desc);   
+        }
         MethodVisitor mv = cv.visitMethod(access, name, desc, signature, exceptions);
 
         String currentMethodID = classPath + '/' + name;
@@ -89,8 +91,10 @@ final class CojacClassVisitor extends ClassVisitor {
         mv.visitEnd();
 
         return instrumentMethod(mv, access, desc);
-
     }
+
+    //        if (args.isSpecified(Arg.REPLACE_FLOATS))
+    //          desc=replaceFloatMethodDescription(desc);
 
     private MethodVisitor instrumentMethod(MethodVisitor parentMv, int access, String desc) {
         MethodVisitor mv = null;
@@ -110,7 +114,7 @@ final class CojacClassVisitor extends ClassVisitor {
         if (args.isSpecified(Arg.REPLACE_FLOATS)) {
             if (fieldType.equals("F")) {
                 //TODO correcty handle initial float initialization for static fields
-                return super.visitField(accessFlags, fieldName, COJAC_FLOAT_WRAPPER, genericSignature, null);
+                return super.visitField(accessFlags, fieldName, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, genericSignature, null);
                 //FieldVisitor fv=cv.visitField(accessFlags, fieldName+COJAC_FIELD_SUFFIX, COJAC_FLOAT_WRAPPER, genericSignature, initValStatic);
                 //if (fv!=null) fv.visitEnd();
                 // ...if we want to replace field (instead of adding a new one...)
@@ -121,11 +125,11 @@ final class CojacClassVisitor extends ClassVisitor {
 //        return instrumentField(fv, accessFlags, fieldName, fieldType, genericSignature, initValStatic);
     }
 
-    private FieldVisitor instrumentField(FieldVisitor parentFv, int arg0, String arg1, String arg2, String arg3, Object arg4) {
-        FieldVisitor fv = new CojacFieldVisitor(parentFv, arg0, arg1, arg2, arg3, arg4);
-        fv.visitEnd();
-        return fv;
-    }
+//    private FieldVisitor instrumentField(FieldVisitor parentFv, int arg0, String arg1, String arg2, String arg3, Object arg4) {
+//        FieldVisitor fv = new CojacFieldVisitor(parentFv, arg0, arg1, arg2, arg3, arg4);
+//        fv.visitEnd();
+//        return fv;
+//    }
 
     
 //  @Override

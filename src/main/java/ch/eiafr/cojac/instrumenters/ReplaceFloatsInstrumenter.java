@@ -22,10 +22,11 @@ import ch.eiafr.cojac.Arg;
 import ch.eiafr.cojac.Args;
 import ch.eiafr.cojac.InstrumentationStats;
 import ch.eiafr.cojac.Methods;
-import ch.eiafr.cojac.Signatures;
+//import ch.eiafr.cojac.Signatures;
 import ch.eiafr.cojac.models.FloatWrapper;
 import ch.eiafr.cojac.models.ReactionType;
 import ch.eiafr.cojac.reactions.Reaction;
+import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.LocalVariablesSorter;
@@ -41,10 +42,8 @@ final class ReplaceFloatsInstrumenter implements OpCodeInstrumenter {
     private final InstrumentationStats stats;
     private final String logFileName;
 
-    private final Map<Integer, MethodDescriptor> invocations = new HashMap<Integer, MethodDescriptor>(50);
-    private final Map<Integer, MethodDescriptor> conversions = new HashMap<Integer, MethodDescriptor>(50);
-    
-    private static final String FLOAT_WRAPPER = "ch/eiafr/cojac/models/FloatWrapper";
+    private final Map<Integer, InvokableMethod> invocations = new HashMap<Integer, InvokableMethod>(50);
+    private final Map<Integer, InvokableMethod> conversions = new HashMap<Integer, InvokableMethod>(50);
     
    // public static final 
 
@@ -62,44 +61,48 @@ final class ReplaceFloatsInstrumenter implements OpCodeInstrumenter {
     }
 
     private void fillMethods() {
-        invocations.put(FADD, new MethodDescriptor(FLOAT_WRAPPER, "fadd", Signatures.CHECK_FLOAT_BINARY));
-        invocations.put(FSUB, new MethodDescriptor(FLOAT_WRAPPER, "fsub", Signatures.CHECK_FLOAT_BINARY));
-        invocations.put(FMUL, new MethodDescriptor(FLOAT_WRAPPER, "fmul", Signatures.CHECK_FLOAT_BINARY));
-        invocations.put(FREM, new MethodDescriptor(FLOAT_WRAPPER, "frem", Signatures.CHECK_FLOAT_BINARY));
-        invocations.put(FDIV, new MethodDescriptor(FLOAT_WRAPPER, "fdiv", Signatures.CHECK_FLOAT_BINARY));
+        invocations.put(FADD, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fadd", REPLACED_FLOAT_BINARY));
+        invocations.put(FSUB, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fsub", REPLACED_FLOAT_BINARY));
+        invocations.put(FMUL, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fmul", REPLACED_FLOAT_BINARY));
+        invocations.put(FREM, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "frem", REPLACED_FLOAT_BINARY));
+        invocations.put(FDIV, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fdiv", REPLACED_FLOAT_BINARY));
 
-        invocations.put(FCMPL, new MethodDescriptor(FLOAT_WRAPPER, "fcmpl", Signatures.CHECK_FLOAT_CMP));
-        invocations.put(FCMPG, new MethodDescriptor(FLOAT_WRAPPER, "fcmpg", Signatures.CHECK_FLOAT_CMP));
+        invocations.put(FNEG, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fneg", REPLACED_FLOAT_UNARY));
 
-        invocations.put(L2F, new MethodDescriptor(FLOAT_WRAPPER, "l2f", REPLACED_L2F));
-        invocations.put(I2F, new MethodDescriptor(FLOAT_WRAPPER, "i2f", REPLACED_I2F));
-        invocations.put(D2F, new MethodDescriptor(FLOAT_WRAPPER, "d2f", REPLACED_D2F));
-        invocations.put(F2I, new MethodDescriptor(FLOAT_WRAPPER, "f2i", REPLACED_F2I));
-        invocations.put(F2L, new MethodDescriptor(FLOAT_WRAPPER, "f2l", REPLACED_F2L));
+        invocations.put(FCMPL, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fcmpl", REPLACED_FLOAT_CMP));
+        invocations.put(FCMPG, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fcmpg", REPLACED_FLOAT_CMP));
+
+        invocations.put(L2F, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "l2f", REPLACED_L2F));
+        invocations.put(I2F, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "i2f", REPLACED_I2F));
+        invocations.put(D2F, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "d2f", REPLACED_D2F));
+        invocations.put(F2I, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "f2i", REPLACED_F2I));
+        invocations.put(F2L, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "f2l", REPLACED_F2L));
         
-        conversions.put(FCONST_0, new MethodDescriptor(FLOAT_WRAPPER, "fromFloat", REPLACED_FROM_FLOAT));
-        conversions.put(FCONST_1, new MethodDescriptor(FLOAT_WRAPPER, "fromFloat", REPLACED_FROM_FLOAT));
-        conversions.put(FCONST_2, new MethodDescriptor(FLOAT_WRAPPER, "fromFloat", REPLACED_FROM_FLOAT));
-        conversions.put(LDC,      new MethodDescriptor(FLOAT_WRAPPER, "fromFloat", REPLACED_FROM_FLOAT));
+        conversions.put(FCONST_0, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", REPLACED_FROM_FLOAT));
+        conversions.put(FCONST_1, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", REPLACED_FROM_FLOAT));
+        conversions.put(FCONST_2, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", REPLACED_FROM_FLOAT));
         
     }
 
     @Override
     public void instrument(MethodVisitor mv, int opCode, String classPath, Methods methods, Reaction r, LocalVariablesSorter src) {
-        MethodDescriptor replacementMethod = invocations.get(opCode);
-        MethodDescriptor conversionMethod = conversions.get(opCode);
+        InvokableMethod replacementMethod = invocations.get(opCode);
+        InvokableMethod conversionMethod = conversions.get(opCode);
         if (replacementMethod != null) {
             replacementMethod.invokeStatic(mv);
         } else if (conversionMethod != null) {
             mv.visitInsn(opCode);
             conversionMethod.invokeStatic(mv);
+        } else if (opCode==FRETURN) {
+            System.out.println("ohoho");
+            mv.visitInsn(ARETURN);
         } else {
             mv.visitInsn(opCode);
         }
     }
 
     //==========================================
-    private static final String RFL=Type.getType(FloatWrapper.class).getDescriptor();
+    private static final String RFL=COJAC_FLOAT_WRAPPER_TYPE_DESCR;//Type.getType(FloatWrapper.class).getDescriptor();
     
     public static final String REPLACED_FLOAT_BINARY = "("+RFL+RFL+")"+RFL;
     public static final String REPLACED_FLOAT_UNARY  = "("+RFL+")"+RFL;
