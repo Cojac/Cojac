@@ -38,7 +38,7 @@ final class DirectInstrumenter implements OpCodeInstrumenter {
     private final InstrumentationStats stats;
     private final String logFileName;
 
-    private final Map<Integer, Method> invocations = new HashMap<Integer, Method>(50);
+    private final Map<Integer, MethodDescriptor> invocations = new HashMap<Integer, MethodDescriptor>(50);
 
     private static final String CHECKED_INTS = "ch/eiafr/cojac/models/CheckedInts";
     private static final String CHECKED_CASTS = "ch/eiafr/cojac/models/CheckedCasts";
@@ -63,46 +63,46 @@ final class DirectInstrumenter implements OpCodeInstrumenter {
     }
 
     private void fillMethods() {
-        invocations.put(IADD, new Method(CHECKED_INTS, "checkedIADD", Signatures.RAW_INTEGER_BINARY));
-        invocations.put(ISUB, new Method(CHECKED_INTS, "checkedISUB", Signatures.RAW_INTEGER_BINARY));
-        invocations.put(IMUL, new Method(CHECKED_INTS, "checkedIMUL", Signatures.RAW_INTEGER_BINARY));
-        invocations.put(IDIV, new Method(CHECKED_INTS, "checkedIDIV", Signatures.RAW_INTEGER_BINARY));
+        invocations.put(IADD, new MethodDescriptor(CHECKED_INTS, "checkedIADD", Signatures.RAW_INTEGER_BINARY));
+        invocations.put(ISUB, new MethodDescriptor(CHECKED_INTS, "checkedISUB", Signatures.RAW_INTEGER_BINARY));
+        invocations.put(IMUL, new MethodDescriptor(CHECKED_INTS, "checkedIMUL", Signatures.RAW_INTEGER_BINARY));
+        invocations.put(IDIV, new MethodDescriptor(CHECKED_INTS, "checkedIDIV", Signatures.RAW_INTEGER_BINARY));
 
-        invocations.put(INEG, new Method(CHECKED_INTS, "checkedINEG", Signatures.RAW_INTEGER_UNARY));
-        invocations.put(IINC, new Method(CHECKED_INTS, "checkedIINC", Signatures.RAW_INTEGER_BINARY));
+        invocations.put(INEG, new MethodDescriptor(CHECKED_INTS, "checkedINEG", Signatures.RAW_INTEGER_UNARY));
+        invocations.put(IINC, new MethodDescriptor(CHECKED_INTS, "checkedIINC", Signatures.RAW_INTEGER_BINARY));
 
-        invocations.put(LADD, new Method(CHECKED_LONGS, "checkedLADD", Signatures.RAW_LONG_BINARY));
-        invocations.put(LSUB, new Method(CHECKED_LONGS, "checkedLSUB", Signatures.RAW_LONG_BINARY));
-        invocations.put(LMUL, new Method(CHECKED_LONGS, "checkedLMUL", Signatures.RAW_LONG_BINARY));
-        invocations.put(LDIV, new Method(CHECKED_LONGS, "checkedLDIV", Signatures.RAW_LONG_BINARY));
+        invocations.put(LADD, new MethodDescriptor(CHECKED_LONGS, "checkedLADD", Signatures.RAW_LONG_BINARY));
+        invocations.put(LSUB, new MethodDescriptor(CHECKED_LONGS, "checkedLSUB", Signatures.RAW_LONG_BINARY));
+        invocations.put(LMUL, new MethodDescriptor(CHECKED_LONGS, "checkedLMUL", Signatures.RAW_LONG_BINARY));
+        invocations.put(LDIV, new MethodDescriptor(CHECKED_LONGS, "checkedLDIV", Signatures.RAW_LONG_BINARY));
 
-        invocations.put(LNEG, new Method(CHECKED_LONGS, "checkedLNEG", Signatures.RAW_LONG_UNARY));
+        invocations.put(LNEG, new MethodDescriptor(CHECKED_LONGS, "checkedLNEG", Signatures.RAW_LONG_UNARY));
 
-        invocations.put(DADD, new Method(CHECKED_DOUBLES, "checkedDADD", Signatures.RAW_DOUBLE_BINARY));
-        invocations.put(DSUB, new Method(CHECKED_DOUBLES, "checkedDSUB", Signatures.RAW_DOUBLE_BINARY));
-        invocations.put(DMUL, new Method(CHECKED_DOUBLES, "checkedDMUL", Signatures.RAW_DOUBLE_BINARY));
-        invocations.put(DDIV, new Method(CHECKED_DOUBLES, "checkedDDIV", Signatures.RAW_DOUBLE_BINARY));
-        invocations.put(DREM, new Method(CHECKED_DOUBLES, "checkedDREM", Signatures.RAW_DOUBLE_BINARY));
-        invocations.put(DCMPL, new Method(CHECKED_DOUBLES, "checkedDCMPL", Signatures.RAW_DOUBLE_CMP));
-        invocations.put(DCMPG, new Method(CHECKED_DOUBLES, "checkedDCMPG", Signatures.RAW_DOUBLE_CMP));
+        invocations.put(DADD, new MethodDescriptor(CHECKED_DOUBLES, "checkedDADD", Signatures.RAW_DOUBLE_BINARY));
+        invocations.put(DSUB, new MethodDescriptor(CHECKED_DOUBLES, "checkedDSUB", Signatures.RAW_DOUBLE_BINARY));
+        invocations.put(DMUL, new MethodDescriptor(CHECKED_DOUBLES, "checkedDMUL", Signatures.RAW_DOUBLE_BINARY));
+        invocations.put(DDIV, new MethodDescriptor(CHECKED_DOUBLES, "checkedDDIV", Signatures.RAW_DOUBLE_BINARY));
+        invocations.put(DREM, new MethodDescriptor(CHECKED_DOUBLES, "checkedDREM", Signatures.RAW_DOUBLE_BINARY));
+        invocations.put(DCMPL, new MethodDescriptor(CHECKED_DOUBLES, "checkedDCMPL", Signatures.RAW_DOUBLE_CMP));
+        invocations.put(DCMPG, new MethodDescriptor(CHECKED_DOUBLES, "checkedDCMPG", Signatures.RAW_DOUBLE_CMP));
 
-        invocations.put(FADD, new Method(CHECKED_FLOATS, "checkedFADD", Signatures.RAW_FLOAT_BINARY));
-        invocations.put(FSUB, new Method(CHECKED_FLOATS, "checkedFSUB", Signatures.RAW_FLOAT_BINARY));
-        invocations.put(FMUL, new Method(CHECKED_FLOATS, "checkedFMUL", Signatures.RAW_FLOAT_BINARY));
-        invocations.put(FREM, new Method(CHECKED_FLOATS, "checkedFREM", Signatures.RAW_FLOAT_BINARY));
-        invocations.put(FDIV, new Method(CHECKED_FLOATS, "checkedFDIV", Signatures.RAW_FLOAT_BINARY));
-        invocations.put(FCMPL, new Method(CHECKED_FLOATS, "checkedFCMPL", Signatures.RAW_FLOAT_CMP));
-        invocations.put(FCMPG, new Method(CHECKED_FLOATS, "checkedFCMPG", Signatures.RAW_FLOAT_CMP));
+        invocations.put(FADD, new MethodDescriptor(CHECKED_FLOATS, "checkedFADD", Signatures.RAW_FLOAT_BINARY));
+        invocations.put(FSUB, new MethodDescriptor(CHECKED_FLOATS, "checkedFSUB", Signatures.RAW_FLOAT_BINARY));
+        invocations.put(FMUL, new MethodDescriptor(CHECKED_FLOATS, "checkedFMUL", Signatures.RAW_FLOAT_BINARY));
+        invocations.put(FREM, new MethodDescriptor(CHECKED_FLOATS, "checkedFREM", Signatures.RAW_FLOAT_BINARY));
+        invocations.put(FDIV, new MethodDescriptor(CHECKED_FLOATS, "checkedFDIV", Signatures.RAW_FLOAT_BINARY));
+        invocations.put(FCMPL, new MethodDescriptor(CHECKED_FLOATS, "checkedFCMPL", Signatures.RAW_FLOAT_CMP));
+        invocations.put(FCMPG, new MethodDescriptor(CHECKED_FLOATS, "checkedFCMPG", Signatures.RAW_FLOAT_CMP));
 
-        invocations.put(L2I, new Method(CHECKED_CASTS, "checkedL2I", Signatures.RAW_L2I));
-        invocations.put(I2S, new Method(CHECKED_CASTS, "checkedI2S", Signatures.RAW_I2S));
-        invocations.put(I2C, new Method(CHECKED_CASTS, "checkedI2C", Signatures.RAW_I2C));
-        invocations.put(I2B, new Method(CHECKED_CASTS, "checkedI2B", Signatures.RAW_I2B));
-        invocations.put(D2F, new Method(CHECKED_CASTS, "checkedD2F", Signatures.RAW_D2F));
-        invocations.put(D2I, new Method(CHECKED_CASTS, "checkedD2I", Signatures.RAW_D2I));
-        invocations.put(D2L, new Method(CHECKED_CASTS, "checkedD2L", Signatures.RAW_D2L));
-        invocations.put(F2I, new Method(CHECKED_CASTS, "checkedF2I", Signatures.RAW_F2I));
-        invocations.put(F2L, new Method(CHECKED_CASTS, "checkedF2L", Signatures.RAW_F2L));
+        invocations.put(L2I, new MethodDescriptor(CHECKED_CASTS, "checkedL2I", Signatures.RAW_L2I));
+        invocations.put(I2S, new MethodDescriptor(CHECKED_CASTS, "checkedI2S", Signatures.RAW_I2S));
+        invocations.put(I2C, new MethodDescriptor(CHECKED_CASTS, "checkedI2C", Signatures.RAW_I2C));
+        invocations.put(I2B, new MethodDescriptor(CHECKED_CASTS, "checkedI2B", Signatures.RAW_I2B));
+        invocations.put(D2F, new MethodDescriptor(CHECKED_CASTS, "checkedD2F", Signatures.RAW_D2F));
+        invocations.put(D2I, new MethodDescriptor(CHECKED_CASTS, "checkedD2I", Signatures.RAW_D2I));
+        invocations.put(D2L, new MethodDescriptor(CHECKED_CASTS, "checkedD2L", Signatures.RAW_D2L));
+        invocations.put(F2I, new MethodDescriptor(CHECKED_CASTS, "checkedF2I", Signatures.RAW_F2I));
+        invocations.put(F2L, new MethodDescriptor(CHECKED_CASTS, "checkedF2L", Signatures.RAW_F2L));
     }
 
     @Override
@@ -114,26 +114,8 @@ final class DirectInstrumenter implements OpCodeInstrumenter {
 
         if (arg != null) {
             stats.incrementCounterValue(arg);
-
-            invokeStatic(mv, invocations.get(opCode));
+            invocations.get(opCode).invokeStatic(mv);
         }
     }
 
-    private static void invokeStatic(MethodVisitor mv, Method method) {
-        mv.visitMethodInsn(INVOKESTATIC, method.classPath, method.method, method.signature);
-    }
-
-    private static final class Method {
-        private final String classPath;
-        private final String method;
-        private final String signature;
-
-        private Method(String classPath, String method, String signature) {
-            super();
-
-            this.classPath = classPath;
-            this.method = method;
-            this.signature = signature;
-        }
-    }
 }

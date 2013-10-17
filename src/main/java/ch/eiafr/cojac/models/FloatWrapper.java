@@ -7,11 +7,29 @@ public class FloatWrapper {
         val=v;
     }
     
+    public static FloatWrapper fromFloat(float a) {
+        return new FloatWrapper(a);
+    }
+
     public static FloatWrapper fadd(FloatWrapper a, FloatWrapper b) {
         return new FloatWrapper(a.val+b.val);
     }
     
-    // idem fsub, fmul, fdiv, frem
+    public static FloatWrapper fsub(FloatWrapper a, FloatWrapper b) {
+        return new FloatWrapper(a.val-b.val);
+    }
+
+    public static FloatWrapper fmul(FloatWrapper a, FloatWrapper b) {
+        return new FloatWrapper(a.val*b.val);
+    }
+
+    public static FloatWrapper fdiv(FloatWrapper a, FloatWrapper b) {
+        return new FloatWrapper(a.val/b.val);
+    }
+
+    public static FloatWrapper frem(FloatWrapper a, FloatWrapper b) {
+        return new FloatWrapper(a.val%b.val);
+    }
     
     public static FloatWrapper fneg(FloatWrapper a) {
         return new FloatWrapper(-a.val);

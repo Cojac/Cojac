@@ -23,10 +23,13 @@ import ch.eiafr.cojac.Args;
 import ch.eiafr.cojac.InstrumentationStats;
 import ch.eiafr.cojac.Methods;
 import ch.eiafr.cojac.Signatures;
+import ch.eiafr.cojac.models.FloatWrapper;
 import ch.eiafr.cojac.models.ReactionType;
 import ch.eiafr.cojac.reactions.Reaction;
+
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.LocalVariablesSorter;
+import org.objectweb.asm.Type;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,21 +41,17 @@ final class ReplaceFloatsInstrumenter implements OpCodeInstrumenter {
     private final InstrumentationStats stats;
     private final String logFileName;
 
-    private final Map<Integer, Method> invocations = new HashMap<Integer, Method>(50);
-
-    private static final String CHECKED_INTS = "ch/eiafr/cojac/models/CheckedInts";
-    private static final String CHECKED_CASTS = "ch/eiafr/cojac/models/CheckedCasts";
-    private static final String CHECKED_LONGS = "ch/eiafr/cojac/models/CheckedLongs";
-    private static final String CHECKED_FLOATS = "ch/eiafr/cojac/models/CheckedFloats";
-    private static final String CHECKED_DOUBLES = "ch/eiafr/cojac/models/CheckedDoubles";
+    private final Map<Integer, MethodDescriptor> invocations = new HashMap<Integer, MethodDescriptor>(50);
+    private final Map<Integer, MethodDescriptor> conversions = new HashMap<Integer, MethodDescriptor>(50);
+    
+    private static final String FLOAT_WRAPPER = "ch/eiafr/cojac/models/FloatWrapper";
+    
+   // public static final 
 
     ReplaceFloatsInstrumenter(Args args, InstrumentationStats stats) {
         super();
-
         this.stats = stats;
-
         reaction = args.getReactionType();
-
 
         if (args.isSpecified(Arg.CALL_BACK))
             logFileName = args.getValue(Arg.CALL_BACK); // No, I'm not proud of that trick...
@@ -63,77 +62,52 @@ final class ReplaceFloatsInstrumenter implements OpCodeInstrumenter {
     }
 
     private void fillMethods() {
-        invocations.put(IADD, new Method(CHECKED_INTS, "checkedIADD", Signatures.RAW_INTEGER_BINARY));
-        invocations.put(ISUB, new Method(CHECKED_INTS, "checkedISUB", Signatures.RAW_INTEGER_BINARY));
-        invocations.put(IMUL, new Method(CHECKED_INTS, "checkedIMUL", Signatures.RAW_INTEGER_BINARY));
-        invocations.put(IDIV, new Method(CHECKED_INTS, "checkedIDIV", Signatures.RAW_INTEGER_BINARY));
+        invocations.put(FADD, new MethodDescriptor(FLOAT_WRAPPER, "fadd", Signatures.CHECK_FLOAT_BINARY));
+        invocations.put(FSUB, new MethodDescriptor(FLOAT_WRAPPER, "fsub", Signatures.CHECK_FLOAT_BINARY));
+        invocations.put(FMUL, new MethodDescriptor(FLOAT_WRAPPER, "fmul", Signatures.CHECK_FLOAT_BINARY));
+        invocations.put(FREM, new MethodDescriptor(FLOAT_WRAPPER, "frem", Signatures.CHECK_FLOAT_BINARY));
+        invocations.put(FDIV, new MethodDescriptor(FLOAT_WRAPPER, "fdiv", Signatures.CHECK_FLOAT_BINARY));
 
-        invocations.put(INEG, new Method(CHECKED_INTS, "checkedINEG", Signatures.RAW_INTEGER_UNARY));
-        invocations.put(IINC, new Method(CHECKED_INTS, "checkedIINC", Signatures.RAW_INTEGER_BINARY));
+        invocations.put(FCMPL, new MethodDescriptor(FLOAT_WRAPPER, "fcmpl", Signatures.CHECK_FLOAT_CMP));
+        invocations.put(FCMPG, new MethodDescriptor(FLOAT_WRAPPER, "fcmpg", Signatures.CHECK_FLOAT_CMP));
 
-        invocations.put(LADD, new Method(CHECKED_LONGS, "checkedLADD", Signatures.RAW_LONG_BINARY));
-        invocations.put(LSUB, new Method(CHECKED_LONGS, "checkedLSUB", Signatures.RAW_LONG_BINARY));
-        invocations.put(LMUL, new Method(CHECKED_LONGS, "checkedLMUL", Signatures.RAW_LONG_BINARY));
-        invocations.put(LDIV, new Method(CHECKED_LONGS, "checkedLDIV", Signatures.RAW_LONG_BINARY));
-
-        invocations.put(LNEG, new Method(CHECKED_LONGS, "checkedLNEG", Signatures.RAW_LONG_UNARY));
-
-        invocations.put(DADD, new Method(CHECKED_DOUBLES, "checkedDADD", Signatures.RAW_DOUBLE_BINARY));
-        invocations.put(DSUB, new Method(CHECKED_DOUBLES, "checkedDSUB", Signatures.RAW_DOUBLE_BINARY));
-        invocations.put(DMUL, new Method(CHECKED_DOUBLES, "checkedDMUL", Signatures.RAW_DOUBLE_BINARY));
-        invocations.put(DDIV, new Method(CHECKED_DOUBLES, "checkedDDIV", Signatures.RAW_DOUBLE_BINARY));
-        invocations.put(DREM, new Method(CHECKED_DOUBLES, "checkedDREM", Signatures.RAW_DOUBLE_BINARY));
-        invocations.put(DCMPL, new Method(CHECKED_DOUBLES, "checkedDCMPL", Signatures.RAW_DOUBLE_CMP));
-        invocations.put(DCMPG, new Method(CHECKED_DOUBLES, "checkedDCMPG", Signatures.RAW_DOUBLE_CMP));
-
-        invocations.put(FADD, new Method(CHECKED_FLOATS, "checkedFADD", Signatures.RAW_FLOAT_BINARY));
-        invocations.put(FSUB, new Method(CHECKED_FLOATS, "checkedFSUB", Signatures.RAW_FLOAT_BINARY));
-        invocations.put(FMUL, new Method(CHECKED_FLOATS, "checkedFMUL", Signatures.RAW_FLOAT_BINARY));
-        invocations.put(FREM, new Method(CHECKED_FLOATS, "checkedFREM", Signatures.RAW_FLOAT_BINARY));
-        invocations.put(FDIV, new Method(CHECKED_FLOATS, "checkedFDIV", Signatures.RAW_FLOAT_BINARY));
-        invocations.put(FCMPL, new Method(CHECKED_FLOATS, "checkedFCMPL", Signatures.RAW_FLOAT_CMP));
-        invocations.put(FCMPG, new Method(CHECKED_FLOATS, "checkedFCMPG", Signatures.RAW_FLOAT_CMP));
-
-        invocations.put(L2I, new Method(CHECKED_CASTS, "checkedL2I", Signatures.RAW_L2I));
-        invocations.put(I2S, new Method(CHECKED_CASTS, "checkedI2S", Signatures.RAW_I2S));
-        invocations.put(I2C, new Method(CHECKED_CASTS, "checkedI2C", Signatures.RAW_I2C));
-        invocations.put(I2B, new Method(CHECKED_CASTS, "checkedI2B", Signatures.RAW_I2B));
-        invocations.put(D2F, new Method(CHECKED_CASTS, "checkedD2F", Signatures.RAW_D2F));
-        invocations.put(D2I, new Method(CHECKED_CASTS, "checkedD2I", Signatures.RAW_D2I));
-        invocations.put(D2L, new Method(CHECKED_CASTS, "checkedD2L", Signatures.RAW_D2L));
-        invocations.put(F2I, new Method(CHECKED_CASTS, "checkedF2I", Signatures.RAW_F2I));
-        invocations.put(F2L, new Method(CHECKED_CASTS, "checkedF2L", Signatures.RAW_F2L));
+        invocations.put(L2F, new MethodDescriptor(FLOAT_WRAPPER, "l2f", REPLACED_L2F));
+        invocations.put(I2F, new MethodDescriptor(FLOAT_WRAPPER, "i2f", REPLACED_I2F));
+        invocations.put(D2F, new MethodDescriptor(FLOAT_WRAPPER, "d2f", REPLACED_D2F));
+        invocations.put(F2I, new MethodDescriptor(FLOAT_WRAPPER, "f2i", REPLACED_F2I));
+        invocations.put(F2L, new MethodDescriptor(FLOAT_WRAPPER, "f2l", REPLACED_F2L));
+        
+        conversions.put(FCONST_0, new MethodDescriptor(FLOAT_WRAPPER, "fromFloat", REPLACED_FROM_FLOAT));
+        conversions.put(FCONST_1, new MethodDescriptor(FLOAT_WRAPPER, "fromFloat", REPLACED_FROM_FLOAT));
+        conversions.put(FCONST_2, new MethodDescriptor(FLOAT_WRAPPER, "fromFloat", REPLACED_FROM_FLOAT));
+        conversions.put(LDC,      new MethodDescriptor(FLOAT_WRAPPER, "fromFloat", REPLACED_FROM_FLOAT));
+        
     }
 
     @Override
     public void instrument(MethodVisitor mv, int opCode, String classPath, Methods methods, Reaction r, LocalVariablesSorter src) {
-        mv.visitLdcInsn(reaction.value());
-        mv.visitLdcInsn(logFileName);
-
-        Arg arg = Arg.fromOpCode(opCode);
-
-        if (arg != null) {
-            stats.incrementCounterValue(arg);
-
-            invokeStatic(mv, invocations.get(opCode));
+        MethodDescriptor replacementMethod = invocations.get(opCode);
+        MethodDescriptor conversionMethod = conversions.get(opCode);
+        if (replacementMethod != null) {
+            replacementMethod.invokeStatic(mv);
+        } else if (conversionMethod != null) {
+            mv.visitInsn(opCode);
+            conversionMethod.invokeStatic(mv);
+        } else {
+            mv.visitInsn(opCode);
         }
     }
 
-    private static void invokeStatic(MethodVisitor mv, Method method) {
-        mv.visitMethodInsn(INVOKESTATIC, method.classPath, method.method, method.signature);
-    }
-
-    private static final class Method {
-        private final String classPath;
-        private final String method;
-        private final String signature;
-
-        private Method(String classPath, String method, String signature) {
-            super();
-
-            this.classPath = classPath;
-            this.method = method;
-            this.signature = signature;
-        }
-    }
+    //==========================================
+    private static final String RFL=Type.getType(FloatWrapper.class).getDescriptor();
+    
+    public static final String REPLACED_FLOAT_BINARY = "("+RFL+RFL+")"+RFL;
+    public static final String REPLACED_FLOAT_UNARY  = "("+RFL+")"+RFL;
+    public static final String REPLACED_FLOAT_CMP    = "("+RFL+RFL+")I";
+    public static final String REPLACED_I2F          = "(I)"+RFL;
+    public static final String REPLACED_L2F          = "(J)"+RFL;
+    public static final String REPLACED_D2F          = "(D)"+RFL;
+    public static final String REPLACED_F2I          = "("+RFL+")I";
+    public static final String REPLACED_F2L          = "("+RFL+")J";
+    public static final String REPLACED_FROM_FLOAT   = "(F)"+RFL;
 }

@@ -21,13 +21,20 @@ package ch.eiafr.cojac;
 import ch.eiafr.cojac.instrumenters.OpCodeInstrumenter;
 import ch.eiafr.cojac.instrumenters.OpCodeInstrumenterFactory;
 import ch.eiafr.cojac.models.CheckedMaths;
+import ch.eiafr.cojac.models.FloatWrapper;
 import ch.eiafr.cojac.reactions.Reaction;
+
+import org.objectweb.asm.Handle;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.LocalVariablesSorter;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -38,6 +45,11 @@ final class CojacFloatReplacerMethodVisitor extends LocalVariablesSorter {
     private final Methods methods;
     private final Reaction reaction;
     private final String classPath;
+    
+    private static final Type REPLACEMENT_FLOAT_TYPE=Type.getType(FloatWrapper.class);
+
+
+    private final Map<Integer, Integer> varMap = new HashMap<>();
 
     private static final List<String> UNARY_METHODS = Arrays.asList(
         "ceil", "round", "floor",
@@ -130,5 +142,62 @@ final class CojacFloatReplacerMethodVisitor extends LocalVariablesSorter {
         mv.visitLdcInsn(logFileName);
         mv.visitLdcInsn(msg);
         mv.visitMethodInsn(INVOKESTATIC, CheckedMaths.CHECK_MATH_RESULT_PATH, CheckedMaths.CHECK_MATH_RESULT_NAME, Signatures.CHECK_MATH_RESULT);
+    }
+
+    @Override
+    public void visitVarInsn(int opcode, int var) {
+        if (opcode==FLOAD) {
+            instrumentLoad(mv, opcode, var);
+        } else if (opcode == FSTORE) {
+            instrumentStore(mv, opcode, var);
+        } else {
+            super.visitVarInsn(opcode, var);
+        }
+    }
+
+    private void instrumentStore(MethodVisitor mv, int opcode, int var) {
+        int rvar=varMap.get(var);
+        if (! varMap.containsKey(var)) {
+            rvar=newLocal(REPLACEMENT_FLOAT_TYPE);
+            varMap.put(var, rvar);
+        }
+        mv.visitVarInsn(ASTORE, rvar);        
+    }
+
+    private void instrumentLoad(MethodVisitor mv, int opcode, int var) {
+        int rvar=varMap.get(var);
+        if (! varMap.containsKey(var)) {
+            rvar=newLocal(REPLACEMENT_FLOAT_TYPE);
+            varMap.put(var, rvar);
+        }
+        mv.visitVarInsn(ALOAD, rvar);                
+    }
+
+    
+    @Override
+    public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index) {
+        // TODO Auto-generated method stub
+        super.visitLocalVariable(name, desc, signature, start, end, index);
+    }
+
+    @Override
+    public void visitFieldInsn(int opcode, String owner, String name, String desc) {
+        // TODO Auto-generated method stub
+        super.visitFieldInsn(opcode, owner, name, desc);
+    }
+
+    @Override
+    public void visitInvokeDynamicInsn(String name, String desc, Handle bsm, Object... bsmArgs) {
+        super.visitInvokeDynamicInsn(name, desc, bsm, bsmArgs);
+    }
+
+    @Override
+    public void visitLdcInsn(Object cst) {
+        super.visitLdcInsn(cst);
+        if (! (cst instanceof Float)) {
+            return;
+        }
+        
+        // Ok, it's a float constant
     }
 }
