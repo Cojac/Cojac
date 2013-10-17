@@ -99,7 +99,7 @@ final class CojacClassVisitor extends ClassVisitor {
     private MethodVisitor instrumentMethod(MethodVisitor parentMv, int access, String desc) {
         MethodVisitor mv = null;
         if (args.isSpecified(Arg.REPLACE_FLOATS))
-            mv = new CojacFloatReplacerMethodVisitor(access, desc, parentMv, stats, args, methods, reaction, classPath, factory);
+            mv = new FloatReplacerMethodVisitor(access, desc, parentMv, stats, args, methods, reaction, classPath, factory);
         else 
             mv = new CojacCheckerMethodVisitor(access, desc, parentMv, stats, args, methods, reaction, classPath, factory);
 

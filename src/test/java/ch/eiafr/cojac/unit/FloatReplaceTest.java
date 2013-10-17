@@ -47,7 +47,8 @@ public class FloatReplaceTest {
 	    }
 	}
     
-    @Test public void testReplaceFloat() throws Exception {
+    @Test 
+    public void testReplaceFloat() throws Exception {
         System.out.println(tinyExample);
         if (tinyExample==null) return;
         Method m = tinyExample.getMethod("go");

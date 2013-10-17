@@ -44,7 +44,7 @@ public final class ClassLoaderOpSizeInstrumenterFactory implements OpCodeInstrum
     public OpCodeInstrumenter getInstrumenter(int opCode, Arg arg) {
         // TODO: a bit tricky...
         if (args.isSpecified(Arg.REPLACE_FLOATS)) {
-            if (opCode==FRETURN)
+            if (opCode==FRETURN || opCode==FCONST_0)
                 return opCodeInstrumenter;
         }
         if (arg==null) return null;

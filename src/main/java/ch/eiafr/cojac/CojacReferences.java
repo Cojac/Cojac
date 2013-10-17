@@ -97,7 +97,7 @@ public final class CojacReferences {
 
     @SuppressWarnings("unused")
     public static int getFlags(Args args) {
-        return ClassWriter.COMPUTE_MAXS;
+        return ClassWriter.COMPUTE_FRAMES;
         //return ClassWriter.COMPUTE_FRAMES;//return ClassWriter.COMPUTE_MAXS;
     }
 

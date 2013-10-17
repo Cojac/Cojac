@@ -35,12 +35,14 @@ import org.objectweb.asm.commons.LocalVariablesSorter;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.objectweb.asm.Opcodes.*;
 
-final class CojacFloatReplacerMethodVisitor extends LocalVariablesSorter {
+final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
     private final OpCodeInstrumenterFactory factory;
     private final InstrumentationStats stats;
     private final Args args;
@@ -49,6 +51,8 @@ final class CojacFloatReplacerMethodVisitor extends LocalVariablesSorter {
     private final String classPath;
 
     private final Map<Integer, Integer> varMap = new HashMap<>();
+    private final Set<Integer> floatVars = new HashSet<>();
+    private final Set<Integer> nonFloatVars = new HashSet<>();
 
     private static final List<String> UNARY_METHODS = Arrays.asList(
         "ceil", "round", "floor",
@@ -63,7 +67,7 @@ final class CojacFloatReplacerMethodVisitor extends LocalVariablesSorter {
     private static final List<String> BINARY_METHODS =
         Arrays.asList("atan2", "pow", "hypot", "copySign", "nextAfter", "scalb");
 
-    CojacFloatReplacerMethodVisitor(int access, String desc, MethodVisitor mv, InstrumentationStats stats, Args args, Methods methods, Reaction reaction, String classPath, OpCodeInstrumenterFactory factory) {
+    FloatReplacerMethodVisitor(int access, String desc, MethodVisitor mv, InstrumentationStats stats, Args args, Methods methods, Reaction reaction, String classPath, OpCodeInstrumenterFactory factory) {
         super(access, desc, mv);
 
         this.stats = stats;
@@ -128,42 +132,69 @@ final class CojacFloatReplacerMethodVisitor extends LocalVariablesSorter {
 
     @Override
     public void visitVarInsn(int opcode, int var) {
-        if (opcode==FLOAD) {
-            instrumentLoad(mv, opcode, var);
-        } else if (opcode == FSTORE) {
-            instrumentStore(mv, opcode, var);
+        if (opcode==FLOAD || opcode==FSTORE) {
+            int replacedOpcode = (opcode==FLOAD) ? ALOAD:ASTORE;
+            int replacedVar=var;
+            if (nonFloatVars.contains(var)) {
+                replacedVar=newLocal(COJAC_FLOAT_WRAPPER_TYPE);
+            } else {
+                floatVars.add(var);
+            }
+            mv.visitVarInsn(replacedOpcode, replacedVar);
         } else {
-            super.visitVarInsn(opcode, var);
+            int replacedVar=var;
+            if (floatVars.contains(var)) {
+                replacedVar=newLocal(typeFromVarInsn(opcode));
+            } else {
+                nonFloatVars.add(var);
+            }
+            mv.visitVarInsn(opcode, replacedVar);
         }
     }
 
-    private void instrumentStore(MethodVisitor mv, int opcode, int var) {
-        int rvar;
-        if (varMap.containsKey(var)) {
-            rvar=varMap.get(var);
-        } else {
-            rvar=newLocal(COJAC_FLOAT_WRAPPER_TYPE);
-            varMap.put(var, rvar);
+    private Type typeFromVarInsn(int opcode) {
+        switch(opcode) {
+        case RET: // TODO: verify RET uses an int variable
+        case ISTORE:
+        case ILOAD: return Type.INT_TYPE;
+        case LSTORE:
+        case LLOAD: return Type.LONG_TYPE;
+        case DSTORE:
+        case DLOAD: return Type.DOUBLE_TYPE;
+        case ASTORE:
+        case ALOAD: return Type.INT_TYPE;  // TODO: verify if ALOAD can use an INT_TYPE variable
         }
-        //mv.visitVarInsn(ASTORE, rvar);        
-        mv.visitVarInsn(ASTORE, var);        
+        return null;
     }
 
-    private void instrumentLoad(MethodVisitor mv, int opcode, int var) {
-        int rvar;
-        if (varMap.containsKey(var)) {
-            rvar=varMap.get(var);
-        } else {
-            rvar=newLocal(COJAC_FLOAT_WRAPPER_TYPE);
-            varMap.put(var, rvar);
-        }
-        //mv.visitVarInsn(ALOAD, rvar);                
-        mv.visitVarInsn(ALOAD, var);                
-    }
-
-    
+    //    private void instrumentStore(MethodVisitor mv, int opcode, int var) {
+//        int rvar;
+//        if (varMap.containsKey(var)) {
+//            rvar=varMap.get(var);
+//        } else {
+//            rvar=newLocal(COJAC_FLOAT_WRAPPER_TYPE);
+//            varMap.put(var, rvar);
+//        }
+//        //mv.visitVarInsn(ASTORE, rvar);        
+//        mv.visitVarInsn(ASTORE, var);        
+//    }
+//
+//    private void instrumentLoad(MethodVisitor mv, int opcode, int var) {
+//        int rvar;
+//        if (varMap.containsKey(var)) {
+//            rvar=varMap.get(var);
+//        } else {
+//            rvar=newLocal(COJAC_FLOAT_WRAPPER_TYPE);
+//            varMap.put(var, rvar);
+//        }
+//        //mv.visitVarInsn(ALOAD, rvar);                
+//        mv.visitVarInsn(ALOAD, var);                
+//    }
+//
+//    
     @Override
     public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index) {
+        //TODO something coherent, even if it is only for the benefit of the debuggers...
         desc=afterFloatReplacement(desc);
         super.visitLocalVariable(name, desc, signature, start, end, index);
     }
