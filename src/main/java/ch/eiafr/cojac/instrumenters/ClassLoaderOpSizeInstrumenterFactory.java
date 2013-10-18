@@ -18,16 +18,26 @@
 
 package ch.eiafr.cojac.instrumenters;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import ch.eiafr.cojac.Arg;
 import ch.eiafr.cojac.Args;
 import ch.eiafr.cojac.InstrumentationStats;
-
 import static org.objectweb.asm.Opcodes.*;
 
 public final class ClassLoaderOpSizeInstrumenterFactory implements OpCodeInstrumenterFactory {
     private final OpCodeInstrumenter opCodeInstrumenter;
 
     private final Args args;
+    
+    private static final Set<Integer> replaceFloatsOpcodes = new HashSet<>();
+    static {
+        int [] t = {FRETURN, FCONST_0, FCONST_1, FCONST_2, I2F, L2F, D2F};
+        for(int e:t) {
+            replaceFloatsOpcodes.add(e);
+        }
+    }
 
     public ClassLoaderOpSizeInstrumenterFactory(Args args, InstrumentationStats stats) {
         super();
@@ -44,7 +54,7 @@ public final class ClassLoaderOpSizeInstrumenterFactory implements OpCodeInstrum
     public OpCodeInstrumenter getInstrumenter(int opCode, Arg arg) {
         // TODO: a bit tricky...
         if (args.isSpecified(Arg.REPLACE_FLOATS)) {
-            if (opCode==FRETURN || opCode==FCONST_0)
+            if (replaceFloatsOpcodes.contains(opCode))
                 return opCodeInstrumenter;
         }
         if (arg==null) return null;

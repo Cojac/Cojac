@@ -136,7 +136,12 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
             int replacedOpcode = (opcode==FLOAD) ? ALOAD:ASTORE;
             int replacedVar=var;
             if (nonFloatVars.contains(var)) {
-                replacedVar=newLocal(COJAC_FLOAT_WRAPPER_TYPE);
+                if (varMap.containsKey(var)) {
+                    replacedVar=varMap.get(var);
+                } else {
+                    replacedVar=newLocal(COJAC_FLOAT_WRAPPER_TYPE);
+                    varMap.put(var, replacedVar);
+                }
             } else {
                 floatVars.add(var);
             }
@@ -144,7 +149,12 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
         } else {
             int replacedVar=var;
             if (floatVars.contains(var)) {
-                replacedVar=newLocal(typeFromVarInsn(opcode));
+                if (varMap.containsKey(var)) {
+                    replacedVar=varMap.get(var);
+                } else {
+                    replacedVar=newLocal(typeFromVarInsn(opcode));
+                    varMap.put(var, replacedVar);
+                }
             } else {
                 nonFloatVars.add(var);
             }
@@ -153,6 +163,7 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
     }
 
     private Type typeFromVarInsn(int opcode) {
+        Type objt = Type.getObjectType("java/lang/Object");
         switch(opcode) {
         case RET: // TODO: verify RET uses an int variable
         case ISTORE:
@@ -162,7 +173,7 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
         case DSTORE:
         case DLOAD: return Type.DOUBLE_TYPE;
         case ASTORE:
-        case ALOAD: return Type.INT_TYPE;  // TODO: verify if ALOAD can use an INT_TYPE variable
+        case ALOAD: return objt;  // TODO: verify if ALOAD can use an java.lang.Object variable
         }
         return null;
     }

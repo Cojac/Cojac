@@ -27,6 +27,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.util.*;
 
 public final class Agent implements ClassFileTransformer {
+    private final boolean PRINT_INSTR_RESULT=false;
     private final CojacReferences references;
     private final ClassInstrumenter instrumenter;
     private final boolean VERBOSE;
@@ -52,7 +53,7 @@ public final class Agent implements ClassFileTransformer {
                 System.out.println("Agent instrumenting "+className +" under "+loader);
             byte[] instrumented= instrumenter.instrument(classfileBuffer);
             if (VERBOSE)
-                CheckClassAdapter.verify(new ClassReader(instrumented), false, new PrintWriter(System.out));
+                CheckClassAdapter.verify(new ClassReader(instrumented), PRINT_INSTR_RESULT, new PrintWriter(System.out));
             
             return instrumented;
         } catch (RuntimeException e) {
