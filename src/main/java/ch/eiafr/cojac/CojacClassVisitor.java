@@ -69,7 +69,8 @@ final class CojacClassVisitor extends ClassVisitor {
     @Override
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
         if (args.isSpecified(Arg.REPLACE_FLOATS)) {
-            desc=replaceFloatMethodDescription(desc);   
+            if (!FloatReplacerMethodVisitor.DONT_INSTRUMENT)
+                desc=replaceFloatMethodDescription(desc);   
         }
         MethodVisitor mv = cv.visitMethod(access, name, desc, signature, exceptions);
 
@@ -110,8 +111,8 @@ final class CojacClassVisitor extends ClassVisitor {
     public FieldVisitor visitField(int accessFlags, String fieldName, String fieldType, String genericSignature, Object initValStatic) {
         if (args.isSpecified(Arg.REPLACE_FLOATS)) {
             if (fieldType.equals("F")) {
-                //TODO correcty handle initial float initialization for static fields
-                return super.visitField(accessFlags, fieldName, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, genericSignature, null);
+                //TODO correctly handle initial float initialization for static fields
+                return super.visitField(accessFlags, fieldName, COJAC_FLOAT_WRAPPER_TYPE_DESCR, genericSignature, null);
                 //FieldVisitor fv=cv.visitField(accessFlags, fieldName+COJAC_FIELD_SUFFIX, COJAC_FLOAT_WRAPPER, genericSignature, initValStatic);
                 //if (fv!=null) fv.visitEnd();
                 // ...if we want to replace field (instead of adding a new one...)

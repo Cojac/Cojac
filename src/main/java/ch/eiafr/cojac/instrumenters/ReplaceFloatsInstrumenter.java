@@ -83,6 +83,7 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
         invocations.put(D2F, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "d2f", REPLACED_D2F));
         invocations.put(F2I, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "f2i", REPLACED_F2I));
         invocations.put(F2L, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "f2l", REPLACED_F2L));
+        invocations.put(F2D, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "f2d", REPLACED_F2D));
         
         conversions.put(FCONST_0, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", REPLACED_FROM_FLOAT));
         conversions.put(FCONST_1, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", REPLACED_FROM_FLOAT));
@@ -122,6 +123,7 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
     public static final String REPLACED_D2F          = "(D)"+RFL;
     public static final String REPLACED_F2I          = "("+RFL+")I";
     public static final String REPLACED_F2L          = "("+RFL+")J";
+    public static final String REPLACED_F2D          = "("+RFL+")D";
     public static final String REPLACED_FROM_FLOAT   = "(F)"+RFL;
     
 }

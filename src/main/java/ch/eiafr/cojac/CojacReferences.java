@@ -85,8 +85,8 @@ public final class CojacReferences {
 
     public boolean hasToBeInstrumented(String className) {
         // TODO: also instrument std lib for float replacement + deal with native methods
-//        if (args.isSpecified(Arg.REPLACE_FLOATS))
-//            return true; // replacement is radical, std lib classes will be instrumented... (problem: native classes...)
+        if (args.isSpecified(Arg.REPLACE_FLOATS))
+            return !className.startsWith("ch.eiafr.cojac.models"); // replacement is radical, std lib classes will be instrumented... (problem: native classes...)
         for (String standardPackage : bypassList) {
             if (className.startsWith(standardPackage)) {
                 return false;

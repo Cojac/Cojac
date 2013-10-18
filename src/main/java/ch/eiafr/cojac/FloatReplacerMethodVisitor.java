@@ -45,6 +45,7 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
     private final Methods methods;
     private final IReaction reaction;
     private final String classPath;
+    public static final boolean DONT_INSTRUMENT = false;
 
     private final Map<Integer, Integer> varMap = new HashMap<>();
     private final Set<Integer> floatVars = new HashSet<>();
@@ -64,39 +65,22 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
 
     @Override
     public void visitInsn(int opCode) {
+        if (DONT_INSTRUMENT) {
+            super.visitInsn(opCode); return; 
+        }
         IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opCode);
         if (instrumenter != null) {
             instrumenter.instrument(mv, opCode, classPath, methods, reaction, this);
-        } else { //Delegate to parent
+        } else { // Delegate to parent
             super.visitInsn(opCode);
         }
     }
 
     @Override
-    public void visitIincInsn(int index, int value) {
-        int opCode=Opcodes.IINC;
-        IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opCode);
-        if (args.isOperationEnabled(Arg.IINC)) {
-            if ( methods != null) {// Maybe make better than methods != null
-                visitVarInsn(ILOAD, index);
-                mv.visitLdcInsn(value);
-                mv.visitMethodInsn(INVOKESTATIC, classPath, methods.getMethod(IINC), Signatures.CHECK_INTEGER_BINARY);
-                visitVarInsn(ISTORE, index);
-            } else {
-                visitVarInsn(ILOAD, index);
-                mv.visitLdcInsn(value);
-                instrumenter.instrument(mv, opCode, classPath, methods, reaction, this);
-                visitVarInsn(ISTORE, index);
-            }
-
-            stats.incrementCounterValue(Arg.IINC);
-        } else {
-            super.visitIincInsn(index, value);
-        }
-    }
-
-    @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc) {
+        if (DONT_INSTRUMENT) {
+            super.visitMethodInsn(opcode, owner, name, desc); return; 
+        }
         desc=replaceFloatMethodDescription(desc);
         // TODO: something smarter, taking into account the method call kinds ?
         super.visitMethodInsn(opcode, owner, name, desc);
@@ -104,6 +88,10 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
 
     @Override
     public void visitVarInsn(int opcode, int var) {
+        if (DONT_INSTRUMENT) {
+            super.visitVarInsn(opcode, var); return; 
+        }
+
         if (opcode==FLOAD || opcode==FSTORE) {
             int replacedOpcode = (opcode==FLOAD) ? ALOAD:ASTORE;
             int replacedVar=var;
@@ -152,6 +140,10 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
 
     @Override
     public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index) {
+        if (DONT_INSTRUMENT) {
+            super.visitLocalVariable(name, desc, signature, start, end, index);
+            return;
+        }
         //TODO something coherent, even if it is only for the benefit of the debuggers...
         desc=afterFloatReplacement(desc);
         super.visitLocalVariable(name, desc, signature, start, end, index);
@@ -159,6 +151,10 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
 
     @Override
     public void visitFieldInsn(int opcode, String owner, String name, String desc) {
+        if (DONT_INSTRUMENT) {
+            super.visitFieldInsn(opcode, owner, name, desc);
+            return;
+        }
         desc=afterFloatReplacement(desc);
         super.visitFieldInsn(opcode, owner, name, desc);
     }
@@ -170,7 +166,14 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
 
     @Override
     public void visitLdcInsn(Object cst) {
+        if (DONT_INSTRUMENT) {
+            super.visitLdcInsn(cst);
+            return;
+        }
         super.visitLdcInsn(cst);
+        if (DONT_INSTRUMENT) {
+            return;
+        }
         if (cst instanceof Float) {
             InvokableMethod.FROM_FLOAT.invokeStatic(mv);        
         }

@@ -40,5 +40,6 @@ public final class CojacAgent {
         CojacReferencesBuilder builder = new CojacReferencesBuilder(args);
         builder.setSplitter(new CojacReferences.AgentSplitter());
         inst.addTransformer(new Agent(builder.build()));
+        //TODO: maybe consider retransforming existing classes when REPLACE_FLOATS...
     }
 }

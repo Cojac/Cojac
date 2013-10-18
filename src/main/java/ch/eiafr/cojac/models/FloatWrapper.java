@@ -57,7 +57,14 @@ public class FloatWrapper {
         return a.val;
     }
     
+    // TODO: correctly implement fcmpl and fcmpg
     public static int fcmpl(FloatWrapper a, FloatWrapper b) {
+        if (a.val < b.val) return -1;
+        if (a.val > b.val) return +1;
+        return 0;
+    }
+    
+    public static int fcmpg(FloatWrapper a, FloatWrapper b) {
         if (a.val < b.val) return -1;
         if (a.val > b.val) return +1;
         return 0;

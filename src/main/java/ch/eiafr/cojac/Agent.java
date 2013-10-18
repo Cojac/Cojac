@@ -27,7 +27,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.util.*;
 
 public final class Agent implements ClassFileTransformer {
-    private final boolean PRINT_INSTR_RESULT=false;
+    private final boolean PRINT_INSTR_RESULT=true;
     private final CojacReferences references;
     private final IClassInstrumenter instrumenter;
     private final boolean VERBOSE;
