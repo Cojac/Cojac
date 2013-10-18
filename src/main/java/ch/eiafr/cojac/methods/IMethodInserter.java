@@ -20,9 +20,9 @@ package ch.eiafr.cojac.methods;
 
 import ch.eiafr.cojac.Args;
 import ch.eiafr.cojac.Methods;
-import ch.eiafr.cojac.reactions.Reaction;
+import ch.eiafr.cojac.reactions.IReaction;
 import org.objectweb.asm.ClassVisitor;
 
-public interface MethodInserter {
-    void insertMethods(ClassVisitor cv, Args args, Methods methods, Reaction reaction, String classPath);
+public interface IMethodInserter {
+    void insertMethods(ClassVisitor cv, Args args, Methods methods, IReaction reaction, String classPath);
 }

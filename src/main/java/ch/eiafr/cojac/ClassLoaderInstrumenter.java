@@ -18,16 +18,16 @@
 
 package ch.eiafr.cojac;
 
-import ch.eiafr.cojac.instrumenters.OpCodeInstrumenterFactory;
-import ch.eiafr.cojac.reactions.Reaction;
+import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenterFactory;
+import ch.eiafr.cojac.reactions.IReaction;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 
-public final class ClassLoaderInstrumenter implements ClassInstrumenter {
+public final class ClassLoaderInstrumenter implements IClassInstrumenter {
     private final Args args;
     private final InstrumentationStats stats;
-    private final Reaction reaction;
-    private final OpCodeInstrumenterFactory factory;
+    private final IReaction reaction;
+    private final IOpcodeInstrumenterFactory factory;
 
     public ClassLoaderInstrumenter(CojacReferences references) {
         super();

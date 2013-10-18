@@ -36,7 +36,7 @@ import javax.management.NotificationBroadcasterSupport;
 
 import ch.eiafr.cojac.models.Reactions;
 
-public final class InstrumentationStats extends NotificationBroadcasterSupport implements CojacMXBean {
+public final class InstrumentationStats extends NotificationBroadcasterSupport implements ICojacMXBean {
     private final Map<Arg, Counter> counters = new EnumMap<Arg, Counter>(Arg.class);
     private long startTime;
     private final Object BLACKLIST_LOCK = new Object();

@@ -53,16 +53,17 @@ public class LogFileTestAgent {
         AgentTest.instrumentation.retransformClasses(classz);
         
         try {
-            Assert.assertFalse(new File(logFile).exists());
+            File lf = new File(logFile);
+            Assert.assertFalse(lf.exists());
 
             Object object = classz.newInstance();
             Method m = classz.getMethod("test");
             m.invoke(object);
 
-            Assert.assertTrue("logFile not created: "+logFile, new File(logFile).exists());
-            Assert.assertTrue(new File(logFile).length() > 0);
+            Assert.assertTrue("logFile not created: "+logFile, lf.exists());
+            Assert.assertTrue(lf.length() > 0);
 
-            new File(logFile).delete();
+            lf.delete();
         } finally {
             AgentTest.instrumentation.removeTransformer(agent);
         }

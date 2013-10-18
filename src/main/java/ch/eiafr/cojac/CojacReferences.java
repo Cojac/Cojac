@@ -36,11 +36,11 @@ import javax.management.remote.JMXServiceURL;
 
 import org.objectweb.asm.ClassWriter;
 
-import ch.eiafr.cojac.instrumenters.ClassLoaderOpSizeInstrumenterFactory;
-import ch.eiafr.cojac.instrumenters.OpCodeInstrumenterFactory;
+import ch.eiafr.cojac.instrumenters.ClassLoaderInstrumenterFactory;
+import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenterFactory;
 import ch.eiafr.cojac.models.Reactions;
 import ch.eiafr.cojac.reactions.ClassLoaderReaction;
-import ch.eiafr.cojac.reactions.Reaction;
+import ch.eiafr.cojac.reactions.IReaction;
 import ch.eiafr.cojac.utils.ReflectionUtils;
 
 public final class CojacReferences {
@@ -48,8 +48,8 @@ public final class CojacReferences {
 
     private final Args args;
     private final InstrumentationStats stats;
-    private final Reaction reaction;
-    private final OpCodeInstrumenterFactory factory;
+    private final IReaction reaction;
+    private final IOpcodeInstrumenterFactory factory;
     private final MBeanServer mbServer;
     private final String[] bypassList;
 
@@ -71,11 +71,11 @@ public final class CojacReferences {
         return stats;
     }
 
-    public Reaction getReaction() {
+    public IReaction getReaction() {
         return reaction;
     }
 
-    public OpCodeInstrumenterFactory getOpCodeInstrumenterFactory() {
+    public IOpcodeInstrumenterFactory getOpCodeInstrumenterFactory() {
         return factory;
     }
 
@@ -105,8 +105,8 @@ public final class CojacReferences {
         private final Args args;
         private ClassLoader loader;
         private InstrumentationStats stats;
-        private Reaction reaction;
-        private OpCodeInstrumenterFactory factory;
+        private IReaction reaction;
+        private IOpcodeInstrumenterFactory factory;
         private MBeanServer mbServer;
         private StringBuilder sbBypassList;
         private String[] bypassList;
@@ -141,7 +141,7 @@ public final class CojacReferences {
             this.reaction = new ClassLoaderReaction(args);
             this.sbBypassList = new StringBuilder(STANDARD_PACKAGES);
 
-            this.factory = new ClassLoaderOpSizeInstrumenterFactory(args, stats);
+            this.factory = new ClassLoaderInstrumenterFactory(args, stats);
 
             if (args.isSpecified(Arg.FILTER)) {
                 ReflectionUtils.setStaticFieldValue(loader, "ch.eiafr.cojac.models.Reactions", "filtering", true);

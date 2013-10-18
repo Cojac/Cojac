@@ -16,13 +16,19 @@
  *
  */
 
-package ch.eiafr.cojac.instrumenters;
+package ch.eiafr.cojac;
 
-import ch.eiafr.cojac.Methods;
-import ch.eiafr.cojac.reactions.Reaction;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.commons.LocalVariablesSorter;
+import java.util.List;
+import java.util.Map;
 
-public interface OpCodeInstrumenter {
-    void instrument(MethodVisitor methodVisitor, int opCode, String classPath, Methods methods, Reaction reaction, LocalVariablesSorter src);
+public interface ICojacMXBean {
+    Map<String, Integer> getCountersMBean();
+
+    List<String> getBlacklist();
+
+    Map<String, Long> getEvent();
+
+    void start();
+
+    void stop();
 }

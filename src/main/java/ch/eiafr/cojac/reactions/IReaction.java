@@ -16,8 +16,14 @@
  *
  */
 
-package ch.eiafr.cojac;
+package ch.eiafr.cojac.reactions;
 
-public interface ClassInstrumenter {
-    byte[] instrument(byte[] byteCode);
+import ch.eiafr.cojac.Methods;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.MethodVisitor;
+
+public interface IReaction {
+    void insertReactionMethod(ClassVisitor cv, Methods methods);
+
+    void insertReactionCall(MethodVisitor mv, String opcode, Methods methods, String classPath);
 }

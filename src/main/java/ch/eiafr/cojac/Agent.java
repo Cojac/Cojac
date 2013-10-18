@@ -29,7 +29,7 @@ import org.objectweb.asm.util.*;
 public final class Agent implements ClassFileTransformer {
     private final boolean PRINT_INSTR_RESULT=false;
     private final CojacReferences references;
-    private final ClassInstrumenter instrumenter;
+    private final IClassInstrumenter instrumenter;
     private final boolean VERBOSE;
     
     public Agent(final CojacReferences references) {

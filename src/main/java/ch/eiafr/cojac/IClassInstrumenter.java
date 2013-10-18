@@ -16,10 +16,8 @@
  *
  */
 
-package ch.eiafr.cojac.instrumenters;
+package ch.eiafr.cojac;
 
-import ch.eiafr.cojac.Arg;
-
-public interface OpCodeInstrumenterFactory {
-    OpCodeInstrumenter getInstrumenter(int opCode, Arg arg);
+public interface IClassInstrumenter {
+    byte[] instrument(byte[] byteCode);
 }

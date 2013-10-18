@@ -18,9 +18,9 @@
 
 package ch.eiafr.cojac;
 
-import ch.eiafr.cojac.instrumenters.OpCodeInstrumenterFactory;
+import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenterFactory;
 import ch.eiafr.cojac.methods.CojacMethodAdder;
-import ch.eiafr.cojac.reactions.Reaction;
+import ch.eiafr.cojac.reactions.IReaction;
 
 
 //import org.objectweb.asm.AnnotationVisitor;
@@ -30,18 +30,15 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-import org.objectweb.asm.Type;
-
-import ch.eiafr.cojac.models.FloatWrapper;
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
 
 final class CojacClassVisitor extends ClassVisitor {
     private final CojacMethodAdder methodAdder;
-    private final OpCodeInstrumenterFactory factory;
+    private final IOpcodeInstrumenterFactory factory;
     private final InstrumentationStats stats;
     private final Args args;
     private final Methods methods;
-    private final Reaction reaction;
+    private final IReaction reaction;
 
     private boolean first = true;
     private String classPath;
@@ -50,7 +47,7 @@ final class CojacClassVisitor extends ClassVisitor {
     
     private CojacAnnotationVisitor cav;
 
-    CojacClassVisitor(ClassVisitor cv, InstrumentationStats stats, Args args, Methods methods, Reaction reaction, OpCodeInstrumenterFactory factory, CojacAnnotationVisitor cav) {
+    CojacClassVisitor(ClassVisitor cv, InstrumentationStats stats, Args args, Methods methods, IReaction reaction, IOpcodeInstrumenterFactory factory, CojacAnnotationVisitor cav) {
         super(Opcodes.ASM4, cv);
 
         this.stats = stats;

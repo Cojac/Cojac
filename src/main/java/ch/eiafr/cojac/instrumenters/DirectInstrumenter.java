@@ -24,7 +24,7 @@ import ch.eiafr.cojac.InstrumentationStats;
 import ch.eiafr.cojac.Methods;
 import ch.eiafr.cojac.Signatures;
 import ch.eiafr.cojac.models.ReactionType;
-import ch.eiafr.cojac.reactions.Reaction;
+import ch.eiafr.cojac.reactions.IReaction;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.LocalVariablesSorter;
 
@@ -33,10 +33,11 @@ import java.util.Map;
 
 import static org.objectweb.asm.Opcodes.*;
 
-final class DirectInstrumenter implements OpCodeInstrumenter {
+final class DirectInstrumenter implements IOpcodeInstrumenter {
     private final ReactionType reaction;
     private final InstrumentationStats stats;
     private final String logFileName;
+    private final Args args;
 
     private final Map<Integer, InvokableMethod> invocations = new HashMap<Integer, InvokableMethod>(50);
 
@@ -48,7 +49,7 @@ final class DirectInstrumenter implements OpCodeInstrumenter {
 
     DirectInstrumenter(Args args, InstrumentationStats stats) {
         super();
-
+        this.args=args;
         this.stats = stats;
 
         reaction = args.getReactionType();
@@ -106,7 +107,7 @@ final class DirectInstrumenter implements OpCodeInstrumenter {
     }
 
     @Override
-    public void instrument(MethodVisitor mv, int opCode, String classPath, Methods methods, Reaction r, LocalVariablesSorter src) {
+    public void instrument(MethodVisitor mv, int opCode, String classPath, Methods methods, IReaction r, LocalVariablesSorter src) {
         mv.visitLdcInsn(reaction.value());
         mv.visitLdcInsn(logFileName);
 
@@ -116,6 +117,13 @@ final class DirectInstrumenter implements OpCodeInstrumenter {
             stats.incrementCounterValue(arg);
             invocations.get(opCode).invokeStatic(mv);
         }
+    }
+
+    @Override
+    public boolean wantsToInstrument(int opcode) {
+        Arg arg = Arg.fromOpCode(opcode);
+        if(arg==null) return false;
+        return args.isOperationEnabled(arg);
     }
 
 }

@@ -5,7 +5,7 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Opcodes;
 
 public class CojacFieldVisitor extends FieldVisitor {
-
+    // TODO: either use this class, or delete it...
     public CojacFieldVisitor(FieldVisitor parentFv, int arg0, String arg1, String arg2, String arg3, Object arg4) {
         super(Opcodes.ASM4, parentFv);
     }

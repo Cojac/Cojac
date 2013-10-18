@@ -18,45 +18,51 @@
 
 package ch.eiafr.cojac.instrumenters;
 
-import ch.eiafr.cojac.Arg;
 import ch.eiafr.cojac.Args;
 import ch.eiafr.cojac.InstrumentationStats;
 import ch.eiafr.cojac.Methods;
-//import ch.eiafr.cojac.Signatures;
-import ch.eiafr.cojac.models.FloatWrapper;
-import ch.eiafr.cojac.models.ReactionType;
-import ch.eiafr.cojac.reactions.Reaction;
+import ch.eiafr.cojac.reactions.IReaction;
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.LocalVariablesSorter;
-import org.objectweb.asm.Type;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static org.objectweb.asm.Opcodes.*;
 
-final class ReplaceFloatsInstrumenter implements OpCodeInstrumenter {
-    private final ReactionType reaction;
+// TODO: instrument float arrays instructions...
+
+final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
     private final InstrumentationStats stats;
-    private final String logFileName;
 
     private final Map<Integer, InvokableMethod> invocations = new HashMap<Integer, InvokableMethod>(50);
     private final Map<Integer, InvokableMethod> conversions = new HashMap<Integer, InvokableMethod>(50);
     
+    private static final Set<Integer> replaceFloatsOpcodes = new HashSet<>();
+    static {
+        int [] t = {
+                FRETURN, 
+                FCONST_0, FCONST_1, FCONST_2, 
+                FLOAD, FSTORE, 
+                I2F, L2F, D2F, F2D, F2I, F2L,
+                FMUL, FADD, FDIV, FSUB, FREM, FNEG, 
+                FCMPG, FCMPL
+        };
+        for(int e:t) {
+            replaceFloatsOpcodes.add(e);
+        }
+    }
+
+
    // public static final 
 
     ReplaceFloatsInstrumenter(Args args, InstrumentationStats stats) {
         super();
         this.stats = stats;
-        reaction = args.getReactionType();
-
-        if (args.isSpecified(Arg.CALL_BACK))
-            logFileName = args.getValue(Arg.CALL_BACK); // No, I'm not proud of that trick...
-        else
-            logFileName = args.getValue(Arg.LOG_FILE);
-
         fillMethods();
     }
 
@@ -85,7 +91,7 @@ final class ReplaceFloatsInstrumenter implements OpCodeInstrumenter {
     }
 
     @Override
-    public void instrument(MethodVisitor mv, int opCode, String classPath, Methods methods, Reaction r, LocalVariablesSorter src) {
+    public void instrument(MethodVisitor mv, int opCode, String classPath, Methods methods, IReaction r, LocalVariablesSorter src) {
         InvokableMethod replacementMethod = invocations.get(opCode);
         InvokableMethod conversionMethod = conversions.get(opCode);
         if (replacementMethod != null) {
@@ -100,6 +106,11 @@ final class ReplaceFloatsInstrumenter implements OpCodeInstrumenter {
         }
     }
 
+    @Override
+    public boolean wantsToInstrument(int opcode) {
+        return replaceFloatsOpcodes.contains(opcode);
+    }
+
     //==========================================
     private static final String RFL=COJAC_FLOAT_WRAPPER_TYPE_DESCR;//Type.getType(FloatWrapper.class).getDescriptor();
     
@@ -112,4 +123,5 @@ final class ReplaceFloatsInstrumenter implements OpCodeInstrumenter {
     public static final String REPLACED_F2I          = "("+RFL+")I";
     public static final String REPLACED_F2L          = "("+RFL+")J";
     public static final String REPLACED_FROM_FLOAT   = "(F)"+RFL;
+    
 }

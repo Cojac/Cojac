@@ -20,15 +20,15 @@ package ch.eiafr.cojac.methods;
 
 import ch.eiafr.cojac.Args;
 import ch.eiafr.cojac.Methods;
-import ch.eiafr.cojac.reactions.Reaction;
+import ch.eiafr.cojac.reactions.IReaction;
 import org.objectweb.asm.ClassVisitor;
 
 
 public final class CojacMethodAdder {
-
+    //TODO: can't remember the role of this class...
 
     @SuppressWarnings("unused")
-    public CojacMethodAdder(Args args, Reaction reaction) {
+    public CojacMethodAdder(Args args, IReaction reaction) {
         super();
     }
 

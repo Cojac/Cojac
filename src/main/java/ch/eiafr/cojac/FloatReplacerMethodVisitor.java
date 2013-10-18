@@ -18,13 +18,11 @@
 
 package ch.eiafr.cojac;
 
-import ch.eiafr.cojac.instrumenters.OpCodeInstrumenter;
-import ch.eiafr.cojac.instrumenters.OpCodeInstrumenterFactory;
+import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenter;
+import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenterFactory;
 import ch.eiafr.cojac.instrumenters.InvokableMethod;
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
-import ch.eiafr.cojac.models.CheckedMaths;
-import ch.eiafr.cojac.models.FloatWrapper;
-import ch.eiafr.cojac.reactions.Reaction;
+import ch.eiafr.cojac.reactions.IReaction;
 
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
@@ -33,41 +31,26 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.LocalVariablesSorter;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import static org.objectweb.asm.Opcodes.*;
 
 final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
-    private final OpCodeInstrumenterFactory factory;
+    private final IOpcodeInstrumenterFactory factory;
     private final InstrumentationStats stats;
     private final Args args;
     private final Methods methods;
-    private final Reaction reaction;
+    private final IReaction reaction;
     private final String classPath;
 
     private final Map<Integer, Integer> varMap = new HashMap<>();
     private final Set<Integer> floatVars = new HashSet<>();
     private final Set<Integer> nonFloatVars = new HashSet<>();
 
-    private static final List<String> UNARY_METHODS = Arrays.asList(
-        "ceil", "round", "floor",
-        "cos", "sin", "tan",
-        "acos", "asin", "atan",
-        "cosh", "sinh", "tanh",
-        "exp", "expm1",
-        "log", "log10", "log1p",
-        "sqrt", "cbrt",
-        "rint", "nextUp");
-
-    private static final List<String> BINARY_METHODS =
-        Arrays.asList("atan2", "pow", "hypot", "copySign", "nextAfter", "scalb");
-
-    FloatReplacerMethodVisitor(int access, String desc, MethodVisitor mv, InstrumentationStats stats, Args args, Methods methods, Reaction reaction, String classPath, OpCodeInstrumenterFactory factory) {
+    FloatReplacerMethodVisitor(int access, String desc, MethodVisitor mv, InstrumentationStats stats, Args args, Methods methods, IReaction reaction, String classPath, IOpcodeInstrumenterFactory factory) {
         super(access, desc, mv);
 
         this.stats = stats;
@@ -81,7 +64,7 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
 
     @Override
     public void visitInsn(int opCode) {
-        OpCodeInstrumenter instrumenter = factory.getInstrumenter(opCode, Arg.fromOpCode(opCode));
+        IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opCode);
         if (instrumenter != null) {
             instrumenter.instrument(mv, opCode, classPath, methods, reaction, this);
         } else { //Delegate to parent
@@ -92,7 +75,7 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
     @Override
     public void visitIincInsn(int index, int value) {
         int opCode=Opcodes.IINC;
-        OpCodeInstrumenter instrumenter = factory.getInstrumenter(opCode, Arg.fromOpCode(opCode));
+        IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opCode);
         if (args.isOperationEnabled(Arg.IINC)) {
             if ( methods != null) {// Maybe make better than methods != null
                 visitVarInsn(ILOAD, index);
@@ -118,17 +101,6 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
         // TODO: something smarter, taking into account the method call kinds ?
         super.visitMethodInsn(opcode, owner, name, desc);
     }
-
-    //checkMathMethodResult(double r, int reaction, 
-    //                      String logFileName, String operationName)
-    
-//    private void protectMethodInvocation(int reactionType, String logFileName, String msg) {
-//        mv.visitInsn(DUP2);
-//        mv.visitLdcInsn(new Integer(reactionType));
-//        mv.visitLdcInsn(logFileName);
-//        mv.visitLdcInsn(msg);
-//        mv.visitMethodInsn(INVOKESTATIC, CheckedMaths.CHECK_MATH_RESULT_PATH, CheckedMaths.CHECK_MATH_RESULT_NAME, Signatures.CHECK_MATH_RESULT);
-//    }
 
     @Override
     public void visitVarInsn(int opcode, int var) {
@@ -178,31 +150,6 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
         return null;
     }
 
-    //    private void instrumentStore(MethodVisitor mv, int opcode, int var) {
-//        int rvar;
-//        if (varMap.containsKey(var)) {
-//            rvar=varMap.get(var);
-//        } else {
-//            rvar=newLocal(COJAC_FLOAT_WRAPPER_TYPE);
-//            varMap.put(var, rvar);
-//        }
-//        //mv.visitVarInsn(ASTORE, rvar);        
-//        mv.visitVarInsn(ASTORE, var);        
-//    }
-//
-//    private void instrumentLoad(MethodVisitor mv, int opcode, int var) {
-//        int rvar;
-//        if (varMap.containsKey(var)) {
-//            rvar=varMap.get(var);
-//        } else {
-//            rvar=newLocal(COJAC_FLOAT_WRAPPER_TYPE);
-//            varMap.put(var, rvar);
-//        }
-//        //mv.visitVarInsn(ALOAD, rvar);                
-//        mv.visitVarInsn(ALOAD, var);                
-//    }
-//
-//    
     @Override
     public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index) {
         //TODO something coherent, even if it is only for the benefit of the debuggers...
@@ -224,10 +171,8 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
     @Override
     public void visitLdcInsn(Object cst) {
         super.visitLdcInsn(cst);
-        if (! (cst instanceof Float)) {
-            return;
+        if (cst instanceof Float) {
+            InvokableMethod.FROM_FLOAT.invokeStatic(mv);        
         }
-        // Ok, it's a float constant
-        InvokableMethod.FROM_FLOAT.invokeStatic(mv);        
     }
 }

@@ -18,50 +18,26 @@
 
 package ch.eiafr.cojac.instrumenters;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import ch.eiafr.cojac.Arg;
 import ch.eiafr.cojac.Args;
 import ch.eiafr.cojac.InstrumentationStats;
-import static org.objectweb.asm.Opcodes.*;
 
-public final class ClassLoaderOpSizeInstrumenterFactory implements OpCodeInstrumenterFactory {
-    private final OpCodeInstrumenter opCodeInstrumenter;
+public final class ClassLoaderInstrumenterFactory implements IOpcodeInstrumenterFactory {
+    private final IOpcodeInstrumenter opCodeInstrumenter;
 
-    private final Args args;
-    
-    private static final Set<Integer> replaceFloatsOpcodes = new HashSet<>();
-    static {
-        int [] t = {FRETURN, FCONST_0, FCONST_1, FCONST_2, I2F, L2F, D2F};
-        for(int e:t) {
-            replaceFloatsOpcodes.add(e);
-        }
-    }
-
-    public ClassLoaderOpSizeInstrumenterFactory(Args args, InstrumentationStats stats) {
+    public ClassLoaderInstrumenterFactory(Args args, InstrumentationStats stats) {
         super();
 
-        this.args = args;
         if (args.isSpecified(Arg.REPLACE_FLOATS))
             opCodeInstrumenter = new ReplaceFloatsInstrumenter(args, stats);
         else
             opCodeInstrumenter = new DirectInstrumenter(args, stats);
-
     }
 
     @Override
-    public OpCodeInstrumenter getInstrumenter(int opCode, Arg arg) {
-        // TODO: a bit tricky...
-        if (args.isSpecified(Arg.REPLACE_FLOATS)) {
-            if (replaceFloatsOpcodes.contains(opCode))
-                return opCodeInstrumenter;
-        }
-        if (arg==null) return null;
-        if (args.isOperationEnabled(arg)) {
+    public IOpcodeInstrumenter getInstrumenter(int opcode) {
+        if (opCodeInstrumenter.wantsToInstrument(opcode))
             return opCodeInstrumenter;
-        }
-
         return null;
     }
 }

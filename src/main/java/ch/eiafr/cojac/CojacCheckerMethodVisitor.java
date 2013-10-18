@@ -18,10 +18,10 @@
 
 package ch.eiafr.cojac;
 
-import ch.eiafr.cojac.instrumenters.OpCodeInstrumenter;
-import ch.eiafr.cojac.instrumenters.OpCodeInstrumenterFactory;
+import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenter;
+import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenterFactory;
 import ch.eiafr.cojac.models.CheckedMaths;
-import ch.eiafr.cojac.reactions.Reaction;
+import ch.eiafr.cojac.reactions.IReaction;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.LocalVariablesSorter;
@@ -32,11 +32,11 @@ import java.util.List;
 import static org.objectweb.asm.Opcodes.*;
 
 final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
-    private final OpCodeInstrumenterFactory factory;
+    private final IOpcodeInstrumenterFactory factory;
     private final InstrumentationStats stats;
     private final Args args;
     private final Methods methods;
-    private final Reaction reaction;
+    private final IReaction reaction;
     private final String classPath;
 
     private static final List<String> UNARY_METHODS = Arrays.asList(
@@ -52,7 +52,7 @@ final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
     private static final List<String> BINARY_METHODS =
         Arrays.asList("atan2", "pow", "hypot", "copySign", "nextAfter", "scalb");
 
-    CojacCheckerMethodVisitor(int access, String desc, MethodVisitor mv, InstrumentationStats stats, Args args, Methods methods, Reaction reaction, String classPath, OpCodeInstrumenterFactory factory) {
+    CojacCheckerMethodVisitor(int access, String desc, MethodVisitor mv, InstrumentationStats stats, Args args, Methods methods, IReaction reaction, String classPath, IOpcodeInstrumenterFactory factory) {
         super(access, desc, mv);
 
         this.stats = stats;
@@ -66,7 +66,7 @@ final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
 
     @Override
     public void visitInsn(int opCode) {
-        OpCodeInstrumenter instrumenter = factory.getInstrumenter(opCode, Arg.fromOpCode(opCode));
+        IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opCode);
 
         //Delegate to parent
         if (instrumenter == null) {
@@ -79,7 +79,7 @@ final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
     @Override
     public void visitIincInsn(int index, int value) {
         int opCode=Opcodes.IINC;
-        OpCodeInstrumenter instrumenter = factory.getInstrumenter(opCode, Arg.fromOpCode(opCode));
+        IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opCode);
         if (args.isOperationEnabled(Arg.IINC)) {
             if ( methods != null) {// Maybe make better than methods != null
                 visitVarInsn(ILOAD, index);

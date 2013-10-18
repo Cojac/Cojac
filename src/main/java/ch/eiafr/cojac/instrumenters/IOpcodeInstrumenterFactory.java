@@ -16,14 +16,8 @@
  *
  */
 
-package ch.eiafr.cojac.reactions;
+package ch.eiafr.cojac.instrumenters;
 
-import ch.eiafr.cojac.Methods;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.MethodVisitor;
-
-public interface Reaction {
-    void insertReactionMethod(ClassVisitor cv, Methods methods);
-
-    void insertReactionCall(MethodVisitor mv, String opcode, Methods methods, String classPath);
+public interface IOpcodeInstrumenterFactory {
+    IOpcodeInstrumenter getInstrumenter(int opCode);
 }

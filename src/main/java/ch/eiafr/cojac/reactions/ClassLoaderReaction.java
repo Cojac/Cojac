@@ -28,7 +28,7 @@ import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 
-public final class ClassLoaderReaction implements Reaction {
+public final class ClassLoaderReaction implements IReaction {
 
     private final Args args;
 

@@ -1,6 +1,5 @@
 package ch.eiafr.cojac.instrumenters;
 
-import static ch.eiafr.cojac.instrumenters.InvokableMethod.COJAC_FLOAT_WRAPPER_TYPE;
 import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 
 import org.objectweb.asm.MethodVisitor;
@@ -9,11 +8,7 @@ import org.objectweb.asm.Type;
 import ch.eiafr.cojac.models.FloatWrapper;
 
 public final class InvokableMethod {
-    //private static final String RFL=Type.getType(FloatWrapper.class).getDescriptor();
-    //public static final String FLOAT_WRAPPER = "ch/eiafr/cojac/models/FloatWrapper"; 
 
-    //public static final Type REPLACEMENT_FLOAT_TYPE=Type.getType(FloatWrapper.class);
-    
     public static final String COJAC_FLOAT_WRAPPER_INTERNAL_NAME = Type.getInternalName(FloatWrapper.class);
     public static final Type   COJAC_FLOAT_WRAPPER_TYPE = Type.getType(FloatWrapper.class);
     public static final String COJAC_FLOAT_WRAPPER_TYPE_DESCR = COJAC_FLOAT_WRAPPER_TYPE.getDescriptor();
