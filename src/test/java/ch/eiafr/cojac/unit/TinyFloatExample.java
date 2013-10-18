@@ -12,6 +12,7 @@ class TFEAux {
 
 
 public class TinyFloatExample {
+    static float myStaticFloat=3.0f; //doesn't get replaced yet...
 
     static float everyFloatOpcode(float f) {
         long l=2L; double d=2.0; int i=2;
