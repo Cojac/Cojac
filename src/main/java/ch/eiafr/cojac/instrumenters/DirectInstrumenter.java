@@ -114,7 +114,7 @@ final class DirectInstrumenter implements IOpcodeInstrumenter {
         Arg arg = Arg.fromOpCode(opCode);
 
         if (arg != null) {
-            stats.incrementCounterValue(arg);
+            stats.incrementCounterValue(opCode);// arg
             invocations.get(opCode).invokeStatic(mv);
         }
     }

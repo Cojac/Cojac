@@ -78,6 +78,10 @@ public class FloatWrapper {
         return (long) a.val;
     }
     
+    public static double f2d(FloatWrapper a) {
+        return (double) a.val;
+    }
+    
     public static FloatWrapper i2f(int a) {
         return new FloatWrapper((float)a);
     }

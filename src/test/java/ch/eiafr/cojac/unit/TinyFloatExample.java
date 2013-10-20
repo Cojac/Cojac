@@ -44,7 +44,7 @@ public class TinyFloatExample {
             int b2=4; 
             a=b2/f;
         }
-        return a+a + (new TFEAux()).tfeaux_fct(a);
+        return a+a ; //+ (new TFEAux()).tfeaux_fct(a);
     }
     
     public static float twoReusedFloatVar(float f){
@@ -81,8 +81,9 @@ public class TinyFloatExample {
     public static void go() {
         float a=4; //double a=4; //float a=3.9f;
         float b = 8.0f * a;
-        b=myFct(a);
+        b=myFct1(a);
         b=fct2(b,b);
+        b+= everyFloatOpcode(b);
         int res=(int) b;
         LinkedList<Float> ll=new LinkedList<>();
         //ll.add(b);

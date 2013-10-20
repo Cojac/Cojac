@@ -44,8 +44,9 @@ public final class ClassLoaderInstrumenter implements IClassInstrumenter {
         ClassWriter cw = new ClassWriter(cr, CojacReferences.getFlags(args));
 
         CojacAnnotationVisitor cav = new CojacAnnotationVisitor(stats);
-        cr.accept(cav, ClassReader.EXPAND_FRAMES);
-        cr.accept(new CojacClassVisitor(cw, stats, args, null, reaction, factory, cav), ClassReader.EXPAND_FRAMES);
+        cr.accept(cav, ClassReader.EXPAND_FRAMES); 
+        CojacClassVisitor ccv = new CojacClassVisitor(cw, stats, args, null, reaction, factory, cav);
+        cr.accept(ccv, ClassReader.EXPAND_FRAMES);
 
         return cw.toByteArray();
     }

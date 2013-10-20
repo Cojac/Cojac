@@ -110,6 +110,8 @@ final class CojacClassVisitor extends ClassVisitor {
     @Override
     public FieldVisitor visitField(int accessFlags, String fieldName, String fieldType, String genericSignature, Object initValStatic) {
         if (args.isSpecified(Arg.REPLACE_FLOATS)) {
+            if (FloatReplacerMethodVisitor.DONT_INSTRUMENT)
+                return super.visitField(accessFlags, fieldName, fieldType, genericSignature, initValStatic);
             if (fieldType.equals("F")) {
                 //TODO correctly handle initial float initialization for static fields
                 return super.visitField(accessFlags, fieldName, COJAC_FLOAT_WRAPPER_TYPE_DESCR, genericSignature, null);

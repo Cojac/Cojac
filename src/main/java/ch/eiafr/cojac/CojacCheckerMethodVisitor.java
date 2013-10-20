@@ -93,7 +93,7 @@ final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
                 visitVarInsn(ISTORE, index);
             }
 
-            stats.incrementCounterValue(Arg.IINC);
+            stats.incrementCounterValue(Opcodes.IINC); //Arg.IINC);
         } else {
             super.visitIincInsn(index, value);
         }

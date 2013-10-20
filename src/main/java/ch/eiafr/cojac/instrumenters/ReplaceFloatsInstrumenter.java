@@ -50,7 +50,8 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
                 FLOAD, FSTORE, 
                 I2F, L2F, D2F, F2D, F2I, F2L,
                 FMUL, FADD, FDIV, FSUB, FREM, FNEG, 
-                FCMPG, FCMPL
+                FCMPG, FCMPL, 
+                IINC
         };
         for(int e:t) {
             replaceFloatsOpcodes.add(e);
@@ -101,6 +102,7 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
             mv.visitInsn(opCode);
             conversionMethod.invokeStatic(mv);
         } else if (opCode==FRETURN) {
+            //stats.incrementCounterValue(arg);
             mv.visitInsn(ARETURN);
         } else {
             mv.visitInsn(opCode);

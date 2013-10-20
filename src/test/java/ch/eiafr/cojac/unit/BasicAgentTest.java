@@ -20,6 +20,7 @@ public class BasicAgentTest extends AbstractAgentTest {
 		Args args = new Args();
 		args.specify(Arg.ALL);
 		args.specify(Arg.EXCEPTION);
+        //args.specify(Arg.INSTRUMENTATION_STATS);
 
 		CojacReferencesBuilder builder = new CojacReferencesBuilder(args);
 		builder.setSplitter(new CojacReferences.AgentSplitter());

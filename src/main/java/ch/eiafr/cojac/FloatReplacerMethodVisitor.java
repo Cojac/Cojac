@@ -64,12 +64,38 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
     }
 
     @Override
+    public void visitIincInsn(int var, int increment) {
+        if (DONT_INSTRUMENT) {
+            super.visitIincInsn(var, increment); return; 
+        }
+        int replacedVar=var;
+        if (floatVars.contains(var)) {
+            if (varMap.containsKey(var)) {
+                replacedVar=varMap.get(var);
+            } else {
+                replacedVar=newLocal(Type.INT_TYPE);
+                varMap.put(var, replacedVar);
+            }
+            System.out.println("COJJJ inst'ing iinc: "+var+"->"+replacedVar);
+        } else {
+            nonFloatVars.add(var);
+        }
+        super.visitIincInsn(replacedVar, increment);
+    }
+
+//    @Override
+//    public void visitFrame(int type, int nLocal, Object[] local, int nStack, Object[] stack) {
+//        super.visitFrame(type, nLocal, local, nStack, stack);
+//    }
+
+    @Override
     public void visitInsn(int opCode) {
         if (DONT_INSTRUMENT) {
             super.visitInsn(opCode); return; 
         }
         IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opCode);
         if (instrumenter != null) {
+            stats.incrementCounterValue(opCode);
             instrumenter.instrument(mv, opCode, classPath, methods, reaction, this);
         } else { // Delegate to parent
             super.visitInsn(opCode);
@@ -81,9 +107,11 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
         if (DONT_INSTRUMENT) {
             super.visitMethodInsn(opcode, owner, name, desc); return; 
         }
-        desc=replaceFloatMethodDescription(desc);
+        String descAfter=replaceFloatMethodDescription(desc);
+        if (!desc.equals(descAfter)) 
+            stats.incrementCounterValue(opcode);
         // TODO: something smarter, taking into account the method call kinds ?
-        super.visitMethodInsn(opcode, owner, name, desc);
+        super.visitMethodInsn(opcode, owner, name, descAfter);
     }
 
     @Override
@@ -102,6 +130,7 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
                     replacedVar=newLocal(COJAC_FLOAT_WRAPPER_TYPE);
                     varMap.put(var, replacedVar);
                 }
+                stats.incrementCounterValue(opcode);
             } else {
                 floatVars.add(var);
             }
@@ -115,6 +144,7 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
                     replacedVar=newLocal(typeFromVarInsn(opcode));
                     varMap.put(var, replacedVar);
                 }
+                stats.incrementCounterValue(opcode);
             } else {
                 nonFloatVars.add(var);
             }
@@ -155,8 +185,10 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
             super.visitFieldInsn(opcode, owner, name, desc);
             return;
         }
-        desc=afterFloatReplacement(desc);
-        super.visitFieldInsn(opcode, owner, name, desc);
+        String descAfter=afterFloatReplacement(desc);
+        if (!desc.equals(descAfter)) 
+            stats.incrementCounterValue(opcode);
+        super.visitFieldInsn(opcode, owner, name, descAfter);
     }
 
     @Override
@@ -166,15 +198,12 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
 
     @Override
     public void visitLdcInsn(Object cst) {
-        if (DONT_INSTRUMENT) {
-            super.visitLdcInsn(cst);
-            return;
-        }
         super.visitLdcInsn(cst);
         if (DONT_INSTRUMENT) {
             return;
         }
         if (cst instanceof Float) {
+            stats.incrementCounterValue(Opcodes.LDC);
             InvokableMethod.FROM_FLOAT.invokeStatic(mv);        
         }
     }

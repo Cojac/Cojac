@@ -34,26 +34,29 @@ import javax.management.AttributeChangeNotification;
 import javax.management.MBeanNotificationInfo;
 import javax.management.NotificationBroadcasterSupport;
 
+import static org.objectweb.asm.util.Printer.OPCODES;
+
 import ch.eiafr.cojac.models.Reactions;
 
 public final class InstrumentationStats extends NotificationBroadcasterSupport implements ICojacMXBean {
-    private final Map<Arg, Counter> counters = new EnumMap<Arg, Counter>(Arg.class);
+    //private final Map<Arg, Counter> counters = new EnumMap<Arg, Counter>(Arg.class);
+    private final Map<Integer, Counter> counters = new HashMap<Integer, Counter>();
     private long startTime;
     private final Object BLACKLIST_LOCK = new Object();
     private List<String> blacklist = new ArrayList<String>();
     private long changes = 0;
 
-    public Map<Arg, Counter> getCounters() {
-        return counters;
-    }
+//    public Map<Arg, Counter> getCounters() {
+//        return counters;
+//    }
 
     @Override
     public Map<String, Integer> getCountersMBean() {
         Map<String, Integer> ctrs = new HashMap<String, Integer>();
 
         synchronized (counters) {
-            for (Entry<Arg, Counter> ctr : counters.entrySet()) {
-                ctrs.put(ctr.getKey().name(), ctr.getValue().getValue());
+            for (Entry<Integer, Counter> ctr : counters.entrySet()) {
+                ctrs.put(stringFromOpcode(ctr.getKey()), ctr.getValue().getValue());
             }
         }
 
@@ -102,23 +105,21 @@ public final class InstrumentationStats extends NotificationBroadcasterSupport i
         }
     }
 
-    int getCounterValue(Arg arg) {
+    int getCounterValue(int arg) {
         check(arg);
 
         return counters.get(arg).getValue();
     }
 
-    public void incrementCounterValue(Arg arg) {
+    public void incrementCounterValue(int arg) {
         check(arg);
 
         counters.get(arg).increment();
     }
 
-    private void check(Arg arg) {
-        assert arg.isOperator();
-
-        if (!counters.containsKey(arg)) {
-            counters.put(arg, new Counter());
+    private void check(int opcode) {
+        if (!counters.containsKey(opcode)) {
+            counters.put(opcode, new Counter());
         }
     }
 
@@ -134,15 +135,18 @@ public final class InstrumentationStats extends NotificationBroadcasterSupport i
         StringBuilder builder = new StringBuilder(2500);
 
         if (startTime > 0) {
-            builder.append("Instrumentation duration : ").append(getDuration()).append(" ns").append('\n');
+            builder.append("COJAC Instrumentation duration : ").append(getDuration()).append(" ns").append('\n');
         }
 
-        builder.append("Number of instructions checked: \n");
+        builder.append("COJAC Number of instructions checked: \n");
 
-        for (Arg arg : Arg.values()) {
-            if (arg.isOperator()) {
-                builder.append('\t').append(arg.toString()).append(" : ").append(getCounterValue(arg)).append('\n');
-            }
+        for (int opcode=0; opcode<OPCODES.length; opcode++) {
+            if (!counters.containsKey(opcode))
+                continue;
+            int count=counters.get(opcode).getValue();
+            if (count==0)
+                continue;
+            builder.append('\t').append(stringFromOpcode(opcode)).append(" : ").append(count).append('\n');
         }
 
         write(args, builder);
@@ -219,5 +223,11 @@ public final class InstrumentationStats extends NotificationBroadcasterSupport i
         public int compare(Entry<String, Long> o1, Entry<String, Long> o2) {
             return -1 * o1.getValue().compareTo(o2.getValue());
         }
+    }
+    
+    private static String stringFromOpcode(int opcode) {
+        if (opcode < 0 || opcode >= OPCODES.length)
+            return "REALLY_UNKNOWN_OPCODE...!!! "+opcode;
+        return OPCODES[opcode];
     }
 }
