@@ -94,6 +94,7 @@ public class FloatWrapper {
         return new FloatWrapper((float)a);
     }
 
+    //TODO: define a "magic call" feature: getFloatInfo(float f) ---> call getFloatInfo on the FloatWrapper
 
 
 }

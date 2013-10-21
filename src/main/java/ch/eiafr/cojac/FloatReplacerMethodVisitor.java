@@ -148,7 +148,7 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
             } else {
                 nonFloatVars.add(var);
             }
-            mv.visitVarInsn(opcode, replacedVar);
+            super.visitVarInsn(opcode, replacedVar); // CAUTION: do not use mv.visitVarInsn
         }
     }
 

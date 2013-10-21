@@ -31,7 +31,7 @@ public class LogFileTest {
 
         args.specify(Arg.ALL);
         args.setValue(Arg.LOG_FILE, logFile);
-/* TODO
+/* TODO: either implement testLogFileExists() or remove that test
         CojacClassLoader classLoader = new CojacClassLoader(new URL[]{}, new CojacReferencesBuilder(args));
 
         Class<?> classz = classLoader.loadClass("ch.eiafr.cojac.unit.SimpleOverflows");

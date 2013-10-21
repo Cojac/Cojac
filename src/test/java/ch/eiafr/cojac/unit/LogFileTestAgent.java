@@ -33,6 +33,7 @@ import ch.eiafr.cojac.CojacReferences;
 import ch.eiafr.cojac.CojacReferences.CojacReferencesBuilder;
 
 public class LogFileTestAgent {
+    //TODO: discover why that test works in surefire/maven, and not as Eclipse/JUnit...
     @Test
     public void testLogFileExists() throws ClassNotFoundException, IllegalAccessException, InstantiationException,
             NoSuchMethodException, InvocationTargetException, UnmodifiableClassException {

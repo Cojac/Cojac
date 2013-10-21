@@ -84,9 +84,10 @@ public final class CojacReferences {
     }
 
     public boolean hasToBeInstrumented(String className) {
-        // TODO: also instrument std lib for float replacement + deal with native methods
-        if (args.isSpecified(Arg.REPLACE_FLOATS))
-            return !className.startsWith("ch.eiafr.cojac.models"); // replacement is radical, std lib classes will be instrumented... (problem: native classes...)
+        // TODO: deal with native methods
+        if (args.isSpecified(Arg.REPLACE_FLOATS)){
+            return !className.startsWith("ch/eiafr/cojac/models"); // replacement is radical, std lib classes will be instrumented... (problem: native classes...)
+        }
         for (String standardPackage : bypassList) {
             if (className.startsWith(standardPackage)) {
                 return false;
@@ -124,11 +125,6 @@ public final class CojacReferences {
             this.args = args;
             this.loader = ClassLoader.getSystemClassLoader();
             this.splitter = new CojacClassLoaderSplitter();
-        }
-
-        public CojacReferencesBuilder setLoader(final ClassLoader loader) {
-            this.loader = loader;
-            return this;
         }
 
         public CojacReferencesBuilder setSplitter(final Splitter splitter) {

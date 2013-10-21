@@ -57,7 +57,9 @@ public final class Agent implements ClassFileTransformer {
             }
             byte[] instrumented= instrumenter.instrument(classfileBuffer);
             if (VERBOSE) {
-                //TODO: why on earth does verify() detect errors the JVM doesn't complain about?
+//                if (className.startsWith("sun/launcher")){
+//                    CheckClassAdapter.verify(new ClassReader(classfileBuffer), true, new PrintWriter(System.out));
+//                }
                 CheckClassAdapter.verify(new ClassReader(instrumented), PRINT_INSTR_RESULT, new PrintWriter(System.out));
             }
             return instrumented;

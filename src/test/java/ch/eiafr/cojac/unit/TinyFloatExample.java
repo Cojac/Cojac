@@ -1,8 +1,10 @@
 package ch.eiafr.cojac.unit;
 import java.util.LinkedList;
 
+//TODO: a reasonable/coherent test example for FloatReplace
+
 class TFEAux {
-    static float myStaticFloat=3.0f; //doesn't get replaced yet...
+    static float myStaticFloat=3.0f;
     static int myStaticInt=3;
     float tfeaux_fct(float f) {
         return 2*f;
@@ -12,7 +14,9 @@ class TFEAux {
 
 
 public class TinyFloatExample {
-    static float myStaticFloat=3.0f; //doesn't get replaced yet...
+
+    
+    static float myStaticFloat=73.0f; 
 
     static float everyFloatOpcode(float f) {
         long l=2L; double d=2.0; int i=2;
@@ -88,7 +92,7 @@ public class TinyFloatExample {
         LinkedList<Float> ll=new LinkedList<>();
         //ll.add(b);
         System.out.println("inside TinyFloatExample.go() "+res);
-        //System.out.println("inside TinyFloatExample.go() "+TFEAux.myStaticFloat);
+        System.out.println("inside TinyFloatExample.go() "+(int)(TFEAux.myStaticFloat));
     }
     
     public static void main(String[] args) {

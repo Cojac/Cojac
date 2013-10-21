@@ -1,7 +1,6 @@
 package ch.eiafr.cojac.unit;
 
 import java.lang.instrument.ClassFileTransformer;
-import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
 
 import org.junit.Test;
@@ -37,11 +36,13 @@ public class FloatReplaceTest {
         return new Agent(builder.build());
     }
 
-	public void loadOperationsWithAgent(ClassFileTransformer classFileTransformer) 
-	         throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+    //TODO: review the test approach, so that it automatically instruments dependent classes
+    public void loadOperationsWithAgent(ClassFileTransformer classFileTransformer) 
+	         throws ClassNotFoundException {
 	    instrumentation.addTransformer(classFileTransformer, true);
 	    try {
 	        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+	        classLoader.loadClass("ch.eiafr.cojac.unit.TFEAux");
 	        tinyExample = classLoader.loadClass("ch.eiafr.cojac.unit.TinyFloatExample");
 	    } finally {
 	        instrumentation.removeTransformer(classFileTransformer);
