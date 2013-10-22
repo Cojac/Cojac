@@ -38,6 +38,8 @@ import java.util.Set;
 
 import static org.objectweb.asm.Opcodes.*;
 
+//TODO: consider extending AnalyzerAdapter, and using LocalVariableSorter by delegation
+
 final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
     private final IOpcodeInstrumenterFactory factory;
     private final InstrumentationStats stats;
