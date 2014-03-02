@@ -95,6 +95,12 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
         if (DONT_INSTRUMENT) {
             super.visitInsn(opCode); return; 
         }
+        
+        // replace FALOAD by AALOAD
+        if(opCode == FALOAD){
+            opCode = AALOAD;
+        }
+        
         IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opCode);
         if (instrumenter != null) {
             stats.incrementCounterValue(opCode);
@@ -121,7 +127,7 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
         if (DONT_INSTRUMENT) {
             super.visitVarInsn(opcode, var); return; 
         }
-
+        
         if (opcode==FLOAD || opcode==FSTORE) {
             int replacedOpcode = (opcode==FLOAD) ? ALOAD:ASTORE;
             int replacedVar=var;
@@ -176,6 +182,7 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
             super.visitLocalVariable(name, desc, signature, start, end, index);
             return;
         }
+        
         //TODO something coherent, even if it is only for the benefit of the debuggers...
         desc=afterFloatReplacement(desc);
         super.visitLocalVariable(name, desc, signature, start, end, index);
@@ -187,6 +194,7 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
             super.visitFieldInsn(opcode, owner, name, desc);
             return;
         }
+        
         String descAfter=afterFloatReplacement(desc);
         if (!desc.equals(descAfter)) 
             stats.incrementCounterValue(opcode);
@@ -207,6 +215,32 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
         if (cst instanceof Float) {
             stats.incrementCounterValue(Opcodes.LDC);
             InvokableMethod.FROM_FLOAT.invokeStatic(mv);        
+        }
+    }
+    
+    @Override
+    public void visitIntInsn(int opcode, int operand){
+        if (DONT_INSTRUMENT) {
+            super.visitIntInsn(opcode, operand);
+            return;
+        }
+        int replacedOpcode = opcode;
+        
+        /*
+        // Replace new array of float by a new array of FloatWrapper.
+        // This version does not instanciate the array object.
+        if(opcode == NEWARRAY && operand == Opcodes.T_FLOAT){
+            replacedOpcode = ANEWARRAY;
+            super.visitTypeInsn(replacedOpcode, COJAC_FLOAT_WRAPPER_INTERNAL_NAME);
+            return;
+        }*/
+        
+        IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opcode);
+        if (instrumenter != null && opcode == NEWARRAY && operand == Opcodes.T_FLOAT) { // maybe not the best way to check if this is an array of float..
+            stats.incrementCounterValue(opcode);
+            instrumenter.instrument(mv, opcode, classPath, methods, reaction, this);
+        } else { // Delegate to parent
+            super.visitIntInsn(opcode, operand);
         }
     }
 }

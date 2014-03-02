@@ -94,6 +94,14 @@ public class FloatWrapper {
         return new FloatWrapper((float)a);
     }
 
+    
+    public static FloatWrapper[] newarray(int size){
+        FloatWrapper[] a = new FloatWrapper[size];
+        for (int i = 0; i < a.length; i++) {
+            a[i] = new FloatWrapper(0);
+        }
+        return a;
+    }
     //TODO: define a "magic call" feature: getFloatInfo(float f) ---> call getFloatInfo on the FloatWrapper
 
 

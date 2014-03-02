@@ -51,7 +51,8 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
                 I2F, L2F, D2F, F2D, F2I, F2L,
                 FMUL, FADD, FDIV, FSUB, FREM, FNEG, 
                 FCMPG, FCMPL, 
-                IINC
+                IINC,
+                NEWARRAY
         };
         for(int e:t) {
             replaceFloatsOpcodes.add(e);
@@ -85,6 +86,8 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
         invocations.put(F2I, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "f2i", REPLACED_F2I));
         invocations.put(F2L, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "f2l", REPLACED_F2L));
         invocations.put(F2D, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "f2d", REPLACED_F2D));
+        
+        invocations.put(NEWARRAY, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "newarray", REPLACED_NEWARRAY));
         
         conversions.put(FCONST_0, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", REPLACED_FROM_FLOAT));
         conversions.put(FCONST_1, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", REPLACED_FROM_FLOAT));
@@ -127,5 +130,7 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
     public static final String REPLACED_F2L          = "("+RFL+")J";
     public static final String REPLACED_F2D          = "("+RFL+")D";
     public static final String REPLACED_FROM_FLOAT   = "(F)"+RFL;
+    
+    public static final String REPLACED_NEWARRAY          = "(I)["+RFL;
     
 }
