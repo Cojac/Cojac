@@ -24,6 +24,10 @@ import static ch.eiafr.cojac.Arg.HELP;
 import java.lang.instrument.Instrumentation;
 
 import ch.eiafr.cojac.CojacReferences.CojacReferencesBuilder;
+import java.lang.instrument.UnmodifiableClassException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class CojacAgent {
     public static void premain(String agentArgs, Instrumentation inst) {
@@ -41,5 +45,28 @@ public final class CojacAgent {
         builder.setSplitter(new CojacReferences.AgentSplitter());
         inst.addTransformer(new Agent(builder.build()));
         //TODO: maybe consider retransforming existing classes when REPLACE_FLOATS...
+
+        if (!inst.isRetransformClassesSupported()) {
+            System.out.println("RetransformClasses not supported");
+        } else {
+            ArrayList<Class> listClasses = new ArrayList<>();
+
+            Class[] cl = inst.getAllLoadedClasses();
+            for (Class class1 : cl) {
+                if (inst.isModifiableClass(class1)) {
+                    listClasses.add(class1);
+                } else {
+                    System.out.println("NOT MODIFIABLE: " + class1);
+                }
+            }
+
+            try {
+                Class[] cl2 = new Class[listClasses.size()];
+                listClasses.toArray(cl2);
+                inst.retransformClasses(Float.class);
+            } catch (UnmodifiableClassException ex) {
+                Logger.getLogger(CojacAgent.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 }
