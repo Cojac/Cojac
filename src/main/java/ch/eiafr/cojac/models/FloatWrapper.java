@@ -18,6 +18,8 @@
 
 package ch.eiafr.cojac.models;
 
+import java.lang.reflect.Array;
+
 public class FloatWrapper {
     private final float val;
     
@@ -102,7 +104,40 @@ public class FloatWrapper {
         }
         return a;
     }
-    //TODO: define a "magic call" feature: getFloatInfo(float f) ---> call getFloatInfo on the FloatWrapper
+    
+    
+    // Get the Type of an array of type compClass with the number of dimensions
+    private static Class<?> arrayClass(Class<?> compClass, int dimensions) {
+        if (dimensions == 0) {
+            return compClass;
+        }
+        int[] dims = new int[dimensions];
+        Object dummy = Array.newInstance(compClass, dims);
+        return dummy.getClass();
+    }
 
+    public static Object multianewarray(int ... sizes) {
+        int dimensions = sizes.length;
+        Object a;
+        if(dimensions == 1){
+            a = newarray(sizes[0]); // Create a simple array for the last dimension
+        }
+        else{
+            Class<?> compType = arrayClass(FloatWrapper.class, dimensions - 1);
+            a = Array.newInstance(compType, sizes[0]);
+
+            Object[] b = (Object[]) a; // All arrays or multi-arrays can be cast to Object[]
+            for (int i = 0; i < b.length; i++) {
+                int newsize[] = new int[sizes.length-1];
+                for (int j = 0; j < newsize.length; j++) {
+                    newsize[j] = sizes[j+1];
+                }
+                b[i] = multianewarray(newsize); // Initialise the others dimensions
+            }
+        }
+        return a;
+    }
+    
+    //TODO: define a "magic call" feature: getFloatInfo(float f) ---> call getFloatInfo on the FloatWrapper
 
 }

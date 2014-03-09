@@ -52,7 +52,7 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
                 FMUL, FADD, FDIV, FSUB, FREM, FNEG, 
                 FCMPG, FCMPL, 
                 IINC,
-                NEWARRAY
+                NEWARRAY, MULTIANEWARRAY
         };
         for(int e:t) {
             replaceFloatsOpcodes.add(e);
@@ -88,6 +88,7 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
         invocations.put(F2D, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "f2d", REPLACED_F2D));
         
         invocations.put(NEWARRAY, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "newarray", REPLACED_NEWARRAY));
+        invocations.put(MULTIANEWARRAY, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "multianewarray", REPLACED_MULTIANEWARRAY));
         
         conversions.put(FCONST_0, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", REPLACED_FROM_FLOAT));
         conversions.put(FCONST_1, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", REPLACED_FROM_FLOAT));
@@ -132,5 +133,6 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
     public static final String REPLACED_FROM_FLOAT   = "(F)"+RFL;
     
     public static final String REPLACED_NEWARRAY          = "(I)["+RFL;
+    public static final String REPLACED_MULTIANEWARRAY    = "([I)Ljava/lang/Object;";
     
 }

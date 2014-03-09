@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.jfree.util.StringUtils;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -99,6 +100,9 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
         // replace FALOAD by AALOAD
         if(opCode == FALOAD){
             opCode = AALOAD;
+        }
+        if(opCode == FASTORE){
+            opCode = AASTORE;
         }
         
         IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opCode);
@@ -224,23 +228,58 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
             super.visitIntInsn(opcode, operand);
             return;
         }
-        int replacedOpcode = opcode;
-        
-        /*
-        // Replace new array of float by a new array of FloatWrapper.
-        // This version does not instanciate the array object.
-        if(opcode == NEWARRAY && operand == Opcodes.T_FLOAT){
-            replacedOpcode = ANEWARRAY;
-            super.visitTypeInsn(replacedOpcode, COJAC_FLOAT_WRAPPER_INTERNAL_NAME);
-            return;
-        }*/
         
         IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opcode);
-        if (instrumenter != null && opcode == NEWARRAY && operand == Opcodes.T_FLOAT) { // maybe not the best way to check if this is an array of float..
+        if (instrumenter != null && opcode == NEWARRAY && operand == Opcodes.T_FLOAT) { // instrument only if it's an array of floats
             stats.incrementCounterValue(opcode);
             instrumenter.instrument(mv, opcode, classPath, methods, reaction, this);
         } else { // Delegate to parent
             super.visitIntInsn(opcode, operand);
         }
+    }
+    
+    
+    @Override
+    public void visitMultiANewArrayInsn(String desc, int dims){
+        if (DONT_INSTRUMENT) {
+            super.visitMultiANewArrayInsn(desc, dims);
+            return;
+        }
+        
+        int opcode = MULTIANEWARRAY;
+        IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opcode);
+        if (instrumenter != null && desc.endsWith("F")){ // instrument if it's an array of floats
+            
+            // Get the dimensions sizes on the stack and create an array with it (for method calling in instrumenter)
+            super.visitIntInsn(BIPUSH, dims);
+            super.visitIntInsn(NEWARRAY, Opcodes.T_INT);
+
+            for(int i=0 ; i<dims ; i++){
+                super.visitVarInsn(ASTORE, 0);
+                super.visitVarInsn(ALOAD, 0);
+                super.visitInsn(SWAP);
+                super.visitVarInsn(ALOAD, 0);
+                super.visitInsn(SWAP);
+                super.visitIntInsn(BIPUSH, i);
+                super.visitInsn(SWAP);
+                super.visitInsn(IASTORE);
+            }
+            
+            stats.incrementCounterValue(opcode);
+            instrumenter.instrument(mv, opcode, classPath, methods, reaction, this);
+            
+            // Cast the object returned to the multi array of cojac float wrapper
+            String type = "";
+            for (int i = 0; i < dims; i++) {
+                type += "[";
+            }
+            type += COJAC_FLOAT_WRAPPER_TYPE;
+            
+            super.visitTypeInsn(CHECKCAST, type);
+            
+        } else { // Delegate to parent
+            super.visitMultiANewArrayInsn(desc, dims);
+        }
+        
     }
 }
