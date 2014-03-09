@@ -120,17 +120,17 @@ public class FloatWrapper {
         int dimensions = sizes.length;
         Object a;
         if(dimensions == 1){
-            a = newarray(sizes[0]); // Create a simple array for the last dimension
+            a = newarray(sizes[sizes.length-1]); // Create a simple array for the last dimension
         }
         else{
             Class<?> compType = arrayClass(FloatWrapper.class, dimensions - 1);
-            a = Array.newInstance(compType, sizes[0]);
+            a = Array.newInstance(compType, sizes[sizes.length-1]);
 
             Object[] b = (Object[]) a; // All arrays or multi-arrays can be cast to Object[]
             for (int i = 0; i < b.length; i++) {
                 int newsize[] = new int[sizes.length-1];
                 for (int j = 0; j < newsize.length; j++) {
-                    newsize[j] = sizes[j+1];
+                    newsize[j] = sizes[j];
                 }
                 b[i] = multianewarray(newsize); // Initialise the others dimensions
             }
