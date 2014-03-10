@@ -116,23 +116,18 @@ public class FloatWrapper {
         return dummy.getClass();
     }
 
-    public static Object multianewarray(int ... sizes) {
-        int dimensions = sizes.length;
+    public static Object multianewarray(int[] sizes, int dimensions) {
         Object a;
         if(dimensions == 1){
-            a = newarray(sizes[sizes.length-1]); // Create a simple array for the last dimension
+            a = newarray(sizes[dimensions-1]); // Create a simple array for the last dimension
         }
         else{
             Class<?> compType = arrayClass(FloatWrapper.class, dimensions - 1);
-            a = Array.newInstance(compType, sizes[sizes.length-1]);
+            a = Array.newInstance(compType, sizes[dimensions-1]);
 
             Object[] b = (Object[]) a; // All arrays or multi-arrays can be cast to Object[]
             for (int i = 0; i < b.length; i++) {
-                int newsize[] = new int[sizes.length-1];
-                for (int j = 0; j < newsize.length; j++) {
-                    newsize[j] = sizes[j];
-                }
-                b[i] = multianewarray(newsize); // Initialise the others dimensions
+                b[i] = multianewarray(sizes, dimensions-1); // Initialise the others dimensions
             }
         }
         return a;

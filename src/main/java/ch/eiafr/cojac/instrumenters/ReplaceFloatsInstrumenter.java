@@ -133,6 +133,6 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
     public static final String REPLACED_FROM_FLOAT   = "(F)"+RFL;
     
     public static final String REPLACED_NEWARRAY          = "(I)["+RFL;
-    public static final String REPLACED_MULTIANEWARRAY    = "([I)Ljava/lang/Object;";
+    public static final String REPLACED_MULTIANEWARRAY    = "([II)Ljava/lang/Object;";
     
 }

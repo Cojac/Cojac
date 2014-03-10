@@ -255,15 +255,14 @@ final class FloatReplacerMethodVisitor extends LocalVariablesSorter {
             super.visitIntInsn(NEWARRAY, Opcodes.T_INT);
 
             for(int i=0 ; i<dims ; i++){
-                super.visitVarInsn(ASTORE, 0);
-                super.visitVarInsn(ALOAD, 0);
+                super.visitInsn(DUP_X1);
                 super.visitInsn(SWAP);
-                super.visitVarInsn(ALOAD, 0);
-                super.visitInsn(SWAP);
-                super.visitIntInsn(BIPUSH, i);
+                super.visitLdcInsn(i);
                 super.visitInsn(SWAP);
                 super.visitInsn(IASTORE);
             }
+            
+            super.visitLdcInsn(dims);
             
             stats.incrementCounterValue(opcode);
             instrumenter.instrument(mv, opcode, classPath, methods, reaction, this);
