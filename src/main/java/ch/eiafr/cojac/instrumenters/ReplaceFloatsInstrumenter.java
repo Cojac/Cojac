@@ -45,6 +45,7 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
     private static final Set<Integer> replaceFloatsOpcodes = new HashSet<>();
     static {
         int [] t = {
+                // FLOATS
                 FRETURN, 
                 FCONST_0, FCONST_1, FCONST_2, 
                 FLOAD, FSTORE, 
@@ -52,7 +53,13 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
                 FMUL, FADD, FDIV, FSUB, FREM, FNEG, 
                 FCMPG, FCMPL, 
                 IINC,
-                NEWARRAY, MULTIANEWARRAY
+                NEWARRAY, MULTIANEWARRAY,
+                // DOUBLES
+                DRETURN,
+                DCONST_0, DCONST_1,
+                I2D, L2D, D2I, D2L, // TODO - define where to put D2F and F2D
+                DMUL, DADD, DDIV, DSUB, DREM, DNEG,
+                DCMPG, DCMPL,
         };
         for(int e:t) {
             replaceFloatsOpcodes.add(e);
@@ -94,6 +101,27 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
         conversions.put(FCONST_1, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", REPLACED_FROM_FLOAT));
         conversions.put(FCONST_2, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", REPLACED_FROM_FLOAT));
         
+        // Doubles
+        invocations.put(DADD, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "dadd", REPLACED_DOUBLE_BINARY));
+        invocations.put(DSUB, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "dsub", REPLACED_DOUBLE_BINARY));
+        invocations.put(DMUL, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "dmul", REPLACED_DOUBLE_BINARY));
+        invocations.put(DREM, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "drem", REPLACED_DOUBLE_BINARY));
+        invocations.put(DDIV, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "ddiv", REPLACED_DOUBLE_BINARY));
+        
+        invocations.put(DNEG, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "dneg", REPLACED_DOUBLE_UNARY));
+        
+        invocations.put(DCMPL, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "dcmpl", REPLACED_DOUBLE_CMP));
+        invocations.put(DCMPG, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "dcmpg", REPLACED_DOUBLE_CMP));
+        
+        invocations.put(I2D, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "i2d", REPLACED_I2D));
+        invocations.put(L2D, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "l2d", REPLACED_L2D));
+        invocations.put(D2I, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "d2i", REPLACED_D2I));
+        invocations.put(D2L, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "d2l", REPLACED_D2L));
+        
+        
+        conversions.put(DCONST_0, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "fromDouble", REPLACED_FROM_DOUBLE));
+        conversions.put(DCONST_1, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "fromDouble", REPLACED_FROM_DOUBLE));
+        
     }
 
     @Override
@@ -105,7 +133,7 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
         } else if (conversionMethod != null) {
             mv.visitInsn(opCode);
             conversionMethod.invokeStatic(mv);
-        } else if (opCode==FRETURN) {
+        } else if (opCode==FRETURN || opCode==DRETURN) {
             //stats.incrementCounterValue(arg);
             mv.visitInsn(ARETURN);
         } else {
@@ -120,19 +148,31 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
 
     //==========================================
     private static final String RFL=COJAC_FLOAT_WRAPPER_TYPE_DESCR;//Type.getType(FloatWrapper.class).getDescriptor();
+    private static final String RDL=COJAC_DOUBLE_WRAPPER_TYPE_DESCR;
     
     public static final String REPLACED_FLOAT_BINARY = "("+RFL+RFL+")"+RFL;
     public static final String REPLACED_FLOAT_UNARY  = "("+RFL+")"+RFL;
     public static final String REPLACED_FLOAT_CMP    = "("+RFL+RFL+")I";
     public static final String REPLACED_I2F          = "(I)"+RFL;
     public static final String REPLACED_L2F          = "(J)"+RFL;
-    public static final String REPLACED_D2F          = "(D)"+RFL;
+    public static final String REPLACED_D2F          = "("+RDL+")"+RFL;
     public static final String REPLACED_F2I          = "("+RFL+")I";
     public static final String REPLACED_F2L          = "("+RFL+")J";
-    public static final String REPLACED_F2D          = "("+RFL+")D";
+    public static final String REPLACED_F2D          = "("+RFL+")"+RDL;
     public static final String REPLACED_FROM_FLOAT   = "(F)"+RFL;
     
     public static final String REPLACED_NEWARRAY          = "(I)["+RFL;
     public static final String REPLACED_MULTIANEWARRAY    = "([II)Ljava/lang/Object;";
+    
+    
+    
+    
+    public static final String REPLACED_DOUBLE_BINARY= "("+RDL+RDL+")"+RDL;
+    public static final String REPLACED_DOUBLE_UNARY  = "("+RDL+")"+RDL;
+    public static final String REPLACED_DOUBLE_CMP    = "("+RDL+RDL+")I";
+    public static final String REPLACED_I2D          = "(I)"+RDL;
+    public static final String REPLACED_L2D          = "(J)"+RDL;
+    public static final String REPLACED_D2I          = "("+RDL+")I";
+    public static final String REPLACED_D2L          = "("+RDL+")J";
     
 }

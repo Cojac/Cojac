@@ -6,9 +6,16 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
 import ch.eiafr.cojac.models.FloatWrapper;
+import ch.eiafr.cojac.models.DoubleWrapper;
 
 public final class InvokableMethod {
 
+    public static final String COJAC_DOUBLE_WRAPPER_INTERNAL_NAME = Type.getInternalName(DoubleWrapper.class);
+    public static final Type   COJAC_DOUBLE_WRAPPER_TYPE = Type.getType(DoubleWrapper.class);
+    public static final String COJAC_DOUBLE_WRAPPER_TYPE_DESCR = COJAC_DOUBLE_WRAPPER_TYPE.getDescriptor();
+    public static final String REPLACED_FROM_DOUBLE   = "(D)"+COJAC_DOUBLE_WRAPPER_TYPE_DESCR;
+    public static final InvokableMethod FROM_DOUBLE = new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "fromDouble", REPLACED_FROM_DOUBLE);
+    
     public static final String COJAC_FLOAT_WRAPPER_INTERNAL_NAME = Type.getInternalName(FloatWrapper.class);
     public static final Type   COJAC_FLOAT_WRAPPER_TYPE = Type.getType(FloatWrapper.class);
     public static final String COJAC_FLOAT_WRAPPER_TYPE_DESCR = COJAC_FLOAT_WRAPPER_TYPE.getDescriptor();
@@ -50,6 +57,8 @@ public final class InvokableMethod {
     public static Type afterFloatReplacement(Type myType) {
         if (myType.getSort()==Type.FLOAT)
             return COJAC_FLOAT_WRAPPER_TYPE;
+        if (myType.getSort()==Type.DOUBLE)
+            return COJAC_DOUBLE_WRAPPER_TYPE;
         return myType;
     }
     

@@ -45,7 +45,7 @@ public final class CojacAgent {
         builder.setSplitter(new CojacReferences.AgentSplitter());
         inst.addTransformer(new Agent(builder.build()));
         //TODO: maybe consider retransforming existing classes when REPLACE_FLOATS...
-
+/*
         if (!inst.isRetransformClassesSupported()) {
             System.out.println("RetransformClasses not supported");
         } else {
@@ -68,5 +68,6 @@ public final class CojacAgent {
                 Logger.getLogger(CojacAgent.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    */
     }
 }

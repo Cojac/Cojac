@@ -31,6 +31,8 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
+import org.objectweb.asm.commons.AnalyzerAdapter;
+import org.objectweb.asm.commons.LocalVariablesSorter;
 
 final class CojacClassVisitor extends ClassVisitor {
     private final CojacMethodAdder methodAdder;
@@ -88,16 +90,22 @@ final class CojacClassVisitor extends ClassVisitor {
 
         mv.visitEnd();
 
-        return instrumentMethod(mv, access, desc);
+        return instrumentMethod(mv, access, desc, name);
     }
 
     //        if (args.isSpecified(Arg.REPLACE_FLOATS))
     //          desc=replaceFloatMethodDescription(desc);
 
-    private MethodVisitor instrumentMethod(MethodVisitor parentMv, int access, String desc) {
+    private MethodVisitor instrumentMethod(MethodVisitor parentMv, int access, String desc, String name) {
         MethodVisitor mv = null;
-        if (args.isSpecified(Arg.REPLACE_FLOATS))
-            mv = new FloatReplacerMethodVisitor(access, desc, parentMv, stats, args, methods, reaction, classPath, factory);
+        if (args.isSpecified(Arg.REPLACE_FLOATS)){
+            AnalyzerAdapter aa = new AnalyzerAdapter(name, access, name, desc, parentMv);
+            // Not used, it change the local variable order and do the mess in the AnalyzerAdapter stack representation
+            LocalVariablesSorter lvs = null;//new LocalVariablesSorter(access, desc, aa);
+            
+            mv = new FloatReplacerMethodVisitor(access, desc, aa, lvs, stats, args, methods, reaction, classPath, factory);
+            //mv = new FloatReplacerMethodVisitor(access, desc, parentMv, name, stats, args, methods, reaction, classPath, factory);
+        }
         else 
             mv = new CojacCheckerMethodVisitor(access, desc, parentMv, stats, args, methods, reaction, classPath, factory);
 
