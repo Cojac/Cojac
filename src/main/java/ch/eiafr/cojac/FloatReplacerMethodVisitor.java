@@ -23,6 +23,7 @@ import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenterFactory;
 import ch.eiafr.cojac.instrumenters.InvokableMethod;
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
 import ch.eiafr.cojac.reactions.IReaction;
+import java.util.ArrayList;
 
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
@@ -36,7 +37,6 @@ import java.util.List;
 import static org.objectweb.asm.Opcodes.*;
 import org.objectweb.asm.commons.AnalyzerAdapter;
 
-// CAUTION: do not use mv in this class (it brokes the internal stack list of AnalyzerAdapter), use this or super!
 
 final class FloatReplacerMethodVisitor extends MethodVisitor {
     private final IOpcodeInstrumenterFactory factory;
@@ -47,7 +47,7 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
     private final String classPath;
     public static final boolean DONT_INSTRUMENT = false;
    
-//    private final LocalVariablesSorter lvs; // Not used yet, when used it change the positions of the local variables and the stack map of AnalyzerAdapter is lost...
+    private final LocalVariablesSorter lvs;
     private final AnalyzerAdapter aa;
     /*
     private final Map<Integer, Integer> varMap = new HashMap<>();
@@ -55,12 +55,12 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
     private final Set<Integer> nonFloatVars = new HashSet<>();
     */
 
-    // Must Link the aa to the parent method visitor before call!
+    // Must Link the lvs to the aa and the aa to the parent method visitor before call!
     FloatReplacerMethodVisitor(int access, String desc, AnalyzerAdapter aa, LocalVariablesSorter lvs, InstrumentationStats stats, Args args, Methods methods, IReaction reaction, String classPath, IOpcodeInstrumenterFactory factory) {
-        super(Opcodes.ASM4, aa);
+        super(Opcodes.ASM4, lvs);
         
         this.aa = aa;
-//        this.lvs = lvs;
+        this.lvs = lvs;
         
         this.stats = stats;
         this.args = args;
@@ -95,27 +95,25 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
 
     @Override
     public void visitFrame(int type, int nLocal, Object[] local, int nStack, Object[] stack) {
-        mv.visitFrame(type, nLocal, local, nStack, stack);
         if(DONT_INSTRUMENT){
+            mv.visitFrame(type, nLocal, local, nStack, stack);
             return;
         }
-        
-        for (int i=0 ; i<aa.locals.size() ; i++) {
-            if(aa.locals.get(i) == Opcodes.FLOAT){
-               aa.locals.set(i, COJAC_FLOAT_WRAPPER_TYPE_DESCR);
+        ArrayList<Object> newLocal = new ArrayList<>();
+        for (Object object : local) {
+            if(object == Opcodes.DOUBLE){
+                newLocal.add(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME);
+                newLocal.add(Opcodes.TOP);
+                nLocal++;
             }
-            if(aa.locals.get(i) == Opcodes.DOUBLE){
-               aa.locals.set(i, COJAC_DOUBLE_WRAPPER_TYPE_DESCR);
+            else if(object == Opcodes.FLOAT){
+                newLocal.add(COJAC_FLOAT_WRAPPER_INTERNAL_NAME);
             }
-        }
-        for (int i=0 ; i<aa.stack.size() ; i++) {
-            if(aa.stack.get(i) == Opcodes.FLOAT){
-               aa.stack.set(i, COJAC_FLOAT_WRAPPER_TYPE_DESCR);
-            }
-            if(aa.stack.get(i) == Opcodes.DOUBLE){
-               aa.stack.set(i, COJAC_DOUBLE_WRAPPER_TYPE_DESCR);
+            else{
+                newLocal.add(object);
             }
         }
+        mv.visitFrame(type, nLocal, newLocal.toArray(), nStack, stack);
     }
         
     @Override

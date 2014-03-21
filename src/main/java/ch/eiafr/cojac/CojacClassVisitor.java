@@ -100,11 +100,8 @@ final class CojacClassVisitor extends ClassVisitor {
         MethodVisitor mv = null;
         if (args.isSpecified(Arg.REPLACE_FLOATS)){
             AnalyzerAdapter aa = new AnalyzerAdapter(name, access, name, desc, parentMv);
-            // Not used, it change the local variable order and do the mess in the AnalyzerAdapter stack representation
-            LocalVariablesSorter lvs = null;//new LocalVariablesSorter(access, desc, aa);
-            
+            LocalVariablesSorter lvs = new LocalVariablesSorter(access, desc, aa);
             mv = new FloatReplacerMethodVisitor(access, desc, aa, lvs, stats, args, methods, reaction, classPath, factory);
-            //mv = new FloatReplacerMethodVisitor(access, desc, parentMv, name, stats, args, methods, reaction, classPath, factory);
         }
         else 
             mv = new CojacCheckerMethodVisitor(access, desc, parentMv, stats, args, methods, reaction, classPath, factory);
@@ -126,6 +123,10 @@ final class CojacClassVisitor extends ClassVisitor {
                 //FieldVisitor fv=cv.visitField(accessFlags, fieldName+COJAC_FIELD_SUFFIX, COJAC_FLOAT_WRAPPER, genericSignature, initValStatic);
                 //if (fv!=null) fv.visitEnd();
                 // ...if we want to replace field (instead of adding a new one...)
+            }
+            if (fieldType.equals("D")) {
+                //TODO correctly handle initial float initialization for static fields
+                return super.visitField(accessFlags, fieldName, COJAC_DOUBLE_WRAPPER_TYPE_DESCR, genericSignature, null);
             }
         }
         return super.visitField(accessFlags, fieldName, fieldType, genericSignature, initValStatic);
