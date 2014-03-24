@@ -137,11 +137,11 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
             }
         }
         // replace FALOAD by AALOAD
-        if(opCode == FALOAD){
-            opCode = AALOAD;
-        }
-        if(opCode == FASTORE){
-            opCode = AASTORE;
+        switch(opCode){
+            case DALOAD:
+            case FALOAD: opCode = AALOAD; break;
+            case DASTORE:
+            case FASTORE: opCode = AASTORE; break;
         }
         
         IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opCode);
@@ -158,6 +158,25 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
         if (DONT_INSTRUMENT) {
             mv.visitMethodInsn(opcode, owner, name, desc); return; 
         }
+        
+        if(owner.equals("java/lang/String") && name.equals("valueOf") && desc.startsWith("(F)")){
+            mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "toFloat", "("+COJAC_FLOAT_WRAPPER_TYPE_DESCR+")F");
+            mv.visitMethodInsn(opcode, owner, name, desc);
+            return;
+        }
+        
+        if(owner.equals("java/io/PrintStream") && name.startsWith("print") && desc.startsWith("(F)")){
+            mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "toFloat", "("+COJAC_FLOAT_WRAPPER_TYPE_DESCR+")F");
+            mv.visitMethodInsn(opcode, owner, name, desc);
+            return;
+        }
+        
+        if(owner.equals("java/lang/StringBuilder") && name.equals("append") && desc.startsWith("(F)")){
+            mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "toFloat", "("+COJAC_FLOAT_WRAPPER_TYPE_DESCR+")F");
+            mv.visitMethodInsn(opcode, owner, name, desc);
+            return;
+        }
+        
         String descAfter=replaceFloatMethodDescription(desc);
         if (!desc.equals(descAfter)) 
             stats.incrementCounterValue(opcode);
@@ -304,9 +323,9 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
         }
         
         IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opcode);
-        if (instrumenter != null && opcode == NEWARRAY && operand == Opcodes.T_FLOAT) { // instrument only if it's an array of floats
+        if (instrumenter != null && opcode == NEWARRAY && (operand == Opcodes.T_FLOAT || operand == Opcodes.T_DOUBLE)) { // instrument only if it's an array of floats
             stats.incrementCounterValue(opcode);
-            instrumenter.instrument(mv, opcode, classPath, methods, reaction, null);
+            instrumenter.instrument(mv, opcode, operand, classPath, methods, reaction, null);
         } else { // Delegate to parent
             mv.visitIntInsn(opcode, operand);
         }
@@ -319,123 +338,21 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
             mv.visitMultiANewArrayInsn(desc, dims);
             return;
         }
-        
-        int opcode = MULTIANEWARRAY;
-        IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opcode);
-        if (instrumenter != null && desc.endsWith("F")){ // instrument if it's an array of floats
-            
-            // Get the dimensions sizes on the stack and create an array with it (for method calling in instrumenter)
-            mv.visitIntInsn(BIPUSH, dims);
-            mv.visitIntInsn(NEWARRAY, Opcodes.T_INT);
-
-            for(int i=0 ; i<dims ; i++){
-                mv.visitInsn(DUP_X1);
-                mv.visitInsn(SWAP);
-                mv.visitLdcInsn(i);
-                mv.visitInsn(SWAP);
-                mv.visitInsn(IASTORE);
-            }
-            
+        if(desc.endsWith("F") || desc.endsWith("D")){
+            String objDescr = Type.getObjectType("java/lang/Object").getDescriptor();
+            String wrapper = COJAC_FLOAT_WRAPPER_INTERNAL_NAME;
+            if(desc.endsWith("D"))
+                wrapper = COJAC_DOUBLE_WRAPPER_INTERNAL_NAME;
+            String replacedDesc = desc;
+            replacedDesc = replacedDesc.replaceAll("F", COJAC_FLOAT_WRAPPER_TYPE_DESCR);
+            replacedDesc = replacedDesc.replaceAll("D", COJAC_DOUBLE_WRAPPER_TYPE_DESCR);
+            mv.visitMultiANewArrayInsn(replacedDesc, dims);
             mv.visitLdcInsn(dims);
-            
-            stats.incrementCounterValue(opcode);
-            instrumenter.instrument(mv, opcode, classPath, methods, reaction, null);
-            // Cast the object returned to the multi array of cojac float wrapper
-            String type = "";
-            for (int i = 0; i < dims; i++) {
-                type += "[";
-            }
-            type += COJAC_FLOAT_WRAPPER_TYPE;
-            mv.visitTypeInsn(CHECKCAST, type);
-            
-        } else { // Delegate to parent
+            mv.visitMethodInsn(INVOKESTATIC, wrapper, "initializeMultiArray", "("+objDescr+"I)"+objDescr);
+            mv.visitTypeInsn(CHECKCAST, replacedDesc);
+        }else{
             mv.visitMultiANewArrayInsn(desc, dims);
         }
-        
-    }
-    
-    @Override
-    public void visitMaxs(int maxStack, int maxLocals){
-        // TODO - verify max values
-        //System.out.println("VISIT MAXS maxStack="+maxStack+" | maxLocals="+maxLocals);
-        mv.visitMaxs(maxStack, maxLocals);
-    }
-    
-    private void printStack(){
-        printStack("STACK", aa.stack);
-    }
-    
-    private void printLocals(){
-        printStack("LOCALS", aa.locals);
-    }
-    
-    
-    private void printStack(String title, List stack){
-        String str = "";
-        for (Object object : stack) {
-            
-            if(object instanceof Integer){
-                if(object == Opcodes.TOP){
-                    str += "TOP ";
-                }
-                else if(object == Opcodes.INTEGER){
-                    str += "INTEGER ";
-                }
-                else if(object == Opcodes.FLOAT){
-                    str += "FLOAT ";
-                }
-                else if(object == Opcodes.DOUBLE){
-                    str += "DOUBLE ";
-                }
-                else if(object == Opcodes.LONG){
-                    str += "LONG ";
-                }
-                else if(object == Opcodes.NULL){
-                    str += "NULL ";
-                }
-                else if(object == Opcodes.UNINITIALIZED_THIS){
-                    str += "UNINITIALIZED_THIS ";
-                }
-            }
-            else{
-                str += object+" ";
-            }
-        }
-        System.out.println(title+"=> "+str);
-    }
-    
-    private void printStack(String title, Object[] stack){
-        String str = "";
-        for (Object object : stack) {
-            
-            if(object instanceof Integer){
-                if(object == Opcodes.TOP){
-                    str += "TOP ";
-                }
-                else if(object == Opcodes.INTEGER){
-                    str += "INTEGER ";
-                }
-                else if(object == Opcodes.FLOAT){
-                    str += "FLOAT ";
-                }
-                else if(object == Opcodes.DOUBLE){
-                    str += "DOUBLE ";
-                }
-                else if(object == Opcodes.LONG){
-                    str += "LONG ";
-                }
-                else if(object == Opcodes.NULL){
-                    str += "NULL ";
-                }
-                else if(object == Opcodes.UNINITIALIZED_THIS){
-                    str += "UNINITIALIZED_THIS ";
-                }
-            }
-            else{
-                str += object+" ";
-            }
-        }
-        System.out.println(title+"=> "+str);
     }
     
 }

@@ -120,6 +120,11 @@ final class DirectInstrumenter implements IOpcodeInstrumenter {
     }
 
     @Override
+    public void instrument(MethodVisitor mv, int opCode, int operand, String classPath, Methods methods, IReaction r, LocalVariablesSorter src){
+        this.instrument(mv, opCode, classPath, methods, r, src);
+    }
+    
+    @Override
     public boolean wantsToInstrument(int opcode) {
         Arg arg = Arg.fromOpCode(opcode);
         if(arg==null) return false;

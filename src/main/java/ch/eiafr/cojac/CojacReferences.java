@@ -86,7 +86,20 @@ public final class CojacReferences {
     public boolean hasToBeInstrumented(String className) {
         // TODO: deal with native methods
         if (args.isSpecified(Arg.REPLACE_FLOATS)){
-            return !className.startsWith("ch/eiafr/cojac/models"); // replacement is radical, std lib classes will be instrumented... (problem: native classes...)
+            String[] passList = {
+                "ch/eiafr/cojac/models",
+                "sun/misc/FloatingDecimal",
+                "java/lang/StrictMath",
+                "sun/misc/FpUtils"
+            };
+            
+            for (String passPackage : passList) {
+                if(className.startsWith(passPackage)){
+                    return false;
+                }
+            }
+            return true;
+            //return !className.startsWith("ch/eiafr/cojac/models"); // replacement is radical, std lib classes will be instrumented... (problem: native classes...)
         }
         for (String standardPackage : bypassList) {
             if (className.startsWith(standardPackage)) {

@@ -26,4 +26,5 @@ import org.objectweb.asm.commons.LocalVariablesSorter;
 public interface IOpcodeInstrumenter {
     boolean wantsToInstrument(int opcode);
     void instrument(MethodVisitor methodVisitor, int opCode, String classPath, Methods methods, IReaction reaction, LocalVariablesSorter src);
+    void instrument(MethodVisitor methodVisitor, int opCode, int operand, String classPath, Methods methods, IReaction reaction, LocalVariablesSorter src);
 }

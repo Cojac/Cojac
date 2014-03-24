@@ -95,7 +95,24 @@ public class DoubleWrapper {
         return new DoubleWrapper((double)FloatWrapper.toFloat(a));
     }
 
+    public static DoubleWrapper[] newarray(int size){
+        DoubleWrapper[] a = new DoubleWrapper[size];
+        for (int i = 0; i < a.length; i++) {
+            a[i] = new DoubleWrapper(0);
+        }
+        return a;
+    }
     
+    public static Object initializeMultiArray(Object array, int dimensions) {
+        Object a[] = (Object[]) array;
+        if(dimensions == 1){
+            return newarray(a.length);
+        }
+        for (int i = 0; i < a.length; i++) {
+            a[i] = initializeMultiArray(a[i], dimensions-1);
+        }
+        return array;
+    }
     
     //TODO: define a "magic call" feature: getFloatInfo(float f) ---> call getFloatInfo on the FloatWrapper
 
