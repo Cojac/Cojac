@@ -49,11 +49,6 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
    
     private final LocalVariablesSorter lvs;
     private final AnalyzerAdapter aa;
-    /*
-    private final Map<Integer, Integer> varMap = new HashMap<>();
-    private final Set<Integer> floatVars = new HashSet<>();
-    private final Set<Integer> nonFloatVars = new HashSet<>();
-    */
 
     // Must Link the lvs to the aa and the aa to the parent method visitor before call!
     FloatReplacerMethodVisitor(int access, String desc, AnalyzerAdapter aa, LocalVariablesSorter lvs, InstrumentationStats stats, Args args, Methods methods, IReaction reaction, String classPath, IOpcodeInstrumenterFactory factory) {
@@ -69,28 +64,6 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
         this.methods = methods;
         this.reaction = reaction;
         this.classPath = classPath;
-    }
-    
-    @Override
-    public void visitIincInsn(int var, int increment) {
-        if (DONT_INSTRUMENT) {
-            mv.visitIincInsn(var, increment); return; 
-        }
-        int replacedVar=var;
-        /*
-        if (floatVars.contains(var)) {
-            if (varMap.containsKey(var)) {
-                replacedVar=varMap.get(var);
-            } else {
-                replacedVar=lvs.newLocal(Type.INT_TYPE);
-                varMap.put(var, replacedVar);
-            }
-            System.out.println("COJJJ inst'ing iinc: "+var+"->"+replacedVar);
-        } else {
-            nonFloatVars.add(var);
-        }
-        */
-        mv.visitIincInsn(replacedVar, increment);
     }
 
     @Override
@@ -113,6 +86,47 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
                 newLocal.add(object);
             }
         }
+        /*
+        String str = "LOCALS BEFORE: [ ";
+        for (Object object : local) {
+            if(object instanceof String)
+                str += (String) object + " ";
+            else if(object == Opcodes.TOP)
+                str += "TOP ";
+            else if(object == Opcodes.DOUBLE)
+                str += "D ";
+            else if(object == Opcodes.LONG)
+                str += "J ";
+            else if(object == Opcodes.INTEGER)
+                str += "I ";
+            else if(object == Opcodes.FLOAT)
+                str += "F ";
+            else
+                str += ". ";
+        }
+        str += "]";
+        System.out.println("VISIT FRAME => "+str);
+        
+        str = "LOCALS AFTER: [ ";
+        for (Object object : newLocal) {
+            if(object instanceof String)
+                str += (String) object + " ";
+            else if(object == Opcodes.TOP)
+                str += "TOP ";
+            else if(object == Opcodes.DOUBLE)
+                str += "D ";
+            else if(object == Opcodes.LONG)
+                str += "J ";
+            else if(object == Opcodes.INTEGER)
+                str += "I ";
+            else if(object == Opcodes.FLOAT)
+                str += "F ";
+            else
+                str += ". ";
+        }
+        str += "]";
+        System.out.println("VISIT FRAME => "+str);
+        */
         mv.visitFrame(type, nLocal, newLocal.toArray(), nStack, stack);
     }
         
@@ -124,9 +138,7 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
 
         // Replace instructions on doubles by instruction on objects when necessary
         if(opCode == DUP2 || opCode == DUP2_X1 || opCode == DUP2_X2 || opCode == POP2){
-            int size = aa.stack.size();
-            Object topStack = aa.stack.get(size-1);
-            if(topStack instanceof String && topStack.equals(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME)){
+            if(stackTop().equals(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME)){
                 switch(opCode){
                     case DUP2: opCode = DUP; break;
                     case DUP2_X1: opCode = DUP_X1; break;
@@ -159,6 +171,7 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
             mv.visitMethodInsn(opcode, owner, name, desc); return; 
         }
         
+        
         if(owner.equals("java/lang/String") && name.equals("valueOf") && desc.startsWith("(F)")){
             mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "toFloat", "("+COJAC_FLOAT_WRAPPER_TYPE_DESCR+")F");
             mv.visitMethodInsn(opcode, owner, name, desc);
@@ -177,10 +190,32 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
             return;
         }
         
+        if(owner.equals("java/lang/Float") && name.equals("valueOf") && desc.startsWith("(F)")){
+            if(stackTop().equals(Opcodes.FLOAT)){
+                // Only if this is a real float
+                mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", "(F)"+COJAC_FLOAT_WRAPPER_TYPE_DESCR);
+            }
+            return;
+        }
+        
+        if(owner.equals("java/lang/Float") && name.equals("floatValue")){
+            // Do nothing, this is already the FloatWrapper of COJAC
+            return;
+        }
+        
         String descAfter=replaceFloatMethodDescription(desc);
         if (!desc.equals(descAfter)) 
             stats.incrementCounterValue(opcode);
         // TODO: something smarter, taking into account the method call kinds ?
+        
+        if(opcode == INVOKESPECIAL){
+            if(owner.equals("java/lang/Float")){
+                System.out.println("desc => "+descAfter);
+                mv.visitMethodInsn(opcode, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, name, descAfter);
+                return;
+            }
+        }
+        
         mv.visitMethodInsn(opcode, owner, name, descAfter);
     }
 
@@ -190,69 +225,16 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
             mv.visitVarInsn(opcode, var); return; 
         }
         
-        if (opcode==DLOAD || opcode==DSTORE) {
-            int replacedOpcode = (opcode==DLOAD) ? ALOAD:ASTORE;
-            int replacedVar=var;
-            /*
-            if (nonFloatVars.contains(var)) {
-                if (varMap.containsKey(var)) {
-                    replacedVar=varMap.get(var);
-                } else {
-                    replacedVar=lvs.newLocal(COJAC_DOUBLE_WRAPPER_TYPE);
-                    varMap.put(var, replacedVar);
-                }
-                stats.incrementCounterValue(opcode);
-                System.out.println("USED???");
-            } else {
-                floatVars.add(var);
-            }
-            */
-            mv.visitVarInsn(replacedOpcode, replacedVar); // Whats is the different between super and mv ???
+        int replacedOpcode = opcode;
+        switch(opcode){
+            case FLOAD:
+            case DLOAD: replacedOpcode = ALOAD; break;
+            case FSTORE:
+            case DSTORE: replacedOpcode = ASTORE; break;
         }
-        else if (opcode==FLOAD || opcode==FSTORE) {
-            int replacedOpcode = (opcode==FLOAD) ? ALOAD:ASTORE;
-            int replacedVar=var;
-            /*
-            if (nonFloatVars.contains(var)) {
-                if (varMap.containsKey(var)) {
-                    replacedVar=varMap.get(var);
-                } else {
-                    replacedVar=lvs.newLocal(COJAC_FLOAT_WRAPPER_TYPE);
-                    varMap.put(var, replacedVar);
-                }
-                stats.incrementCounterValue(opcode);
-                if(mainMethod)
-                    System.out.println("REPLACE ?? BY FLOAT");
-            } else {
-                if(mainMethod)
-                    System.out.println("ADD VAR FLOAT "+var);
-                floatVars.add(var);
-            }
-            */
-            mv.visitVarInsn(replacedOpcode, replacedVar);
-        } else {
-            int replacedVar=var;
-            /*
-            if (floatVars.contains(var)) {
-                if (varMap.containsKey(var)) {
-                    replacedVar=varMap.get(var);
-                } else {
-                    replacedVar=lvs.newLocal(typeFromVarInsn(opcode));
-                    varMap.put(var, replacedVar);
-                }
-                stats.incrementCounterValue(opcode);
-                if(mainMethod)
-                    System.out.println("REPLACE FLOAT BY ??");
-            } else {
-                if(mainMethod)
-                    System.out.println("ADD VAR NONFLOAT "+var);
-                nonFloatVars.add(var);
-            }
-            */
-            mv.visitVarInsn(opcode, replacedVar); // CAUTION: do not use mv.visitVarInsn
-        }
+        mv.visitVarInsn(replacedOpcode, var);
     }
-
+/*
     private Type typeFromVarInsn(int opcode) {
         Type objt = Type.getObjectType("java/lang/Object");
         switch(opcode) {
@@ -268,7 +250,7 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
         }
         return null;
     }
-
+*/
     @Override
     public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index) {
         if (DONT_INSTRUMENT) {
@@ -353,6 +335,26 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
         }else{
             mv.visitMultiANewArrayInsn(desc, dims);
         }
+    }
+    
+    @Override
+    public void visitTypeInsn(int opcode, String type){
+        if (DONT_INSTRUMENT) {
+            mv.visitTypeInsn(opcode, type);
+            return;
+        }
+        
+        
+        if(type.equals("java/lang/Float")){
+            mv.visitTypeInsn(opcode, COJAC_FLOAT_WRAPPER_INTERNAL_NAME);
+            return;
+        }
+        
+        mv.visitTypeInsn(opcode, type);
+    }
+    
+    private Object stackTop(){
+        return aa.stack.get(aa.stack.size()-1);
     }
     
 }

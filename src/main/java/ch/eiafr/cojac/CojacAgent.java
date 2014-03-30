@@ -41,11 +41,7 @@ public final class CojacAgent {
             args.printHelpAndExit();
         }
 
-        CojacReferencesBuilder builder = new CojacReferencesBuilder(args);
-        builder.setSplitter(new CojacReferences.AgentSplitter());
-        inst.addTransformer(new Agent(builder.build()));
-        //TODO: maybe consider retransforming existing classes when REPLACE_FLOATS...
-/*
+        // retransforming existing classes when REPLACE_FLOATS (not working)
         if (!inst.isRetransformClassesSupported()) {
             System.out.println("RetransformClasses not supported");
         } else {
@@ -55,19 +51,20 @@ public final class CojacAgent {
             for (Class class1 : cl) {
                 if (inst.isModifiableClass(class1)) {
                     listClasses.add(class1);
-                } else {
-                    System.out.println("NOT MODIFIABLE: " + class1);
                 }
             }
 
             try {
                 Class[] cl2 = new Class[listClasses.size()];
                 listClasses.toArray(cl2);
-                inst.retransformClasses(Float.class);
+                inst.retransformClasses(cl2);
             } catch (UnmodifiableClassException ex) {
                 Logger.getLogger(CojacAgent.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    */
+        
+        CojacReferencesBuilder builder = new CojacReferencesBuilder(args);
+        builder.setSplitter(new CojacReferences.AgentSplitter());
+        inst.addTransformer(new Agent(builder.build()));
     }
 }

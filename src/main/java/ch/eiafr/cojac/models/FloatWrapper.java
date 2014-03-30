@@ -25,6 +25,14 @@ public class FloatWrapper {
         val=v;
     }
     
+    public FloatWrapper(FloatWrapper fw) {
+        val=fw.val;
+    }
+    
+    public FloatWrapper(DoubleWrapper dw) {
+        val=(float) dw.toDouble(dw);
+    }
+    
     public static FloatWrapper fromFloat(float a) {
         return new FloatWrapper(a);
     }
@@ -109,6 +117,11 @@ public class FloatWrapper {
         for (int i = 0; i < a.length; i++)
             a[i] = initializeMultiArray(a[i], dimensions-1);
         return array;
+    }
+    
+    @Override
+    public String toString(){
+        return Float.toString(val);
     }
     
     //TODO: define a "magic call" feature: getFloatInfo(float f) ---> call getFloatInfo on the FloatWrapper
