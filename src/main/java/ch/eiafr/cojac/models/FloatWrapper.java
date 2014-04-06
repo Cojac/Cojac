@@ -24,13 +24,14 @@ public class FloatWrapper {
     public FloatWrapper(float v) {
         val=v;
     }
-    
     public FloatWrapper(FloatWrapper fw) {
         val=fw.val;
     }
-    
     public FloatWrapper(DoubleWrapper dw) {
         val=(float) dw.toDouble(dw);
+    }
+    public FloatWrapper(String str) {
+        val=Float.valueOf(str);
     }
     
     public static FloatWrapper fromFloat(float a) {
@@ -117,6 +118,13 @@ public class FloatWrapper {
         for (int i = 0; i < a.length; i++)
             a[i] = initializeMultiArray(a[i], dimensions-1);
         return array;
+    }
+    
+    public static byte byteValue(FloatWrapper fw){
+        return (byte)fw.val;
+    }
+    public static short shortValue(FloatWrapper fw){
+        return (short)fw.val;
     }
     
     @Override

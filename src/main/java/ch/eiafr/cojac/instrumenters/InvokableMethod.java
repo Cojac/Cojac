@@ -66,6 +66,21 @@ public final class InvokableMethod {
             return COJAC_FLOAT_WRAPPER_TYPE;
         if (myType.getSort()==Type.DOUBLE)
             return COJAC_DOUBLE_WRAPPER_TYPE;
+        
+        if(myType.getSort() == Type.OBJECT && myType.getInternalName().equals("java/lang/Float"))
+            return COJAC_FLOAT_WRAPPER_TYPE;
+        
+        if(myType.getDescriptor().endsWith("[D")){
+            String str = myType.getDescriptor();
+            str = str.replace("[D", "["+COJAC_DOUBLE_WRAPPER_TYPE_DESCR);
+            myType = Type.getObjectType(str);
+        }
+        if(myType.getDescriptor().endsWith("[F")){
+            String str = myType.getDescriptor();
+            str = str.replace("[F", "["+COJAC_FLOAT_WRAPPER_TYPE_DESCR);
+            myType = Type.getObjectType(str);
+        }
+        
         return myType;
     }
     

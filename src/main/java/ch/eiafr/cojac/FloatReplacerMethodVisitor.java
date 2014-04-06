@@ -23,7 +23,6 @@ import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenterFactory;
 import ch.eiafr.cojac.instrumenters.InvokableMethod;
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
 import ch.eiafr.cojac.reactions.IReaction;
-import java.util.ArrayList;
 
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
@@ -32,7 +31,6 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.LocalVariablesSorter;
 
-import java.util.List;
 
 import static org.objectweb.asm.Opcodes.*;
 import org.objectweb.asm.commons.AnalyzerAdapter;
@@ -56,7 +54,7 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
         
         this.aa = aa;
         this.lvs = lvs;
-        
+
         this.stats = stats;
         this.args = args;
         this.factory = factory;
@@ -67,78 +65,16 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
     }
 
     @Override
-    public void visitFrame(int type, int nLocal, Object[] local, int nStack, Object[] stack) {
-        if(DONT_INSTRUMENT){
-            mv.visitFrame(type, nLocal, local, nStack, stack);
-            return;
-        }
-        ArrayList<Object> newLocal = new ArrayList<>();
-        for (Object object : local) {
-            if(object == Opcodes.DOUBLE){
-                newLocal.add(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME);
-                newLocal.add(Opcodes.TOP);
-                nLocal++;
-            }
-            else if(object == Opcodes.FLOAT){
-                newLocal.add(COJAC_FLOAT_WRAPPER_INTERNAL_NAME);
-            }
-            else{
-                newLocal.add(object);
-            }
-        }
-        /*
-        String str = "LOCALS BEFORE: [ ";
-        for (Object object : local) {
-            if(object instanceof String)
-                str += (String) object + " ";
-            else if(object == Opcodes.TOP)
-                str += "TOP ";
-            else if(object == Opcodes.DOUBLE)
-                str += "D ";
-            else if(object == Opcodes.LONG)
-                str += "J ";
-            else if(object == Opcodes.INTEGER)
-                str += "I ";
-            else if(object == Opcodes.FLOAT)
-                str += "F ";
-            else
-                str += ". ";
-        }
-        str += "]";
-        System.out.println("VISIT FRAME => "+str);
-        
-        str = "LOCALS AFTER: [ ";
-        for (Object object : newLocal) {
-            if(object instanceof String)
-                str += (String) object + " ";
-            else if(object == Opcodes.TOP)
-                str += "TOP ";
-            else if(object == Opcodes.DOUBLE)
-                str += "D ";
-            else if(object == Opcodes.LONG)
-                str += "J ";
-            else if(object == Opcodes.INTEGER)
-                str += "I ";
-            else if(object == Opcodes.FLOAT)
-                str += "F ";
-            else
-                str += ". ";
-        }
-        str += "]";
-        System.out.println("VISIT FRAME => "+str);
-        */
-        mv.visitFrame(type, nLocal, newLocal.toArray(), nStack, stack);
-    }
-        
-    @Override
     public void visitInsn(int opCode) {
         if (DONT_INSTRUMENT) {
             mv.visitInsn(opCode); return; 
         }
-
+        
+        // TODO - check instruction DUP_X2
         // Replace instructions on doubles by instruction on objects when necessary
         if(opCode == DUP2 || opCode == DUP2_X1 || opCode == DUP2_X2 || opCode == POP2){
             if(stackTop().equals(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME)){
+                stats.incrementCounterValue(opCode);
                 switch(opCode){
                     case DUP2: opCode = DUP; break;
                     case DUP2_X1: opCode = DUP_X1; break;
@@ -203,10 +139,43 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
             return;
         }
         
+        if(owner.equals("java/lang/Float") && name.equals("doubleValue")){
+             mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "f2d", "("+COJAC_FLOAT_WRAPPER_TYPE_DESCR+")"+COJAC_DOUBLE_WRAPPER_TYPE_DESCR);
+            return;
+        }
+        if(owner.equals("java/lang/Float") && name.equals("intValue")){
+             mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "f2i", "("+COJAC_FLOAT_WRAPPER_TYPE_DESCR+")I");
+            return;
+        }
+        if(owner.equals("java/lang/Float") && name.equals("longValue")){
+             mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "f2l", "("+COJAC_FLOAT_WRAPPER_TYPE_DESCR+")J");
+            return;
+        }
+        if(owner.equals("java/lang/Float") && name.equals("shortValue")){
+             mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "shortValue", "("+COJAC_FLOAT_WRAPPER_TYPE_DESCR+")S");
+            return;
+        }
+        if(owner.equals("java/lang/Float") && name.equals("byteValue")){
+             mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "byteValue", "("+COJAC_FLOAT_WRAPPER_TYPE_DESCR+")B");
+            return;
+        }
+
+        
+        if(owner.equals("java/lang/Float") && name.equals("parseFloat") && desc.endsWith("F")){
+            mv.visitMethodInsn(opcode, owner, name, desc);
+            mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", "(F)"+COJAC_FLOAT_WRAPPER_TYPE_DESCR);
+            return;
+        }
+        
         String descAfter=replaceFloatMethodDescription(desc);
         if (!desc.equals(descAfter)) 
             stats.incrementCounterValue(opcode);
         // TODO: something smarter, taking into account the method call kinds ?
+        
+
+        descAfter = descAfter.replace("[D", "["+COJAC_DOUBLE_WRAPPER_TYPE_DESCR);
+        descAfter = descAfter.replace("[F", "["+COJAC_FLOAT_WRAPPER_TYPE_DESCR);
+        
         
         if(opcode == INVOKESPECIAL){
             if(owner.equals("java/lang/Float")){

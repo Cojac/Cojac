@@ -31,6 +31,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AnalyzerAdapter;
 import org.objectweb.asm.commons.LocalVariablesSorter;
 
@@ -99,8 +100,9 @@ final class CojacClassVisitor extends ClassVisitor {
     private MethodVisitor instrumentMethod(MethodVisitor parentMv, int access, String desc, String name) {
         MethodVisitor mv = null;
         if (args.isSpecified(Arg.REPLACE_FLOATS)){
+            
             AnalyzerAdapter aa = new AnalyzerAdapter(name, access, name, desc, parentMv);
-            LocalVariablesSorter lvs = new LocalVariablesSorter(access, desc, aa);
+            LocalVariablesSorter lvs = new FloatVariablesSorter(access, desc, aa);
             mv = new FloatReplacerMethodVisitor(access, desc, aa, lvs, stats, args, methods, reaction, classPath, factory);
         }
         else 
