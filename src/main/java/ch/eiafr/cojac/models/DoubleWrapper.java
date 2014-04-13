@@ -29,6 +29,10 @@ public class DoubleWrapper {
     public static DoubleWrapper fromDouble(double a) {
         return new DoubleWrapper(a);
     }
+    
+    public static DoubleWrapper fromString(String a){
+        return new DoubleWrapper(Double.valueOf(a));
+    }
 
     public static DoubleWrapper dadd(DoubleWrapper a, DoubleWrapper b) {
         return new DoubleWrapper(a.val+b.val);
@@ -56,6 +60,10 @@ public class DoubleWrapper {
 
     public static double toDouble(DoubleWrapper a) {
         return a.val;
+    }
+    
+    public static Double toRealDoubleWrapper(DoubleWrapper a){
+        return new Double(a.val);
     }
     
     // TODO: correctly implement fcmpl and fcmpg

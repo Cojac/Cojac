@@ -24,18 +24,17 @@ public class FloatWrapper {
     public FloatWrapper(float v) {
         val=v;
     }
-    public FloatWrapper(FloatWrapper fw) {
-        val=fw.val;
-    }
-    public FloatWrapper(DoubleWrapper dw) {
-        val=(float) dw.toDouble(dw);
-    }
-    public FloatWrapper(String str) {
-        val=Float.valueOf(str);
-    }
     
     public static FloatWrapper fromFloat(float a) {
         return new FloatWrapper(a);
+    }
+    
+    public static FloatWrapper fromString(String a){
+        return new FloatWrapper(Float.valueOf(a));
+    }
+    
+    public static FloatWrapper fromDouble(DoubleWrapper a){
+        return new FloatWrapper((float)DoubleWrapper.toDouble(a));
     }
 
     public static FloatWrapper fadd(FloatWrapper a, FloatWrapper b) {
@@ -64,6 +63,10 @@ public class FloatWrapper {
 
     public static float toFloat(FloatWrapper a) {
         return a.val;
+    }
+    
+    public static Float toRealFloatWrapper(FloatWrapper a){
+        return new Float(a.val);
     }
     
     // TODO: correctly implement fcmpl and fcmpg
@@ -119,13 +122,7 @@ public class FloatWrapper {
             a[i] = initializeMultiArray(a[i], dimensions-1);
         return array;
     }
-    
-    public static byte byteValue(FloatWrapper fw){
-        return (byte)fw.val;
-    }
-    public static short shortValue(FloatWrapper fw){
-        return (short)fw.val;
-    }
+
     
     @Override
     public String toString(){
@@ -134,4 +131,8 @@ public class FloatWrapper {
     
     //TODO: define a "magic call" feature: getFloatInfo(float f) ---> call getFloatInfo on the FloatWrapper
 
+    public static boolean isInfiniteProxy(FloatWrapper a){
+        return Float.isInfinite(a.val);
     }
+    
+}

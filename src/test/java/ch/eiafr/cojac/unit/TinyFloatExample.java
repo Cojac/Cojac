@@ -95,6 +95,8 @@ public class TinyFloatExample {
         Float f6 = new Float(5.21);
         Float f7 = new Float(dval);
  
+        Float f8 = Float.parseFloat("76.654");
+        
         // Float conversions
         byte by = f1.byteValue();
         double d = f1.doubleValue();
@@ -103,10 +105,53 @@ public class TinyFloatExample {
         long l = f1.longValue();
         short s = f1.shortValue();
         
-        
+        // other methods
+        Float.isInfinite(f1);
+        Float.isInfinite(f1);
+        Float.isNaN(f2);
+        Float.compare(f1, f2);
+        Float.toHexString(f1);
+        f1.compareTo(f2);
+        float hex = Float.intBitsToFloat(i);
         
         
         float v = f1 + f2 + f3 + f4;
+        
+        return a + b + v;
+    }
+    
+    static Double testDoubleWrapper(Double a, Double b){
+        double val = 5.2;
+        float fval = 7.91f;
+        // Float creation
+        Double d1 = 1.5;
+        Double d2 = new Double(d1);
+        Double d3 = val;
+        Double d4 = new Double(val);
+        Double d5 = new Double("521.235");
+        Double d6 = new Double(5.21);
+        Double d7 = new Double(fval);
+ 
+        Double f8 = Double.parseDouble("76.654");
+        
+        // Float conversions
+        byte by = d1.byteValue();
+        double d = d1.doubleValue();
+        float f = d1.floatValue();
+        int i = d1.intValue();
+        long l = d1.longValue();
+        short s = d1.shortValue();
+        
+        // other methods
+        Double.isInfinite(d1);
+        Double.isInfinite(d1);
+        Double.isNaN(d2);
+        Double.compare(d1, d2);
+        Double.toHexString(d1);
+        d1.compareTo(d2);
+        
+        
+        double v = d1 + d2 + d3 + d4;
         
         return a + b + v;
     }
@@ -174,6 +219,9 @@ public class TinyFloatExample {
         Float fw1 = 1.6f;
         Float fw2 = b;
         Float fwres = testFloatWrapper(fw1, fw2);
+        Double dw1 = 1.6;
+        Double dw2 = (double)b;
+        Double dwres = testDoubleWrapper(dw1, dw2);
         
         System.out.println("inside TinyFloatExample.go() "+res);
         System.out.println("inside TinyFloatExample.go() "+(int)(TFEAux.myStaticFloat));

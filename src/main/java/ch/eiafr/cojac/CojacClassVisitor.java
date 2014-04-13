@@ -31,6 +31,8 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
+import ch.eiafr.cojac.instrumenters.ReplaceFloatsMethods;
+import java.util.ArrayList;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AnalyzerAdapter;
 import org.objectweb.asm.commons.LocalVariablesSorter;
@@ -49,6 +51,8 @@ final class CojacClassVisitor extends ClassVisitor {
     //public static final String COJAC_FIELD_SUFFIX = "_C$O$J$A$C";
     
     private CojacAnnotationVisitor cav;
+    
+    private ArrayList<String> proxyMethods;
 
     CojacClassVisitor(ClassVisitor cv, InstrumentationStats stats, Args args, Methods methods, IReaction reaction, IOpcodeInstrumenterFactory factory, CojacAnnotationVisitor cav) {
         super(Opcodes.ASM4, cv);
@@ -60,6 +64,7 @@ final class CojacClassVisitor extends ClassVisitor {
         this.factory = factory;
         this.cav = cav;
         methodAdder = methods != null ? new CojacMethodAdder(args, reaction) : null;
+        proxyMethods = new ArrayList<>();
     }
 
     @Override
@@ -69,6 +74,15 @@ final class CojacClassVisitor extends ClassVisitor {
         classPath = name;
     }
 
+    public boolean isProxyMerhod(String name, String desc){
+        return proxyMethods.contains(name+"_"+desc);
+    }
+    
+    public MethodVisitor addProxyMethod(int access, String name, String desc, String signature, String[] exceptions){
+        proxyMethods.add(name+"_"+desc);
+        return cv.visitMethod(access, name, desc, signature, exceptions);
+    }
+    
     @Override
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
         if (args.isSpecified(Arg.REPLACE_FLOATS)) {
@@ -83,12 +97,14 @@ final class CojacClassVisitor extends ClassVisitor {
             return mv;
         }
 
+        /*
         if (methods != null && first && "<init>".equals(name)) {
             first = false;
 
             methodAdder.insertMethods(cv, methods, classPath);
         }
-
+        */
+                
         mv.visitEnd();
 
         return instrumentMethod(mv, access, desc, name);
@@ -103,7 +119,8 @@ final class CojacClassVisitor extends ClassVisitor {
             
             AnalyzerAdapter aa = new AnalyzerAdapter(name, access, name, desc, parentMv);
             LocalVariablesSorter lvs = new FloatVariablesSorter(access, desc, aa);
-            mv = new FloatReplacerMethodVisitor(access, desc, aa, lvs, stats, args, methods, reaction, classPath, factory);
+            ReplaceFloatsMethods rfm = new ReplaceFloatsMethods(cv, classPath);
+            mv = new FloatReplacerMethodVisitor(access, desc, aa, lvs, rfm, stats, args, methods, reaction, classPath, factory);
         }
         else 
             mv = new CojacCheckerMethodVisitor(access, desc, parentMv, stats, args, methods, reaction, classPath, factory);

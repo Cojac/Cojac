@@ -76,50 +76,50 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
     }
 
     private void fillMethods() {
-        invocations.put(FADD, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fadd", REPLACED_FLOAT_BINARY));
-        invocations.put(FSUB, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fsub", REPLACED_FLOAT_BINARY));
-        invocations.put(FMUL, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fmul", REPLACED_FLOAT_BINARY));
-        invocations.put(FREM, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "frem", REPLACED_FLOAT_BINARY));
-        invocations.put(FDIV, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fdiv", REPLACED_FLOAT_BINARY));
+        invocations.put(FADD, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fadd", REPLACED_FLOAT_BINARY, INVOKESTATIC));
+        invocations.put(FSUB, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fsub", REPLACED_FLOAT_BINARY, INVOKESTATIC));
+        invocations.put(FMUL, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fmul", REPLACED_FLOAT_BINARY, INVOKESTATIC));
+        invocations.put(FREM, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "frem", REPLACED_FLOAT_BINARY, INVOKESTATIC));
+        invocations.put(FDIV, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fdiv", REPLACED_FLOAT_BINARY, INVOKESTATIC));
 
-        invocations.put(FNEG, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fneg", REPLACED_FLOAT_UNARY));
+        invocations.put(FNEG, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fneg", REPLACED_FLOAT_UNARY, INVOKESTATIC));
 
-        invocations.put(FCMPL, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fcmpl", REPLACED_FLOAT_CMP));
-        invocations.put(FCMPG, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fcmpg", REPLACED_FLOAT_CMP));
+        invocations.put(FCMPL, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fcmpl", REPLACED_FLOAT_CMP, INVOKESTATIC));
+        invocations.put(FCMPG, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fcmpg", REPLACED_FLOAT_CMP, INVOKESTATIC));
 
-        invocations.put(L2F, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "l2f", REPLACED_L2F));
-        invocations.put(I2F, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "i2f", REPLACED_I2F));
-        invocations.put(D2F, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "d2f", REPLACED_D2F));
-        invocations.put(F2I, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "f2i", REPLACED_F2I));
-        invocations.put(F2L, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "f2l", REPLACED_F2L));
-        invocations.put(F2D, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "f2d", REPLACED_F2D));
+        invocations.put(L2F, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "l2f", REPLACED_L2F, INVOKESTATIC));
+        invocations.put(I2F, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "i2f", REPLACED_I2F, INVOKESTATIC));
+        invocations.put(D2F, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "d2f", REPLACED_D2F, INVOKESTATIC));
+        invocations.put(F2I, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "f2i", REPLACED_F2I, INVOKESTATIC));
+        invocations.put(F2L, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "f2l", REPLACED_F2L, INVOKESTATIC));
+        invocations.put(F2D, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "f2d", REPLACED_F2D, INVOKESTATIC));
         
-        invocations.put(NEWARRAY, new InvokableMethod(null, "newarray", REPLACED_NEWARRAY));
+        invocations.put(NEWARRAY, new InvokableMethod(null, "newarray", REPLACED_NEWARRAY, INVOKESTATIC));
         
-        conversions.put(FCONST_0, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", REPLACED_FROM_FLOAT));
-        conversions.put(FCONST_1, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", REPLACED_FROM_FLOAT));
-        conversions.put(FCONST_2, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", REPLACED_FROM_FLOAT));
+        conversions.put(FCONST_0, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", REPLACED_FROM_FLOAT, INVOKESTATIC));
+        conversions.put(FCONST_1, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", REPLACED_FROM_FLOAT, INVOKESTATIC));
+        conversions.put(FCONST_2, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", REPLACED_FROM_FLOAT, INVOKESTATIC));
         
         // Doubles
-        invocations.put(DADD, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "dadd", REPLACED_DOUBLE_BINARY));
-        invocations.put(DSUB, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "dsub", REPLACED_DOUBLE_BINARY));
-        invocations.put(DMUL, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "dmul", REPLACED_DOUBLE_BINARY));
-        invocations.put(DREM, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "drem", REPLACED_DOUBLE_BINARY));
-        invocations.put(DDIV, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "ddiv", REPLACED_DOUBLE_BINARY));
+        invocations.put(DADD, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "dadd", REPLACED_DOUBLE_BINARY, INVOKESTATIC));
+        invocations.put(DSUB, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "dsub", REPLACED_DOUBLE_BINARY, INVOKESTATIC));
+        invocations.put(DMUL, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "dmul", REPLACED_DOUBLE_BINARY, INVOKESTATIC));
+        invocations.put(DREM, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "drem", REPLACED_DOUBLE_BINARY, INVOKESTATIC));
+        invocations.put(DDIV, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "ddiv", REPLACED_DOUBLE_BINARY, INVOKESTATIC));
         
-        invocations.put(DNEG, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "dneg", REPLACED_DOUBLE_UNARY));
+        invocations.put(DNEG, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "dneg", REPLACED_DOUBLE_UNARY, INVOKESTATIC));
         
-        invocations.put(DCMPL, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "dcmpl", REPLACED_DOUBLE_CMP));
-        invocations.put(DCMPG, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "dcmpg", REPLACED_DOUBLE_CMP));
+        invocations.put(DCMPL, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "dcmpl", REPLACED_DOUBLE_CMP, INVOKESTATIC));
+        invocations.put(DCMPG, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "dcmpg", REPLACED_DOUBLE_CMP, INVOKESTATIC));
         
-        invocations.put(I2D, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "i2d", REPLACED_I2D));
-        invocations.put(L2D, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "l2d", REPLACED_L2D));
-        invocations.put(D2I, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "d2i", REPLACED_D2I));
-        invocations.put(D2L, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "d2l", REPLACED_D2L));
+        invocations.put(I2D, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "i2d", REPLACED_I2D, INVOKESTATIC));
+        invocations.put(L2D, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "l2d", REPLACED_L2D, INVOKESTATIC));
+        invocations.put(D2I, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "d2i", REPLACED_D2I, INVOKESTATIC));
+        invocations.put(D2L, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "d2l", REPLACED_D2L, INVOKESTATIC));
         
         
-        conversions.put(DCONST_0, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "fromDouble", REPLACED_FROM_DOUBLE));
-        conversions.put(DCONST_1, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "fromDouble", REPLACED_FROM_DOUBLE));
+        conversions.put(DCONST_0, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "fromDouble", REPLACED_FROM_DOUBLE, INVOKESTATIC));
+        conversions.put(DCONST_1, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "fromDouble", REPLACED_FROM_DOUBLE, INVOKESTATIC));
         
     }
 
@@ -128,10 +128,10 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
         InvokableMethod replacementMethod = invocations.get(opCode);
         InvokableMethod conversionMethod = conversions.get(opCode);
         if (replacementMethod != null) {
-            replacementMethod.invokeStatic(mv);
+            replacementMethod.invoke(mv);
         } else if (conversionMethod != null) {
             mv.visitInsn(opCode);
-            conversionMethod.invokeStatic(mv);
+            conversionMethod.invoke(mv);
         } else if (opCode==FRETURN || opCode==DRETURN) {
             //stats.incrementCounterValue(arg);
             mv.visitInsn(ARETURN);
@@ -158,10 +158,10 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
             default: break;
         }
         if (replacementMethod != null) {
-            replacementMethod.invokeStatic(mv, replacedClassPath, replacedWrapper);
+            replacementMethod.invoke(mv, replacedClassPath, replacedWrapper);
         } else if (conversionMethod != null) {
             mv.visitInsn(opCode);
-            conversionMethod.invokeStatic(mv, replacedClassPath, replacedWrapper);
+            conversionMethod.invoke(mv, replacedClassPath, replacedWrapper);
         } else if (opCode==FRETURN || opCode==DRETURN) {
             //stats.incrementCounterValue(arg);
             mv.visitInsn(ARETURN);

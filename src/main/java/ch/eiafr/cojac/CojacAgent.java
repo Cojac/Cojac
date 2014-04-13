@@ -51,7 +51,7 @@ public final class CojacAgent {
         
         inst.addTransformer(agent, inst.isRetransformClassesSupported());
         
-        inst.setNativeMethodPrefix(agent, "$$$COJAC_NATIVE_METHOD$$$_");
+        //inst.setNativeMethodPrefix(agent, "$$$COJAC_NATIVE_METHOD$$$_");
         
         // retransforming existing classes when REPLACE_FLOATS
         if (args.isSpecified(Arg.REPLACE_FLOATS)){
