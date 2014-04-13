@@ -122,6 +122,11 @@ public class DoubleWrapper {
         return array;
     }
     
+    
+    public static DoubleWrapper math_sqrt(DoubleWrapper a){
+        return new DoubleWrapper(Math.sqrt(a.val));
+    }
+    
     //TODO: define a "magic call" feature: getFloatInfo(float f) ---> call getFloatInfo on the FloatWrapper
 
 }

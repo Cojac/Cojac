@@ -31,6 +31,10 @@ public class ReplaceFloatsMethods {
     
     private static final String DL_NAME = Type.getType(Double.class).getInternalName();
     private static final String DL_DESCR = Type.getType(Double.class).getDescriptor();
+    
+    
+    private static final String MATH_NAME = Type.getType(Math.class).getInternalName();
+    private static final String MATH_DESCR = Type.getType(Math.class).getDescriptor();
 
     private static final String CFW_N=COJAC_FLOAT_WRAPPER_INTERNAL_NAME;
     private static final String CFW=COJAC_FLOAT_WRAPPER_TYPE_DESCR;
@@ -71,9 +75,9 @@ public class ReplaceFloatsMethods {
         
         
         // Doubles replacements
-        suppressions.put(new MethodSignature(DL_NAME, "valueOf", "(D)"+DL_DESCR), CDW_N); // delete if the value is already a FloatWrapper
-        suppressions.put(new MethodSignature(DL_NAME, "doubleValue", "()D"), null); // delete in every case (keep FloatWrapper)
-        suppressions.put(new MethodSignature(DL_NAME, "<init>", "(D)V"), CDW_N); // Delete the new Float(float) is the float is already a FloatWrapper
+        suppressions.put(new MethodSignature(DL_NAME, "valueOf", "(D)"+DL_DESCR), CDW_N); // delete if the value is already a DoubleWrapper
+        suppressions.put(new MethodSignature(DL_NAME, "doubleValue", "()D"), null); // delete in every case (keep DoubleWrapper)
+        suppressions.put(new MethodSignature(DL_NAME, "<init>", "(D)V"), CDW_N); // Delete the new Double(double) is the double is already a DoubleWrapper
         
         invocations.put(new MethodSignature(DL_NAME, "valueOf", "(D)"+DL_DESCR), InvokableMethod.FROM_DOUBLE);
         
@@ -87,7 +91,12 @@ public class ReplaceFloatsMethods {
 
         invocations.put(new MethodSignature(DL_NAME, "parseFloat", "(Ljava/lang/String;)D"), new InvokableMethod(CDW_N, "fromString", "(Ljava/lang/String;)"+CDW, INVOKESTATIC));
         
-        allMethodsConversions.add(DL_NAME); // use proxy to call every other methods from Float
+        allMethodsConversions.add(DL_NAME); // use proxy to call every other methods from Double
+        
+        // Math Library
+        invocations.put(new MethodSignature(MATH_NAME, "sqrt", "(D)D"), new InvokableMethod(CDW_N, "math_sqrt", "("+CDW+")"+CDW, INVOKESTATIC));
+        
+        allMethodsConversions.add(MATH_NAME);
         
     }
     

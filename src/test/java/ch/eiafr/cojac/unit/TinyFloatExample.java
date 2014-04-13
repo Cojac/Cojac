@@ -156,6 +156,11 @@ public class TinyFloatExample {
         return a + b + v;
     }
     
+    public static void testMathLib(){
+        double a = 100;
+        Math.sqrt(a);
+    }
+    
     public static float myFct1(float f) {
         float a;
         if (f>0) {
@@ -222,6 +227,8 @@ public class TinyFloatExample {
         Double dw1 = 1.6;
         Double dw2 = (double)b;
         Double dwres = testDoubleWrapper(dw1, dw2);
+        
+        testMathLib();
         
         System.out.println("inside TinyFloatExample.go() "+res);
         System.out.println("inside TinyFloatExample.go() "+(int)(TFEAux.myStaticFloat));
