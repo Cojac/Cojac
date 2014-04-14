@@ -342,7 +342,7 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
             mv.visitTypeInsn(opcode, COJAC_FLOAT_WRAPPER_INTERNAL_NAME);
             return;
         }
-        if(type.equals(Type.getType(Double.class))){
+        if(type.equals(Type.getType(Double.class).getInternalName())){
             mv.visitTypeInsn(opcode, COJAC_DOUBLE_WRAPPER_INTERNAL_NAME);
             return;
         }

@@ -26,6 +26,18 @@ public class DoubleWrapper {
         val=v;
     }
     
+    public DoubleWrapper(DoubleWrapper v) {
+        val=v.val;
+    }
+    
+    public DoubleWrapper(String v) {
+        val=Double.valueOf(v);
+    }
+    
+    public DoubleWrapper(FloatWrapper v) {
+        val=FloatWrapper.toFloat(v);
+    }
+    
     public static DoubleWrapper fromDouble(double a) {
         return new DoubleWrapper(a);
     }

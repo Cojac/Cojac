@@ -25,6 +25,18 @@ public class FloatWrapper {
         val=v;
     }
     
+    public FloatWrapper(FloatWrapper v) {
+        val=v.val;
+    }
+    
+    public FloatWrapper(String v) {
+        val=Float.valueOf(v);
+    }
+    
+    public FloatWrapper(DoubleWrapper v) {
+        val=(float)DoubleWrapper.toDouble(v);
+    }
+    
     public static FloatWrapper fromFloat(float a) {
         return new FloatWrapper(a);
     }
