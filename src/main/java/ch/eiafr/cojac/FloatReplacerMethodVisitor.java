@@ -351,6 +351,8 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
     }
     
     private Object stackTop(){
+        if(aa.stack == null)
+            return null;
         if(aa.stack.isEmpty())
             return null;
         return aa.stack.get(aa.stack.size()-1);

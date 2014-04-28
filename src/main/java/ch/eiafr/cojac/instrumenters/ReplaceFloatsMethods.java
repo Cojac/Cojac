@@ -6,6 +6,7 @@
 
 package ch.eiafr.cojac.instrumenters;
 
+import ch.eiafr.cojac.FloatProxyMethod;
 import java.util.HashMap;
 import java.util.Map;
 import org.objectweb.asm.MethodVisitor;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import org.objectweb.asm.ClassVisitor;
 import static org.objectweb.asm.Opcodes.*;
 import org.objectweb.asm.Type;
+import sun.misc.FpUtils;
 
 /**
  *
@@ -42,13 +44,13 @@ public class ReplaceFloatsMethods {
     private static final String CDW=COJAC_DOUBLE_WRAPPER_TYPE_DESCR;
     
     private final ArrayList<MethodSignature> addedMethods = new ArrayList<>();
-    private final ClassVisitor cv;
+    private final FloatProxyMethod fpm;
     private final String classPath;
     private static final String COJAC_PROXY_METHODS_PREFIX = "COJAC_PROXY_METHOD_";
     
-    public ReplaceFloatsMethods(ClassVisitor cv, String classPath) {
+    public ReplaceFloatsMethods(FloatProxyMethod fpm, String classPath) {
         fillMethods();
-        this.cv = cv;
+        this.fpm = fpm;
         this.classPath = classPath;
     }
 
@@ -98,6 +100,8 @@ public class ReplaceFloatsMethods {
         
         allMethodsConversions.add(MATH_NAME);
         
+        allMethodsConversions.add(Type.getType(StrictMath.class).getDescriptor());
+        allMethodsConversions.add(Type.getType(FpUtils.class).getDescriptor());
     }
     
     
@@ -119,13 +123,14 @@ public class ReplaceFloatsMethods {
             return true;
         }
         else if(allMethodsConversions.contains(owner)){
-            transformTypesAndInvoke(mv, opcode, owner, name, desc);
+            //transformTypesAndInvoke(mv, opcode, owner, name, desc);
+            fpm.proxyCall(mv, opcode, owner, name, desc);
             return true;
         }
         return false;
     }
     
-    
+    /*
     public void transformTypesAndInvoke(MethodVisitor mv, int opcode, String owner, String name, String desc){
         HashMap<Integer, Type> typeConversions = new HashMap<>();
         
@@ -243,5 +248,5 @@ public class ReplaceFloatsMethods {
             mv.visitMethodInsn(INVOKESTATIC, CDW_N, "fromDouble", "(D)"+CDW);
         }
     }
-    
+    */
 }

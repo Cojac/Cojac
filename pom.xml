@@ -44,6 +44,7 @@
 							<Premain-Class>ch.eiafr.cojac.CojacAgent</Premain-Class>
 							<Can-Retransform-Classes>true</Can-Retransform-Classes>
 							<Can-Redefine-Classes>true</Can-Redefine-Classes>
+                                                        <Can-Set-Native-Method-Prefix>true</Can-Set-Native-Method-Prefix>
 						</manifestEntries>
 					</archive>
 				</configuration>
@@ -65,6 +66,7 @@
 							<Premain-Class>ch.eiafr.cojac.CojacAgent</Premain-Class>
 							<Can-Retransform-Classes>true</Can-Retransform-Classes>
 							<Can-Redefine-Classes>true</Can-Redefine-Classes>
+                                                        <Can-Set-Native-Method-Prefix>true</Can-Set-Native-Method-Prefix>
 						</manifestEntries>
 					</archive>
 				</configuration>

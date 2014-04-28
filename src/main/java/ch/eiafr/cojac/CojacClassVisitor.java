@@ -33,6 +33,8 @@ import org.objectweb.asm.Opcodes;
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
 import ch.eiafr.cojac.instrumenters.ReplaceFloatsMethods;
 import java.util.ArrayList;
+import static org.objectweb.asm.Opcodes.INVOKESTATIC;
+import static org.objectweb.asm.Opcodes.IRETURN;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AnalyzerAdapter;
 import org.objectweb.asm.commons.LocalVariablesSorter;
@@ -53,6 +55,8 @@ final class CojacClassVisitor extends ClassVisitor {
     private CojacAnnotationVisitor cav;
     
     private ArrayList<String> proxyMethods;
+    
+    private FloatProxyMethod fpm;
 
     CojacClassVisitor(ClassVisitor cv, InstrumentationStats stats, Args args, Methods methods, IReaction reaction, IOpcodeInstrumenterFactory factory, CojacAnnotationVisitor cav) {
         super(Opcodes.ASM4, cv);
@@ -65,6 +69,7 @@ final class CojacClassVisitor extends ClassVisitor {
         this.cav = cav;
         methodAdder = methods != null ? new CojacMethodAdder(args, reaction) : null;
         proxyMethods = new ArrayList<>();
+        
     }
 
     @Override
@@ -72,6 +77,7 @@ final class CojacClassVisitor extends ClassVisitor {
         cv.visit(version, access, name, signature, supername, interfaces);
 
         classPath = name;
+        fpm = new FloatProxyMethod(this, classPath);
     }
 
     public boolean isProxyMerhod(String name, String desc){
@@ -85,10 +91,27 @@ final class CojacClassVisitor extends ClassVisitor {
     
     @Override
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
+        String oldDesc = desc;
         if (args.isSpecified(Arg.REPLACE_FLOATS)) {
             if (!FloatReplacerMethodVisitor.DONT_INSTRUMENT)
                 desc=replaceFloatMethodDescription(desc);   
         }
+        
+        boolean isNative = (access & Opcodes.ACC_NATIVE) > 0;
+       
+        if(isNative && !FloatReplacerMethodVisitor.DONT_INSTRUMENT){
+            System.out.println("NATIVE METHOD "+name+" "+desc);
+            
+
+            fpm.nativeCall(null, access, classPath, name, oldDesc);
+            //mv.visitMethodInsn(INVOKESTATIC, classPath, "$$$COJAC_NATIVE_METHOD$$$_"+name, desc);
+            //mv.visitInsn(Type.getReturnType(desc).getOpcode(IRETURN));
+
+            cv.visitMethod(access | Opcodes.ACC_STATIC, "$$$COJAC_NATIVE_METHOD$$$_"+name, oldDesc, signature, exceptions);
+
+            return null;
+        }
+        
         MethodVisitor mv = cv.visitMethod(access, name, desc, signature, exceptions);
 
         String currentMethodID = classPath + '/' + name;
@@ -106,7 +129,9 @@ final class CojacClassVisitor extends ClassVisitor {
         */
                 
         mv.visitEnd();
-
+        
+        
+        
         return instrumentMethod(mv, access, desc, name);
     }
 
@@ -119,7 +144,7 @@ final class CojacClassVisitor extends ClassVisitor {
             
             AnalyzerAdapter aa = new AnalyzerAdapter(name, access, name, desc, parentMv);
             LocalVariablesSorter lvs = new FloatVariablesSorter(access, desc, aa);
-            ReplaceFloatsMethods rfm = new ReplaceFloatsMethods(cv, classPath);
+            ReplaceFloatsMethods rfm = new ReplaceFloatsMethods(fpm, classPath);
             mv = new FloatReplacerMethodVisitor(access, desc, aa, lvs, rfm, stats, args, methods, reaction, classPath, factory);
         }
         else 
