@@ -19,7 +19,7 @@
 package ch.eiafr.cojac.models;
 
 
-public class DoubleWrapper {
+public class DoubleWrapper extends NumberWrapper{
     private final double val;
     
     public DoubleWrapper(double v) {
@@ -134,11 +134,25 @@ public class DoubleWrapper {
         return array;
     }
     
+    public static DoubleWrapper[] convertArray(double[] array){
+        DoubleWrapper[] a = new DoubleWrapper[array.length];
+        for (int i = 0; i < a.length; i++)
+            a[i] = new DoubleWrapper(array[i]);
+        return a;
+    }
+    
+    public static double[] convertArray(DoubleWrapper[] array){
+        double[] a = new double[array.length];
+        for (int i = 0; i < a.length; i++)
+            a[i] = DoubleWrapper.toDouble(array[i]);
+        return a;
+    }
     
     public static DoubleWrapper math_sqrt(DoubleWrapper a){
         return new DoubleWrapper(Math.sqrt(a.val));
     }
     
     //TODO: define a "magic call" feature: getFloatInfo(float f) ---> call getFloatInfo on the FloatWrapper
+
 
 }

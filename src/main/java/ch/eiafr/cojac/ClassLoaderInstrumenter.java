@@ -28,6 +28,8 @@ public final class ClassLoaderInstrumenter implements IClassInstrumenter {
     private final InstrumentationStats stats;
     private final IReaction reaction;
     private final IOpcodeInstrumenterFactory factory;
+    private final Class[] loadedClasses;
+	private final String[] bypassList;
 
     public ClassLoaderInstrumenter(CojacReferences references) {
         super();
@@ -36,6 +38,8 @@ public final class ClassLoaderInstrumenter implements IClassInstrumenter {
         this.stats = references.getStats();
         this.reaction = references.getReaction();
         this.factory = references.getOpCodeInstrumenterFactory();
+        this.loadedClasses = references.getLoadedClasses();
+		this.bypassList = references.getBypassList();
     }
 
     @Override
@@ -45,7 +49,7 @@ public final class ClassLoaderInstrumenter implements IClassInstrumenter {
 
         CojacAnnotationVisitor cav = new CojacAnnotationVisitor(stats);
         cr.accept(cav, ClassReader.EXPAND_FRAMES); 
-        CojacClassVisitor ccv = new CojacClassVisitor(cw, stats, args, null, reaction, factory, cav);
+        CojacClassVisitor ccv = new CojacClassVisitor(cw, stats, args, null, reaction, factory, loadedClasses, bypassList, cav);
         cr.accept(ccv, ClassReader.EXPAND_FRAMES);
 
         return cw.toByteArray();

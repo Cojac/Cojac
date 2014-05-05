@@ -336,6 +336,8 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
             mv.visitTypeInsn(opcode, type);
             return;
         }
+        Type myType = Type.getType(type);
+        
         
         
         if(type.equals("java/lang/Float")){
@@ -345,6 +347,21 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
         if(type.equals(Type.getType(Double.class).getInternalName())){
             mv.visitTypeInsn(opcode, COJAC_DOUBLE_WRAPPER_INTERNAL_NAME);
             return;
+        }
+        
+        if(myType.getSort() == Type.ARRAY){
+            if(myType.getElementType().equals(Type.FLOAT_TYPE)){
+                type = "";
+                for(int i=0 ; i<myType.getDimensions() ; i++)
+                    type += "[";
+                type += COJAC_FLOAT_WRAPPER_TYPE_DESCR;
+            }
+             if(myType.getElementType().equals(Type.DOUBLE_TYPE)){
+                type = "";
+                for(int i=0 ; i<myType.getDimensions() ; i++)
+                    type += "[";
+                type += COJAC_DOUBLE_WRAPPER_TYPE_DESCR;
+            }
         }
         
         mv.visitTypeInsn(opcode, type);

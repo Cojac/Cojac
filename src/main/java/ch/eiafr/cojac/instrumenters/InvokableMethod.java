@@ -5,8 +5,10 @@ import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
-import ch.eiafr.cojac.models.FloatWrapper;
-import ch.eiafr.cojac.models.DoubleWrapper;
+
+import com.monnard.utils.FloatWrapper;
+import com.monnard.utils.DoubleWrapper;
+
 
 public final class InvokableMethod {
 
@@ -87,16 +89,24 @@ public final class InvokableMethod {
         
         if(myType.equals(Type.getType(Double.class)))
             return COJAC_DOUBLE_WRAPPER_TYPE;
-        
-        if(myType.getDescriptor().endsWith("[D")){
-            String str = myType.getDescriptor();
-            str = str.replace("[D", "["+COJAC_DOUBLE_WRAPPER_TYPE_DESCR);
-            myType = Type.getObjectType(str);
-        }
-        if(myType.getDescriptor().endsWith("[F")){
-            String str = myType.getDescriptor();
-            str = str.replace("[F", "["+COJAC_FLOAT_WRAPPER_TYPE_DESCR);
-            myType = Type.getObjectType(str);
+
+        if(myType.getSort() == Type.ARRAY){
+            if(myType.getElementType().equals(Type.FLOAT_TYPE)){
+                String desc = "";
+                for(int i=0 ; i <myType.getDimensions() ; i++){
+                    desc += "[";
+                }
+                desc += COJAC_FLOAT_WRAPPER_TYPE_DESCR;
+                myType = Type.getType(desc);
+            }
+            if(myType.getElementType().equals(Type.DOUBLE_TYPE)){
+                String desc = "";
+                for(int i=0 ; i <myType.getDimensions() ; i++){
+                    desc += "[";
+                }
+                desc += COJAC_DOUBLE_WRAPPER_TYPE_DESCR;
+                myType = Type.getType(desc);
+            }
         }
         
         return myType;

@@ -16,8 +16,11 @@ class TFEAux {
 public class TinyFloatExample {
 
     
-    static float myStaticFloat=73.0f; 
+    static float myStaticFloat=73.0f;
+    static Float myStaticFloatWrapper= Float.valueOf(73f);
+    static float[] myStaticFloatArray = {5f, 6f, 41.21f};
 
+    
     static float everyFloatOpcode(float f) {
         long l=2L; double d=2.0; int i=2;
         float a=f;

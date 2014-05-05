@@ -24,6 +24,9 @@ import sun.misc.FpUtils;
  */
 public class ReplaceFloatsMethods {
     
+    private final Class[] loadedClasses;
+	private final String[] bypassList;
+    
     private final Map<MethodSignature, Object> suppressions = new HashMap<>(50);
     private final Map<MethodSignature, InvokableMethod> invocations = new HashMap<>(50);
     private final ArrayList<String> allMethodsConversions = new ArrayList<>(50);
@@ -48,10 +51,12 @@ public class ReplaceFloatsMethods {
     private final String classPath;
     private static final String COJAC_PROXY_METHODS_PREFIX = "COJAC_PROXY_METHOD_";
     
-    public ReplaceFloatsMethods(FloatProxyMethod fpm, String classPath) {
-        fillMethods();
+    public ReplaceFloatsMethods(FloatProxyMethod fpm, String classPath, Class[] loadedClasses, String[] bypassList) {
         this.fpm = fpm;
         this.classPath = classPath;
+        this.loadedClasses = loadedClasses;
+		this.bypassList = bypassList;
+		fillMethods();
     }
 
     private void fillMethods() {
@@ -100,8 +105,18 @@ public class ReplaceFloatsMethods {
         
         allMethodsConversions.add(MATH_NAME);
         
-        allMethodsConversions.add(Type.getType(StrictMath.class).getDescriptor());
-        allMethodsConversions.add(Type.getType(FpUtils.class).getDescriptor());
+        allMethodsConversions.add("javax/swing/plaf/ColorUIResource");
+        allMethodsConversions.add("java/awt/Color");
+        allMethodsConversions.add("sun/java2d/pipe/PixelToParallelogramConverter"); // why???
+        allMethodsConversions.add("sun/java2d/SunGraphics2D");
+        
+        //allMethodsConversions.add(Type.getType(StrictMath.class).getDescriptor());
+        //allMethodsConversions.add(Type.getType(FpUtils.class).getDescriptor());
+        if(loadedClasses != null){
+            for (Class class1 : loadedClasses) {
+                allMethodsConversions.add(Type.getType(class1).getInternalName());
+            }
+        }
     }
     
     
@@ -127,6 +142,14 @@ public class ReplaceFloatsMethods {
             fpm.proxyCall(mv, opcode, owner, name, desc);
             return true;
         }
+		
+		for (String standardPackage : bypassList) {
+            if (owner.startsWith(standardPackage)) {
+                fpm.proxyCall(mv, opcode, owner, name, desc);
+				return true;
+            }
+        }
+		
         return false;
     }
     

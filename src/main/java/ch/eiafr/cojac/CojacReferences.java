@@ -52,6 +52,8 @@ public final class CojacReferences {
     private final IOpcodeInstrumenterFactory factory;
     private final MBeanServer mbServer;
     private final String[] bypassList;
+    
+    private final Class[] loadedClasses;
 
     private CojacReferences(CojacReferencesBuilder builder) {
         this.args = builder.args;
@@ -61,8 +63,18 @@ public final class CojacReferences {
         this.mbServer = builder.mbServer;
         this.bypassList = builder.bypassList;
         Reactions.stats = stats;
+        
+        this.loadedClasses = builder.loadedClasses;
     }
 
+	public String[] getBypassList(){
+		return bypassList;
+	}
+	
+    public Class[] getLoadedClasses(){
+        return loadedClasses;
+    }
+    
     public Args getArgs() {
         return args;
     }
@@ -85,12 +97,14 @@ public final class CojacReferences {
 
     public boolean hasToBeInstrumented(String className) {
         // TODO: deal with native methods
+		/*
         if (args.isSpecified(Arg.REPLACE_FLOATS)){
             String[] passList = {
                 "ch/eiafr/cojac/models",
                 "sun/misc/FloatingDecimal",
                 "java/lang/StrictMath",
-                "sun/misc/FpUtils"
+                "sun/misc/FpUtils",
+                "sun/java2d/SunGraphics2D",
             };
             
             for (String passPackage : passList) {
@@ -100,7 +114,7 @@ public final class CojacReferences {
             }
             return true;
             //return !className.startsWith("ch/eiafr/cojac/models"); // replacement is radical, std lib classes will be instrumented... (problem: native classes...)
-        }
+        }*/
         for (String standardPackage : bypassList) {
             if (className.startsWith(standardPackage)) {
                 return false;
@@ -125,19 +139,26 @@ public final class CojacReferences {
         private StringBuilder sbBypassList;
         private String[] bypassList;
         private Splitter splitter;
+        
+        private final Class[] loadedClasses;
 
         private static final String STANDARD_PACKAGES = "com.sun.;java.;javax.;sun.;sunw.;"
                 + "org.xml.sax.;org.w3c.dom.;org.omg.;org.ietf.jgss.;"
                 + "com.apple.;apple.;" + "ch.eiafr.cojac.models;" + "org.slf4j";
 
         public CojacReferencesBuilder() {
-            this(new Args());
+            this(new Args(), null);
+        }
+        
+        public CojacReferencesBuilder(final Args args) {
+            this(args, null);
         }
 
-        public CojacReferencesBuilder(final Args args) {
+        public CojacReferencesBuilder(final Args args, final Class[] loadedClasses) {
             this.args = args;
             this.loader = ClassLoader.getSystemClassLoader();
             this.splitter = new CojacClassLoaderSplitter();
+            this.loadedClasses = loadedClasses;
         }
 
         public CojacReferencesBuilder setSplitter(final Splitter splitter) {

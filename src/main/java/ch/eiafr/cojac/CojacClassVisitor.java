@@ -46,6 +46,9 @@ final class CojacClassVisitor extends ClassVisitor {
     private final Args args;
     private final Methods methods;
     private final IReaction reaction;
+    
+    private final Class[] loadedClasses;
+	private final String[] bypassList;
 
     private boolean first = true;
     private String classPath;
@@ -58,7 +61,7 @@ final class CojacClassVisitor extends ClassVisitor {
     
     private FloatProxyMethod fpm;
 
-    CojacClassVisitor(ClassVisitor cv, InstrumentationStats stats, Args args, Methods methods, IReaction reaction, IOpcodeInstrumenterFactory factory, CojacAnnotationVisitor cav) {
+    CojacClassVisitor(ClassVisitor cv, InstrumentationStats stats, Args args, Methods methods, IReaction reaction, IOpcodeInstrumenterFactory factory, Class[] loadedClasses, String[] bypassList, CojacAnnotationVisitor cav) {
         super(Opcodes.ASM4, cv);
 
         this.stats = stats;
@@ -66,6 +69,8 @@ final class CojacClassVisitor extends ClassVisitor {
         this.methods = methods;
         this.reaction = reaction;
         this.factory = factory;
+        this.loadedClasses = loadedClasses;
+		this.bypassList = bypassList;
         this.cav = cav;
         methodAdder = methods != null ? new CojacMethodAdder(args, reaction) : null;
         proxyMethods = new ArrayList<>();
@@ -100,16 +105,25 @@ final class CojacClassVisitor extends ClassVisitor {
         boolean isNative = (access & Opcodes.ACC_NATIVE) > 0;
        
         if(isNative && !FloatReplacerMethodVisitor.DONT_INSTRUMENT){
-            System.out.println("NATIVE METHOD "+name+" "+desc);
+//            System.out.println("NATIVE METHOD "+name+" "+desc);
             
-
+            
+            //cv.visitMethod(access, "$$$COJAC_NATIVE_METHOD$$$_"+name, oldDesc, signature, exceptions);
+            cv.visitMethod(access, name, oldDesc, signature, exceptions);
+            
             fpm.nativeCall(null, access, classPath, name, oldDesc);
             //mv.visitMethodInsn(INVOKESTATIC, classPath, "$$$COJAC_NATIVE_METHOD$$$_"+name, desc);
             //mv.visitInsn(Type.getReturnType(desc).getOpcode(IRETURN));
-
-            cv.visitMethod(access | Opcodes.ACC_STATIC, "$$$COJAC_NATIVE_METHOD$$$_"+name, oldDesc, signature, exceptions);
+            
+            //cv.visitMethod(access | Opcodes.ACC_STATIC, "$$$COJAC_NATIVE_METHOD$$$_"+name, oldDesc, signature, exceptions);
 
             return null;
+        }
+        else{
+            if(desc.equals(oldDesc) == false){
+                // Write method proxy for calls from native
+                fpm.proxyNative(null, access, classPath, name, oldDesc);
+            }
         }
         
         MethodVisitor mv = cv.visitMethod(access, name, desc, signature, exceptions);
@@ -144,7 +158,7 @@ final class CojacClassVisitor extends ClassVisitor {
             
             AnalyzerAdapter aa = new AnalyzerAdapter(name, access, name, desc, parentMv);
             LocalVariablesSorter lvs = new FloatVariablesSorter(access, desc, aa);
-            ReplaceFloatsMethods rfm = new ReplaceFloatsMethods(fpm, classPath);
+            ReplaceFloatsMethods rfm = new ReplaceFloatsMethods(fpm, classPath, loadedClasses, bypassList);
             mv = new FloatReplacerMethodVisitor(access, desc, aa, lvs, rfm, stats, args, methods, reaction, classPath, factory);
         }
         else 
@@ -172,6 +186,35 @@ final class CojacClassVisitor extends ClassVisitor {
                 //TODO correctly handle initial float initialization for static fields
                 return super.visitField(accessFlags, fieldName, COJAC_DOUBLE_WRAPPER_TYPE_DESCR, genericSignature, null);
             }
+            
+            if(fieldType.equals(Type.getType(Float.class).getDescriptor())){
+                return super.visitField(accessFlags, fieldName, COJAC_FLOAT_WRAPPER_TYPE_DESCR, genericSignature, null);
+            }
+            if(fieldType.equals(Type.getType(Double.class).getDescriptor())){
+                return super.visitField(accessFlags, fieldName, COJAC_DOUBLE_WRAPPER_TYPE_DESCR, genericSignature, null);
+            }
+            
+            Type type = Type.getType(fieldType);
+            if(type.getSort() == Type.ARRAY){
+                if(type.getElementType().equals(Type.FLOAT_TYPE)){
+                    String desc = "";
+                    for(int i=0 ; i <type.getDimensions() ; i++){
+                        desc += "[";
+                    }
+                    desc += COJAC_FLOAT_WRAPPER_TYPE_DESCR;
+                    return super.visitField(accessFlags, fieldName, desc, genericSignature, null);
+                }
+                if(type.getElementType().equals(Type.DOUBLE_TYPE)){
+                    String desc = "";
+                    for(int i=0 ; i <type.getDimensions() ; i++){
+                        desc += "[";
+                    }
+                    desc += COJAC_DOUBLE_WRAPPER_TYPE_DESCR;
+                    return super.visitField(accessFlags, fieldName, desc, genericSignature, null);
+                }
+            }
+            
+            
         }
         return super.visitField(accessFlags, fieldName, fieldType, genericSignature, initValStatic);
 //        FieldVisitor fv = cv.visitField(accessFlags, fieldName, fieldType, genericSignature, initValStatic);

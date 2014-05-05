@@ -18,7 +18,7 @@
 
 package ch.eiafr.cojac.models;
 
-public class FloatWrapper {
+public class FloatWrapper extends NumberWrapper {
     private final float val;
     
     public FloatWrapper(float v) {
@@ -134,6 +134,20 @@ public class FloatWrapper {
             a[i] = initializeMultiArray(a[i], dimensions-1);
         return array;
     }
+    
+    public static FloatWrapper[] convertArray(float[] array){
+        FloatWrapper[] a = new FloatWrapper[array.length];
+        for (int i = 0; i < a.length; i++)
+            a[i] = new FloatWrapper(array[i]);
+        return a;
+    }
+    
+    public static float[] convertArray(FloatWrapper[] array){
+        float[] a = new float[array.length];
+        for (int i = 0; i < a.length; i++)
+            a[i] = FloatWrapper.toFloat(array[i]);
+        return a;
+    }
 
     
     @Override
@@ -146,5 +160,7 @@ public class FloatWrapper {
     public static boolean isInfiniteProxy(FloatWrapper a){
         return Float.isInfinite(a.val);
     }
+
+
     
 }

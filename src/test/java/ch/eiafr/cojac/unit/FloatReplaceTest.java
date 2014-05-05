@@ -11,6 +11,8 @@ import ch.eiafr.cojac.Args;
 import ch.eiafr.cojac.CojacReferences;
 import ch.eiafr.cojac.CojacReferences.CojacReferencesBuilder;
 import static ch.eiafr.cojac.unit.AgentTest.*;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 public class FloatReplaceTest {
     protected AgentTest dummyAgentTest=new AgentTest(); // just to ensure AgentTest is loaded
@@ -52,6 +54,15 @@ public class FloatReplaceTest {
     @Test 
     public void testReplaceFloat() throws Exception {
         System.out.println(tinyExample);
+        
+        ClassLoader cl = ClassLoader.getSystemClassLoader();
+ 
+        URL[] urls = ((URLClassLoader)cl).getURLs();
+ 
+        for(URL url: urls){
+        	System.out.println(url.getFile());
+        }
+        
         if (tinyExample==null) return;
         Method m = tinyExample.getMethod("go");
         if (m==null) return;

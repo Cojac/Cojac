@@ -25,6 +25,8 @@ import java.lang.instrument.Instrumentation;
 
 import ch.eiafr.cojac.CojacReferences.CojacReferencesBuilder;
 import java.lang.instrument.UnmodifiableClassException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,18 +43,23 @@ public final class CojacAgent {
             args.printHelpAndExit();
         }
 
+        Class[] loadedClasses = inst.getAllLoadedClasses();
+
         
-        
-        CojacReferencesBuilder builder = new CojacReferencesBuilder(args);
+        CojacReferencesBuilder builder = new CojacReferencesBuilder(args, loadedClasses);
         builder.setSplitter(new CojacReferences.AgentSplitter());
         
         Agent agent = new Agent(builder.build());
         
         
-        inst.addTransformer(agent, inst.isRetransformClassesSupported());
+        inst.addTransformer(agent);
         
-        inst.setNativeMethodPrefix(agent, "$$$COJAC_NATIVE_METHOD$$$_");
+        //inst.setNativeMethodPrefix(agent, "$$$COJAC_NATIVE_METHOD$$$_");
         
+        Class[] cl = inst.getAllLoadedClasses();
+
+        
+        /*
         // retransforming existing classes when REPLACE_FLOATS
         if (args.isSpecified(Arg.REPLACE_FLOATS)){
             if (!inst.isRetransformClassesSupported()) {
@@ -85,5 +92,6 @@ public final class CojacAgent {
                     //}
             }
         }
+                */
     }
 }
