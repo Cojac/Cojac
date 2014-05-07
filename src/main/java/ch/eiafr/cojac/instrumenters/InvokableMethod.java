@@ -78,40 +78,28 @@ public final class InvokableMethod {
         return Type.getMethodDescriptor(returnAfter, after);
     }
 
-    public static Type afterFloatReplacement(Type myType) {
-        if (myType.getSort()==Type.FLOAT)
+	public static Type afterFloatReplacement(Type type){
+        if(type.equals(Type.getType(Float.class)))
             return COJAC_FLOAT_WRAPPER_TYPE;
-        if (myType.getSort()==Type.DOUBLE)
-            return COJAC_DOUBLE_WRAPPER_TYPE;
-        
-        if(myType.getSort() == Type.OBJECT && myType.getInternalName().equals("java/lang/Float"))
+        if(type.equals(Type.FLOAT_TYPE))
             return COJAC_FLOAT_WRAPPER_TYPE;
-        
-        if(myType.equals(Type.getType(Double.class)))
+        if(type.equals(Type.getType(Double.class)))
             return COJAC_DOUBLE_WRAPPER_TYPE;
-
-        if(myType.getSort() == Type.ARRAY){
-            if(myType.getElementType().equals(Type.FLOAT_TYPE)){
-                String desc = "";
-                for(int i=0 ; i <myType.getDimensions() ; i++){
-                    desc += "[";
-                }
-                desc += COJAC_FLOAT_WRAPPER_TYPE_DESCR;
-                myType = Type.getType(desc);
-            }
-            if(myType.getElementType().equals(Type.DOUBLE_TYPE)){
-                String desc = "";
-                for(int i=0 ; i <myType.getDimensions() ; i++){
-                    desc += "[";
-                }
-                desc += COJAC_DOUBLE_WRAPPER_TYPE_DESCR;
-                myType = Type.getType(desc);
-            }
+        if(type.equals(Type.DOUBLE_TYPE))
+            return COJAC_DOUBLE_WRAPPER_TYPE;
+        if(type.getSort() == Type.ARRAY){
+            Type newType = afterFloatReplacement(type.getElementType());
+            if(type.equals(newType))
+                return type;
+            String desc = "";
+            for(int i=0 ; i <type.getDimensions() ; i++)
+                desc += "[";
+            desc += newType.getDescriptor();
+            return Type.getType(desc);
         }
-        
-        return myType;
+        return type; 
     }
-    
+	
     public static String afterFloatReplacement(String typeDescr) {
         return afterFloatReplacement(Type.getType(typeDescr)).getDescriptor();
     }

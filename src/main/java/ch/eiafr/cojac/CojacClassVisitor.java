@@ -47,9 +47,8 @@ final class CojacClassVisitor extends ClassVisitor {
     private final Methods methods;
     private final IReaction reaction;
     
-    private final Class[] loadedClasses;
-	private final String[] bypassList;
-
+	private final CojacReferences references;
+	
     private boolean first = true;
     private String classPath;
     
@@ -61,16 +60,16 @@ final class CojacClassVisitor extends ClassVisitor {
 	
     private FloatProxyMethod fpm;
 
-    CojacClassVisitor(ClassVisitor cv, InstrumentationStats stats, Args args, Methods methods, IReaction reaction, IOpcodeInstrumenterFactory factory, Class[] loadedClasses, String[] bypassList, CojacAnnotationVisitor cav) {
-        super(Opcodes.ASM4, cv);
+    //CojacClassVisitor(ClassVisitor cv, InstrumentationStats stats, Args args, Methods methods, IReaction reaction, IOpcodeInstrumenterFactory factory, Class[] loadedClasses, String[] bypassList, CojacAnnotationVisitor cav) {
+    CojacClassVisitor(ClassVisitor cv, Methods methods, CojacReferences references, CojacAnnotationVisitor cav) {
+		super(Opcodes.ASM4, cv);
 
-        this.stats = stats;
-        this.args = args;
+		this.references = references;
+        this.stats = references.getStats();
+        this.args = references.getArgs();
         this.methods = methods;
-        this.reaction = reaction;
-        this.factory = factory;
-        this.loadedClasses = loadedClasses;
-		this.bypassList = bypassList;
+        this.reaction = references.getReaction();
+        this.factory = references.getOpCodeInstrumenterFactory();
         this.cav = cav;
         methodAdder = methods != null ? new CojacMethodAdder(args, reaction) : null;
         proxyMethods = new ArrayList<>();
@@ -160,8 +159,8 @@ final class CojacClassVisitor extends ClassVisitor {
             
             AnalyzerAdapter aa = new AnalyzerAdapter(classPath, access, name, desc, parentMv);
             LocalVariablesSorter lvs = new FloatVariablesSorter(access, desc, aa);
-            ReplaceFloatsMethods rfm = new ReplaceFloatsMethods(fpm, classPath, loadedClasses, bypassList);
-            mv = new FloatReplacerMethodVisitor(access, desc, aa, lvs, rfm, stats, args, methods, reaction, classPath, factory, name);
+            ReplaceFloatsMethods rfm = new ReplaceFloatsMethods(fpm, classPath, references);
+            mv = new FloatReplacerMethodVisitor(access, desc, aa, lvs, rfm, stats, args, methods, reaction, classPath, factory, name, references);
         }
         else 
             mv = new CojacCheckerMethodVisitor(access, desc, parentMv, stats, args, methods, reaction, classPath, factory);

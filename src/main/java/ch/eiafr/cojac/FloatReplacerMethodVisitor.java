@@ -24,7 +24,6 @@ import ch.eiafr.cojac.instrumenters.InvokableMethod;
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
 import ch.eiafr.cojac.instrumenters.ReplaceFloatsMethods;
 import ch.eiafr.cojac.reactions.IReaction;
-import org.objectweb.asm.ClassVisitor;
 
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
@@ -36,10 +35,12 @@ import org.objectweb.asm.commons.LocalVariablesSorter;
 
 import static org.objectweb.asm.Opcodes.*;
 import org.objectweb.asm.commons.AnalyzerAdapter;
-import org.objectweb.asm.tree.MethodInsnNode;
 
 
 final class FloatReplacerMethodVisitor extends MethodVisitor {
+	
+	private final CojacReferences references;
+	
     private final IOpcodeInstrumenterFactory factory;
     private final InstrumentationStats stats;
     private final Args args;
@@ -55,13 +56,15 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
 	private final String methodName; // Only for de bug
 
     // Must Link the lvs to the aa and the aa to the parent method visitor before call!
-    FloatReplacerMethodVisitor(int access, String desc, AnalyzerAdapter aa, LocalVariablesSorter lvs, ReplaceFloatsMethods rfm, InstrumentationStats stats, Args args, Methods methods, IReaction reaction, String classPath, IOpcodeInstrumenterFactory factory, String name) {
+    FloatReplacerMethodVisitor(int access, String desc, AnalyzerAdapter aa, LocalVariablesSorter lvs, ReplaceFloatsMethods rfm, InstrumentationStats stats, Args args, Methods methods, IReaction reaction, String classPath, IOpcodeInstrumenterFactory factory, String name, CojacReferences references) {
         super(Opcodes.ASM4, lvs);
         
         this.aa = aa;
         this.lvs = lvs;
         this.rfm = rfm;
 
+		this.references = references;
+		
         this.stats = stats;
         this.args = args;
         this.factory = factory;
@@ -115,104 +118,16 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
         if (DONT_INSTRUMENT) {
             mv.visitMethodInsn(opcode, owner, name, desc); return; 
         }
-		
-        
 
         if(rfm.instrument(mv, opcode, owner, name, desc, stackTop())){
             return;
         }
         
-        /*
-        if(owner.equals("java/lang/Float") && name.equals("floatValue")){
-            System.out.println(opcode+" | "+owner+" | "+name+" | "+desc);
-        }
-        */
-        /*
-        System.out.println("visit "+owner+"->"+name);
-        
-        MethodInsnNode min = new MethodInsnNode(opcode, owner, name, desc);
-        
-        
-        
-        if(owner.equals("java/lang/String") && name.equals("valueOf") && desc.startsWith("(F)")){
-            mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "toFloat", "("+COJAC_FLOAT_WRAPPER_TYPE_DESCR+")F");
-            mv.visitMethodInsn(opcode, owner, name, desc);
-            return;
-        }
-        
-        if(owner.equals("java/io/PrintStream") && name.startsWith("print") && desc.startsWith("(F)")){
-            mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "toFloat", "("+COJAC_FLOAT_WRAPPER_TYPE_DESCR+")F");
-            mv.visitMethodInsn(opcode, owner, name, desc);
-            return;
-        }
-        
-        if(owner.equals("java/lang/StringBuilder") && name.equals("append") && desc.startsWith("(F)")){
-            mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "toFloat", "("+COJAC_FLOAT_WRAPPER_TYPE_DESCR+")F");
-            mv.visitMethodInsn(opcode, owner, name, desc);
-            return;
-        }
-        
-        if(owner.equals("java/lang/Float") && name.equals("valueOf") && desc.startsWith("(F)")){
-            if(stackTop().equals(Opcodes.FLOAT)){
-                // Only if this is a real float
-                mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", "(F)"+COJAC_FLOAT_WRAPPER_TYPE_DESCR);
-            }
-            return;
-        }
-        
-        if(owner.equals("java/lang/Float") && name.equals("floatValue")){
-            // Do nothing, this is already the FloatWrapper of COJAC
-            return;
-        }
-        
-        if(owner.equals("java/lang/Float") && name.equals("doubleValue")){
-             mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "f2d", "("+COJAC_FLOAT_WRAPPER_TYPE_DESCR+")"+COJAC_DOUBLE_WRAPPER_TYPE_DESCR);
-            return;
-        }
-        if(owner.equals("java/lang/Float") && name.equals("intValue")){
-             mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "f2i", "("+COJAC_FLOAT_WRAPPER_TYPE_DESCR+")I");
-            return;
-        }
-        if(owner.equals("java/lang/Float") && name.equals("longValue")){
-             mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "f2l", "("+COJAC_FLOAT_WRAPPER_TYPE_DESCR+")J");
-            return;
-        }
-        if(owner.equals("java/lang/Float") && name.equals("shortValue")){
-             mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "shortValue", "("+COJAC_FLOAT_WRAPPER_TYPE_DESCR+")S");
-            return;
-        }
-        if(owner.equals("java/lang/Float") && name.equals("byteValue")){
-             mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "byteValue", "("+COJAC_FLOAT_WRAPPER_TYPE_DESCR+")B");
-            return;
-        }
-
-        
-        if(owner.equals("java/lang/Float") && name.equals("parseFloat") && desc.endsWith("F")){
-            mv.visitMethodInsn(opcode, owner, name, desc);
-            mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", "(F)"+COJAC_FLOAT_WRAPPER_TYPE_DESCR);
-            return;
-        }
-        */
-        
         String descAfter=replaceFloatMethodDescription(desc);
         if (!desc.equals(descAfter)) 
             stats.incrementCounterValue(opcode);
         // TODO: something smarter, taking into account the method call kinds ?
-        
 
-        descAfter = descAfter.replace("[D", "["+COJAC_DOUBLE_WRAPPER_TYPE_DESCR);
-        descAfter = descAfter.replace("[F", "["+COJAC_FLOAT_WRAPPER_TYPE_DESCR);
-        
-        /*
-        if(opcode == INVOKESPECIAL){
-            if(owner.equals("java/lang/Float")){
-                System.out.println("desc => "+descAfter);
-                mv.visitMethodInsn(opcode, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, name, descAfter);
-                return;
-            }
-        }
-        */
-        
         mv.visitMethodInsn(opcode, owner, name, descAfter);
     }
 
@@ -231,24 +146,8 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
         }
         mv.visitVarInsn(replacedOpcode, var);
     }
-/*
-    private Type typeFromVarInsn(int opcode) {
-        Type objt = Type.getObjectType("java/lang/Object");
-        switch(opcode) {
-        case RET: // TODO: verify RET uses an int variable
-        case ISTORE:
-        case ILOAD: return Type.INT_TYPE;
-        case LSTORE:
-        case LLOAD: return Type.LONG_TYPE;
-        case DSTORE:
-        case DLOAD: return Type.DOUBLE_TYPE;
-        case ASTORE:
-        case ALOAD: return objt;  // TODO: verify if ALOAD can use an java.lang.Object variable
-        }
-        return null;
-    }
-*/
-    @Override
+
+	@Override
     public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index) {
         if (DONT_INSTRUMENT) {
             mv.visitLocalVariable(name, desc, signature, start, end, index);
@@ -267,6 +166,24 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
             return;
         }
         
+		// TODO - proxy for static fields
+		if(references.hasToBeInstrumented(owner) == false){ // proxy for fields
+			Type type = Type.getType(desc);
+			Type cojacType = afterFloatReplacement(type);
+			if(type.equals(cojacType) == false){
+				if(opcode == GETFIELD){
+					mv.visitFieldInsn(opcode, owner, name, desc);
+					FloatProxyMethod.convertRealToCojacType(type, mv);
+					return;
+				}
+				if(opcode == PUTFIELD){
+					FloatProxyMethod.convertCojacToRealType(type, mv);
+					mv.visitFieldInsn(opcode, owner, name, desc);
+					return;
+				}
+			}
+		}
+		
         String descAfter=afterFloatReplacement(desc);
         if (!desc.equals(descAfter)) 
             stats.incrementCounterValue(opcode);
@@ -282,11 +199,6 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
 			}
 		}
 		
-    }
-
-    @Override
-    public void visitInvokeDynamicInsn(String name, String desc, Handle bsm, Object... bsmArgs) {
-        mv.visitInvokeDynamicInsn(name, desc, bsm, bsmArgs);
     }
 
     @Override
@@ -329,7 +241,7 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
             return;
         }
         if(desc.endsWith("F") || desc.endsWith("D")){
-            String objDescr = Type.getObjectType("java/lang/Object").getDescriptor();
+            String objDescr = Type.getType(Object.class).getDescriptor();
             String wrapper = COJAC_FLOAT_WRAPPER_INTERNAL_NAME;
             if(desc.endsWith("D"))
                 wrapper = COJAC_DOUBLE_WRAPPER_INTERNAL_NAME;
@@ -351,34 +263,11 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
             mv.visitTypeInsn(opcode, type);
             return;
         }
-        Type myType = Type.getType(type);
+        Type myType = Type.getObjectType(type); // get type from internal name
+		
+		Type cojacType = afterFloatReplacement(myType);
         
-        
-        if(type.equals("java/lang/Float")){
-            mv.visitTypeInsn(opcode, COJAC_FLOAT_WRAPPER_INTERNAL_NAME);
-            return;
-        }
-        if(type.equals(Type.getType(Double.class).getInternalName())){
-            mv.visitTypeInsn(opcode, COJAC_DOUBLE_WRAPPER_INTERNAL_NAME);
-            return;
-        }
-        
-        if(myType != null && myType.getSort() == Type.ARRAY){ // the type can be null
-            if(myType.getElementType().equals(Type.FLOAT_TYPE)){
-                type = "";
-                for(int i=0 ; i<myType.getDimensions() ; i++)
-                    type += "[";
-                type += COJAC_FLOAT_WRAPPER_TYPE_DESCR;
-            }
-             if(myType.getElementType().equals(Type.DOUBLE_TYPE)){
-                type = "";
-                for(int i=0 ; i<myType.getDimensions() ; i++)
-                    type += "[";
-                type += COJAC_DOUBLE_WRAPPER_TYPE_DESCR;
-            }
-        }
-        
-        mv.visitTypeInsn(opcode, type);
+        mv.visitTypeInsn(opcode, cojacType.getInternalName());
     }
     
     private Object stackTop(){
@@ -387,11 +276,6 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
         if(aa.stack.isEmpty())
             return null;
         return aa.stack.get(aa.stack.size()-1);
-    }
-    
-    private void methodCaller(int opcode, String owner, String name, String desc){
-        Type[] types = Type.getArgumentTypes(desc);
-        
     }
     
 }

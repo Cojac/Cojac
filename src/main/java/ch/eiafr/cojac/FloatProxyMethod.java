@@ -54,7 +54,7 @@ public class FloatProxyMethod {
         }
         for (int i=0 ; i < args.length; i++) {
             Type type = args[i];
-            Type cojacType = getCojacType(type);
+            Type cojacType = afterFloatReplacement(type);
             if(!type.equals(cojacType)){
                 typeConversions.put(i, type);
                 args[i] = cojacType;
@@ -107,7 +107,7 @@ public class FloatProxyMethod {
         Type args[] = Type.getArgumentTypes(desc);
         for (int i=0 ; i < args.length; i++) {
             Type type = args[i];
-            Type cojacType = getCojacType(type);
+            Type cojacType = afterFloatReplacement(type);
             if(!type.equals(cojacType)){
                 typeConversions.put(i, type);
                 args[i] = cojacType;
@@ -115,7 +115,7 @@ public class FloatProxyMethod {
         }
 
         
-        String newDesc = Type.getMethodDescriptor(getCojacType(Type.getReturnType(desc)), args);
+        String newDesc = Type.getMethodDescriptor(afterFloatReplacement(Type.getReturnType(desc)), args);
         
         if(desc.equals(newDesc)){
             return;
@@ -152,7 +152,7 @@ public class FloatProxyMethod {
             newMv.visitMethodInsn(INVOKEVIRTUAL, owner, name, desc);
         convertReturnType(desc, newMv);
         
-        newMv.visitInsn(getCojacType(Type.getReturnType(desc)).getOpcode(IRETURN));
+        newMv.visitInsn(afterFloatReplacement(Type.getReturnType(desc)).getOpcode(IRETURN));
         newMv.visitMaxs(0, 0);
         
     }
@@ -165,7 +165,7 @@ public class FloatProxyMethod {
         Type newDescArgs[] = new Type[args.length];
         for (int i=0 ; i < args.length; i++) {
             Type type = args[i];
-            Type cojacType = getCojacType(type);
+            Type cojacType = afterFloatReplacement(type);
             newDescArgs[i] = cojacType;
             if(!type.equals(cojacType)){
                 typeConversions.put(i, type);
@@ -174,7 +174,7 @@ public class FloatProxyMethod {
         }
 
         
-        String newDesc = Type.getMethodDescriptor(getCojacType(Type.getReturnType(desc)), newDescArgs);
+        String newDesc = Type.getMethodDescriptor(afterFloatReplacement(Type.getReturnType(desc)), newDescArgs);
         
         boolean isStatic = (access & ACC_STATIC) > 0;
         
@@ -208,13 +208,13 @@ public class FloatProxyMethod {
     
     private void convertReturnType(String desc, MethodVisitor mv){
         Type returnType = Type.getReturnType(desc);
-        Type cojacType = getCojacType(returnType);
+        Type cojacType = afterFloatReplacement(returnType);
         if(!returnType.equals(cojacType)){
             convertRealToCojacType(returnType, mv);
         }
     }
     
-    private void convertRealToCojacType(Type realType, MethodVisitor mv){
+    public static void convertRealToCojacType(Type realType, MethodVisitor mv){
         if(realType.equals(Type.FLOAT_TYPE)){
             mv.visitMethodInsn(INVOKESTATIC, CFW_N, "fromFloat", "(F)"+CFW);
         }
@@ -234,25 +234,25 @@ public class FloatProxyMethod {
                 if(realType.getElementType().equals(Type.FLOAT_TYPE)){
                     mv.visitLdcInsn(realType.getDimensions());
                     mv.visitMethodInsn(INVOKESTATIC, CFW_N, "convertArrayToCojac", "("+objDesc+"I)"+objDesc);
-                    mv.visitTypeInsn(CHECKCAST, getCojacType(realType).getDescriptor());
+                    mv.visitTypeInsn(CHECKCAST, afterFloatReplacement(realType).getDescriptor());
                 }
                 else if(realType.getElementType().equals(Type.DOUBLE_TYPE)){
                     mv.visitLdcInsn(realType.getDimensions());
                     mv.visitMethodInsn(INVOKESTATIC, CDW_N, "convertArrayToCojac", "("+objDesc+"I)"+objDesc);
-                    mv.visitTypeInsn(CHECKCAST, getCojacType(realType).getDescriptor());
+                    mv.visitTypeInsn(CHECKCAST, afterFloatReplacement(realType).getDescriptor());
                 }
                 return;
             }
             if(realType.getElementType().equals(Type.FLOAT_TYPE)){
-                mv.visitMethodInsn(INVOKESTATIC, CFW_N, "convertArray", "("+realType.getDescriptor()+")"+getCojacType(realType).getDescriptor());
+                mv.visitMethodInsn(INVOKESTATIC, CFW_N, "convertArray", "("+realType.getDescriptor()+")"+afterFloatReplacement(realType).getDescriptor());
             }
             else if(realType.getElementType().equals(Type.DOUBLE_TYPE)){
-                mv.visitMethodInsn(INVOKESTATIC, CDW_N, "convertArray", "("+realType.getDescriptor()+")"+getCojacType(realType).getDescriptor());
+                mv.visitMethodInsn(INVOKESTATIC, CDW_N, "convertArray", "("+realType.getDescriptor()+")"+afterFloatReplacement(realType).getDescriptor());
             }
         }
     }
     
-    private void convertCojacToRealType(Type realType, MethodVisitor mv){
+    public static void convertCojacToRealType(Type realType, MethodVisitor mv){
         if(realType.equals(Type.FLOAT_TYPE)){
             mv.visitMethodInsn(INVOKESTATIC, CFW_N, "toFloat", "("+CFW+")F");
         }
@@ -282,55 +282,27 @@ public class FloatProxyMethod {
                 return;
             }
             if(realType.getElementType().equals(Type.FLOAT_TYPE)){
-                mv.visitMethodInsn(INVOKESTATIC, CFW_N, "convertArray", "("+getCojacType(realType).getDescriptor()+")"+realType.getDescriptor());
+                mv.visitMethodInsn(INVOKESTATIC, CFW_N, "convertArray", "("+afterFloatReplacement(realType).getDescriptor()+")"+realType.getDescriptor());
             }
             else if(realType.getElementType().equals(Type.DOUBLE_TYPE)){
-                mv.visitMethodInsn(INVOKESTATIC, CDW_N, "convertArray", "("+getCojacType(realType).getDescriptor()+")"+realType.getDescriptor());
+                mv.visitMethodInsn(INVOKESTATIC, CDW_N, "convertArray", "("+afterFloatReplacement(realType).getDescriptor()+")"+realType.getDescriptor());
             }
         }
     }
     
-    private Type getCojacType(Type type){
-        if(type.equals(Type.getType(Float.class))){
-            return COJAC_FLOAT_WRAPPER_TYPE;
-        }
-        if(type.equals(Type.FLOAT_TYPE)){
-            return COJAC_FLOAT_WRAPPER_TYPE;
-        }
-        if(type.equals(Type.getType(Double.class))){
-            return COJAC_DOUBLE_WRAPPER_TYPE;
-        }
-        if(type.equals(Type.DOUBLE_TYPE)){
-            return COJAC_DOUBLE_WRAPPER_TYPE;
-        }
-        if(type.getSort() == Type.ARRAY){
-            Type newType = getCojacType(type.getElementType());
-            if(type.equals(newType)){
-                return type;
-            }
-            String desc = "";
-            for(int i=0 ; i <type.getDimensions() ; i++){
-                desc += "[";
-            }
-            desc += newType.getDescriptor();
-            return Type.getType(desc);
-        }
-        return type; 
-    }
 
     private int getLoadOpcode(Type type){
         switch(type.getSort()){
             case Type.ARRAY:
             case Type.OBJECT:
                 return ALOAD;
-            case Type.BOOLEAN:
-                return ILOAD;
             case Type.CHAR:
                 return CALOAD;
             case Type.DOUBLE:
                 return DLOAD;
             case Type.FLOAT:
                 return FLOAD;
+			case Type.BOOLEAN:
             case Type.BYTE:
             case Type.SHORT:
             case Type.INT:

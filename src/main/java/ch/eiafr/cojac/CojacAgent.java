@@ -24,12 +24,7 @@ import static ch.eiafr.cojac.Arg.HELP;
 import java.lang.instrument.Instrumentation;
 
 import ch.eiafr.cojac.CojacReferences.CojacReferencesBuilder;
-import java.lang.instrument.UnmodifiableClassException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.objectweb.asm.Type;
 
 public final class CojacAgent {
     public static void premain(String agentArgs, Instrumentation inst) {
@@ -44,9 +39,12 @@ public final class CojacAgent {
         }
 
         Class[] loadedClasses = inst.getAllLoadedClasses();
+		String[] strLoadedClasses = new String[loadedClasses.length];
+		for (int i = 0; i < strLoadedClasses.length; i++)
+			strLoadedClasses[i] = Type.getType(loadedClasses[i]).getInternalName();
 
         
-        CojacReferencesBuilder builder = new CojacReferencesBuilder(args, loadedClasses);
+        CojacReferencesBuilder builder = new CojacReferencesBuilder(args, strLoadedClasses);
         builder.setSplitter(new CojacReferences.AgentSplitter());
         
         Agent agent = new Agent(builder.build());
@@ -54,44 +52,5 @@ public final class CojacAgent {
         
         inst.addTransformer(agent);
         
-        //inst.setNativeMethodPrefix(agent, "$$$COJAC_NATIVE_METHOD$$$_");
-        
-        Class[] cl = inst.getAllLoadedClasses();
-
-        
-        /*
-        // retransforming existing classes when REPLACE_FLOATS
-        if (args.isSpecified(Arg.REPLACE_FLOATS)){
-            if (!inst.isRetransformClassesSupported()) {
-                System.out.println("RetransformClasses not supported");
-            } else {
-                    
-                    ArrayList<Class> listClasses = new ArrayList<>();
-                    
-                    
-                    
-                    listClasses.remove(Float.class);
-
-                    Class[] cl = inst.getAllLoadedClasses();
-                    for (Class class1 : cl) {
-                    //if (inst.isModifiableClass(class1)) {
-                    listClasses.add(class1);
-                    //}
-                    }
-                    
-                    for (Class class1 : listClasses) {
-                        //System.out.println("RETRANSFORM "+class1);
-                }
-                    
-                    //try {
-                    Class[] cl2 = new Class[listClasses.size()];
-                    listClasses.toArray(cl2);
-                    //inst.retransformClasses(cl2);
-                    //} catch (UnmodifiableClassException ex) {
-                   // Logger.getLogger(CojacAgent.class.getName()).log(Level.SEVERE, null, ex);
-                    //}
-            }
-        }
-                */
     }
 }
