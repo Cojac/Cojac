@@ -148,6 +148,32 @@ public class FloatWrapper extends NumberWrapper {
             a[i] = FloatWrapper.toFloat(array[i]);
         return a;
     }
+	
+	// Not the good way
+	 public static Object convertArrayToReal(Object array, int dimensions){
+        Object a[] = (Object[]) array;
+        if(dimensions == 1)
+            return convertArray((FloatWrapper[])a);
+        for (int i = 0; i < a.length; i++)
+            a[i] = convertArrayToReal(a[i], dimensions-1);
+        return array;
+    }
+    
+	 // Not the good way
+    public static Object convertArrayToCojac(Object array, int dimensions){
+        Object a[] = (Object[]) array;
+        if(dimensions == 1)
+            return convertArray((float[])array);
+        for (int i = 0; i < a.length; i++)
+            a[i] = convertArrayToReal(a[i], dimensions-1);
+        return array;
+    }
+
+	public static FloatWrapper initialize(FloatWrapper a){
+		if(a == null)
+			return new FloatWrapper(0);
+		return a;
+	}
 
     
     @Override

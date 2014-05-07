@@ -148,6 +148,34 @@ public class DoubleWrapper extends NumberWrapper{
         return a;
     }
     
+	// Not the good way
+	public static Object convertArrayToReal(Object array, int dimensions){
+        Object a[] = (Object[]) array;
+        if(dimensions == 1){
+            return convertArray((DoubleWrapper[])a);
+        }
+        for (int i = 0; i < a.length; i++){
+            a[i] = convertArrayToReal(a[i], dimensions-1);
+        }
+        return array;
+    }
+    
+	// Not the good way
+    public static Object convertArrayToCojac(Object array, int dimensions){
+        Object a[] = (Object[]) array;
+        if(dimensions == 1)
+            return convertArray((double[])array);
+        for (int i = 0; i < a.length; i++)
+            a[i] = convertArrayToReal(a[i], dimensions-1);
+        return array;
+    }
+    
+	public static DoubleWrapper initialize(DoubleWrapper a){
+		if(a == null)
+			return new DoubleWrapper(0);
+		return a;
+	}
+	
     public static DoubleWrapper math_sqrt(DoubleWrapper a){
         return new DoubleWrapper(Math.sqrt(a.val));
     }

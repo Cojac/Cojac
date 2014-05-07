@@ -51,9 +51,11 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
     private final LocalVariablesSorter lvs;
     private final AnalyzerAdapter aa;
     private final ReplaceFloatsMethods rfm;
+	
+	private final String methodName; // Only for de bug
 
     // Must Link the lvs to the aa and the aa to the parent method visitor before call!
-    FloatReplacerMethodVisitor(int access, String desc, AnalyzerAdapter aa, LocalVariablesSorter lvs, ReplaceFloatsMethods rfm, InstrumentationStats stats, Args args, Methods methods, IReaction reaction, String classPath, IOpcodeInstrumenterFactory factory) {
+    FloatReplacerMethodVisitor(int access, String desc, AnalyzerAdapter aa, LocalVariablesSorter lvs, ReplaceFloatsMethods rfm, InstrumentationStats stats, Args args, Methods methods, IReaction reaction, String classPath, IOpcodeInstrumenterFactory factory, String name) {
         super(Opcodes.ASM4, lvs);
         
         this.aa = aa;
@@ -67,8 +69,10 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
         this.methods = methods;
         this.reaction = reaction;
         this.classPath = classPath;
+		
+		this.methodName = name;
     }
-
+	
     @Override
     public void visitInsn(int opCode) {
         if (DONT_INSTRUMENT) {
@@ -111,7 +115,7 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
         if (DONT_INSTRUMENT) {
             mv.visitMethodInsn(opcode, owner, name, desc); return; 
         }
-        
+		
         
 
         if(rfm.instrument(mv, opcode, owner, name, desc, stackTop())){
@@ -267,6 +271,17 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
         if (!desc.equals(descAfter)) 
             stats.incrementCounterValue(opcode);
         mv.visitFieldInsn(opcode, owner, name, descAfter);
+		
+		// TODO handle GETSTATIC & handle std_lib and already loaded classes
+		if(opcode == GETFIELD){
+			if(descAfter.equals(COJAC_DOUBLE_WRAPPER_TYPE_DESCR)){
+				mv.visitMethodInsn(INVOKESTATIC, COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "initialize", "("+COJAC_DOUBLE_WRAPPER_TYPE_DESCR+")"+COJAC_DOUBLE_WRAPPER_TYPE_DESCR);
+			}
+			if(descAfter.equals(COJAC_FLOAT_WRAPPER_TYPE_DESCR)){
+				mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "initialize", "("+COJAC_FLOAT_WRAPPER_TYPE_DESCR+")"+COJAC_FLOAT_WRAPPER_TYPE_DESCR);
+			}
+		}
+		
     }
 
     @Override
@@ -339,7 +354,6 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
         Type myType = Type.getType(type);
         
         
-        
         if(type.equals("java/lang/Float")){
             mv.visitTypeInsn(opcode, COJAC_FLOAT_WRAPPER_INTERNAL_NAME);
             return;
@@ -349,7 +363,7 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
             return;
         }
         
-        if(myType.getSort() == Type.ARRAY){
+        if(myType != null && myType.getSort() == Type.ARRAY){ // the type can be null
             if(myType.getElementType().equals(Type.FLOAT_TYPE)){
                 type = "";
                 for(int i=0 ; i<myType.getDimensions() ; i++)

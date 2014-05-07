@@ -58,7 +58,7 @@ final class CojacClassVisitor extends ClassVisitor {
     private CojacAnnotationVisitor cav;
     
     private ArrayList<String> proxyMethods;
-    
+	
     private FloatProxyMethod fpm;
 
     CojacClassVisitor(ClassVisitor cv, InstrumentationStats stats, Args args, Methods methods, IReaction reaction, IOpcodeInstrumenterFactory factory, Class[] loadedClasses, String[] bypassList, CojacAnnotationVisitor cav) {
@@ -101,8 +101,10 @@ final class CojacClassVisitor extends ClassVisitor {
             if (!FloatReplacerMethodVisitor.DONT_INSTRUMENT)
                 desc=replaceFloatMethodDescription(desc);   
         }
-        
+		
         boolean isNative = (access & Opcodes.ACC_NATIVE) > 0;
+		boolean isAbstrac = (access & Opcodes.ACC_ABSTRACT) > 0;
+		boolean isInterface = (access & Opcodes.ACC_INTERFACE) > 0;
        
         if(isNative && !FloatReplacerMethodVisitor.DONT_INSTRUMENT){
 //            System.out.println("NATIVE METHOD "+name+" "+desc);
@@ -122,7 +124,7 @@ final class CojacClassVisitor extends ClassVisitor {
         else{
             if(desc.equals(oldDesc) == false){
                 // Write method proxy for calls from native
-                fpm.proxyNative(null, access, classPath, name, oldDesc);
+                //fpm.proxyNative(null, access, classPath, name, oldDesc);
             }
         }
         
@@ -147,7 +149,7 @@ final class CojacClassVisitor extends ClassVisitor {
         
         
         return instrumentMethod(mv, access, desc, name);
-    }
+		}
 
     //        if (args.isSpecified(Arg.REPLACE_FLOATS))
     //          desc=replaceFloatMethodDescription(desc);
@@ -156,10 +158,10 @@ final class CojacClassVisitor extends ClassVisitor {
         MethodVisitor mv = null;
         if (args.isSpecified(Arg.REPLACE_FLOATS)){
             
-            AnalyzerAdapter aa = new AnalyzerAdapter(name, access, name, desc, parentMv);
+            AnalyzerAdapter aa = new AnalyzerAdapter(classPath, access, name, desc, parentMv);
             LocalVariablesSorter lvs = new FloatVariablesSorter(access, desc, aa);
             ReplaceFloatsMethods rfm = new ReplaceFloatsMethods(fpm, classPath, loadedClasses, bypassList);
-            mv = new FloatReplacerMethodVisitor(access, desc, aa, lvs, rfm, stats, args, methods, reaction, classPath, factory);
+            mv = new FloatReplacerMethodVisitor(access, desc, aa, lvs, rfm, stats, args, methods, reaction, classPath, factory, name);
         }
         else 
             mv = new CojacCheckerMethodVisitor(access, desc, parentMv, stats, args, methods, reaction, classPath, factory);
@@ -173,6 +175,9 @@ final class CojacClassVisitor extends ClassVisitor {
     @Override
     public FieldVisitor visitField(int accessFlags, String fieldName, String fieldType, String genericSignature, Object initValStatic) {
         if (args.isSpecified(Arg.REPLACE_FLOATS)) {
+			
+			// TODO - check loaded & std_lib classes
+			
             if (FloatReplacerMethodVisitor.DONT_INSTRUMENT)
                 return super.visitField(accessFlags, fieldName, fieldType, genericSignature, initValStatic);
             if (fieldType.equals("F")) {
