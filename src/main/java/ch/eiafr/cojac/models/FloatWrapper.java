@@ -175,6 +175,11 @@ public class FloatWrapper extends NumberWrapper {
 		return a;
 	}
 
+	public static FloatWrapper castFromObject(Object obj){
+		if(obj instanceof Float)
+			return new FloatWrapper((Float)obj);
+		return (FloatWrapper)obj;
+	}
     
     @Override
     public String toString(){

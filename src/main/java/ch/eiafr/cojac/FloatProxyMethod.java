@@ -97,11 +97,6 @@ public class FloatProxyMethod {
     }
     
     public void nativeCall(MethodVisitor mv, int access, String owner, String name, String desc){
-        
-        if(name.equals("nativeGetBounds")){
-            System.out.println("nativeGetBounds "+owner+" "+desc);
-        }
-        
         HashMap<Integer, Type> typeConversions = new HashMap<>();
         
         Type args[] = Type.getArgumentTypes(desc);
@@ -133,9 +128,6 @@ public class FloatProxyMethod {
         
         for (int i = 0; i < args.length; i++) {
             Type type = args[i];
-            if(type == null){
-                System.out.println("WHAT???");
-            }
             newMv.visitVarInsn(getLoadOpcode(type), varIndex);
             varIndex += type.getSize();
             if(typeConversions.get(i) != null){
@@ -143,9 +135,6 @@ public class FloatProxyMethod {
             }
         }
         
-        if(name.equals("nativeGetBounds")){
-            System.out.println("call to "+owner+" $$$COJAC_NATIVE_METHOD$$$_"+name+" "+desc);
-        }
         if(isStatic)
             newMv.visitMethodInsn(INVOKESTATIC, owner, name, desc);
         else
@@ -228,7 +217,7 @@ public class FloatProxyMethod {
             mv.visitMethodInsn(INVOKESTATIC, CDW_N, "fromDouble", "("+Type.getType(Double.class).getDescriptor()+")"+CDW);
         }
         else if(realType.getSort() == Type.ARRAY){
-            if(realType.getDimensions() > 1){
+            if(realType.getDimensions() > 1){ // TODO better code
                 System.out.println("ALERT ARRAY DIMENSION HIGHER THAN 1 => "+realType.getDimensions());
                 String objDesc = Type.getType(Object.class).getDescriptor();
                 if(realType.getElementType().equals(Type.FLOAT_TYPE)){
@@ -266,7 +255,7 @@ public class FloatProxyMethod {
             mv.visitMethodInsn(INVOKESTATIC, CDW_N, "toRealDoubleWrapper", "("+CDW+")"+DL_DESCR);
         }
         else if(realType.getSort() == Type.ARRAY){
-            if(realType.getDimensions() > 1){
+            if(realType.getDimensions() > 1){ // TODO better code
                 System.out.println("ALERT ARRAY DIMENSION HIGHER THAN 1 => "+realType.getDimensions());
                 String objDesc = Type.getType(Object.class).getDescriptor();
                 if(realType.getElementType().equals(Type.FLOAT_TYPE)){

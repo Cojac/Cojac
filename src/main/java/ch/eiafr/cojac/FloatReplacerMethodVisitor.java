@@ -266,6 +266,21 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
         Type myType = Type.getObjectType(type); // get type from internal name
 		
 		Type cojacType = afterFloatReplacement(myType);
+		
+		// TODO - handle arrays casted into object...
+		if(opcode == CHECKCAST && myType.equals(cojacType) == false){
+			if(stackTop().equals(Type.getType(Object.class).getInternalName())){
+				if(cojacType.equals(COJAC_FLOAT_WRAPPER_TYPE)){
+					 mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "castFromObject", "("+Type.getType(Object.class).getDescriptor()+")"+COJAC_FLOAT_WRAPPER_TYPE_DESCR);
+					 return;
+				}
+				if(cojacType.equals(COJAC_DOUBLE_WRAPPER_TYPE)){
+					 mv.visitMethodInsn(INVOKESTATIC, COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "castFromObject", "("+Type.getType(Object.class).getDescriptor()+")"+COJAC_DOUBLE_WRAPPER_TYPE_DESCR);
+					 return;
+				}
+			}
+		}
+			
         
         mv.visitTypeInsn(opcode, cojacType.getInternalName());
     }

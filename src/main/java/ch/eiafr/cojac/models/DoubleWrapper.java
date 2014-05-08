@@ -176,6 +176,12 @@ public class DoubleWrapper extends NumberWrapper{
 		return a;
 	}
 	
+	public static DoubleWrapper castFromObject(Object obj){
+		if(obj instanceof Double)
+			return new DoubleWrapper((Double)obj);
+		return (DoubleWrapper)obj;
+	}
+	
     public static DoubleWrapper math_sqrt(DoubleWrapper a){
         return new DoubleWrapper(Math.sqrt(a.val));
     }
