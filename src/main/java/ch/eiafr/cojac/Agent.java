@@ -22,8 +22,14 @@ import java.io.PrintWriter;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
+import java.util.Arrays;
 
 import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.util.*;
 
 public final class Agent implements ClassFileTransformer {
@@ -45,7 +51,7 @@ public final class Agent implements ClassFileTransformer {
 
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
-        try {
+		try {
             if (!references.hasToBeInstrumented(className)) {
                 if (VERBOSE) {
                     System.out.println("Agent NOT instrumenting "+className +" under "+loader);
@@ -60,12 +66,36 @@ public final class Agent implements ClassFileTransformer {
 //                if (className.startsWith("sun/launcher")){
 //                    CheckClassAdapter.verify(new ClassReader(classfileBuffer), true, new PrintWriter(System.out));
 //                }
-                CheckClassAdapter.verify(new ClassReader(instrumented), PRINT_INSTR_RESULT, new PrintWriter(System.out));
-            }
+				// TODO - FAIL in verbose mode when class code contains call to an interface (which is instrumented after...)
+				//byte[] noInterface = removeInterfaces(instrumented);
+				//System.out.println("LENGTH: "+instrumented.length+" // "+noInterface.length);
+				CheckClassAdapter.verify(new ClassReader(instrumented), PRINT_INSTR_RESULT, new PrintWriter(System.out));
+			}
+			
+			
             return instrumented;
         } catch (RuntimeException e) {
             e.printStackTrace();  // Otherwise it'll be hidden!
             throw e;
         }
     }
+	
+	private byte[] removeInterfaces(final byte[] byteCode){
+		ClassReader cr = new ClassReader(byteCode);
+        ClassWriter cw = new ClassWriter(cr, 0);
+		InterfaceRemover ir = new InterfaceRemover(cw);
+		cr.accept(ir, ClassReader.EXPAND_FRAMES);
+        return cw.toByteArray();
+	}
+	
+	private class InterfaceRemover extends ClassVisitor{
+		public InterfaceRemover(ClassVisitor cv) {
+			super(Opcodes.ASM4, cv);
+		}
+		@Override
+		public void visit(int version, int access, String name, String signature, String supername, String[] interfaces) {
+			super.visit(version, access, name, signature, supername, null);
+		}
+	}
+	
 }

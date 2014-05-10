@@ -1,4 +1,6 @@
 package ch.eiafr.cojac.unit;
+import java.awt.geom.Line2D;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 //TODO: a reasonable/coherent test example for FloatReplace
@@ -163,6 +165,13 @@ public class TinyFloatExample {
         double a = 100;
         Math.sqrt(a);
     }
+	
+	public static ArrayList<Double> testList(){
+		
+		//Line2D line = new Line2D.Double(0,0,0,0);
+		
+		return new ArrayList<>();
+	}
     
     public static float myFct1(float f) {
         float a;
@@ -232,6 +241,7 @@ public class TinyFloatExample {
         Double dwres = testDoubleWrapper(dw1, dw2);
         
         testMathLib();
+		testList();
         
         System.out.println("inside TinyFloatExample.go() "+res);
         System.out.println("inside TinyFloatExample.go() "+(int)(TFEAux.myStaticFloat));

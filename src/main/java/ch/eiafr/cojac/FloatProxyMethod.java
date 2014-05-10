@@ -6,12 +6,16 @@
 
 package ch.eiafr.cojac;
 
-import ch.eiafr.cojac.instrumenters.MethodSignature;
-import java.util.HashMap;
+import static ch.eiafr.cojac.FloatProxyMethod_old.convertCojacToRealType;
+import static ch.eiafr.cojac.FloatProxyMethod_old.convertRealToCojacType;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import static org.objectweb.asm.Opcodes.*;
+import org.objectweb.asm.commons.AnalyzerAdapter;
 
 /**
  *
@@ -32,6 +36,7 @@ public class FloatProxyMethod {
     private static final String DL_DESCR = Type.getType(Double.class).getDescriptor();
     
     private static final String COJAC_PROXY_METHODS_PREFIX = "COJAC_PROXY_METHOD_";
+	private static final String COJAC_TYPE_CONVERT_NAME = "COJAC_TYPE_CONVERT";
     
     private final String classPath;
     
@@ -41,113 +46,42 @@ public class FloatProxyMethod {
     }
     
     public void proxyCall(MethodVisitor mv, int opcode, String owner, String name, String desc){
-
-        
-        HashMap<Integer, Type> typeConversions = new HashMap<>();
-        
-        Type args[] = Type.getArgumentTypes(desc);
-        if(opcode == INVOKEVIRTUAL || opcode == INVOKEINTERFACE || opcode == INVOKESPECIAL || opcode == INVOKEVIRTUAL){
-            Type newArgs[] = new Type[args.length+1];
-            System.arraycopy(args, 0, newArgs, 1, args.length);
-            newArgs[0] = Type.getObjectType(owner);
-            args = newArgs;
-        }
-        for (int i=0 ; i < args.length; i++) {
-            Type type = args[i];
-            Type cojacType = afterFloatReplacement(type);
-            if(!type.equals(cojacType)){
-                typeConversions.put(i, type);
-                args[i] = cojacType;
-            }
-        }
-        
-        if(typeConversions.isEmpty()){
-            mv.visitMethodInsn(opcode, owner, name, desc);
-            convertReturnType(desc, mv);
-            return;
-        }
-        
-        String newDesc = Type.getMethodDescriptor(Type.getReturnType(desc), args);
-        String proxyName = COJAC_PROXY_METHODS_PREFIX+name;
-        if(name.equals("<init>")){
-            proxyName = COJAC_PROXY_METHODS_PREFIX+"constructor";
-        }
-        
-        MethodSignature ms = new MethodSignature(owner, proxyName, newDesc);
-        if(!ccv.isProxyMerhod(proxyName, newDesc)){
-            MethodVisitor newMv = ccv.addProxyMethod(ACC_STATIC, proxyName, newDesc, null, null);
-            
-            int varIndex = 0; // Static method
-            for (int i = 0; i < args.length; i++) {
-                Type type = args[i];
-                newMv.visitVarInsn(getLoadOpcode(type), varIndex);
-                varIndex += type.getSize();
-                if(typeConversions.get(i) != null){
-                    convertCojacToRealType(typeConversions.get(i), newMv);
-                }
-            }
-            newMv.visitMethodInsn(opcode, owner, name, desc);
-            newMv.visitInsn(Type.getReturnType(desc).getOpcode(IRETURN));
-            newMv.visitMaxs(0, 0);
-        }
-        mv.visitMethodInsn(INVOKESTATIC, classPath, proxyName, newDesc);
-//        System.out.println("CALL => "+proxyName+" => "+newDesc);
-        convertReturnType(desc, mv);
-        
+		
+		FloatVariablesSorter fvs = (FloatVariablesSorter)mv;
+		//fvs.printStack();
+		convertArgumentsToReal(mv, desc, opcode, owner);
+		
+		mv.visitMethodInsn(opcode, owner, name, desc);
+		
+		Type returnType = Type.getReturnType(desc);
+		Type cojacType = afterFloatReplacement(returnType);
+		if(returnType.equals(cojacType) == false){
+			convertRealToCojacType(returnType, mv);
+		}
+		
     }
     
     public void nativeCall(MethodVisitor mv, int access, String owner, String name, String desc){
-        HashMap<Integer, Type> typeConversions = new HashMap<>();
-        
-        Type args[] = Type.getArgumentTypes(desc);
-        for (int i=0 ; i < args.length; i++) {
-            Type type = args[i];
-            Type cojacType = afterFloatReplacement(type);
-            if(!type.equals(cojacType)){
-                typeConversions.put(i, type);
-                args[i] = cojacType;
-            }
-        }
-
-        
-        String newDesc = Type.getMethodDescriptor(afterFloatReplacement(Type.getReturnType(desc)), args);
-        
-        if(desc.equals(newDesc)){
-            return;
-        }
-        
         boolean isStatic = (access & ACC_STATIC) > 0;
-        
-        MethodVisitor newMv = ccv.addProxyMethod(access & ~ACC_NATIVE, name, newDesc, null, null);
-        
-        int varIndex = 1;
-        if(isStatic)
-            varIndex = 0;
-        else
-            newMv.visitVarInsn(ALOAD, 0);
-        
-        for (int i = 0; i < args.length; i++) {
-            Type type = args[i];
-            newMv.visitVarInsn(getLoadOpcode(type), varIndex);
-            varIndex += type.getSize();
-            if(typeConversions.get(i) != null){
-                convertCojacToRealType(typeConversions.get(i), newMv);
-            }
-        }
-        
-        if(isStatic)
+		
+		String newDesc = replaceFloatMethodDescription(desc);
+		
+		MethodVisitor newMv = ccv.addProxyMethod(access & ~ACC_NATIVE, name, newDesc, null, null);
+
+		convertArgumentsToReal(newMv, desc, 0, owner);
+		
+		if(isStatic)
             newMv.visitMethodInsn(INVOKESTATIC, owner, name, desc);
         else
             newMv.visitMethodInsn(INVOKEVIRTUAL, owner, name, desc);
-        convertReturnType(desc, newMv);
         
-        newMv.visitInsn(afterFloatReplacement(Type.getReturnType(desc)).getOpcode(IRETURN));
+		newMv.visitInsn(afterFloatReplacement(Type.getReturnType(desc)).getOpcode(IRETURN));
         newMv.visitMaxs(0, 0);
-        
     }
     
     public void proxyNative(MethodVisitor mv, int access, String owner, String name, String desc){
-        
+		System.out.println("PROXY NATIVER NOT IMPLEMENTED");
+        /*
         HashMap<Integer, Type> typeConversions = new HashMap<>();
         
         Type args[] = Type.getArgumentTypes(desc);
@@ -192,8 +126,89 @@ public class FloatProxyMethod {
         
         newMv.visitInsn(Type.getReturnType(desc).getOpcode(IRETURN));
         newMv.visitMaxs(0, 0);
-        
+        */
     }
+	
+	private void convertArgumentsToReal(MethodVisitor mv, String desc, int opcode, String owner){
+		HashMap<Integer, Type> typeConversions = new HashMap<>();
+		Type outArgs[] = Type.getArgumentTypes(desc);
+		Type inArgs[] = new Type[outArgs.length];
+		for (int i = 0; i < outArgs.length; i++) {
+			inArgs[i] = afterFloatReplacement(outArgs[i]);
+			if(inArgs[i].equals(outArgs[i]) == false){
+				typeConversions.put(i, outArgs[i]);
+			}
+		}
+		
+		//if(Arrays.equals(inArgs, outArgs)){
+		//	System.out.println("no convertions");
+		//	return;
+		//}
+		
+		String convertDesc = Type.getMethodDescriptor(Type.getType("[Ljava/lang/Object;"), inArgs);
+		
+		
+		if(!ccv.isProxyMerhod(COJAC_TYPE_CONVERT_NAME, convertDesc)){
+			 MethodVisitor newMv = ccv.addProxyMethod(ACC_STATIC, COJAC_TYPE_CONVERT_NAME, convertDesc, null, null);
+			 int varIndex = 0;
+			 
+			 newMv.visitLdcInsn(outArgs.length);
+			 newMv.visitTypeInsn(ANEWARRAY, Type.getType(Object.class).getInternalName());
+			 
+			 for (int i=0 ; i < outArgs.length; i++) {
+				newMv.visitInsn(DUP);
+				newMv.visitLdcInsn(i);
+                Type type = outArgs[i];
+                newMv.visitVarInsn(getLoadOpcode(inArgs[i]), varIndex);
+                varIndex += inArgs[i].getSize();
+                if(typeConversions.get(i) != null){
+                    convertCojacToRealType(typeConversions.get(i), newMv);
+                }
+				convertPrimitiveToObject(newMv, type);
+				newMv.visitInsn(AASTORE);
+            }
+			newMv.visitInsn(ARETURN);
+            newMv.visitMaxs(0, 0);
+		}
+		mv.visitMethodInsn(INVOKESTATIC, classPath, COJAC_TYPE_CONVERT_NAME, convertDesc);
+		
+		// convertion of owner if invokevirtual
+		if(opcode == INVOKEVIRTUAL){
+			if(owner.equals(Type.getType(Float.class).getInternalName())){
+				mv.visitInsn(SWAP);
+				convertCojacToRealType(Type.getType(Float.class), mv);
+				mv.visitInsn(SWAP);
+			}
+			if(owner.equals(Type.getType(Double.class).getInternalName())){
+				mv.visitInsn(SWAP);
+				convertCojacToRealType(Type.getType(Double.class), mv);
+				mv.visitInsn(SWAP);
+			}
+		}
+		
+		for(int i=0 ; i < outArgs.length ; i++){
+			mv.visitInsn(DUP);
+			mv.visitLdcInsn(i);
+			mv.visitInsn(AALOAD);
+			if(outArgs[i].getSort() == Type.ARRAY || outArgs[i].getSort() == Type.OBJECT){ // else: primitive type
+				mv.visitTypeInsn(CHECKCAST, outArgs[i].getInternalName());
+			}
+			else{
+				mv.visitTypeInsn(CHECKCAST, getPrimitiveWrapper(outArgs[i]).getInternalName());
+				mv.visitMethodInsn(INVOKEVIRTUAL, getPrimitiveWrapper(outArgs[i]).getInternalName(), getWrapperToPrimitiveMethod(outArgs[i]), "()"+outArgs[i].getDescriptor());
+			}
+			
+			if(outArgs[i].getSize() == 2){ // Swap when double or long: Object D D
+				mv.visitInsn(DUP2_X1); // D D Object D D
+				mv.visitInsn(POP2); // D D Object
+			}
+			else{
+				mv.visitInsn(SWAP);
+			}
+		}
+		mv.visitInsn(POP);
+		
+	}
     
     private void convertReturnType(String desc, MethodVisitor mv){
         Type returnType = Type.getReturnType(desc);
@@ -285,12 +300,11 @@ public class FloatProxyMethod {
             case Type.ARRAY:
             case Type.OBJECT:
                 return ALOAD;
-            case Type.CHAR:
-                return CALOAD;
             case Type.DOUBLE:
                 return DLOAD;
             case Type.FLOAT:
                 return FLOAD;
+			case Type.CHAR:
 			case Type.BOOLEAN:
             case Type.BYTE:
             case Type.SHORT:
@@ -301,5 +315,39 @@ public class FloatProxyMethod {
         }
         return -1;
     }
-    
+
+	private void convertPrimitiveToObject(MethodVisitor newMv, Type type) {
+		if(type.getSort() == Type.ARRAY || type.getSort() == Type.OBJECT)
+			return;
+		Type wrapper = getPrimitiveWrapper(type);
+		newMv.visitMethodInsn(INVOKESTATIC, wrapper.getInternalName(), "valueOf", "("+type.getDescriptor()+")"+wrapper.getDescriptor());
+	}
+	
+	private Type getPrimitiveWrapper(Type primitiveType){
+		switch(primitiveType.getSort()){
+			case Type.BOOLEAN: return Type.getType(Boolean.class);
+			case Type.BYTE: return Type.getType(Byte.class);
+			case Type.CHAR: return Type.getType(Character.class);
+			case Type.DOUBLE: return Type.getType(Double.class);
+			case Type.FLOAT: return Type.getType(Float.class);
+			case Type.INT: return Type.getType(Integer.class);
+			case Type.LONG: return Type.getType(Long.class);
+			case Type.SHORT: return Type.getType(Short.class);
+		}
+		return null;
+	}
+	
+	private String getWrapperToPrimitiveMethod(Type primitiveType){
+		switch(primitiveType.getSort()){
+			case Type.BOOLEAN:return "booleanValue";
+			case Type.BYTE: return "byteValue";
+			case Type.CHAR: return "charValue";
+			case Type.DOUBLE: return "doubleValue";
+			case Type.FLOAT: return "floatValue";
+			case Type.INT: return "intValue";
+			case Type.LONG: return "longValue";
+			case Type.SHORT: return "shortValue";
+		}
+		return null;
+	}
 }
