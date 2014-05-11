@@ -11,11 +11,8 @@ import static ch.eiafr.cojac.FloatProxyMethod_old.convertRealToCojacType;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import static org.objectweb.asm.Opcodes.*;
-import org.objectweb.asm.commons.AnalyzerAdapter;
 
 /**
  *
@@ -46,9 +43,6 @@ public class FloatProxyMethod {
     }
     
     public void proxyCall(MethodVisitor mv, int opcode, String owner, String name, String desc){
-		
-		FloatVariablesSorter fvs = (FloatVariablesSorter)mv;
-		//fvs.printStack();
 		convertArgumentsToReal(mv, desc, opcode, owner);
 		
 		mv.visitMethodInsn(opcode, owner, name, desc);
@@ -58,7 +52,6 @@ public class FloatProxyMethod {
 		if(returnType.equals(cojacType) == false){
 			convertRealToCojacType(returnType, mv);
 		}
-		
     }
     
     public void nativeCall(MethodVisitor mv, int access, String owner, String name, String desc){
@@ -186,6 +179,7 @@ public class FloatProxyMethod {
 			}
 		}
 		
+		// Explode the object array to put arguments on stack
 		for(int i=0 ; i < outArgs.length ; i++){
 			mv.visitInsn(DUP);
 			mv.visitLdcInsn(i);

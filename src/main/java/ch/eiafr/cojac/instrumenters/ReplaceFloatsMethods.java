@@ -48,6 +48,7 @@ public class ReplaceFloatsMethods {
     private final FloatProxyMethod fpm;
     private final String classPath;
     private static final String COJAC_PROXY_METHODS_PREFIX = "COJAC_PROXY_METHOD_";
+	private static final String COJAC_MAGIC_CALL_PREFIX = "COJAC_MAGIC_";
     
     public ReplaceFloatsMethods(FloatProxyMethod fpm, String classPath, CojacReferences references) {
         this.fpm = fpm;
@@ -109,6 +110,11 @@ public class ReplaceFloatsMethods {
     public boolean instrument(MethodVisitor mv, int opcode, String owner, String name, String desc, Object stackTop){
         MethodSignature ms = new MethodSignature(owner, name, desc);
         
+		if(name.startsWith(COJAC_MAGIC_CALL_PREFIX)){
+			cojacMagicCall(mv, name, desc);
+			return true;
+		}
+		
         InvokableMethod replacementMethod = invocations.get(ms);
         
         if(suppressions.containsKey(ms)){
@@ -138,5 +144,14 @@ public class ReplaceFloatsMethods {
 		
         return false;
     }
+	
+	
+	private void cojacMagicCall(MethodVisitor mv, String name, String desc){
+		String newDesc = replaceFloatMethodDescription(desc);
+		// TODO - which wrapper has to be called ?
+		System.out.println("call "+name+" "+desc+" "+newDesc);
+		InvokableMethod im = new InvokableMethod(CDW_N, name, newDesc, INVOKESTATIC);
+		im.invoke(mv);
+	}
     
 }
