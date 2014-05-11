@@ -5,9 +5,11 @@ import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
-
-import com.monnard.utils.FloatWrapper;
-import com.monnard.utils.DoubleWrapper;
+// TODO - Take user implementation of wrapper with an option of the agent
+//import com.monnard.utils.FloatWrapper;
+//import com.monnard.utils.DoubleWrapper;
+import ch.eiafr.cojac.models.FloatWrapper;
+import ch.eiafr.cojac.models.DoubleWrapper;
 
 
 public final class InvokableMethod {
