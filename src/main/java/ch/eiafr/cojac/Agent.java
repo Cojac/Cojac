@@ -71,7 +71,8 @@ public final class Agent implements ClassFileTransformer {
 			
 			
             return instrumented;
-        } catch (RuntimeException e) {
+        } catch (Throwable e) {
+			System.out.println("EXCEPTION FOR CLASS "+className);
             e.printStackTrace();  // Otherwise it'll be hidden!
             throw e;
         }

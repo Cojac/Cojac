@@ -181,6 +181,15 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
 					mv.visitFieldInsn(opcode, owner, name, desc);
 					return;
 				}
+				
+				// TODO
+				if(opcode == GETSTATIC){
+					System.out.println("GETSTATIC problem");
+				}
+				if(opcode == PUTSTATIC){
+					System.out.println("PUTSTATIC problem");
+				}
+				
 			}
 		}
 		
