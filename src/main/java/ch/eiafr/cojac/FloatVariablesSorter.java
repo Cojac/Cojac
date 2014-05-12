@@ -7,7 +7,6 @@
 package ch.eiafr.cojac;
 
 import static ch.eiafr.cojac.FloatReplacerMethodVisitor.DONT_INSTRUMENT;
-import ch.eiafr.cojac.instrumenters.InvokableMethod;
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.COJAC_DOUBLE_WRAPPER_INTERNAL_NAME;
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.COJAC_DOUBLE_WRAPPER_TYPE;
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.COJAC_DOUBLE_WRAPPER_TYPE_DESCR;

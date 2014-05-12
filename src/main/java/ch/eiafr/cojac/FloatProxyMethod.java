@@ -157,6 +157,12 @@ public class FloatProxyMethod {
                 if(typeConversions.get(i) != null){
                     convertCojacToRealType(typeConversions.get(i), newMv);
                 }
+				if(inArgs[i].equals(Type.getType(Object.class))){
+					convetObject(newMv, inArgs[i]);
+				}
+				if(inArgs[i].getSort() == Type.ARRAY && inArgs[i].getElementType().equals(Type.getType(Object.class))){
+					convetObjectArray(newMv, inArgs[i]);
+				}
 				convertPrimitiveToObject(newMv, type);
 				newMv.visitInsn(AASTORE);
             }
@@ -344,4 +350,17 @@ public class FloatProxyMethod {
 		}
 		return null;
 	}
+	
+	private void convetObject(MethodVisitor mv, Type objType){
+		String objDesc = Type.getType(Object.class).getDescriptor();
+		mv.visitMethodInsn(INVOKESTATIC, CDW_N, "convertFromObject", "("+objDesc+")"+objDesc);
+	}
+	
+	private void convetObjectArray(MethodVisitor mv, Type objType){
+		String objDesc = Type.getType(Object.class).getDescriptor();
+		mv.visitTypeInsn(CHECKCAST, Type.getType(Object.class).getInternalName());
+		mv.visitMethodInsn(INVOKESTATIC, CDW_N, "convertFromObjectArray", "("+objDesc+")"+objDesc);
+		mv.visitTypeInsn(CHECKCAST, objType.getInternalName());
+	}
+	
 }

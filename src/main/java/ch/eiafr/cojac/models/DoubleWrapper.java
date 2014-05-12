@@ -185,6 +185,29 @@ public class DoubleWrapper extends NumberWrapper{
     public static DoubleWrapper math_sqrt(DoubleWrapper a){
         return new DoubleWrapper(Math.sqrt(a.val));
     }
+	
+	public static Object convertFromObject(Object obj){
+		if(obj instanceof FloatWrapper){
+			return FloatWrapper.toRealFloatWrapper((FloatWrapper)obj);
+		}
+		if(obj instanceof DoubleWrapper){
+			return DoubleWrapper.toRealDoubleWrapper((DoubleWrapper)obj);
+		}
+		return obj;
+	}
+	
+	public static Object convertFromObjectArray(Object obj){
+		if(obj instanceof Object[]){
+			Object array[] = (Object[]) obj;
+			for (int i = 0; i < array.length; i++) {
+				array[i] = convertFromObjectArray(array[i]);
+			}
+			return (Object) array;
+		}
+		else{
+			return convertFromObject(obj);
+		}
+	}
     
     //TODO: define a "magic call" feature: getFloatInfo(float f) ---> call getFloatInfo on the FloatWrapper
 
