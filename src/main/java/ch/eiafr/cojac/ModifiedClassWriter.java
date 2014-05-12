@@ -20,8 +20,11 @@ public class ModifiedClassWriter extends ClassWriter {
     private ClassLoader l = getClass().getClassLoader();
 
 
-	ModifiedClassWriter(ClassReader cr, int flags) {
+	ModifiedClassWriter(ClassReader cr, int flags, ClassLoader loader) {
 		super(cr, flags);
+		if(loader != null){
+			l = loader;
+		}
 	}
 
     @Override

@@ -44,9 +44,9 @@ public final class ClassLoaderInstrumenter implements IClassInstrumenter {
     }
 
     @Override
-    public byte[] instrument(byte[] byteCode) {
+    public byte[] instrument(byte[] byteCode, ClassLoader loader) {
         ClassReader cr = new ClassReader(byteCode);
-        ClassWriter cw = new ModifiedClassWriter(cr, CojacReferences.getFlags(args));
+        ClassWriter cw = new ModifiedClassWriter(cr, CojacReferences.getFlags(args), loader);
 
         CojacAnnotationVisitor cav = new CojacAnnotationVisitor(stats);
         cr.accept(cav, ClassReader.EXPAND_FRAMES); 

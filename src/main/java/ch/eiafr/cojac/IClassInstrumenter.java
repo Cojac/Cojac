@@ -19,5 +19,5 @@
 package ch.eiafr.cojac;
 
 public interface IClassInstrumenter {
-    byte[] instrument(byte[] byteCode);
+    byte[] instrument(byte[] byteCode, ClassLoader loader);
 }

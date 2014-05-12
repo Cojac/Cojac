@@ -58,7 +58,7 @@ public final class Agent implements ClassFileTransformer {
             if (VERBOSE) {
                 System.out.println("Agent instrumenting "+className +" under "+loader);
             }
-            byte[] instrumented= instrumenter.instrument(classfileBuffer);
+            byte[] instrumented= instrumenter.instrument(classfileBuffer, loader);
             if (VERBOSE) {
 //                if (className.startsWith("sun/launcher")){
 //                    CheckClassAdapter.verify(new ClassReader(classfileBuffer), true, new PrintWriter(System.out));
