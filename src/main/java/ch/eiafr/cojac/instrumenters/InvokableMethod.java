@@ -10,6 +10,8 @@ import org.objectweb.asm.Type;
 //import com.monnard.utils.DoubleWrapper;
 import ch.eiafr.cojac.models.FloatWrapper;
 import ch.eiafr.cojac.models.DoubleWrapper;
+import org.objectweb.asm.Opcodes;
+import static org.objectweb.asm.Opcodes.INVOKEINTERFACE;
 
 
 public final class InvokableMethod {
@@ -56,15 +58,15 @@ public final class InvokableMethod {
     }
     
     public void invokeStatic(MethodVisitor mv) {
-        mv.visitMethodInsn(INVOKESTATIC, classPath, method, signature);
+        mv.visitMethodInsn(INVOKESTATIC, classPath, method, signature, false);
     }
     
     public void invoke(MethodVisitor mv) {
-        mv.visitMethodInsn(opCode, classPath, method, signature);
+        mv.visitMethodInsn(opCode, classPath, method, signature, (opCode == INVOKEINTERFACE));
     }
     
     public void invoke(MethodVisitor mv, String replacedClassPath, String replacedWrapper) {
-        mv.visitMethodInsn(opCode, replacedClassPath, method, signature.replaceAll(COJAC_REPLACE_WRAPPER_TYPE, replacedWrapper));
+        mv.visitMethodInsn(opCode, replacedClassPath, method, signature.replaceAll(COJAC_REPLACE_WRAPPER_TYPE, replacedWrapper), (opCode == INVOKEINTERFACE));
     }
     
     // ---------------------------

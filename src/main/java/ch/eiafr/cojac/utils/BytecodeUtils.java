@@ -44,7 +44,8 @@ public final class BytecodeUtils {
         mv.visitMethodInsn(INVOKESTATIC,
             parseQualifierId(callBack),
             parseMethodId(callBack),
-            Signatures.REACT);
+            Signatures.REACT,
+			false);
     }
 
     private static String parseMethodId(String fullid) {

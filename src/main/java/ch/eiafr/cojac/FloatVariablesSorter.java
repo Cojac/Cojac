@@ -31,7 +31,7 @@ public class FloatVariablesSorter extends LocalVariablesSorter{
             .getObjectType("java/lang/Object");
     
     public FloatVariablesSorter(int access, String desc, MethodVisitor mv) {
-        super(access, desc, mv);
+        super(Opcodes.ASM5, access, desc, mv);
 
         Type[] args = Type.getArgumentTypes(desc);
         

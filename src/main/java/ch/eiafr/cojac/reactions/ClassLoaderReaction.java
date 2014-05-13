@@ -59,7 +59,8 @@ public final class ClassLoaderReaction implements IReaction {
             mv.visitMethodInsn(INVOKESTATIC,
                 "ch/eiafr/cojac/models/Reactions",
                 getCurrentMethodReaction(),
-                getCurrentSignatureReaction());
+                getCurrentSignatureReaction(),
+				false);
         }
     }
 

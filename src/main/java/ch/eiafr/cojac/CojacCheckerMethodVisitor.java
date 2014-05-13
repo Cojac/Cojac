@@ -53,7 +53,7 @@ final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
         Arrays.asList("atan2", "pow", "hypot", "copySign", "nextAfter", "scalb");
 
     CojacCheckerMethodVisitor(int access, String desc, MethodVisitor mv, InstrumentationStats stats, Args args, Methods methods, IReaction reaction, String classPath, IOpcodeInstrumenterFactory factory) {
-        super(access, desc, mv);
+        super(Opcodes.ASM5, access, desc, mv);
 
         this.stats = stats;
         this.args = args;
@@ -84,7 +84,7 @@ final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
             if ( methods != null) {// Maybe make better than methods != null
                 visitVarInsn(ILOAD, index);
                 mv.visitLdcInsn(value);
-                mv.visitMethodInsn(INVOKESTATIC, classPath, methods.getMethod(IINC), Signatures.CHECK_INTEGER_BINARY);
+                mv.visitMethodInsn(INVOKESTATIC, classPath, methods.getMethod(IINC), Signatures.CHECK_INTEGER_BINARY, false);
                 visitVarInsn(ISTORE, index);
             } else {
                 visitVarInsn(ILOAD, index);
@@ -100,7 +100,7 @@ final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
     }
 
     @Override
-    public void visitMethodInsn(int opcode, String owner, String name, String desc) {
+    public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
         if (opcode == INVOKESTATIC && args.isOperationEnabled(Arg.MATHS) &&
             ("java/lang/Math".equals(owner) || "java/lang/StrictMath".equals(owner))) {
             if ("(D)D".equals(desc) && UNARY_METHODS.contains(name) || "(DD)D".equals(desc) && BINARY_METHODS.contains(name)) {
@@ -111,13 +111,13 @@ final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
                 else
                     logFileName = args.getValue(Arg.LOG_FILE);
                 int reactionType=args.getReactionType().value();
-                mv.visitMethodInsn(INVOKESTATIC, owner, name, desc);
+                mv.visitMethodInsn(INVOKESTATIC, owner, name, desc, itf);
                 protectMethodInvocation(reactionType, logFileName, msg);
             } else {
-                mv.visitMethodInsn(INVOKESTATIC, owner, name, desc);
+                mv.visitMethodInsn(INVOKESTATIC, owner, name, desc, itf);
             }
         } else {
-            super.visitMethodInsn(opcode, owner, name, desc);
+            super.visitMethodInsn(opcode, owner, name, desc, itf);
         }
     }
 
@@ -129,6 +129,6 @@ final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
         mv.visitLdcInsn(new Integer(reactionType));
         mv.visitLdcInsn(logFileName);
         mv.visitLdcInsn(msg);
-        mv.visitMethodInsn(INVOKESTATIC, CheckedMaths.CHECK_MATH_RESULT_PATH, CheckedMaths.CHECK_MATH_RESULT_NAME, Signatures.CHECK_MATH_RESULT);
+        mv.visitMethodInsn(INVOKESTATIC, CheckedMaths.CHECK_MATH_RESULT_PATH, CheckedMaths.CHECK_MATH_RESULT_NAME, Signatures.CHECK_MATH_RESULT, false);
     }
 }
