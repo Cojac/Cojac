@@ -103,6 +103,7 @@ public final class CojacReferences {
                     return false;
                 }
             }
+			
         }
         for (String standardPackage : bypassList) {
             if (className.startsWith(standardPackage)) {
@@ -184,6 +185,11 @@ public final class CojacReferences {
                 sbBypassList.append(BYPASS_SEPARATOR);
                 sbBypassList.append(args.getValue(Arg.BYPASS));
             }
+			
+			if(args.isSpecified(Arg.REPLACE_FLOATS)){ // Only for proxy tests
+				sbBypassList.append(BYPASS_SEPARATOR);
+                sbBypassList.append("ch.eiafr.cojac.unit.replace.FloatProxyNotInstrumented");
+			}
 
             bypassList = splitter.split(sbBypassList.toString());
 

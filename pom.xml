@@ -172,12 +172,6 @@
 		<!-- System dependencies for benchmarks -->
 
 		<dependency>
-			<groupId>com.monnard.utils</groupId>
-			<artifactId>CojacWrappers</artifactId>
-			<version>1.0</version>
-		</dependency>
-
-		<dependency>
 			<groupId>com.wicht.benchmark.utils</groupId>
 			<artifactId>bb</artifactId>
 			<version>1.0</version>

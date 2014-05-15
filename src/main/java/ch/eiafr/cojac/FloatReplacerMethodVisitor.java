@@ -166,30 +166,20 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
             return;
         }
         
-		// TODO - proxy for static fields
 		if(references.hasToBeInstrumented(owner) == false){ // proxy for fields
 			Type type = Type.getType(desc);
 			Type cojacType = afterFloatReplacement(type);
 			if(type.equals(cojacType) == false){
-				if(opcode == GETFIELD){
+				if(opcode == GETFIELD || opcode == GETSTATIC){
 					mv.visitFieldInsn(opcode, owner, name, desc);
 					FloatProxyMethod.convertRealToCojacType(type, mv);
 					return;
 				}
-				if(opcode == PUTFIELD){
+				if(opcode == PUTFIELD || opcode == PUTSTATIC){
 					FloatProxyMethod.convertCojacToRealType(type, mv);
 					mv.visitFieldInsn(opcode, owner, name, desc);
 					return;
 				}
-				
-				// TODO
-				if(opcode == GETSTATIC){
-					System.out.println("GETSTATIC problem");
-				}
-				if(opcode == PUTSTATIC){
-					System.out.println("PUTSTATIC problem");
-				}
-				
 			}
 		}
 		

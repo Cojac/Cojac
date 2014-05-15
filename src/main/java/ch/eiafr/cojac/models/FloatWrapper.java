@@ -18,7 +18,7 @@
 
 package ch.eiafr.cojac.models;
 
-public class FloatWrapper extends NumberWrapper {
+public class FloatWrapper extends NumberWrapper implements Comparable<FloatWrapper> {
     private final float val;
     
     public FloatWrapper(float v) {
@@ -192,6 +192,25 @@ public class FloatWrapper extends NumberWrapper {
         return Float.isInfinite(a.val);
     }
 
+	@Override
+	public int compareTo(FloatWrapper o) {
+		if(val > o.val)
+			return 1;
+		if(val < o.val)
+			return -1;
+		return 0;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+        return (obj instanceof FloatWrapper) && (((FloatWrapper)obj).val == val);
+    }
 
-    
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 43 * hash + Float.floatToIntBits(this.val);
+		return hash;
+	}
+
 }

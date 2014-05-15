@@ -19,7 +19,7 @@
 package ch.eiafr.cojac.models;
 
 
-public class DoubleWrapper extends NumberWrapper{
+public class DoubleWrapper extends NumberWrapper implements Comparable<DoubleWrapper>{
     private final double val;
     
     public DoubleWrapper(double v) {
@@ -210,6 +210,27 @@ public class DoubleWrapper extends NumberWrapper{
 	}
     
     //TODO: define a "magic call" feature: getFloatInfo(float f) ---> call getFloatInfo on the FloatWrapper
+
+	@Override
+	public int compareTo(DoubleWrapper o) {
+		if(val > o.val)
+			return 1;
+		if(val < o.val)
+			return -1;
+		return 0;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+        return (obj instanceof DoubleWrapper) && (((DoubleWrapper)obj).val == val);
+    }
+
+	@Override
+	public int hashCode() {
+		int hash = 3;
+		hash = 43 * hash + (int) (Double.doubleToLongBits(this.val) ^ (Double.doubleToLongBits(this.val) >>> 32));
+		return hash;
+	}
 
 
 }

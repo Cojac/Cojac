@@ -48,7 +48,8 @@ public class ReplaceFloatsMethods {
     private final FloatProxyMethod fpm;
     private final String classPath;
     private static final String COJAC_PROXY_METHODS_PREFIX = "COJAC_PROXY_METHOD_";
-	private static final String COJAC_MAGIC_CALL_PREFIX = "COJAC_MAGIC_";
+	private static final String COJAC_MAGIC_CALL_DOUBLE_PREFIX = "COJAC_MAGIC_DOUBLE_";
+	private static final String COJAC_MAGIC_CALL_FLOAT_PREFIX = "COJAC_MAGIC_FLOAT_";
     
     public ReplaceFloatsMethods(FloatProxyMethod fpm, String classPath, CojacReferences references) {
         this.fpm = fpm;
@@ -110,8 +111,12 @@ public class ReplaceFloatsMethods {
     public boolean instrument(MethodVisitor mv, int opcode, String owner, String name, String desc, Object stackTop){
         MethodSignature ms = new MethodSignature(owner, name, desc);
         
-		if(name.startsWith(COJAC_MAGIC_CALL_PREFIX)){
-			cojacMagicCall(mv, name, desc);
+		if(name.startsWith(COJAC_MAGIC_CALL_DOUBLE_PREFIX)){
+			cojacMagicCall(mv, name, desc, CDW_N);
+			return true;
+		}
+		if(name.startsWith(COJAC_MAGIC_CALL_FLOAT_PREFIX)){
+			cojacMagicCall(mv, name, desc, CFW_N);
 			return true;
 		}
 		
@@ -146,11 +151,9 @@ public class ReplaceFloatsMethods {
     }
 	
 	
-	private void cojacMagicCall(MethodVisitor mv, String name, String desc){
+	private void cojacMagicCall(MethodVisitor mv, String name, String desc, String wrapper){
 		String newDesc = replaceFloatMethodDescription(desc);
-		// TODO - which wrapper has to be called ?
-		System.out.println("call "+name+" "+desc+" "+newDesc);
-		InvokableMethod im = new InvokableMethod(CDW_N, name, newDesc, INVOKESTATIC);
+		InvokableMethod im = new InvokableMethod(wrapper, name, newDesc, INVOKESTATIC);
 		im.invoke(mv);
 	}
     
