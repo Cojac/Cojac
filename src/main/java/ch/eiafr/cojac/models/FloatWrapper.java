@@ -18,6 +18,8 @@
 
 package ch.eiafr.cojac.models;
 
+import java.lang.reflect.Array;
+
 public class FloatWrapper extends NumberWrapper implements Comparable<FloatWrapper> {
     private final float val;
     
@@ -118,69 +120,6 @@ public class FloatWrapper extends NumberWrapper implements Comparable<FloatWrapp
         return new FloatWrapper((float)DoubleWrapper.toDouble(a));
     }
 
-    
-    public static FloatWrapper[] newarray(int size){
-        FloatWrapper[] a = new FloatWrapper[size];
-        for (int i = 0; i < a.length; i++)
-            a[i] = new FloatWrapper(0);
-        return a;
-    }
-    
-    public static Object initializeMultiArray(Object array, int dimensions) {
-        Object a[] = (Object[]) array;
-        if(dimensions == 1)
-            return newarray(a.length);
-        for (int i = 0; i < a.length; i++)
-            a[i] = initializeMultiArray(a[i], dimensions-1);
-        return array;
-    }
-    
-    public static FloatWrapper[] convertArray(float[] array){
-        FloatWrapper[] a = new FloatWrapper[array.length];
-        for (int i = 0; i < a.length; i++)
-            a[i] = new FloatWrapper(array[i]);
-        return a;
-    }
-    
-    public static float[] convertArray(FloatWrapper[] array){
-        float[] a = new float[array.length];
-        for (int i = 0; i < a.length; i++)
-            a[i] = FloatWrapper.toFloat(array[i]);
-        return a;
-    }
-	
-	// Not the good way
-	 public static Object convertArrayToReal(Object array, int dimensions){
-        Object a[] = (Object[]) array;
-        if(dimensions == 1)
-            return convertArray((FloatWrapper[])a);
-        for (int i = 0; i < a.length; i++)
-            a[i] = convertArrayToReal(a[i], dimensions-1);
-        return array;
-    }
-    
-	 // Not the good way
-    public static Object convertArrayToCojac(Object array, int dimensions){
-        Object a[] = (Object[]) array;
-        if(dimensions == 1)
-            return convertArray((float[])array);
-        for (int i = 0; i < a.length; i++)
-            a[i] = convertArrayToReal(a[i], dimensions-1);
-        return array;
-    }
-
-	public static FloatWrapper initialize(FloatWrapper a){
-		if(a == null)
-			return new FloatWrapper(0);
-		return a;
-	}
-
-	public static FloatWrapper castFromObject(Object obj){
-		if(obj instanceof Float)
-			return new FloatWrapper((Float)obj);
-		return (FloatWrapper)obj;
-	}
-    
     @Override
     public String toString(){
         return Float.toString(val);

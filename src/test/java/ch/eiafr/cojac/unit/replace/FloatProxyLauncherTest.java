@@ -37,6 +37,7 @@ public class FloatProxyLauncherTest {
     protected ClassFileTransformer getClassFileTransformer() {
         Args args = new Args();
         args.specify(Arg.ALL);
+		args.specify(Arg.VERBOSE);
         args.specify(Arg.EXCEPTION);
         args.specify(Arg.REPLACE_FLOATS);
         args.specify(Arg.INSTRUMENTATION_STATS);
@@ -72,7 +73,81 @@ public class FloatProxyLauncherTest {
         invokeMethod("staticFieldFloatAccess");
     }
 	
+	@Test
+	public void instanceFieldDoubleAccess() throws Exception{
+		invokeMethod("instanceFieldDoubleAccess");
+	}
 	
+	@Test
+	public void instanceFieldFloatAccess() throws Exception{
+		invokeMethod("instanceFieldFloatAccess");
+	}
+	
+	@Test
+	public void objectConstructor() throws Exception{
+		invokeMethod("objectConstructor");
+	}
+	
+	@Test
+	public void instanceMethod() throws Exception{
+		invokeMethod("instanceMethod");
+	}
+	
+	@Test
+	public void staticMethod() throws Exception{
+		invokeMethod("staticMethod");
+	}
+	
+	@Test
+	public void oneDimArrayPassingByMethod() throws Exception{
+		invokeMethod("oneDimArrayPassingByMethod");
+	}
+	
+	@Test
+	public void multiDimArrayPassingByMethod() throws Exception{
+		invokeMethod("multiDimArrayPassingByMethod");
+	}
+/*	
+	@Test
+	public void oneDimArrayField() throws Exception{
+		invokeMethod("oneDimArrayField");
+	}
+	
+	@Test
+	public void multiDimArrayField() throws Exception{
+		invokeMethod("multiDimArrayField");
+	}
+	
+	@Test
+	public void castedNumberPassingByMethod() throws Exception{
+		invokeMethod("castedNumberPassingByMethod");
+	}
+	
+	@Test
+	public void castedNumberReturningByMethod() throws Exception{
+		invokeMethod("castedNumberReturningByMethod");
+	}
+	
+	@Test
+	public void castedObjectPassingByMethod() throws Exception{
+		invokeMethod("castedObjectPassingByMethod");
+	}
+	
+	@Test
+	public void castedObjectReturningByMethod() throws Exception{
+		invokeMethod("castedObjectReturningByMethod");
+	}
+	
+	@Test
+	public void oneDimeArrayCastedObjectPassingByMethod() throws Exception{
+		invokeMethod("oneDimeArrayCastedObjectPassingByMethod");
+	}
+	
+	@Test
+	public void oneDimeArrayCastedObjectReturningByMethod() throws Exception{
+		invokeMethod("oneDimeArrayCastedObjectReturningByMethod");
+	}
+*/
 	private void invokeMethod(String methodName) throws Exception{
 		if (floatProxyTest==null) return;
         Method m = floatProxyTest.getMethod(methodName);

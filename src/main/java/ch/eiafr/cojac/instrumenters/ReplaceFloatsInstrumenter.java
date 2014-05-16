@@ -23,6 +23,8 @@ import ch.eiafr.cojac.InstrumentationStats;
 import ch.eiafr.cojac.Methods;
 import ch.eiafr.cojac.reactions.IReaction;
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
+import ch.eiafr.cojac.models.DoubleNumbers;
+import ch.eiafr.cojac.models.FloatNumbers;
 
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.LocalVariablesSorter;
@@ -33,11 +35,15 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.objectweb.asm.Opcodes.*;
+import org.objectweb.asm.Type;
 
 // TODO: instrument float arrays instructions...
 
 final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
     private final InstrumentationStats stats;
+	
+	public static final String FN_NAME = Type.getType(FloatNumbers.class).getInternalName();
+	public static final String DN_NAME = Type.getType(DoubleNumbers.class).getInternalName();
 
     private final Map<Integer, InvokableMethod> invocations = new HashMap<Integer, InvokableMethod>(50);
     private final Map<Integer, InvokableMethod> conversions = new HashMap<Integer, InvokableMethod>(50);
@@ -149,11 +155,11 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
         switch(operand){
             case T_DOUBLE:
                 replacedWrapper = COJAC_DOUBLE_WRAPPER_TYPE_DESCR;
-                replacedClassPath = COJAC_DOUBLE_WRAPPER_INTERNAL_NAME;
+                replacedClassPath = DN_NAME;
                 break;
             case T_FLOAT:
                 replacedWrapper = COJAC_FLOAT_WRAPPER_TYPE_DESCR;
-                replacedClassPath = COJAC_FLOAT_WRAPPER_INTERNAL_NAME;
+                replacedClassPath = FN_NAME;
                 break;
             default: break;
         }

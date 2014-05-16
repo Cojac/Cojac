@@ -15,4 +15,51 @@ public class FloatProxyNotInstrumented {
 	public static double staticDouble = 53.75;
 	public static float staticFloat = 53.75f;
 	
+	public double doubleField;
+	public float floatField;
+	
+	public FloatProxyNotInstrumented(){
+	}
+	
+	double d1;
+	long l1;
+	float f1;
+	double d2;
+	
+	public FloatProxyNotInstrumented(double d1, long l1, float f1, double d2){
+		this.d1 = d1;
+		this.l1 = l1;
+		this.f1 = f1;
+		this.d2 = d2;
+	}
+	
+	public void instanceMethod(short s1, long l1, double d1, double d2, byte b1, boolean bo1, char c1,  float f1){
+		this.d1 = d1;
+		this.l1 = l1;
+		this.f1 = f1;
+		this.d2 = d2;
+	}
+	
+	static double static_d1;
+	static long static_l1;
+	static float static_f1;
+	static double static_d2;
+	
+	public static void staticMethod(long l1, double d1, short s1, double d2, byte b1, boolean bo1, char c1,  float f1){
+		static_d1 = d1;
+		static_l1 = l1;
+		static_f1 = f1;
+		static_d2 = d2;
+	}
+	
+	
+	public float[] oneDimArrayPassing(float[] array){
+		return array;
+	}
+
+	public float[][] multiDimArrayPassing(float[][] array) {
+		return array;
+	}
+	
+	
 }

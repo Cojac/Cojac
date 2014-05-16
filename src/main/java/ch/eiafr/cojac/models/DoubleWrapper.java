@@ -18,6 +18,8 @@
 
 package ch.eiafr.cojac.models;
 
+import java.lang.reflect.Array;
+
 
 public class DoubleWrapper extends NumberWrapper implements Comparable<DoubleWrapper>{
     private final double val;
@@ -115,102 +117,11 @@ public class DoubleWrapper extends NumberWrapper implements Comparable<DoubleWra
         return new DoubleWrapper((double)FloatWrapper.toFloat(a));
     }
 
-    public static DoubleWrapper[] newarray(int size){
-        DoubleWrapper[] a = new DoubleWrapper[size];
-        for (int i = 0; i < a.length; i++) {
-            a[i] = new DoubleWrapper(0);
-        }
-        return a;
-    }
-    
-    public static Object initializeMultiArray(Object array, int dimensions) {
-        Object a[] = (Object[]) array;
-        if(dimensions == 1){
-            return newarray(a.length);
-        }
-        for (int i = 0; i < a.length; i++) {
-            a[i] = initializeMultiArray(a[i], dimensions-1);
-        }
-        return array;
-    }
-    
-    public static DoubleWrapper[] convertArray(double[] array){
-        DoubleWrapper[] a = new DoubleWrapper[array.length];
-        for (int i = 0; i < a.length; i++)
-            a[i] = new DoubleWrapper(array[i]);
-        return a;
-    }
-    
-    public static double[] convertArray(DoubleWrapper[] array){
-        double[] a = new double[array.length];
-        for (int i = 0; i < a.length; i++)
-            a[i] = DoubleWrapper.toDouble(array[i]);
-        return a;
-    }
-    
-	// Not the good way
-	public static Object convertArrayToReal(Object array, int dimensions){
-        Object a[] = (Object[]) array;
-        if(dimensions == 1){
-            return convertArray((DoubleWrapper[])a);
-        }
-        for (int i = 0; i < a.length; i++){
-            a[i] = convertArrayToReal(a[i], dimensions-1);
-        }
-        return array;
-    }
-    
-	// Not the good way
-    public static Object convertArrayToCojac(Object array, int dimensions){
-        Object a[] = (Object[]) array;
-        if(dimensions == 1)
-            return convertArray((double[])array);
-        for (int i = 0; i < a.length; i++)
-            a[i] = convertArrayToReal(a[i], dimensions-1);
-        return array;
-    }
-    
-	public static DoubleWrapper initialize(DoubleWrapper a){
-		if(a == null)
-			return new DoubleWrapper(0);
-		return a;
-	}
-	
-	public static DoubleWrapper castFromObject(Object obj){
-		if(obj instanceof Double)
-			return new DoubleWrapper((Double)obj);
-		return (DoubleWrapper)obj;
-	}
-	
-    public static DoubleWrapper math_sqrt(DoubleWrapper a){
+	//TODO: define a "magic call" feature: getFloatInfo(float f) ---> call getFloatInfo on the FloatWrapper
+	public static DoubleWrapper math_sqrt(DoubleWrapper a){
         return new DoubleWrapper(Math.sqrt(a.val));
     }
 	
-	public static Object convertFromObject(Object obj){
-		if(obj instanceof FloatWrapper){
-			return FloatWrapper.toRealFloatWrapper((FloatWrapper)obj);
-		}
-		if(obj instanceof DoubleWrapper){
-			return DoubleWrapper.toRealDoubleWrapper((DoubleWrapper)obj);
-		}
-		return obj;
-	}
-	
-	public static Object convertFromObjectArray(Object obj){
-		if(obj instanceof Object[]){
-			Object array[] = (Object[]) obj;
-			for (int i = 0; i < array.length; i++) {
-				array[i] = convertFromObjectArray(array[i]);
-			}
-			return (Object) array;
-		}
-		else{
-			return convertFromObject(obj);
-		}
-	}
-    
-    //TODO: define a "magic call" feature: getFloatInfo(float f) ---> call getFloatInfo on the FloatWrapper
-
 	@Override
 	public int compareTo(DoubleWrapper o) {
 		if(val > o.val)
