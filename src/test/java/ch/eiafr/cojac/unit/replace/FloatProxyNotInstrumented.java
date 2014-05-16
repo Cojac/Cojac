@@ -76,9 +76,21 @@ public class FloatProxyNotInstrumented {
 		return f;
 	}
 	
-	public Object oneDimeArrayCastedObject(Object val){
+	public Object oneDimeArrayCastedObjectFloat(Object val){
 		float[] f = (float[])val;
 		f[2] *= 0.789f;
+		return f;
+	}
+	
+	public Object oneDimeArrayCastedObjectDouble(Object val){
+		double[] f = (double[])val;
+		f[2] *= 0.789;
+		return f;
+	}
+	
+	public Object oneDimeArrayCastedObjectChar(Object val){
+		char[] f = (char[])val;
+		f[2] += 'a';
 		return f;
 	}
 	

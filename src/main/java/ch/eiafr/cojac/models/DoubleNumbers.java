@@ -104,6 +104,8 @@ public class DoubleNumbers {
 	}
 	
 	public static Object convertFromObjectToReal(Object obj){
+		if(obj == null)
+			return obj;
 		if(obj.getClass().isArray()){
 			Class type = getArrayType(obj);
 			if(type.equals(FloatWrapper.class)){
@@ -114,6 +116,8 @@ public class DoubleNumbers {
 				int dim = getArrayDimension(obj);
 				return DoubleNumbers.convertArrayToReal(obj, dim);
 			}
+			if(isPrimitiveType(type))
+				return obj;
 			Object array[] = (Object[]) obj;
 			for (int i = 0; i < array.length; i++) 
 				array[i] = convertFromObjectToReal(array[i]);
@@ -129,6 +133,8 @@ public class DoubleNumbers {
 	}
 	
 	public static Object convertFromObjectToCojac(Object obj){
+		if(obj == null)
+			return obj;
 		if(obj.getClass().isArray()){
 			Class type = getArrayType(obj);
 			if(type.equals(float.class) || type.equals(Float.class)){
@@ -139,6 +145,8 @@ public class DoubleNumbers {
 				int dim = getArrayDimension(obj);
 				return DoubleNumbers.convertArrayToCojac(obj, dim);
 			}
+			if(isPrimitiveType(type))
+				return obj;
 			Object array[] = (Object[]) obj;
 			for (int i = 0; i < array.length; i++) 
 				array[i] = convertFromObjectToCojac(array[i]);
@@ -151,6 +159,13 @@ public class DoubleNumbers {
 				return new DoubleWrapper((Double)obj);
 			return obj;
 		}
+	}
+	
+	private static boolean isPrimitiveType(Class type){
+		return type.equals(boolean.class) || type.equals(byte.class) ||
+				type.equals(char.class) || type.equals(double.class) ||
+				type.equals(float.class) || type.equals(int.class) ||
+				type.equals(long.class) || type.equals(short.class);
 	}
 	
 	private static Class getArrayType(Object array){

@@ -136,8 +136,16 @@ public class FloatProxy {
 	public static void oneDimeArrayCastedObjectPassingByMethod() throws Exception{
 		float[] array = new float[] {4321.1f, 453.2f, 6.31f};
 		FloatProxyNotInstrumented fpni = new FloatProxyNotInstrumented();
-		float[] a2 = (float[]) fpni.oneDimeArrayCastedObject(array);
+		float[] a2 = (float[]) fpni.oneDimeArrayCastedObjectFloat(array);
 		Assert.assertTrue(a2.length == 3);
+		
+		double[] darray = new double[] {4321.1, 453.2, 6.31};
+		double[] da2 = (double[]) fpni.oneDimeArrayCastedObjectDouble(darray);
+		Assert.assertTrue(da2.length == 3);
+		
+		char[] carray = new char[] {'A', 'd', 'h'};
+		char[] ca2 = (char[]) fpni.oneDimeArrayCastedObjectChar(carray);
+		Assert.assertTrue(ca2.length == 3);
 	}
 	
 	public static void multiDimeArrayCastedObjectPassingByMethod() throws Exception{
