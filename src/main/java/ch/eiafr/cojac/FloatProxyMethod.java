@@ -54,6 +54,14 @@ public class FloatProxyMethod {
 		if(returnType.equals(cojacType) == false){
 			convertRealToCojacType(returnType, mv);
 		}
+		
+		if(returnType.equals(Type.getType(Object.class))){
+			convertObjectToCojac(mv, returnType);
+		}
+		else if(returnType.getSort() == Type.ARRAY && returnType.getElementType().equals(Type.getType(Object.class))){
+			convertObjectToCojac(mv, returnType);
+		}
+		
     }
     
     public void nativeCall(MethodVisitor mv, int access, String owner, String name, String desc){
@@ -160,10 +168,10 @@ public class FloatProxyMethod {
                     convertCojacToRealType(typeConversions.get(i), newMv);
                 }
 				else if(inArgs[i].equals(Type.getType(Object.class))){
-					convertObject(newMv, inArgs[i]);
+					convertObjectToReal(newMv, inArgs[i]);
 				}
 				else if(inArgs[i].getSort() == Type.ARRAY && inArgs[i].getElementType().equals(Type.getType(Object.class))){
-					convertObjectArray(newMv, inArgs[i]);
+					convertObjectToReal(newMv, inArgs[i]);
 				}
 				convertPrimitiveToObject(newMv, type);
 				newMv.visitInsn(AASTORE);
@@ -335,16 +343,18 @@ public class FloatProxyMethod {
 		return null;
 	}
 	
-	private void convertObject(MethodVisitor mv, Type objType){
-		String objDesc = Type.getType(Object.class).getDescriptor();
-		mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "convertFromObject", "("+objDesc+")"+objDesc, false);
-	}
-	
-	private void convertObjectArray(MethodVisitor mv, Type objType){
+	private void convertObjectToReal(MethodVisitor mv, Type objType){
 		String objDesc = Type.getType(Object.class).getDescriptor();
 		mv.visitTypeInsn(CHECKCAST, Type.getType(Object.class).getInternalName());
-		mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "convertFromObjectArray", "("+objDesc+")"+objDesc, false);
+		mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "convertFromObjectToReal", "("+objDesc+")"+objDesc, false);
 		mv.visitTypeInsn(CHECKCAST, objType.getInternalName());
+	}
+	
+	private void convertObjectToCojac(MethodVisitor mv, Type objType){
+		String objDesc = Type.getType(Object.class).getDescriptor();
+		mv.visitTypeInsn(CHECKCAST, Type.getType(Object.class).getInternalName());
+		mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "convertFromObjectToCojac", "("+objDesc+")"+objDesc, false);
+		mv.visitTypeInsn(CHECKCAST, afterFloatReplacement(objType).getInternalName());
 	}
 	
 }

@@ -103,18 +103,8 @@ public class DoubleNumbers {
 		return (DoubleWrapper)obj;
 	}
 	
-	public static Object convertFromObject(Object obj){
-		if(obj instanceof FloatWrapper){
-			return FloatWrapper.toRealFloatWrapper((FloatWrapper)obj);
-		}
-		if(obj instanceof DoubleWrapper){
-			return DoubleWrapper.toRealDoubleWrapper((DoubleWrapper)obj);
-		}
-		return obj;
-	}
-	
-	public static Object convertFromObjectArray(Object obj){
-		if(obj instanceof Object[]){
+	public static Object convertFromObjectToReal(Object obj){
+		if(obj.getClass().isArray()){
 			Class type = getArrayType(obj);
 			if(type.equals(FloatWrapper.class)){
 				int dim = getArrayDimension(obj);
@@ -124,15 +114,42 @@ public class DoubleNumbers {
 				int dim = getArrayDimension(obj);
 				return DoubleNumbers.convertArrayToReal(obj, dim);
 			}
-			
 			Object array[] = (Object[]) obj;
-			for (int i = 0; i < array.length; i++) {
-				array[i] = convertFromObjectArray(array[i]);
-			}
+			for (int i = 0; i < array.length; i++) 
+				array[i] = convertFromObjectToReal(array[i]);
 			return (Object) array;
 		}
 		else{
-			return convertFromObject(obj);
+			if(obj instanceof FloatWrapper)
+				return FloatWrapper.toRealFloatWrapper((FloatWrapper)obj);
+			if(obj instanceof DoubleWrapper)
+				return DoubleWrapper.toRealDoubleWrapper((DoubleWrapper)obj);
+			return obj;
+		}
+	}
+	
+	public static Object convertFromObjectToCojac(Object obj){
+		if(obj.getClass().isArray()){
+			Class type = getArrayType(obj);
+			if(type.equals(float.class) || type.equals(Float.class)){
+				int dim = getArrayDimension(obj);
+				return FloatNumbers.convertArrayToCojac(obj, dim);
+			}
+			if(type.equals(double.class) || type.equals(Double.class)){
+				int dim = getArrayDimension(obj);
+				return DoubleNumbers.convertArrayToCojac(obj, dim);
+			}
+			Object array[] = (Object[]) obj;
+			for (int i = 0; i < array.length; i++) 
+				array[i] = convertFromObjectToCojac(array[i]);
+			return (Object) array;
+		}
+		else{
+			if(obj instanceof Float)
+				return new FloatWrapper((Float)obj);
+			if(obj instanceof Double)
+				return new DoubleWrapper((Double)obj);
+			return obj;
 		}
 	}
 	

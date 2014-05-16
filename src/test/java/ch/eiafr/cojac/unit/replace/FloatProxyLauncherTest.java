@@ -127,27 +127,26 @@ public class FloatProxyLauncherTest {
 	public void castedNumberReturningByMethod() throws Exception{
 		invokeMethod("castedNumberReturningByMethod");
 	}
-	
+*/	
 	@Test
 	public void castedObjectPassingByMethod() throws Exception{
 		invokeMethod("castedObjectPassingByMethod");
 	}
-	
+/*	
 	@Test
 	public void castedObjectReturningByMethod() throws Exception{
 		invokeMethod("castedObjectReturningByMethod");
 	}
-	
+*/	
 	@Test
 	public void oneDimeArrayCastedObjectPassingByMethod() throws Exception{
 		invokeMethod("oneDimeArrayCastedObjectPassingByMethod");
 	}
-	
+
 	@Test
-	public void oneDimeArrayCastedObjectReturningByMethod() throws Exception{
-		invokeMethod("oneDimeArrayCastedObjectReturningByMethod");
+	public void multiDimeArrayCastedObjectPassingByMethod() throws Exception{
+		invokeMethod("multiDimeArrayCastedObjectPassingByMethod");
 	}
-*/
 	private void invokeMethod(String methodName) throws Exception{
 		if (floatProxyTest==null) return;
         Method m = floatProxyTest.getMethod(methodName);

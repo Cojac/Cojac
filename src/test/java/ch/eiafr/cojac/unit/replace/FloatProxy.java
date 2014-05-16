@@ -85,18 +85,26 @@ public class FloatProxy {
 		assertEquals(d2, FloatProxyNotInstrumented.static_d2);
 	}
 	
-	public static void oneDimArrayPassingByMethod() throws Exception{ // TODO - double
+	public static void oneDimArrayPassingByMethod() throws Exception{
 		float array[] = new float[] {12.413f, 6.5f, 8.12f, 654.5f};
 		FloatProxyNotInstrumented fpni = new FloatProxyNotInstrumented();
 		float r[] = fpni.oneDimArrayPassing(array);
 		Assert.assertTrue(Arrays.equals(r, array));
+		
+		double darray[] = new double[] {12.413, 6.5, 8.12, 654.5};
+		double dr[] = fpni.oneDimArrayPassing(darray);
+		Assert.assertTrue(Arrays.equals(dr, darray));
 	}
 	
-	public static void multiDimArrayPassingByMethod() throws Exception{ // TODO - double
+	public static void multiDimArrayPassingByMethod() throws Exception{
 		float array[][] = new float[][] {{12.413f, 6.5f}, {54.212f, 53.123f}};
 		FloatProxyNotInstrumented fpni = new FloatProxyNotInstrumented();
 		float[][] r = fpni.multiDimArrayPassing(array);
 		Assert.assertTrue(Arrays.deepEquals(r, array));
+		
+		double darray[][] = new double[][] {{12.413, 6.5}, {54.212, 53.123}};
+		double[][] dr = fpni.multiDimArrayPassing(darray);
+		Assert.assertTrue(Arrays.deepEquals(dr, darray));
 	}
 	
 	public static void oneDimArrayField() throws Exception{
@@ -116,7 +124,9 @@ public class FloatProxy {
 	}
 	
 	public static void castedObjectPassingByMethod() throws Exception{
-		throw new UnsupportedOperationException("Not implemented yet.");
+		Float f1 = new Float(5243.132);
+		FloatProxyNotInstrumented fpni = new FloatProxyNotInstrumented();
+		Float f2 = (Float) fpni.castedObjectPassing(f1);
 	}
 	
 	public static void castedObjectReturningByMethod() throws Exception{
@@ -124,11 +134,17 @@ public class FloatProxy {
 	}
 	
 	public static void oneDimeArrayCastedObjectPassingByMethod() throws Exception{
-		throw new UnsupportedOperationException("Not implemented yet.");
+		float[] array = new float[] {4321.1f, 453.2f, 6.31f};
+		FloatProxyNotInstrumented fpni = new FloatProxyNotInstrumented();
+		float[] a2 = (float[]) fpni.oneDimeArrayCastedObject(array);
+		Assert.assertTrue(a2.length == 3);
 	}
 	
-	public static void oneDimeArrayCastedObjectReturningByMethod() throws Exception{
-		throw new UnsupportedOperationException("Not implemented yet.");
+	public static void multiDimeArrayCastedObjectPassingByMethod() throws Exception{
+		float[][] array = new float[][] {{4321.1f, 453.2f, 6.31f}, {432.2f, 12.1f}};
+		FloatProxyNotInstrumented fpni = new FloatProxyNotInstrumented();
+		float[][] a2 = (float[][]) fpni.multiDimeArrayCastedObject(array);
+		Assert.assertTrue(a2.length == 2 && a2[0].length == 3 && a2[1].length == 2);
 	}
 	
 }

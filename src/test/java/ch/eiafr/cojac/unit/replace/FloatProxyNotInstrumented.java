@@ -56,10 +56,37 @@ public class FloatProxyNotInstrumented {
 	public float[] oneDimArrayPassing(float[] array){
 		return array;
 	}
-
+	
+	public double[] oneDimArrayPassing(double[] array){
+		return array;
+	}
+	
 	public float[][] multiDimArrayPassing(float[][] array) {
 		return array;
 	}
 	
+	public double[][] multiDimArrayPassing(double[][] array) {
+		return array;
+	}
+	
+	
+	public Object castedObjectPassing(Object val){
+		Float f = (Float)val;
+		f += 432.1f;
+		return f;
+	}
+	
+	public Object oneDimeArrayCastedObject(Object val){
+		float[] f = (float[])val;
+		f[2] *= 0.789f;
+		return f;
+	}
+	
+	public Object multiDimeArrayCastedObject(Object val){
+		float[][] f = (float[][])val;
+		f[0][0] %= 0.231;
+		f[1][0] /= 2.5;
+		return f;
+	}
 	
 }
