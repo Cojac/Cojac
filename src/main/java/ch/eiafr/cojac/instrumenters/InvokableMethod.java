@@ -29,7 +29,6 @@ public final class InvokableMethod {
     public static final InvokableMethod FROM_FLOAT = new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", REPLACED_FROM_FLOAT, INVOKESTATIC);
     
     
-    public static final String COJAC_REPLACE_WRAPPER_TYPE = "COJAC_WRAPPER_TO_REPLACE";
     //TODO the wrapper could be given as a Cojac parameter
 
     //-----------------------------
@@ -63,10 +62,6 @@ public final class InvokableMethod {
     
     public void invoke(MethodVisitor mv) {
         mv.visitMethodInsn(opCode, classPath, method, signature, (opCode == INVOKEINTERFACE));
-    }
-    
-    public void invoke(MethodVisitor mv, String replacedClassPath, String replacedWrapper) {
-        mv.visitMethodInsn(opCode, replacedClassPath, method, signature.replaceAll(COJAC_REPLACE_WRAPPER_TYPE, replacedWrapper), (opCode == INVOKEINTERFACE));
     }
     
     // ---------------------------

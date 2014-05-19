@@ -27,7 +27,6 @@ import ch.eiafr.cojac.models.DoubleNumbers;
 import ch.eiafr.cojac.models.FloatNumbers;
 import ch.eiafr.cojac.reactions.IReaction;
 
-import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -195,8 +194,10 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
 		
 		// TODO handle GETSTATIC & handle std_lib and already loaded classes
 		if(opcode == GETFIELD){
+			String objDesc = Type.getType(Object.class).getDescriptor();
 			if(descAfter.equals(COJAC_DOUBLE_WRAPPER_TYPE_DESCR)){
-				mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "initialize", "("+COJAC_DOUBLE_WRAPPER_TYPE_DESCR+")"+COJAC_DOUBLE_WRAPPER_TYPE_DESCR, false);
+				mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "initialize", "("+objDesc+")"+objDesc, false);
+				mv.visitTypeInsn(CHECKCAST, COJAC_DOUBLE_WRAPPER_INTERNAL_NAME);
 			}
 			if(descAfter.equals(COJAC_FLOAT_WRAPPER_TYPE_DESCR)){
 				mv.visitMethodInsn(INVOKESTATIC, FN_NAME, "initialize", "("+COJAC_FLOAT_WRAPPER_TYPE_DESCR+")"+COJAC_FLOAT_WRAPPER_TYPE_DESCR, false);
@@ -227,7 +228,23 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
             mv.visitIntInsn(opcode, operand);
             return;
         }
-        
+		
+		if(opcode == NEWARRAY){
+			if(operand == Opcodes.T_FLOAT){
+				//mv.visitMethodInsn(INVOKESTATIC, FN_NAME, "newarray", "(I)["+COJAC_FLOAT_WRAPPER_TYPE_DESCR, false);
+				mv.visitMethodInsn(INVOKESTATIC, FN_NAME, "newarray", "(I)["+Type.getType(Object.class).getDescriptor(), false);
+				mv.visitTypeInsn(CHECKCAST, "["+COJAC_FLOAT_WRAPPER_TYPE_DESCR);
+				return;
+			}
+			if(operand == Opcodes.T_DOUBLE){
+				//mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "newarray", "(I)["+COJAC_DOUBLE_WRAPPER_TYPE_DESCR, false);
+				mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "newarray", "(I)["+Type.getType(Object.class).getDescriptor(), false);
+				mv.visitTypeInsn(CHECKCAST, "["+COJAC_DOUBLE_WRAPPER_TYPE_DESCR);
+				return;
+			}
+		}
+		mv.visitIntInsn(opcode, operand);
+        /*
         IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opcode);
         if (instrumenter != null && opcode == NEWARRAY && (operand == Opcodes.T_FLOAT || operand == Opcodes.T_DOUBLE)) { // instrument only if it's an array of floats
             stats.incrementCounterValue(opcode);
@@ -235,6 +252,7 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
         } else { // Delegate to parent
             mv.visitIntInsn(opcode, operand);
         }
+		*/
     }
     
     
@@ -275,12 +293,10 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
 		if(opcode == CHECKCAST && myType.equals(cojacType) == false){
 			if(stackTop().equals(Type.getType(Object.class).getInternalName())){
 				if(cojacType.equals(COJAC_FLOAT_WRAPPER_TYPE)){
-					 mv.visitMethodInsn(INVOKESTATIC, FN_NAME, "castFromObject", "("+Type.getType(Object.class).getDescriptor()+")"+COJAC_FLOAT_WRAPPER_TYPE_DESCR, false);
-					 return;
+					 mv.visitMethodInsn(INVOKESTATIC, FN_NAME, "castFromObject", "("+Type.getType(Object.class).getDescriptor()+")"+Type.getType(Object.class).getDescriptor(), false);
 				}
 				if(cojacType.equals(COJAC_DOUBLE_WRAPPER_TYPE)){
-					 mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "castFromObject", "("+Type.getType(Object.class).getDescriptor()+")"+COJAC_DOUBLE_WRAPPER_TYPE_DESCR, false);
-					 return;
+					 mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "castFromObject", "("+Type.getType(Object.class).getDescriptor()+")"+Type.getType(Object.class).getDescriptor(), false);
 				}
 			}
 		}

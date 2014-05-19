@@ -7,20 +7,26 @@
 package ch.eiafr.cojac.models;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 
 /**
  *
  * @author romain
  */
 public class FloatNumbers {
-	public static FloatWrapper[] newarray(int size){
-        FloatWrapper[] a = new FloatWrapper[size];
-        for (int i = 0; i < a.length; i++)
-            a[i] = new FloatWrapper(0);
+	
+	private static Class floatWrapper = FloatWrapper.class;
+    
+	public static Object[] newarray(int size) throws Exception{
+		Object[] a = (Object[]) Array.newInstance(floatWrapper, size);
+        for (int i = 0; i < a.length; i++) {
+            a[i] = floatWrapper.getConstructor(float.class).newInstance(0);
+        }
         return a;
     }
+
     
-    public static Object initializeMultiArray(Object array, int dimensions) {
+    public static Object initializeMultiArray(Object array, int dimensions) throws Exception {
         Object a[] = (Object[]) array;
         if(dimensions == 1)
             return newarray(a.length);
@@ -29,17 +35,19 @@ public class FloatNumbers {
         return array;
     }
     
-    public static FloatWrapper[] convertArray(float[] array){
-        FloatWrapper[] a = new FloatWrapper[array.length];
+	private static Object[] convertArray(float[] array) throws Exception{
+        Object[] a = (Object[]) Array.newInstance(floatWrapper, array.length);
         for (int i = 0; i < a.length; i++)
-            a[i] = new FloatWrapper(array[i]);
+            a[i] = floatWrapper.getConstructor(float.class).newInstance(array[i]);
         return a;
     }
-    
-    public static float[] convertArray(FloatWrapper[] array){
+	
+	private static float[] convertArray(Object[] array) throws Exception{
         float[] a = new float[array.length];
-        for (int i = 0; i < a.length; i++)
-            a[i] = FloatWrapper.toFloat(array[i]);
+        for (int i = 0; i < a.length; i++){
+			Method m = floatWrapper.getMethod("toFloat", new Class[] {floatWrapper});
+			a[i] = (float)m.invoke(floatWrapper, array[i]);
+		}
         return a;
     }
 	
@@ -53,11 +61,11 @@ public class FloatNumbers {
         return dummy.getClass();
     }
 
-    public static Object convertArrayToReal(Object array, int dimensions) {
+    public static Object convertArrayToReal(Object array, int dimensions) throws Exception {
         Object a;
 		Object[] input = (Object[])array;
         if(dimensions == 1){
-            a = convertArray((FloatWrapper[])input);
+            a = convertArray(input);
         }
         else{
             Class<?> compType = arrayClass(float.class, dimensions - 1);
@@ -70,14 +78,14 @@ public class FloatNumbers {
         return a;
     }
 	
-	public static Object convertArrayToCojac(Object array, int dimensions) {
+	public static Object convertArrayToCojac(Object array, int dimensions) throws Exception {
         Object a;
         if(dimensions == 1){
             a = convertArray((float[])array);
         }
         else{
 			Object[] input = (Object[])array;
-            Class<?> compType = arrayClass(FloatWrapper.class, dimensions - 1);
+            Class<?> compType = arrayClass(floatWrapper, dimensions - 1);
             a = Array.newInstance(compType, input.length);
             Object[] b = (Object[]) a; // All arrays or multi-arrays can be cast to Object[]
             for (int i = 0; i < b.length; i++) {
@@ -96,17 +104,17 @@ public class FloatNumbers {
             a[i] = convertArrayToReal(a[i], dimensions-1);
         return array;
     }
-*/
-	public static FloatWrapper initialize(FloatWrapper a){
+*/	
+	public static Object initialize(Object a) throws Exception{
 		if(a == null)
-			return new FloatWrapper(0);
+			return floatWrapper.getConstructor(float.class).newInstance(0);
 		return a;
 	}
 
-	public static FloatWrapper castFromObject(Object obj){
-		if(obj instanceof Float)
-			return new FloatWrapper((Float)obj);
-		return (FloatWrapper)obj;
+	public static Object castFromObject(Object obj) throws Exception{
+		if(obj instanceof Double)
+			return floatWrapper.getConstructor(float.class).newInstance((Double)obj);
+		return obj;
 	}
 	
 	

@@ -59,7 +59,6 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
                 FMUL, FADD, FDIV, FSUB, FREM, FNEG, 
                 FCMPG, FCMPL, 
                 IINC,
-                NEWARRAY,
                 // DOUBLES
                 DRETURN,
                 DCONST_0, DCONST_1,
@@ -99,8 +98,6 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
         invocations.put(F2I, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "f2i", REPLACED_F2I, INVOKESTATIC));
         invocations.put(F2L, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "f2l", REPLACED_F2L, INVOKESTATIC));
         invocations.put(F2D, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "f2d", REPLACED_F2D, INVOKESTATIC));
-        
-        invocations.put(NEWARRAY, new InvokableMethod(null, "newarray", REPLACED_NEWARRAY, INVOKESTATIC));
         
         conversions.put(FCONST_0, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", REPLACED_FROM_FLOAT, INVOKESTATIC));
         conversions.put(FCONST_1, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", REPLACED_FROM_FLOAT, INVOKESTATIC));
@@ -147,36 +144,6 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
     }
     
     @Override
-    public void instrument(MethodVisitor mv, int opCode, int operand, String classPath, Methods methods, IReaction r, LocalVariablesSorter src) {
-        InvokableMethod replacementMethod = invocations.get(opCode);
-        InvokableMethod conversionMethod = conversions.get(opCode);
-        String replacedWrapper = null;
-        String replacedClassPath = null;
-        switch(operand){
-            case T_DOUBLE:
-                replacedWrapper = COJAC_DOUBLE_WRAPPER_TYPE_DESCR;
-                replacedClassPath = DN_NAME;
-                break;
-            case T_FLOAT:
-                replacedWrapper = COJAC_FLOAT_WRAPPER_TYPE_DESCR;
-                replacedClassPath = FN_NAME;
-                break;
-            default: break;
-        }
-        if (replacementMethod != null) {
-            replacementMethod.invoke(mv, replacedClassPath, replacedWrapper);
-        } else if (conversionMethod != null) {
-            mv.visitInsn(opCode);
-            conversionMethod.invoke(mv, replacedClassPath, replacedWrapper);
-        } else if (opCode==FRETURN || opCode==DRETURN) {
-            //stats.incrementCounterValue(arg);
-            mv.visitInsn(ARETURN);
-        } else {
-            mv.visitInsn(opCode);
-        }
-    }
-
-    @Override
     public boolean wantsToInstrument(int opcode) {
         return replaceFloatsOpcodes.contains(opcode);
     }
@@ -195,9 +162,6 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
     public static final String REPLACED_F2L          = "("+RFL+")J";
     public static final String REPLACED_F2D          = "("+RFL+")"+RDL;
     public static final String REPLACED_FROM_FLOAT   = "(F)"+RFL;
-    
-    public static final String REPLACED_NEWARRAY          = "(I)["+COJAC_REPLACE_WRAPPER_TYPE;
-    
     
     public static final String REPLACED_DOUBLE_BINARY= "("+RDL+RDL+")"+RDL;
     public static final String REPLACED_DOUBLE_UNARY  = "("+RDL+")"+RDL;
