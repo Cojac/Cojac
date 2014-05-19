@@ -6,12 +6,9 @@
 
 package ch.eiafr.cojac;
 
-import static ch.eiafr.cojac.FloatProxyMethod_old.convertCojacToRealType;
-import static ch.eiafr.cojac.FloatProxyMethod_old.convertRealToCojacType;
 import static ch.eiafr.cojac.FloatReplacerMethodVisitor.DN_NAME;
 import static ch.eiafr.cojac.FloatReplacerMethodVisitor.FN_NAME;
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 import org.objectweb.asm.MethodVisitor;
 import static org.objectweb.asm.Opcodes.*;
