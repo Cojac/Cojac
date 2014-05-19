@@ -18,6 +18,7 @@
 
 package ch.eiafr.cojac;
 
+import ch.eiafr.cojac.models.FloatReplacerClasses;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
@@ -38,6 +39,8 @@ import org.objectweb.asm.ClassWriter;
 
 import ch.eiafr.cojac.instrumenters.ClassLoaderInstrumenterFactory;
 import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenterFactory;
+import ch.eiafr.cojac.models.DoubleWrapper;
+import ch.eiafr.cojac.models.FloatWrapper;
 import ch.eiafr.cojac.models.Reactions;
 import ch.eiafr.cojac.reactions.ClassLoaderReaction;
 import ch.eiafr.cojac.reactions.IReaction;
@@ -161,8 +164,31 @@ public final class CojacReferences {
             this.reaction = new ClassLoaderReaction(args);
             this.sbBypassList = new StringBuilder(STANDARD_PACKAGES);
 
-            this.factory = new ClassLoaderInstrumenterFactory(args, stats);
+            
+			
+			if(args.isSpecified(Arg.REPLACE_FLOATS)){ // Only for proxy tests
+				sbBypassList.append(BYPASS_SEPARATOR);
+                sbBypassList.append("ch.eiafr.cojac.unit.replace.FloatProxyNotInstrumented");
+			
+				if(args.isSpecified(Arg.FLOAT_WRAPPER) && args.getValue(Arg.FLOAT_WRAPPER).length()>0){
+					String floatWrapper = args.getValue(Arg.FLOAT_WRAPPER);
+					FloatReplacerClasses.setFloatWrapper(floatWrapper);
+				}
+				else{
+					FloatReplacerClasses.setFloatWrapper(FloatWrapper.class.getCanonicalName());
+				}
 
+				if(args.isSpecified(Arg.DOUBLE_WRAPPER) && args.getValue(Arg.DOUBLE_WRAPPER).length()>0){
+					String doubleWrapper = args.getValue(Arg.DOUBLE_WRAPPER);
+					FloatReplacerClasses.setDoubleWrapper(doubleWrapper);
+				}
+				else{
+					FloatReplacerClasses.setDoubleWrapper(DoubleWrapper.class.getCanonicalName());
+				}
+			}
+			
+			this.factory = new ClassLoaderInstrumenterFactory(args, stats); // Must be instantiate after the set of the Wrappers
+			
             if (args.isSpecified(Arg.FILTER)) {
                 ReflectionUtils.setStaticFieldValue(loader, "ch.eiafr.cojac.models.Reactions", "filtering", true);
             }
@@ -186,11 +212,8 @@ public final class CojacReferences {
                 sbBypassList.append(args.getValue(Arg.BYPASS));
             }
 			
-			if(args.isSpecified(Arg.REPLACE_FLOATS)){ // Only for proxy tests
-				sbBypassList.append(BYPASS_SEPARATOR);
-                sbBypassList.append("ch.eiafr.cojac.unit.replace.FloatProxyNotInstrumented");
-			}
-
+			
+			
             bypassList = splitter.split(sbBypassList.toString());
 
             if (args.isSpecified(Arg.RUNTIME_STATS)) {

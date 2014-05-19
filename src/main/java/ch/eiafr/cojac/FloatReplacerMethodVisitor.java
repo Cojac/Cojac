@@ -18,24 +18,23 @@
 
 package ch.eiafr.cojac;
 
+import static ch.eiafr.cojac.models.FloatReplacerClasses.*;
 import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenter;
 import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenterFactory;
-import ch.eiafr.cojac.instrumenters.InvokableMethod;
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
 import ch.eiafr.cojac.instrumenters.ReplaceFloatsMethods;
 import ch.eiafr.cojac.models.DoubleNumbers;
 import ch.eiafr.cojac.models.FloatNumbers;
 import ch.eiafr.cojac.reactions.IReaction;
-
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.LocalVariablesSorter;
 
 
 import static org.objectweb.asm.Opcodes.*;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AnalyzerAdapter;
+import org.objectweb.asm.commons.LocalVariablesSorter;
 
 
 final class FloatReplacerMethodVisitor extends MethodVisitor {
@@ -214,11 +213,11 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
         }
         if (cst instanceof Float) {
             stats.incrementCounterValue(Opcodes.LDC);
-            InvokableMethod.FROM_FLOAT.invoke(mv);
+			mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", "(F)"+COJAC_FLOAT_WRAPPER_TYPE_DESCR, false);
         }
         if (cst instanceof Double) {
             stats.incrementCounterValue(Opcodes.LDC);
-            InvokableMethod.FROM_DOUBLE.invoke(mv);
+			mv.visitMethodInsn(INVOKESTATIC, COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "fromDouble", "(D)"+COJAC_DOUBLE_WRAPPER_TYPE_DESCR, false);
         }
     }
     

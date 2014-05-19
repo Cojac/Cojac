@@ -36,8 +36,8 @@ import java.util.Map;
 
 public final class Args {
     private final Options options = Arg.createOptions();
-    private final Map<Arg, ArgValue> values = new EnumMap<Arg, ArgValue>(Arg.class);
-    private final List<String> files = new ArrayList<String>(5);
+    private final Map<Arg, ArgValue> values = new EnumMap<>(Arg.class);
+    private final List<String> files = new ArrayList<>(5);
     private String[] appArgs;
 
     static final String DEFAULT_LOG_FILE_NAME = "COJAC_Report.log";

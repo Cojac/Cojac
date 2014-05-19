@@ -18,23 +18,17 @@
 
 package ch.eiafr.cojac;
 
+import static ch.eiafr.cojac.models.FloatReplacerClasses.*;
 import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenterFactory;
+import static ch.eiafr.cojac.instrumenters.InvokableMethod.replaceFloatMethodDescription;
+import ch.eiafr.cojac.instrumenters.ReplaceFloatsMethods;
 import ch.eiafr.cojac.methods.CojacMethodAdder;
 import ch.eiafr.cojac.reactions.IReaction;
-
-
-//import org.objectweb.asm.AnnotationVisitor;
-//import org.objectweb.asm.Attribute;
+import java.util.ArrayList;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-
-import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
-import ch.eiafr.cojac.instrumenters.ReplaceFloatsMethods;
-import java.util.ArrayList;
-import static org.objectweb.asm.Opcodes.INVOKESTATIC;
-import static org.objectweb.asm.Opcodes.IRETURN;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AnalyzerAdapter;
 import org.objectweb.asm.commons.LocalVariablesSorter;

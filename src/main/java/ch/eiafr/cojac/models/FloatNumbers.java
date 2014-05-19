@@ -6,6 +6,7 @@
 
 package ch.eiafr.cojac.models;
 
+import static ch.eiafr.cojac.models.FloatReplacerClasses.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 
@@ -15,12 +16,10 @@ import java.lang.reflect.Method;
  */
 public class FloatNumbers {
 	
-	private static Class floatWrapper = FloatWrapper.class;
-    
 	public static Object[] newarray(int size) throws Exception{
-		Object[] a = (Object[]) Array.newInstance(floatWrapper, size);
+		Object[] a = (Object[]) Array.newInstance(COJAC_FLOAT_WRAPPER_CLASS, size);
         for (int i = 0; i < a.length; i++) {
-            a[i] = floatWrapper.getConstructor(float.class).newInstance(0);
+            a[i] = COJAC_FLOAT_WRAPPER_CLASS.getConstructor(float.class).newInstance(0);
         }
         return a;
     }
@@ -36,17 +35,17 @@ public class FloatNumbers {
     }
     
 	private static Object[] convertArray(float[] array) throws Exception{
-        Object[] a = (Object[]) Array.newInstance(floatWrapper, array.length);
+        Object[] a = (Object[]) Array.newInstance(COJAC_FLOAT_WRAPPER_CLASS, array.length);
         for (int i = 0; i < a.length; i++)
-            a[i] = floatWrapper.getConstructor(float.class).newInstance(array[i]);
+            a[i] = COJAC_FLOAT_WRAPPER_CLASS.getConstructor(float.class).newInstance(array[i]);
         return a;
     }
 	
 	private static float[] convertArray(Object[] array) throws Exception{
         float[] a = new float[array.length];
         for (int i = 0; i < a.length; i++){
-			Method m = floatWrapper.getMethod("toFloat", new Class[] {floatWrapper});
-			a[i] = (float)m.invoke(floatWrapper, array[i]);
+			Method m = COJAC_FLOAT_WRAPPER_CLASS.getMethod("toFloat", new Class[] {COJAC_FLOAT_WRAPPER_CLASS});
+			a[i] = (float)m.invoke(COJAC_FLOAT_WRAPPER_CLASS, array[i]);
 		}
         return a;
     }
@@ -85,7 +84,7 @@ public class FloatNumbers {
         }
         else{
 			Object[] input = (Object[])array;
-            Class<?> compType = arrayClass(floatWrapper, dimensions - 1);
+            Class<?> compType = arrayClass(COJAC_FLOAT_WRAPPER_CLASS, dimensions - 1);
             a = Array.newInstance(compType, input.length);
             Object[] b = (Object[]) a; // All arrays or multi-arrays can be cast to Object[]
             for (int i = 0; i < b.length; i++) {
@@ -107,13 +106,13 @@ public class FloatNumbers {
 */	
 	public static Object initialize(Object a) throws Exception{
 		if(a == null)
-			return floatWrapper.getConstructor(float.class).newInstance(0);
+			return COJAC_FLOAT_WRAPPER_CLASS.getConstructor(float.class).newInstance(0);
 		return a;
 	}
 
 	public static Object castFromObject(Object obj) throws Exception{
 		if(obj instanceof Double)
-			return floatWrapper.getConstructor(float.class).newInstance((Double)obj);
+			return COJAC_FLOAT_WRAPPER_CLASS.getConstructor(float.class).newInstance((Double)obj);
 		return obj;
 	}
 	

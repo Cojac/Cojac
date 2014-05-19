@@ -19,23 +19,21 @@
 package ch.eiafr.cojac.instrumenters;
 
 import ch.eiafr.cojac.Args;
+import static ch.eiafr.cojac.models.FloatReplacerClasses.*;
 import ch.eiafr.cojac.InstrumentationStats;
 import ch.eiafr.cojac.Methods;
-import ch.eiafr.cojac.reactions.IReaction;
-import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
 import ch.eiafr.cojac.models.DoubleNumbers;
 import ch.eiafr.cojac.models.FloatNumbers;
-
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.commons.LocalVariablesSorter;
-
+import ch.eiafr.cojac.reactions.IReaction;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.*;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.LocalVariablesSorter;
 
 // TODO: instrument float arrays instructions...
 
@@ -45,8 +43,8 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
 	public static final String FN_NAME = Type.getType(FloatNumbers.class).getInternalName();
 	public static final String DN_NAME = Type.getType(DoubleNumbers.class).getInternalName();
 
-    private final Map<Integer, InvokableMethod> invocations = new HashMap<Integer, InvokableMethod>(50);
-    private final Map<Integer, InvokableMethod> conversions = new HashMap<Integer, InvokableMethod>(50);
+    private final Map<Integer, InvokableMethod> invocations = new HashMap<>(50);
+    private final Map<Integer, InvokableMethod> conversions = new HashMap<>(50);
     
     private static final Set<Integer> replaceFloatsOpcodes = new HashSet<>();
     static {
@@ -76,6 +74,7 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
 
     ReplaceFloatsInstrumenter(Args args, InstrumentationStats stats) {
         super();
+		fillDescriptors();
         this.stats = stats;
         fillMethods();
     }
@@ -149,26 +148,50 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
     }
 
     //==========================================
-    private static final String RFL=COJAC_FLOAT_WRAPPER_TYPE_DESCR;//Type.getType(FloatWrapper.class).getDescriptor();
-    private static final String RDL=COJAC_DOUBLE_WRAPPER_TYPE_DESCR;
-    
-    public static final String REPLACED_FLOAT_BINARY = "("+RFL+RFL+")"+RFL;
-    public static final String REPLACED_FLOAT_UNARY  = "("+RFL+")"+RFL;
-    public static final String REPLACED_FLOAT_CMP    = "("+RFL+RFL+")I";
-    public static final String REPLACED_I2F          = "(I)"+RFL;
-    public static final String REPLACED_L2F          = "(J)"+RFL;
-    public static final String REPLACED_D2F          = "("+RDL+")"+RFL;
-    public static final String REPLACED_F2I          = "("+RFL+")I";
-    public static final String REPLACED_F2L          = "("+RFL+")J";
-    public static final String REPLACED_F2D          = "("+RFL+")"+RDL;
-    public static final String REPLACED_FROM_FLOAT   = "(F)"+RFL;
-    
-    public static final String REPLACED_DOUBLE_BINARY= "("+RDL+RDL+")"+RDL;
-    public static final String REPLACED_DOUBLE_UNARY  = "("+RDL+")"+RDL;
-    public static final String REPLACED_DOUBLE_CMP    = "("+RDL+RDL+")I";
-    public static final String REPLACED_I2D          = "(I)"+RDL;
-    public static final String REPLACED_L2D          = "(J)"+RDL;
-    public static final String REPLACED_D2I          = "("+RDL+")I";
-    public static final String REPLACED_D2L          = "("+RDL+")J";
-    
+    private static String RFL;
+    private static String RDL;
+    private static String REPLACED_FLOAT_BINARY;
+    private static String REPLACED_FLOAT_UNARY;
+    private static String REPLACED_FLOAT_CMP;
+    private static String REPLACED_I2F;
+    private static String REPLACED_L2F;
+    private static String REPLACED_D2F;
+    private static String REPLACED_F2I;
+    private static String REPLACED_F2L;
+    private static String REPLACED_F2D;
+    private static String REPLACED_FROM_FLOAT;
+	
+    private static String REPLACED_DOUBLE_BINARY;
+    private static String REPLACED_DOUBLE_UNARY;
+    private static String REPLACED_DOUBLE_CMP;
+    private static String REPLACED_I2D;
+    private static String REPLACED_L2D;
+    private static String REPLACED_D2I;
+    private static String REPLACED_D2L;
+	private static String REPLACED_FROM_DOUBLE;
+	
+	public void fillDescriptors(){
+		RFL=COJAC_FLOAT_WRAPPER_TYPE_DESCR;
+		RDL=COJAC_DOUBLE_WRAPPER_TYPE_DESCR;
+		REPLACED_FLOAT_BINARY = "("+RFL+RFL+")"+RFL;
+		REPLACED_FLOAT_UNARY  = "("+RFL+")"+RFL;
+		REPLACED_FLOAT_CMP    = "("+RFL+RFL+")I";
+		REPLACED_I2F          = "(I)"+RFL;
+		REPLACED_L2F          = "(J)"+RFL;
+		REPLACED_D2F          = "("+RDL+")"+RFL;
+		REPLACED_F2I          = "("+RFL+")I";
+		REPLACED_F2L          = "("+RFL+")J";
+		REPLACED_F2D          = "("+RFL+")"+RDL;
+		REPLACED_FROM_FLOAT   = "(F)"+RFL;
+
+		REPLACED_DOUBLE_BINARY= "("+RDL+RDL+")"+RDL;
+		REPLACED_DOUBLE_UNARY  = "("+RDL+")"+RDL;
+		REPLACED_DOUBLE_CMP    = "("+RDL+RDL+")I";
+		REPLACED_I2D          = "(I)"+RDL;
+		REPLACED_L2D          = "(J)"+RDL;
+		REPLACED_D2I          = "("+RDL+")I";
+		REPLACED_D2L          = "("+RDL+")J";
+		REPLACED_FROM_DOUBLE  = "(D)"+RDL;
+	}
+	
 }

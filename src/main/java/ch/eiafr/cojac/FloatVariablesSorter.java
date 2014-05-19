@@ -6,12 +6,8 @@
 
 package ch.eiafr.cojac;
 
+import static ch.eiafr.cojac.models.FloatReplacerClasses.*;
 import static ch.eiafr.cojac.FloatReplacerMethodVisitor.DONT_INSTRUMENT;
-import static ch.eiafr.cojac.instrumenters.InvokableMethod.COJAC_DOUBLE_WRAPPER_INTERNAL_NAME;
-import static ch.eiafr.cojac.instrumenters.InvokableMethod.COJAC_DOUBLE_WRAPPER_TYPE;
-import static ch.eiafr.cojac.instrumenters.InvokableMethod.COJAC_DOUBLE_WRAPPER_TYPE_DESCR;
-import static ch.eiafr.cojac.instrumenters.InvokableMethod.COJAC_FLOAT_WRAPPER_INTERNAL_NAME;
-import static ch.eiafr.cojac.instrumenters.InvokableMethod.COJAC_FLOAT_WRAPPER_TYPE_DESCR;
 import java.util.ArrayList;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;

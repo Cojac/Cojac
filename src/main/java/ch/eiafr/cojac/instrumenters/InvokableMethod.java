@@ -1,37 +1,13 @@
 package ch.eiafr.cojac.instrumenters;
 
-import static org.objectweb.asm.Opcodes.INVOKESTATIC;
-
+import static ch.eiafr.cojac.models.FloatReplacerClasses.*;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Type;
-
-// TODO - Take user implementation of wrapper with an option of the agent
-//import com.monnard.utils.FloatWrapper;
-//import com.monnard.utils.DoubleWrapper;
-import ch.eiafr.cojac.models.FloatWrapper;
-import ch.eiafr.cojac.models.DoubleWrapper;
-import org.objectweb.asm.Opcodes;
 import static org.objectweb.asm.Opcodes.INVOKEINTERFACE;
+import static org.objectweb.asm.Opcodes.INVOKESTATIC;
+import org.objectweb.asm.Type;
 
 
 public final class InvokableMethod {
-
-    public static final String COJAC_DOUBLE_WRAPPER_INTERNAL_NAME = Type.getInternalName(DoubleWrapper.class);
-    public static final Type   COJAC_DOUBLE_WRAPPER_TYPE = Type.getType(DoubleWrapper.class);
-    public static final String COJAC_DOUBLE_WRAPPER_TYPE_DESCR = COJAC_DOUBLE_WRAPPER_TYPE.getDescriptor();
-    public static final String REPLACED_FROM_DOUBLE   = "(D)"+COJAC_DOUBLE_WRAPPER_TYPE_DESCR;
-    public static final InvokableMethod FROM_DOUBLE = new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "fromDouble", REPLACED_FROM_DOUBLE, INVOKESTATIC);
-    
-    public static final String COJAC_FLOAT_WRAPPER_INTERNAL_NAME = Type.getInternalName(FloatWrapper.class);
-    public static final Type   COJAC_FLOAT_WRAPPER_TYPE = Type.getType(FloatWrapper.class);
-    public static final String COJAC_FLOAT_WRAPPER_TYPE_DESCR = COJAC_FLOAT_WRAPPER_TYPE.getDescriptor();
-    public static final String REPLACED_FROM_FLOAT   = "(F)"+COJAC_FLOAT_WRAPPER_TYPE_DESCR;
-    public static final InvokableMethod FROM_FLOAT = new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", REPLACED_FROM_FLOAT, INVOKESTATIC);
-    
-    
-    //TODO the wrapper could be given as a Cojac parameter
-
-    //-----------------------------
     
     final String classPath;
     final String method;
@@ -60,6 +36,7 @@ public final class InvokableMethod {
         mv.visitMethodInsn(INVOKESTATIC, classPath, method, signature, false);
     }
     
+	// TODO - is this needed?
     public void invoke(MethodVisitor mv) {
         mv.visitMethodInsn(opCode, classPath, method, signature, (opCode == INVOKEINTERFACE));
     }
@@ -102,7 +79,5 @@ public final class InvokableMethod {
     public static String afterFloatReplacement(String typeDescr) {
         return afterFloatReplacement(Type.getType(typeDescr)).getDescriptor();
     }
-
-
     
 }

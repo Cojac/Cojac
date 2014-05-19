@@ -8,12 +8,13 @@ package ch.eiafr.cojac.instrumenters;
 
 import ch.eiafr.cojac.CojacReferences;
 import ch.eiafr.cojac.FloatProxyMethod;
-import java.util.HashMap;
-import java.util.Map;
-import org.objectweb.asm.MethodVisitor;
+import static ch.eiafr.cojac.models.FloatReplacerClasses.*;
 
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import org.objectweb.asm.MethodVisitor;
 import static org.objectweb.asm.Opcodes.*;
 import org.objectweb.asm.Type;
 
@@ -39,10 +40,10 @@ public class ReplaceFloatsMethods {
     private static final String MATH_NAME = Type.getType(Math.class).getInternalName();
     private static final String MATH_DESCR = Type.getType(Math.class).getDescriptor();
 
-    private static final String CFW_N=COJAC_FLOAT_WRAPPER_INTERNAL_NAME;
-    private static final String CFW=COJAC_FLOAT_WRAPPER_TYPE_DESCR;
-    private static final String CDW_N=COJAC_DOUBLE_WRAPPER_INTERNAL_NAME;
-    private static final String CDW=COJAC_DOUBLE_WRAPPER_TYPE_DESCR;
+    private static String CFW_N;
+    private static String CFW;
+    private static String CDW_N;
+    private static String CDW;
     
     private final ArrayList<MethodSignature> addedMethods = new ArrayList<>();
     private final FloatProxyMethod fpm;
@@ -52,6 +53,10 @@ public class ReplaceFloatsMethods {
 	private static final String COJAC_MAGIC_CALL_FLOAT_PREFIX = "COJAC_MAGIC_FLOAT_";
     
     public ReplaceFloatsMethods(FloatProxyMethod fpm, String classPath, CojacReferences references) {
+		CFW_N = COJAC_FLOAT_WRAPPER_INTERNAL_NAME;
+		CFW = COJAC_FLOAT_WRAPPER_TYPE_DESCR;
+		CDW_N = COJAC_DOUBLE_WRAPPER_INTERNAL_NAME;
+		CDW = COJAC_DOUBLE_WRAPPER_TYPE_DESCR;
         this.fpm = fpm;
         this.classPath = classPath;
 		this.references = references;
@@ -64,7 +69,7 @@ public class ReplaceFloatsMethods {
         suppressions.put(new MethodSignature(FL_NAME, "valueOf", "(F)"+FL_DESCR), CFW_N); // delete if the value is already a FloatWrapper
         suppressions.put(new MethodSignature(FL_NAME, "floatValue", "()F"), null); // delete in every case (keep FloatWrapper)
         
-        invocations.put(new MethodSignature(FL_NAME, "valueOf", "(F)"+FL_DESCR), InvokableMethod.FROM_FLOAT);
+        invocations.put(new MethodSignature(FL_NAME, "valueOf", "(F)"+FL_DESCR), new InvokableMethod(CFW_N, "fromFloat", "(F)"+CFW, INVOKESTATIC));
         
         invocations.put(new MethodSignature(FL_NAME, "<init>", "(F)V"), new InvokableMethod(CFW_N, "<init>", "("+CFW+")V", INVOKESPECIAL));
         invocations.put(new MethodSignature(FL_NAME, "<init>", "(Ljava/lang/String;)V"), new InvokableMethod(CFW_N, "<init>", "(Ljava/lang/String;)V", INVOKESPECIAL));
@@ -84,7 +89,7 @@ public class ReplaceFloatsMethods {
         suppressions.put(new MethodSignature(DL_NAME, "valueOf", "(D)"+DL_DESCR), CDW_N); // delete if the value is already a DoubleWrapper
         suppressions.put(new MethodSignature(DL_NAME, "doubleValue", "()D"), null); // delete in every case (keep DoubleWrapper)
         
-        invocations.put(new MethodSignature(DL_NAME, "valueOf", "(D)"+DL_DESCR), InvokableMethod.FROM_DOUBLE);
+        invocations.put(new MethodSignature(DL_NAME, "valueOf", "(D)"+DL_DESCR), new InvokableMethod(CDW_N, "fromDouble", "(D)"+CDW, INVOKESTATIC));
 
         invocations.put(new MethodSignature(DL_NAME, "<init>", "(D)V"), new InvokableMethod(CDW_N, "<init>", "("+CDW+")V", INVOKESPECIAL));
         invocations.put(new MethodSignature(DL_NAME, "<init>", "(Ljava/lang/String;)V"), new InvokableMethod(CDW_N, "<init>", "(Ljava/lang/String;)V", INVOKESPECIAL));

@@ -24,6 +24,8 @@ import org.objectweb.asm.Opcodes;
 
 public enum Arg {
     REPLACE_FLOATS("R"),
+	FLOAT_WRAPPER("FW"),
+	DOUBLE_WRAPPER("DW"),
     HELP("h"),
     ALL("a"),
     PRINT("c"),
@@ -141,7 +143,13 @@ public enum Arg {
         Options options = new Options();
 
         options.addOption(Arg.REPLACE_FLOATS.shortOpt(),
-                "replacefloats", false, "Replaces floats by CojacFloat objects ");
+            "replacefloats", false, "Replaces floats by CojacFloat objects ");
+		options.addOption(Arg.FLOAT_WRAPPER.shortOpt(),
+            "floatwrapper", true, "Select the FloatWrapper wanted (Must be in COJAC or in classpath)" +
+            "Example: -FW ch.eiafr.cojac.models.FloatWrapper use the class as floats replacement object");
+		options.addOption(Arg.DOUBLE_WRAPPER.shortOpt(),
+            "doublewrapper", true, "Select the DoubleWrapper wanted (Must be in COJAC or in classpath)" +
+            "Example: -DW ch.eiafr.cojac.models.DoubleWrapper use the class as doubles replacement object");
         options.addOption(Arg.NONE.shortOpt(),
             "none", false, "Don't instrument any instruction");
         options.addOption(Arg.BYPASS.shortOpt(),

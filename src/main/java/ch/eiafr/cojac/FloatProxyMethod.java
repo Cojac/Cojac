@@ -6,6 +6,7 @@
 
 package ch.eiafr.cojac;
 
+import static ch.eiafr.cojac.models.FloatReplacerClasses.*;
 import static ch.eiafr.cojac.FloatReplacerMethodVisitor.DN_NAME;
 import static ch.eiafr.cojac.FloatReplacerMethodVisitor.FN_NAME;
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
@@ -20,11 +21,6 @@ import org.objectweb.asm.Type;
  */
 public class FloatProxyMethod {
     private final CojacClassVisitor ccv;
-    
-    private static final String CFW_N=COJAC_FLOAT_WRAPPER_INTERNAL_NAME;
-    private static final String CFW=COJAC_FLOAT_WRAPPER_TYPE_DESCR;
-    private static final String CDW_N=COJAC_DOUBLE_WRAPPER_INTERNAL_NAME;
-    private static final String CDW=COJAC_DOUBLE_WRAPPER_TYPE_DESCR;
     
     private static final String FL_NAME = Type.getType(Float.class).getInternalName();
     private static final String FL_DESCR = Type.getType(Float.class).getDescriptor();
@@ -322,16 +318,16 @@ public class FloatProxyMethod {
     
     public static void convertRealToCojacType(Type realType, MethodVisitor mv){
         if(realType.equals(Type.FLOAT_TYPE)){
-            mv.visitMethodInsn(INVOKESTATIC, CFW_N, "fromFloat", "(F)"+CFW, false);
+            mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", "(F)"+COJAC_FLOAT_WRAPPER_TYPE_DESCR, false);
         }
         else if(realType.equals(Type.getType(Float.class))){
-            mv.visitMethodInsn(INVOKESTATIC, CFW_N, "fromFloat", "("+Type.getType(Float.class).getDescriptor()+")"+CFW, false);
+            mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", "("+Type.getType(Float.class).getDescriptor()+")"+COJAC_FLOAT_WRAPPER_TYPE_DESCR, false);
         }
         else if(realType.equals(Type.DOUBLE_TYPE)){
-            mv.visitMethodInsn(INVOKESTATIC, CDW_N, "fromDouble", "(D)"+CDW, false);
+            mv.visitMethodInsn(INVOKESTATIC, COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "fromDouble", "(D)"+COJAC_DOUBLE_WRAPPER_TYPE_DESCR, false);
         }
         else if(realType.equals(Type.getType(Double.class))){
-            mv.visitMethodInsn(INVOKESTATIC, CDW_N, "fromDouble", "("+Type.getType(Double.class).getDescriptor()+")"+CDW, false);
+            mv.visitMethodInsn(INVOKESTATIC, COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "fromDouble", "("+Type.getType(Double.class).getDescriptor()+")"+COJAC_DOUBLE_WRAPPER_TYPE_DESCR, false);
         }
         else if(realType.getSort() == Type.ARRAY){
             if(realType.getElementType().equals(Type.FLOAT_TYPE) || realType.getElementType().equals(Type.DOUBLE_TYPE)){ // TODO better code
@@ -351,16 +347,16 @@ public class FloatProxyMethod {
     
     public static void convertCojacToRealType(Type realType, MethodVisitor mv){
         if(realType.equals(Type.FLOAT_TYPE)){
-            mv.visitMethodInsn(INVOKESTATIC, CFW_N, "toFloat", "("+CFW+")F", false);
+            mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "toFloat", "("+COJAC_FLOAT_WRAPPER_TYPE_DESCR+")F", false);
         }
         else if(realType.equals(Type.getType(Float.class))){
-            mv.visitMethodInsn(INVOKESTATIC, CFW_N, "toRealFloatWrapper", "("+CFW+")"+FL_DESCR, false);
+            mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "toRealFloatWrapper", "("+COJAC_FLOAT_WRAPPER_TYPE_DESCR+")"+FL_DESCR, false);
         }
         else if(realType.equals(Type.DOUBLE_TYPE)){
-            mv.visitMethodInsn(INVOKESTATIC, CDW_N, "toDouble", "("+CDW+")D", false);
+            mv.visitMethodInsn(INVOKESTATIC, COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "toDouble", "("+COJAC_DOUBLE_WRAPPER_TYPE_DESCR+")D", false);
         }
         else if(realType.equals(Type.getType(Double.class))){
-            mv.visitMethodInsn(INVOKESTATIC, CDW_N, "toRealDoubleWrapper", "("+CDW+")"+DL_DESCR, false);
+            mv.visitMethodInsn(INVOKESTATIC, COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "toRealDoubleWrapper", "("+COJAC_DOUBLE_WRAPPER_TYPE_DESCR+")"+DL_DESCR, false);
         }
         else if(realType.getSort() == Type.ARRAY){
 			if(realType.getElementType().equals(Type.FLOAT_TYPE) || realType.getElementType().equals(Type.DOUBLE_TYPE)){
