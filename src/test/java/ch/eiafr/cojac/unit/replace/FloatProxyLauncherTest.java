@@ -147,6 +147,12 @@ public class FloatProxyLauncherTest {
 	public void multiDimeArrayCastedObjectPassingByMethod() throws Exception{
 		invokeMethod("multiDimeArrayCastedObjectPassingByMethod");
 	}
+	
+	@Test
+	public void arrayModifiedInMethodWithReference() throws Exception{
+		invokeMethod("arrayModifiedInMethodWithReference");
+	}
+	
 	private void invokeMethod(String methodName) throws Exception{
 		if (floatProxyTest==null) return;
         Method m = floatProxyTest.getMethod(methodName);

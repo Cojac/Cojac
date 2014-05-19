@@ -18,8 +18,6 @@
 
 package ch.eiafr.cojac.models;
 
-import java.lang.reflect.Array;
-
 
 public class DoubleWrapper extends NumberWrapper implements Comparable<DoubleWrapper>{
     private final double val;

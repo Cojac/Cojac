@@ -185,4 +185,61 @@ public class DoubleNumbers {
 		return count;
 	}
 	
+	public static void mergeOriginalArrayIntoCojac(Object cojac, Object original){
+		if(cojac.getClass().isArray()){
+			Class type = getArrayType(cojac);
+			if(type.equals(FloatWrapper.class)){
+				int dim = getArrayDimension(cojac);
+				mergeFloatArray(original, cojac, dim);
+			}
+			if(type.equals(DoubleWrapper.class)){
+				int dim = getArrayDimension(cojac);
+				mergeDoubleArray(original, cojac, dim);
+			}
+			
+		}
+	}
+	
+	private static void mergeFloatArray(Object original, Object cojac, int dimension){
+        if(dimension == 1){
+            mergeFloatArray((float[])original, (FloatWrapper[])cojac);
+        }
+        else{
+			Object[] originalArray = (Object[])original;
+			Object[] cojacArray = (Object[])cojac;
+            for (int i = 0; i < originalArray.length; i++) {
+                mergeFloatArray(originalArray[i], cojacArray[i], dimension-1);
+            }
+        }
+	}
+	
+	private static void mergeFloatArray(float[] original, FloatWrapper[] cojac){
+		for (int i = 0; i < cojac.length; i++) {
+			if(original[i] != FloatWrapper.toFloat(cojac[i])){
+				cojac[i] = new FloatWrapper(original[i]);
+			}
+		}
+	}
+	
+	private static void mergeDoubleArray(Object original, Object cojac, int dimension){
+        if(dimension == 1){
+            mergeDoubleArray((double[])original, (DoubleWrapper[])cojac);
+        }
+        else{
+			Object[] originalArray = (Object[])original;
+			Object[] cojacArray = (Object[])cojac;
+            for (int i = 0; i < originalArray.length; i++) {
+                mergeDoubleArray(originalArray[i], cojacArray[i], dimension-1);
+            }
+        }
+	}
+	
+	private static void mergeDoubleArray(double[] original, DoubleWrapper[] cojac){
+		for (int i = 0; i < cojac.length; i++) {
+			if(original[i] != DoubleWrapper.toDouble(cojac[i])){
+				cojac[i] = new DoubleWrapper(original[i]);
+			}
+		}
+	}
+	
 }

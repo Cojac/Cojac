@@ -10,11 +10,12 @@ import static ch.eiafr.cojac.FloatProxyMethod_old.convertCojacToRealType;
 import static ch.eiafr.cojac.FloatProxyMethod_old.convertRealToCojacType;
 import static ch.eiafr.cojac.FloatReplacerMethodVisitor.DN_NAME;
 import static ch.eiafr.cojac.FloatReplacerMethodVisitor.FN_NAME;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Type;
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import org.objectweb.asm.MethodVisitor;
 import static org.objectweb.asm.Opcodes.*;
+import org.objectweb.asm.Type;
 
 /**
  *
@@ -45,9 +46,11 @@ public class FloatProxyMethod {
     }
     
     public void proxyCall(MethodVisitor mv, int opcode, String owner, String name, String desc){
-		convertArgumentsToReal(mv, desc, opcode, owner);
+		HashMap<Integer, Type> convertedArrays = convertArgumentsToReal(mv, desc, opcode, owner);
 		
 		mv.visitMethodInsn(opcode, owner, name, desc, (opcode == INVOKEINTERFACE));
+		
+		checkArraysAfterCall(mv, convertedArrays, desc);
 		
 		Type returnType = Type.getReturnType(desc);
 		Type cojacType = afterFloatReplacement(returnType);
@@ -61,7 +64,6 @@ public class FloatProxyMethod {
 		else if(returnType.getSort() == Type.ARRAY && returnType.getElementType().equals(Type.getType(Object.class))){
 			convertObjectToCojac(mv, returnType);
 		}
-		
     }
     
     public void nativeCall(MethodVisitor mv, int access, String owner, String name, String desc){
@@ -71,13 +73,17 @@ public class FloatProxyMethod {
 		
 		MethodVisitor newMv = ccv.addProxyMethod(access & ~ACC_NATIVE, name, newDesc, null, null);
 
-		convertArgumentsToReal(newMv, desc, 0, owner);
+		HashMap<Integer, Type> convertedArrays = convertArgumentsToReal(newMv, desc, 0, owner);
+		
+		
 		
 		if(isStatic)
             newMv.visitMethodInsn(INVOKESTATIC, owner, name, desc, false);
         else
             newMv.visitMethodInsn(INVOKEVIRTUAL, owner, name, desc, false);
         
+		checkArraysAfterCall(mv, convertedArrays, desc);
+		
 		newMv.visitInsn(afterFloatReplacement(Type.getReturnType(desc)).getOpcode(IRETURN));
         newMv.visitMaxs(0, 0);
     }
@@ -132,8 +138,10 @@ public class FloatProxyMethod {
         */
     }
 	
-	private void convertArgumentsToReal(MethodVisitor mv, String desc, int opcode, String owner){
+	private HashMap<Integer, Type> convertArgumentsToReal(MethodVisitor mv, String desc, int opcode, String owner){
 		HashMap<Integer, Type> typeConversions = new HashMap<>();
+		HashMap<Integer, Type> convertedArrays;
+		
 		Type outArgs[] = Type.getArgumentTypes(desc);
 		Type inArgs[] = new Type[outArgs.length];
 		for (int i = 0; i < outArgs.length; i++) {
@@ -150,35 +158,7 @@ public class FloatProxyMethod {
 		
 		String convertDesc = Type.getMethodDescriptor(Type.getType("[Ljava/lang/Object;"), inArgs);
 		
-		
-		if(!ccv.isProxyMerhod(COJAC_TYPE_CONVERT_NAME, convertDesc)){
-			 MethodVisitor newMv = ccv.addProxyMethod(ACC_STATIC, COJAC_TYPE_CONVERT_NAME, convertDesc, null, null);
-			 int varIndex = 0;
-			 
-			 newMv.visitLdcInsn(outArgs.length);
-			 newMv.visitTypeInsn(ANEWARRAY, Type.getType(Object.class).getInternalName());
-			 
-			 for (int i=0 ; i < outArgs.length; i++) {
-				newMv.visitInsn(DUP);
-				newMv.visitLdcInsn(i);
-                Type type = outArgs[i];
-                newMv.visitVarInsn(getLoadOpcode(inArgs[i]), varIndex);
-                varIndex += inArgs[i].getSize();
-                if(typeConversions.get(i) != null){
-                    convertCojacToRealType(typeConversions.get(i), newMv);
-                }
-				else if(inArgs[i].equals(Type.getType(Object.class))){
-					convertObjectToReal(newMv, inArgs[i]);
-				}
-				else if(inArgs[i].getSort() == Type.ARRAY && inArgs[i].getElementType().equals(Type.getType(Object.class))){
-					convertObjectToReal(newMv, inArgs[i]);
-				}
-				convertPrimitiveToObject(newMv, type);
-				newMv.visitInsn(AASTORE);
-            }
-			newMv.visitInsn(ARETURN);
-            newMv.visitMaxs(0, 0);
-		}
+		convertedArrays = createConvertMethod(convertDesc, inArgs, outArgs, typeConversions);
 		mv.visitMethodInsn(INVOKESTATIC, classPath, COJAC_TYPE_CONVERT_NAME, convertDesc, false);
 		
 		// convertion of owner if invokevirtual
@@ -195,11 +175,27 @@ public class FloatProxyMethod {
 			}
 		}
 		
+		// Keep the reference of converted arrays
+		if(opcode == INVOKEVIRTUAL || opcode == INVOKEINTERFACE || opcode == INVOKESPECIAL){
+			mv.visitInsn(DUP_X1);
+		}
+		else{
+			mv.visitInsn(DUP);
+		}
+		
+		
 		// Explode the object array to put arguments on stack
 		for(int i=0 ; i < outArgs.length ; i++){
 			mv.visitInsn(DUP);
 			mv.visitLdcInsn(i);
 			mv.visitInsn(AALOAD);
+			
+			if(outArgs[i].getSort() == Type.ARRAY){
+				mv.visitTypeInsn(CHECKCAST, "["+Type.getType(Object.class).getDescriptor());
+				mv.visitLdcInsn(1);
+				mv.visitInsn(AALOAD);
+			}
+			
 			if(outArgs[i].getSort() == Type.ARRAY || outArgs[i].getSort() == Type.OBJECT){ // else: primitive type
 				mv.visitTypeInsn(CHECKCAST, outArgs[i].getInternalName());
 			}
@@ -218,8 +214,107 @@ public class FloatProxyMethod {
 		}
 		mv.visitInsn(POP);
 		
+		return convertedArrays;
+	}
+	
+	private HashMap<Integer, Type> createConvertMethod(String convertDesc, Type[] inArgs, Type[] outArgs, HashMap<Integer, Type> typeConversions){
+		
+		HashMap<Integer, Type> convertedArrays = new HashMap<>();
+		
+		 for (int i=0 ; i < outArgs.length; i++) {
+			 if(inArgs[i].getSort() == Type.ARRAY){ // If it is an array, keep the two arrays references (cojac & original)
+				convertedArrays.put(i, inArgs[i]);
+			 }
+		 }
+		
+		if(!ccv.isProxyMerhod(COJAC_TYPE_CONVERT_NAME, convertDesc)){
+			 MethodVisitor newMv = ccv.addProxyMethod(ACC_STATIC, COJAC_TYPE_CONVERT_NAME, convertDesc, null, null);
+			 int varIndex = 0;
+			 
+			 newMv.visitLdcInsn(outArgs.length);
+			 newMv.visitTypeInsn(ANEWARRAY, Type.getType(Object.class).getInternalName());
+			 
+			 for (int i=0 ; i < outArgs.length; i++) {
+				newMv.visitInsn(DUP);
+				newMv.visitLdcInsn(i);
+				
+				
+                Type type = outArgs[i];
+                newMv.visitVarInsn(getLoadOpcode(inArgs[i]), varIndex);
+                varIndex += inArgs[i].getSize();
+				
+				if(inArgs[i].getSort() == Type.ARRAY){ // If it is an array, keep the two arrays references (cojac & original)
+					newMv.visitLdcInsn(2);
+					newMv.visitTypeInsn(ANEWARRAY, Type.getType(Object.class).getInternalName());
+					newMv.visitInsn(DUP_X1);
+					newMv.visitInsn(SWAP);
+					newMv.visitInsn(DUP_X1);
+					newMv.visitLdcInsn(0);
+					newMv.visitInsn(SWAP);
+					newMv.visitInsn(AASTORE);
+				}
+				
+				
+                if(typeConversions.get(i) != null){
+                    convertCojacToRealType(typeConversions.get(i), newMv);
+                }
+				else if(inArgs[i].equals(Type.getType(Object.class))){
+					convertObjectToReal(newMv, inArgs[i]);
+				}
+				else if(inArgs[i].getSort() == Type.ARRAY && inArgs[i].getElementType().equals(Type.getType(Object.class))){
+					convertObjectToReal(newMv, inArgs[i]);
+				}
+				convertPrimitiveToObject(newMv, type);
+				
+				if(inArgs[i].getSort() == Type.ARRAY){ // If it is an array, keep the two arrays references (cojac & original)
+					newMv.visitInsn(SWAP);
+					newMv.visitInsn(DUP_X1);
+					newMv.visitInsn(SWAP);
+					newMv.visitLdcInsn(1);
+					newMv.visitInsn(SWAP);
+					newMv.visitInsn(AASTORE);
+				}
+				
+				newMv.visitInsn(AASTORE);
+            }
+			newMv.visitInsn(ARETURN);
+            newMv.visitMaxs(0, 0);
+		}
+		return convertedArrays;
 	}
     
+	private void checkArraysAfterCall(MethodVisitor mv, HashMap<Integer, Type> convertedArrays, String desc){
+		Type returnType = Type.getReturnType(desc);
+		int returnTypeSize = returnType.getSize();
+		if(returnTypeSize == 1){
+			mv.visitInsn(SWAP);
+		}
+		else if(returnTypeSize == 2){
+			mv.visitInsn(DUP2_X1); // D D Object D D
+			mv.visitInsn(POP2); // D D Object
+		}
+		// TODO - check tables
+		for(int pos: convertedArrays.keySet()){
+			Type type = convertedArrays.get(pos);
+			mv.visitInsn(DUP);
+			mv.visitLdcInsn(pos);
+			mv.visitInsn(AALOAD);
+			mv.visitTypeInsn(CHECKCAST, "["+Type.getType(Object.class).getDescriptor());
+			
+			mv.visitInsn(DUP);
+			mv.visitLdcInsn(0);
+			mv.visitInsn(AALOAD);
+			mv.visitInsn(SWAP);
+			mv.visitLdcInsn(1);
+			mv.visitInsn(AALOAD);
+			// mergeOriginalArrayIntoCojac
+			String objDesc = Type.getType(Object.class).getDescriptor();
+			mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "mergeOriginalArrayIntoCojac", "("+objDesc+objDesc+")V", false);
+			
+		}
+		mv.visitInsn(POP);
+	}
+	
     private void convertReturnType(String desc, MethodVisitor mv){
         Type returnType = Type.getReturnType(desc);
         Type cojacType = afterFloatReplacement(returnType);

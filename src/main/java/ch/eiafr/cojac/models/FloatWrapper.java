@@ -18,8 +18,6 @@
 
 package ch.eiafr.cojac.models;
 
-import java.lang.reflect.Array;
-
 public class FloatWrapper extends NumberWrapper implements Comparable<FloatWrapper> {
     private final float val;
     

@@ -155,4 +155,11 @@ public class FloatProxy {
 		Assert.assertTrue(a2.length == 2 && a2[0].length == 3 && a2[1].length == 2);
 	}
 	
+	public static void arrayModifiedInMethodWithReference() throws Exception{
+		float[] a = new float[] {7.8f, 2.3f, 5.89f};
+		float[] a_sorted = new float[] {2.3f, 5.89f, 7.8f};
+		Arrays.sort(a);
+		Assert.assertTrue(Arrays.equals(a, a_sorted));
+	}
+	
 }
