@@ -45,6 +45,8 @@ import ch.eiafr.cojac.models.Reactions;
 import ch.eiafr.cojac.reactions.ClassLoaderReaction;
 import ch.eiafr.cojac.reactions.IReaction;
 import ch.eiafr.cojac.utils.ReflectionUtils;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class CojacReferences {
     public static final String BYPASS_SEPARATOR = ";";
@@ -58,6 +60,9 @@ public final class CojacReferences {
     
     private final String[] loadedClasses;
 
+	private final String floatWrapper;
+	private final String doubleWrapper;
+	
     private CojacReferences(CojacReferencesBuilder builder) {
         this.args = builder.args;
         this.stats = builder.stats;
@@ -68,7 +73,17 @@ public final class CojacReferences {
         Reactions.stats = stats;
         
         this.loadedClasses = builder.loadedClasses;
+		this.floatWrapper = builder.floatWrapper;
+		this.doubleWrapper = builder.doubleWrapper;
     }
+
+	public String getFloatWrapper() {
+		return floatWrapper;
+	}
+
+	public String getDoubleWrapper() {
+		return doubleWrapper;
+	}
 
 	public String[] getBypassList(){
 		return bypassList;
@@ -132,6 +147,8 @@ public final class CojacReferences {
         private StringBuilder sbBypassList;
         private String[] bypassList;
         private Splitter splitter;
+		private String floatWrapper;
+		private String doubleWrapper;
         
         private final String[] loadedClasses;
 
@@ -170,20 +187,48 @@ public final class CojacReferences {
 				sbBypassList.append(BYPASS_SEPARATOR);
                 sbBypassList.append("ch.eiafr.cojac.unit.replace.FloatProxyNotInstrumented");
 			
+				Class clazz = null;
+				try {
+					clazz = loader.loadClass("ch.eiafr.cojac.models.FloatReplacerClasses");
+				} catch (ClassNotFoundException ex) {
+					Logger.getLogger(CojacReferences.class.getName()).log(Level.SEVERE, null, ex);
+				}
+				
 				if(args.isSpecified(Arg.FLOAT_WRAPPER) && args.getValue(Arg.FLOAT_WRAPPER).length()>0){
-					String floatWrapper = args.getValue(Arg.FLOAT_WRAPPER);
-					FloatReplacerClasses.setFloatWrapper(floatWrapper);
+					floatWrapper = args.getValue(Arg.FLOAT_WRAPPER);
+					if(floatWrapper.startsWith("cojac."))
+						floatWrapper = floatWrapper.replace("cojac.", "ch.eiafr.cojac.models.wrappers.");
+					//FloatReplacerClasses.setFloatWrapper(floatWrapper);
+					try {
+						clazz.getMethod("setFloatWrapper", String.class).invoke(clazz, floatWrapper);
+					} catch (Exception ex) {
+						Logger.getLogger(CojacReferences.class.getName()).log(Level.SEVERE, null, ex);
+					}
 				}
 				else{
-					FloatReplacerClasses.setFloatWrapper(FloatWrapper.class.getCanonicalName());
+					try {
+						clazz.getMethod("setFloatWrapper", String.class).invoke(clazz, FloatWrapper.class.getCanonicalName());
+					} catch (Exception ex) {
+						Logger.getLogger(CojacReferences.class.getName()).log(Level.SEVERE, null, ex);
+					}
 				}
 
 				if(args.isSpecified(Arg.DOUBLE_WRAPPER) && args.getValue(Arg.DOUBLE_WRAPPER).length()>0){
-					String doubleWrapper = args.getValue(Arg.DOUBLE_WRAPPER);
-					FloatReplacerClasses.setDoubleWrapper(doubleWrapper);
+					doubleWrapper = args.getValue(Arg.DOUBLE_WRAPPER);
+					if(doubleWrapper.startsWith("cojac."))
+						doubleWrapper = doubleWrapper.replace("cojac.", "ch.eiafr.cojac.models.wrappers.");
+					try {
+						clazz.getMethod("setDoubleWrapper", String.class).invoke(clazz, doubleWrapper);
+					} catch (Exception ex) {
+						Logger.getLogger(CojacReferences.class.getName()).log(Level.SEVERE, null, ex);
+					}
 				}
 				else{
-					FloatReplacerClasses.setDoubleWrapper(DoubleWrapper.class.getCanonicalName());
+					try {
+						clazz.getMethod("setDoubleWrapper", String.class).invoke(clazz, DoubleWrapper.class.getCanonicalName());
+					} catch (Exception ex) {
+						Logger.getLogger(CojacReferences.class.getName()).log(Level.SEVERE, null, ex);
+					}
 				}
 			}
 			

@@ -158,8 +158,8 @@ public class ReplaceFloatsMethods {
 	
 	private void cojacMagicCall(MethodVisitor mv, String name, String desc, String wrapper){
 		String newDesc = replaceFloatMethodDescription(desc);
-		InvokableMethod im = new InvokableMethod(wrapper, name, newDesc, INVOKESTATIC);
-		im.invoke(mv);
+		InvokableMethod im = new InvokableMethod(wrapper, name, newDesc);
+		im.invokeStatic(mv);
 	}
     
 }

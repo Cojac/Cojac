@@ -26,7 +26,10 @@ import java.security.ProtectionDomain;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.FieldVisitor;
+import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.util.*;
 
 public final class Agent implements ClassFileTransformer {
@@ -48,7 +51,11 @@ public final class Agent implements ClassFileTransformer {
 
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+		
 		try {
+			if(className.equals("ch/eiafr/cojac/models/FloatReplacerClasses")){
+				return setGlobalFields(classfileBuffer, loader);
+			}
             if (!references.hasToBeInstrumented(className)) {
                 if (VERBOSE) {
                     System.out.println("Agent NOT instrumenting "+className +" under "+loader);
@@ -95,5 +102,26 @@ public final class Agent implements ClassFileTransformer {
 			super.visit(version, access, name, signature, supername, null);
 		}
 	}
+	
+	
+	public byte[] setGlobalFields(byte[] byteCode, ClassLoader loader) {
+        ClassReader cr = new ClassReader(byteCode);
+        ClassWriter cw = new ClassWriter(cr, ClassWriter.COMPUTE_FRAMES);
+        ClassVisitor cv = new ClassVisitor(Opcodes.ASM5, cw) {
+			@Override
+			public void visit(int version, int access, String name, String signature, String superName, String[] interfaces){
+				super.visit(version, access, name, signature, superName, interfaces);
+				MethodVisitor mv = cv.visitMethod(Opcodes.ACC_STATIC, "<clinit>", "()V", null, null);
+				mv.visitLdcInsn(references.getDoubleWrapper());
+				mv.visitMethodInsn(Opcodes.INVOKESTATIC, name, "setDoubleWrapper", "(Ljava/lang/String;)V", false);
+				mv.visitLdcInsn(references.getFloatWrapper());
+				mv.visitMethodInsn(Opcodes.INVOKESTATIC, name, "setFloatWrapper", "(Ljava/lang/String;)V", false);
+				mv.visitInsn(Opcodes.RETURN);
+				mv.visitMaxs(0, 0);
+			}
+		};
+		cr.accept(cv, ClassReader.EXPAND_FRAMES);
+        return cw.toByteArray();
+    }
 	
 }

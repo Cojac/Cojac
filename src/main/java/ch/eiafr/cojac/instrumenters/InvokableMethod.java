@@ -36,7 +36,6 @@ public final class InvokableMethod {
         mv.visitMethodInsn(INVOKESTATIC, classPath, method, signature, false);
     }
     
-	// TODO - is this needed?
     public void invoke(MethodVisitor mv) {
         mv.visitMethodInsn(opCode, classPath, method, signature, (opCode == INVOKEINTERFACE));
     }
