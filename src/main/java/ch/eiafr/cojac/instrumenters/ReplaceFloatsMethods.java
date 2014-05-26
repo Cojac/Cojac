@@ -131,7 +131,7 @@ public class ReplaceFloatsMethods {
             Object supressionMethod = suppressions.get(ms);
             if(supressionMethod == null)
                 return true;
-            if(stackTop.equals(supressionMethod))
+            if(stackTop != null && stackTop.equals(supressionMethod))
                 return true;
         }
         

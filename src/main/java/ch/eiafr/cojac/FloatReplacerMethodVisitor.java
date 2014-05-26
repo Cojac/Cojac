@@ -195,7 +195,8 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
 				mv.visitTypeInsn(CHECKCAST, COJAC_DOUBLE_WRAPPER_INTERNAL_NAME);
 			}
 			if(descAfter.equals(COJAC_FLOAT_WRAPPER_TYPE_DESCR)){
-				mv.visitMethodInsn(INVOKESTATIC, FN_NAME, "initialize", "("+COJAC_FLOAT_WRAPPER_TYPE_DESCR+")"+COJAC_FLOAT_WRAPPER_TYPE_DESCR, false);
+				mv.visitMethodInsn(INVOKESTATIC, FN_NAME, "initialize", "("+objDesc+")"+objDesc, false);
+				mv.visitTypeInsn(CHECKCAST, COJAC_FLOAT_WRAPPER_INTERNAL_NAME);
 			}
 		}
 		
@@ -300,7 +301,7 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
     
     private Object stackTop(){
         if(aa.stack == null)
-            return null;
+			return null;
         if(aa.stack.isEmpty())
             return null;
         return aa.stack.get(aa.stack.size()-1);

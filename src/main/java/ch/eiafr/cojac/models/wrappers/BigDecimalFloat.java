@@ -19,10 +19,17 @@
 package ch.eiafr.cojac.models.wrappers;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Objects;
 
 public class BigDecimalFloat extends Number implements Comparable<BigDecimalFloat> {
     private final BigDecimal val;
+	
+	private boolean isNaN = false;
+	private boolean isInfinite = false;
+	private boolean isPositiveInfinite = false;
+	
+	private static MathContext mathContext = new MathContext(100);
 	
 	public BigDecimalFloat(BigDecimal v) {
         val = v;
@@ -33,7 +40,18 @@ public class BigDecimalFloat extends Number implements Comparable<BigDecimalFloa
 	}
     
     public BigDecimalFloat(float v) {
-        val = new BigDecimal(v);
+		if(Float.isNaN(v)){
+			isNaN = true;
+			val = null;
+		}
+		else if(Float.isInfinite(v)){
+			isInfinite = true;
+			isPositiveInfinite = v > 0;
+			val = null;
+		}
+		else{
+			val = new BigDecimal(v, mathContext);
+		}
     }
     
     public BigDecimalFloat(BigDecimalFloat v) {
@@ -41,7 +59,7 @@ public class BigDecimalFloat extends Number implements Comparable<BigDecimalFloa
     }
     
     public BigDecimalFloat(String v) {
-        val = new BigDecimal(v);
+        val = new BigDecimal(v, mathContext);
     }
     
     public BigDecimalFloat(BigDecimalDouble v) {
@@ -61,27 +79,70 @@ public class BigDecimalFloat extends Number implements Comparable<BigDecimalFloa
     }
 
     public static BigDecimalFloat fadd(BigDecimalFloat a, BigDecimalFloat b) {
-        return new BigDecimalFloat(a.val.add(b.val));
+		if(a.isNaN || b.isNaN)
+			return new BigDecimalFloat(Float.NaN);
+		if(a.isInfinite || b.isInfinite){
+			float aVal = a.getFloatInfiniteValue();
+			float bVal = a.getFloatInfiniteValue();
+			return new BigDecimalFloat(aVal+bVal);
+		}
+        return new BigDecimalFloat(a.val.add(b.val, mathContext));
     }
     
     public static BigDecimalFloat fsub(BigDecimalFloat a, BigDecimalFloat b) {
-        return new BigDecimalFloat(a.val.subtract(b.val));
+		if(a.isNaN || b.isNaN)
+			return new BigDecimalFloat(Float.NaN);
+		if(a.isInfinite || b.isInfinite){
+			float aVal = a.getFloatInfiniteValue();
+			float bVal = a.getFloatInfiniteValue();
+			return new BigDecimalFloat(aVal-bVal);
+		}
+        return new BigDecimalFloat(a.val.subtract(b.val, mathContext));
     }
 
     public static BigDecimalFloat fmul(BigDecimalFloat a, BigDecimalFloat b) {
-        return new BigDecimalFloat(a.val.multiply(b.val));
+		if(a.isNaN || b.isNaN)
+			return new BigDecimalFloat(Float.NaN);
+		if(a.isInfinite || b.isInfinite){
+			float aVal = a.getFloatInfiniteValue();
+			float bVal = a.getFloatInfiniteValue();
+			return new BigDecimalFloat(aVal*bVal);
+		}
+        return new BigDecimalFloat(a.val.multiply(b.val, mathContext));
     }
 
     public static BigDecimalFloat fdiv(BigDecimalFloat a, BigDecimalFloat b) {
-        return new BigDecimalFloat(a.val.divide(b.val));
+		if(a.isNaN || b.isNaN)
+			return new BigDecimalFloat(Float.NaN);
+		if(a.isInfinite || b.isInfinite){
+			float aVal = a.getFloatInfiniteValue();
+			float bVal = a.getFloatInfiniteValue();
+			return new BigDecimalFloat(aVal/bVal);
+		}
+		if(b.val.equals(BigDecimal.ZERO))
+			return new BigDecimalFloat(a.val.floatValue()/0.0f);
+        return new BigDecimalFloat(a.val.divide(b.val, mathContext));
     }
 
     public static BigDecimalFloat frem(BigDecimalFloat a, BigDecimalFloat b) {
-        return new BigDecimalFloat(a.val.remainder(b.val));
+		if(a.isNaN || b.isNaN)
+			return new BigDecimalFloat(Float.NaN);
+		if(a.isInfinite || b.isInfinite){
+			float aVal = a.getFloatInfiniteValue();
+			float bVal = a.getFloatInfiniteValue();
+			return new BigDecimalFloat(aVal%bVal);
+		}
+        return new BigDecimalFloat(a.val.remainder(b.val, mathContext)); // is this correct ?
     }
     
     public static BigDecimalFloat fneg(BigDecimalFloat a) {
-        return new BigDecimalFloat(a.val.negate());
+		if(a.isNaN)
+			return new BigDecimalFloat(Float.NaN);
+		if(a.isInfinite){
+			float aVal = a.getFloatInfiniteValue();
+			return new BigDecimalFloat(-aVal);
+		}
+        return new BigDecimalFloat(a.val.negate(mathContext));
     }
 
     public static float toFloat(BigDecimalFloat a) {
@@ -89,6 +150,14 @@ public class BigDecimalFloat extends Number implements Comparable<BigDecimalFloa
     }
     
     public static Float toRealFloatWrapper(BigDecimalFloat a){
+        if(a.isNaN)
+			return Float.NaN;
+		if(a.isInfinite){
+			if(a.isPositiveInfinite)
+				return Float.POSITIVE_INFINITY;
+			else
+				return Float.NEGATIVE_INFINITY;
+		}
         return a.val.floatValue();
     }
     
@@ -102,14 +171,38 @@ public class BigDecimalFloat extends Number implements Comparable<BigDecimalFloa
     }
     
     public static int f2i(BigDecimalFloat a) {
+        if(a.isNaN)
+			return (int)Float.NaN;
+		if(a.isInfinite){
+			if(a.isPositiveInfinite)
+				return (int)Float.POSITIVE_INFINITY;
+			else
+				return (int)Float.NEGATIVE_INFINITY;
+		}
         return a.val.intValue();
     }
     
     public static long f2l(BigDecimalFloat a) {
+        if(a.isNaN)
+			return (long)Float.NaN;
+		if(a.isInfinite){
+			if(a.isPositiveInfinite)
+				return (long)Float.POSITIVE_INFINITY;
+			else
+				return (long)Float.NEGATIVE_INFINITY;
+		}
         return a.val.longValue();
     }
     
     public static BigDecimalDouble f2d(BigDecimalFloat a) {
+        if(a.isNaN)
+			return new BigDecimalDouble(Double.NaN);
+		if(a.isInfinite){
+			if(a.isPositiveInfinite)
+				return new BigDecimalDouble(Double.POSITIVE_INFINITY);
+			else
+				return new BigDecimalDouble(Double.NEGATIVE_INFINITY);
+		}
         return new BigDecimalDouble(a.val);
     }
     
@@ -132,12 +225,39 @@ public class BigDecimalFloat extends Number implements Comparable<BigDecimalFloa
     
 	@Override
 	public int compareTo(BigDecimalFloat o) {
+		if(isNaN && o.isNaN)
+			return 0;
+		if(isNaN)
+			return 1;
+		if(o.isNaN)
+			return -1;
+		
+		if(isInfinite || o.isInfinite){
+			Float aVal = getFloatInfiniteValue();
+			Float bVal = o.getFloatInfiniteValue();
+			return aVal.compareTo(bVal);
+		}
+		
 		return val.compareTo(o.val);
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
-        return (obj instanceof BigDecimalFloat) && (((BigDecimalFloat)obj).val.equals(val));
+        if(obj instanceof BigDecimalFloat == false)
+			return false;
+		BigDecimalFloat bdd = (BigDecimalFloat)obj;
+		if(isNaN && bdd.isNaN)
+			return true;
+		if(isNaN || bdd.isNaN)
+			return false;
+		
+		if(isInfinite || bdd.isInfinite){
+			Float aVal = getFloatInfiniteValue();
+			Float bVal = bdd.getFloatInfiniteValue();
+			return aVal.equals(bVal);
+		}
+		
+        return val.equals(bdd.val);
     }
 
 	@Override
@@ -165,6 +285,12 @@ public class BigDecimalFloat extends Number implements Comparable<BigDecimalFloa
 	@Override
 	public double doubleValue() {
 		return val.doubleValue();
+	}
+	
+	private float getFloatInfiniteValue(){
+		if(isPositiveInfinite)
+			return Float.POSITIVE_INFINITY;
+		return Float.NEGATIVE_INFINITY;
 	}
 
 }

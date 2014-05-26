@@ -135,8 +135,31 @@ public class FloatVariablesSorter extends LocalVariablesSorter{
                 newLocal.add(object);
             }
         }
+		
+		ArrayList<Object> newStack = new ArrayList<>();
+		for (Object object : stack) {
+			if(object == Opcodes.DOUBLE){
+                newStack.add(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME);
+            }
+            else if(object == Opcodes.FLOAT){
+                newStack.add(COJAC_FLOAT_WRAPPER_INTERNAL_NAME);
+            }
+            else if(object instanceof String && ((String)object).endsWith("[D")){
+                String tab = (String) object;
+                tab = tab.replaceAll("D", COJAC_DOUBLE_WRAPPER_TYPE_DESCR);
+                newStack.add(tab);
+            }
+            else if(object instanceof String && ((String)object).endsWith("[F")){
+                String tab = (String) object;
+                tab = tab.replaceAll("F", COJAC_FLOAT_WRAPPER_TYPE_DESCR);
+                newStack.add(tab);
+            }
+            else{
+                newStack.add(object);
+            }
+		}
         
-        mv.visitFrame(type, nLocal, newLocal.toArray(), nStack, stack);
+        mv.visitFrame(type, nLocal, newLocal.toArray(), nStack, newStack.toArray());
     }
 
     private int remapFirstFrame(final int var, final Type type){
