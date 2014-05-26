@@ -45,7 +45,7 @@ public class ReplaceFloatsMethods {
     private static String CDW_N;
     private static String CDW;
     
-    private final ArrayList<MethodSignature> addedMethods = new ArrayList<>();
+    private final ArrayList<String> addedMethods = new ArrayList<>();
     private final FloatProxyMethod fpm;
     private final String classPath;
     private static final String COJAC_PROXY_METHODS_PREFIX = "COJAC_PROXY_METHOD_";
@@ -161,5 +161,5 @@ public class ReplaceFloatsMethods {
 		InvokableMethod im = new InvokableMethod(wrapper, name, newDesc);
 		im.invokeStatic(mv);
 	}
-    
+	
 }

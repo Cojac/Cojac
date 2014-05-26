@@ -43,18 +43,14 @@ final class CojacClassVisitor extends ClassVisitor {
     
 	private final CojacReferences references;
 	
-    private boolean first = true;
     private String classPath;
     
-    //public static final String COJAC_FIELD_SUFFIX = "_C$O$J$A$C";
-    
-    private CojacAnnotationVisitor cav;
+    private final CojacAnnotationVisitor cav;
     
     private ArrayList<String> proxyMethods;
 	
     private FloatProxyMethod fpm;
 
-    //CojacClassVisitor(ClassVisitor cv, InstrumentationStats stats, Args args, Methods methods, IReaction reaction, IOpcodeInstrumenterFactory factory, Class[] loadedClasses, String[] bypassList, CojacAnnotationVisitor cav) {
     CojacClassVisitor(ClassVisitor cv, Methods methods, CojacReferences references, CojacAnnotationVisitor cav) {
 		super(Opcodes.ASM4, cv);
 
@@ -148,13 +144,13 @@ final class CojacClassVisitor extends ClassVisitor {
     //          desc=replaceFloatMethodDescription(desc);
 
     private MethodVisitor instrumentMethod(MethodVisitor parentMv, int access, String desc, String name) {
-        MethodVisitor mv = null;
+        MethodVisitor mv;
         if (args.isSpecified(Arg.REPLACE_FLOATS)){
-            
+			// Create the MethodVisitor delegation chain: FloatReplacerMethodVisitor -> LocalVariableSorter -> AnalyzerAdapter -> parentMv
             AnalyzerAdapter aa = new AnalyzerAdapter(classPath, access, name, desc, parentMv);
             LocalVariablesSorter lvs = new FloatVariablesSorter(access, desc, aa);
             ReplaceFloatsMethods rfm = new ReplaceFloatsMethods(fpm, classPath, references);
-            mv = new FloatReplacerMethodVisitor(access, desc, aa, lvs, rfm, stats, args, methods, reaction, classPath, factory, name, references);
+            mv = new FloatReplacerMethodVisitor(access, desc, aa, lvs, rfm, stats, args, methods, reaction, classPath, factory, references);
         }
         else 
             mv = new CojacCheckerMethodVisitor(access, desc, parentMv, stats, args, methods, reaction, classPath, factory);

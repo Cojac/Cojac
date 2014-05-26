@@ -18,13 +18,9 @@
 
 package ch.eiafr.cojac.models.wrappers;
 
-import ch.eiafr.cojac.models.*;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.Objects;
-
 
 public class BigDecimalDouble extends Number implements Comparable<BigDecimalDouble>{
     //private final double val;

@@ -18,7 +18,6 @@
 
 package ch.eiafr.cojac.models.wrappers;
 
-import ch.eiafr.cojac.models.*;
 import java.math.BigDecimal;
 import java.util.Objects;
 

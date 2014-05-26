@@ -18,10 +18,8 @@
 
 package ch.eiafr.cojac.models.wrappers;
 
-import ch.eiafr.cojac.models.*;
 
-
-public class BasicDouble extends NumberWrapper implements Comparable<BasicDouble>{
+public class BasicDouble extends Number implements Comparable<BasicDouble>{
     private final double val;
     
     public BasicDouble(double v) {
@@ -141,6 +139,26 @@ public class BasicDouble extends NumberWrapper implements Comparable<BasicDouble
 		int hash = 3;
 		hash = 43 * hash + (int) (Double.doubleToLongBits(this.val) ^ (Double.doubleToLongBits(this.val) >>> 32));
 		return hash;
+	}
+
+	@Override
+	public int intValue() {
+		return (int) val;
+	}
+
+	@Override
+	public long longValue() {
+		return (long) val;
+	}
+
+	@Override
+	public float floatValue() {
+		return (float) val;
+	}
+
+	@Override
+	public double doubleValue() {
+		return val;
 	}
 
 

@@ -18,7 +18,6 @@
 
 package ch.eiafr.cojac;
 
-import ch.eiafr.cojac.models.FloatReplacerClasses;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
@@ -39,9 +38,9 @@ import org.objectweb.asm.ClassWriter;
 
 import ch.eiafr.cojac.instrumenters.ClassLoaderInstrumenterFactory;
 import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenterFactory;
-import ch.eiafr.cojac.models.DoubleWrapper;
-import ch.eiafr.cojac.models.FloatWrapper;
 import ch.eiafr.cojac.models.Reactions;
+import ch.eiafr.cojac.models.wrappers.BasicDouble;
+import ch.eiafr.cojac.models.wrappers.BasicFloat;
 import ch.eiafr.cojac.reactions.ClassLoaderReaction;
 import ch.eiafr.cojac.reactions.IReaction;
 import ch.eiafr.cojac.utils.ReflectionUtils;
@@ -115,12 +114,21 @@ public final class CojacReferences {
 
     public boolean hasToBeInstrumented(String className) {
         // TODO: deal with native methods
-        if (args.isSpecified(Arg.REPLACE_FLOATS) && loadedClasses != null){
-            for (String passClass : loadedClasses) {
-                if(className.equals(passClass)){
-                    return false;
-                }
-            }
+        if (args.isSpecified(Arg.REPLACE_FLOATS)){
+			if(className.startsWith("java/util/ArrayList")){ // Do not lose the enriched informations when store float or double in an arraylist
+				return true;
+			}
+			//if(className.startsWith("java/util/Collection")){ // Do not lose the enriched informations when store float or double in an collection
+			//	return true;
+			//}
+			
+			if(loadedClasses != null){
+				for (String passClass : loadedClasses) {
+					if(className.equals(passClass)){
+						return false;
+					}
+				}
+			}
 			
         }
         for (String standardPackage : bypassList) {
@@ -207,7 +215,7 @@ public final class CojacReferences {
 				}
 				else{
 					try {
-						clazz.getMethod("setFloatWrapper", String.class).invoke(clazz, FloatWrapper.class.getCanonicalName());
+						clazz.getMethod("setFloatWrapper", String.class).invoke(clazz, BasicFloat.class.getCanonicalName());
 					} catch (Exception ex) {
 						Logger.getLogger(CojacReferences.class.getName()).log(Level.SEVERE, null, ex);
 					}
@@ -225,7 +233,7 @@ public final class CojacReferences {
 				}
 				else{
 					try {
-						clazz.getMethod("setDoubleWrapper", String.class).invoke(clazz, DoubleWrapper.class.getCanonicalName());
+						clazz.getMethod("setDoubleWrapper", String.class).invoke(clazz, BasicDouble.class.getCanonicalName());
 					} catch (Exception ex) {
 						Logger.getLogger(CojacReferences.class.getName()).log(Level.SEVERE, null, ex);
 					}

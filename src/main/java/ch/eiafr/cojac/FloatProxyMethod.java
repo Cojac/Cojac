@@ -28,7 +28,6 @@ public class FloatProxyMethod {
     private static final String DL_NAME = Type.getType(Double.class).getInternalName();
     private static final String DL_DESCR = Type.getType(Double.class).getDescriptor();
     
-    private static final String COJAC_PROXY_METHODS_PREFIX = "COJAC_PROXY_METHOD_";
 	private static final String COJAC_TYPE_CONVERT_NAME = "COJAC_TYPE_CONVERT";
     
     private final String classPath;

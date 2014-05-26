@@ -194,6 +194,9 @@ public class DoubleNumbers {
 	}
 	
 	public static void mergeOriginalArrayIntoCojac(Object cojac, Object original) throws Exception{
+		if(cojac == null){
+			return;
+		}
 		if(cojac.getClass().isArray()){
 			Class type = getArrayType(cojac);
 			if(type.equals(COJAC_FLOAT_WRAPPER_CLASS)){

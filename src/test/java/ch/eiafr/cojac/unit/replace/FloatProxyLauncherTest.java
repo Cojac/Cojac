@@ -153,6 +153,33 @@ public class FloatProxyLauncherTest {
 		invokeMethod("arrayModifiedInMethodWithReference");
 	}
 	
+	// TODO - Fix array references & proxy bug
+	/*
+	 This test fails, this is a known bug,
+	 When an array is passed to the not-instrumented side, and the array is modified
+	 through an other method than the passing method, the instrumented array is not modified
+	*/
+	/*
+	@Test
+	public void arrayPassedInNotInstrumentedSideModifiedWithAnOtherMethod() throws Exception{
+		invokeMethod("arrayPassedInNotInstrumentedSideModifiedWithAnOtherMethod");
+	}
+	*/
+	
+	// TODO - Fix instrumented callback passed to not-instrumented side
+	/*
+	 This test fails, this is a known bug,
+	 When a callback is created by the user to sort a floats array for example,
+	 the class passed is instrumented and the types did not match the original types
+	 in the not-instrumented side.
+	*/
+	/*
+	@Test
+	public void arraySortedWithUserDefinedComparator() throws Exception{
+		invokeMethod("arraySortedWithUserDefinedComparator");
+	}
+	*/
+	
 	private void invokeMethod(String methodName) throws Exception{
 		if (floatProxyTest==null) return;
         Method m = floatProxyTest.getMethod(methodName);

@@ -18,9 +18,7 @@
 
 package ch.eiafr.cojac.models.wrappers;
 
-import ch.eiafr.cojac.models.*;
-
-public class BasicFloat extends NumberWrapper implements Comparable<BasicFloat> {
+public class BasicFloat extends Number implements Comparable<BasicFloat> {
     private final float val;
     
     public BasicFloat(float v) {
@@ -151,5 +149,26 @@ public class BasicFloat extends NumberWrapper implements Comparable<BasicFloat> 
 		hash = 43 * hash + Float.floatToIntBits(this.val);
 		return hash;
 	}
+
+	@Override
+	public int intValue() {
+		return (int) val;
+	}
+
+	@Override
+	public long longValue() {
+		return (long) val;
+	}
+
+	@Override
+	public float floatValue() {
+		return val;
+	}
+
+	@Override
+	public double doubleValue() {
+		return val;
+	}
+
 
 }

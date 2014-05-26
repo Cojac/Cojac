@@ -101,4 +101,15 @@ public class FloatProxyNotInstrumented {
 		return f;
 	}
 	
+	private float[] farray;
+	public void arrayPassing(float[] array){
+		this.farray = array;
+	}
+	
+	public void resetPassedArray(){
+		for (int i = 0; i < farray.length; i++) {
+			farray[i] = 0;
+		}
+	}
+	
 }

@@ -6,7 +6,11 @@
 
 package ch.eiafr.cojac.unit.replace;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertEquals;
 import org.junit.Assert;
 
@@ -161,5 +165,30 @@ public class FloatProxy {
 		Arrays.sort(a);
 		Assert.assertTrue(Arrays.equals(a, a_sorted));
 	}
+	
+	// This test is not executed (known bug, see the test call in FloatProxyLauncherTest)
+	public static void arrayPassedInNotInstrumentedSideModifiedWithAnOtherMethod() throws Exception{
+		float[] a = new float[] {7.8f, 2.3f, 5.89f};
+		FloatProxyNotInstrumented fpni = new FloatProxyNotInstrumented();
+		fpni.arrayPassing(a);
+		fpni.resetPassedArray();
+		Assert.assertTrue(Arrays.equals(a, new float[] {0,0,0}));
+	}
+	
+	// This test is not executed (known bug, see the test call in FloatProxyLauncherTest)
+	public static void arraySortedWithUserDefinedComparator() throws Exception{
+		ArrayList<Float> a = new ArrayList<>();
+		a.add(5.8f);
+		a.add(7.8f);
+		a.add(2.3f);
+		Comparator fc = new Comparator<Float>(){
+			 @Override
+			public int compare(Float f1, Float f2) {
+				return Float.compare(f1, f2);
+			}
+		};
+		Collections.sort(a, fc);
+	}
+	
 	
 }

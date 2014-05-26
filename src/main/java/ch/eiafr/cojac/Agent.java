@@ -26,10 +26,8 @@ import java.security.ProtectionDomain;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
 import org.objectweb.asm.util.*;
 
 public final class Agent implements ClassFileTransformer {
@@ -67,12 +65,12 @@ public final class Agent implements ClassFileTransformer {
             }
             byte[] instrumented= instrumenter.instrument(classfileBuffer, loader);
             if (VERBOSE) {
-//                if (className.startsWith("sun/launcher")){
-//                    CheckClassAdapter.verify(new ClassReader(classfileBuffer), true, new PrintWriter(System.out));
-//                }
-				// TODO - FAIL in verbose mode when class code contains call to an interface (which is instrumented after...)
-				//byte[] noInterface = removeInterfaces(instrumented);
-				//System.out.println("LENGTH: "+instrumented.length+" // "+noInterface.length);
+				// TODO - FAIL in verbose mode when the instrumented application use interfaces
+				/*
+				The interfaces are loaded by this class, the loading of a class by the agent is done without the instrumentation.
+				One the interface is loaded, it is never reloaded for the same classloader.
+				That means the interface will never be instrumented in verbose mode. 
+				*/
 				CheckClassAdapter.verify(new ClassReader(instrumented), PRINT_INSTR_RESULT, new PrintWriter(System.out));
 			}
 			
@@ -85,25 +83,16 @@ public final class Agent implements ClassFileTransformer {
         }
     }
 	
-	private byte[] removeInterfaces(final byte[] byteCode){
-		ClassReader cr = new ClassReader(byteCode);
-        ClassWriter cw = new ClassWriter(cr, 0);
-		InterfaceRemover ir = new InterfaceRemover(cw);
-		cr.accept(ir, ClassReader.EXPAND_FRAMES);
-        return cw.toByteArray();
-	}
-	
-	private class InterfaceRemover extends ClassVisitor{
-		public InterfaceRemover(ClassVisitor cv) {
-			super(Opcodes.ASM4, cv);
-		}
-		@Override
-		public void visit(int version, int access, String name, String signature, String supername, String[] interfaces) {
-			super.visit(version, access, name, signature, supername, null);
-		}
-	}
-	
-	
+	/**
+	 * This method works only with the FloatReplacerClasses class
+	 * It instrument it to create a static initializer block to set
+	 * all the static variables used by the agent and injected in the 
+	 * instrumented application.
+	 * This is used when there is more than one classloader in the application
+	 * @param byteCode
+	 * @param loader
+	 * @return 
+	 */
 	public byte[] setGlobalFields(byte[] byteCode, ClassLoader loader) {
         ClassReader cr = new ClassReader(byteCode);
         ClassWriter cw = new ClassWriter(cr, ClassWriter.COMPUTE_FRAMES);

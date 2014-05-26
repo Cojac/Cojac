@@ -56,10 +56,8 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
 	public static final String FN_NAME = Type.getType(FloatNumbers.class).getInternalName();
 	public static final String DN_NAME = Type.getType(DoubleNumbers.class).getInternalName();
 	
-	private final String methodName; // Only for debug
-
     // Must Link the lvs to the aa and the aa to the parent method visitor before call!
-    FloatReplacerMethodVisitor(int access, String desc, AnalyzerAdapter aa, LocalVariablesSorter lvs, ReplaceFloatsMethods rfm, InstrumentationStats stats, Args args, Methods methods, IReaction reaction, String classPath, IOpcodeInstrumenterFactory factory, String name, CojacReferences references) {
+    FloatReplacerMethodVisitor(int access, String desc, AnalyzerAdapter aa, LocalVariablesSorter lvs, ReplaceFloatsMethods rfm, InstrumentationStats stats, Args args, Methods methods, IReaction reaction, String classPath, IOpcodeInstrumenterFactory factory, CojacReferences references) {
         super(Opcodes.ASM4, lvs);
         
         this.aa = aa;
@@ -75,8 +73,6 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
         this.methods = methods;
         this.reaction = reaction;
         this.classPath = classPath;
-		
-		this.methodName = name;
     }
 	
     @Override
@@ -230,13 +226,11 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
 		
 		if(opcode == NEWARRAY){
 			if(operand == Opcodes.T_FLOAT){
-				//mv.visitMethodInsn(INVOKESTATIC, FN_NAME, "newarray", "(I)["+COJAC_FLOAT_WRAPPER_TYPE_DESCR, false);
 				mv.visitMethodInsn(INVOKESTATIC, FN_NAME, "newarray", "(I)["+Type.getType(Object.class).getDescriptor(), false);
 				mv.visitTypeInsn(CHECKCAST, "["+COJAC_FLOAT_WRAPPER_TYPE_DESCR);
 				return;
 			}
 			if(operand == Opcodes.T_DOUBLE){
-				//mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "newarray", "(I)["+COJAC_DOUBLE_WRAPPER_TYPE_DESCR, false);
 				mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "newarray", "(I)["+Type.getType(Object.class).getDescriptor(), false);
 				mv.visitTypeInsn(CHECKCAST, "["+COJAC_DOUBLE_WRAPPER_TYPE_DESCR);
 				return;

@@ -13,8 +13,12 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 
 /**
- *
- * @author romain
+ * The code of this class comes from the tests of the ASM library
+ * except that the classloader is added to ensure this class to find the classes
+ * in the getCommonSuperClass method.
+ * The only goal of this class is to don't load the classes passed to the 
+ * getCommonSuperClass method (the default implementation does).
+ * If a class is loaded here, it will never be instrumented.
  */
 public class ModifiedClassWriter extends ClassWriter {
     private ClassLoader l = getClass().getClassLoader();

@@ -52,7 +52,7 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
                 // FLOATS
                 FRETURN, 
                 FCONST_0, FCONST_1, FCONST_2, 
-                FLOAD, FSTORE, 
+                FLOAD, FSTORE, // nothing to do here?
                 I2F, L2F, D2F, F2D, F2I, F2L,
                 FMUL, FADD, FDIV, FSUB, FREM, FNEG, 
                 FCMPG, FCMPL, 
