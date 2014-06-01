@@ -1,6 +1,6 @@
 /*
  * *
- *    Copyright 2011 Baptiste Wicht & Frédéric Bapst
+ *    Copyright 2011-2014 Baptiste Wicht, Frédéric Bapst & Romain Monnard
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -36,7 +36,15 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AnalyzerAdapter;
 import org.objectweb.asm.commons.LocalVariablesSorter;
 
-
+/**
+ * There is a delegation chain in place for MethodVisitors:
+ * FloatReplacerMethodVisitor -> FloatVariableSorter -> AnalyzerAdapter -> parentMv
+ * (the -> means "delegate to")
+ * The AnalyzerAdapter keep the representation of the operand stack and the local variables
+ * Only the operand stack can be used in this class.
+ * The load and store operation indices (for the slot of each local variable) are
+ * remapped in the FloatVariableSorter (which extends LocalVariableSorter).
+ */
 final class FloatReplacerMethodVisitor extends MethodVisitor {
 	
 	private final CojacReferences references;
@@ -56,7 +64,6 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
 	public static final String FN_NAME = Type.getType(FloatNumbers.class).getInternalName();
 	public static final String DN_NAME = Type.getType(DoubleNumbers.class).getInternalName();
 	
-    // Must Link the lvs to the aa and the aa to the parent method visitor before call!
     FloatReplacerMethodVisitor(int access, String desc, AnalyzerAdapter aa, LocalVariablesSorter lvs, ReplaceFloatsMethods rfm, InstrumentationStats stats, Args args, Methods methods, IReaction reaction, String classPath, IOpcodeInstrumenterFactory factory, CojacReferences references) {
         super(Opcodes.ASM4, lvs);
         
@@ -125,7 +132,6 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
         String descAfter=replaceFloatMethodDescription(desc);
         if (!desc.equals(descAfter)) 
             stats.incrementCounterValue(opcode);
-        // TODO: something smarter, taking into account the method call kinds ?
 
         mv.visitMethodInsn(opcode, owner, name, descAfter, itf);
     }
@@ -153,7 +159,6 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
             return;
         }
         
-        //TODO something coherent, even if it is only for the benefit of the debuggers...
         desc=afterFloatReplacement(desc);
         mv.visitLocalVariable(name, desc, signature, start, end, index);
     }
@@ -187,7 +192,7 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
             stats.incrementCounterValue(opcode);
         mv.visitFieldInsn(opcode, owner, name, descAfter);
 		
-		// TODO handle GETSTATIC & handle std_lib and already loaded classes
+		// TODO - handle GETSTATIC & handle std_lib and already loaded classes
 		if(opcode == GETFIELD){
 			String objDesc = Type.getType(Object.class).getDescriptor();
 			if(descAfter.equals(COJAC_DOUBLE_WRAPPER_TYPE_DESCR)){
@@ -238,15 +243,6 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
 			}
 		}
 		mv.visitIntInsn(opcode, operand);
-        /*
-        IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opcode);
-        if (instrumenter != null && opcode == NEWARRAY && (operand == Opcodes.T_FLOAT || operand == Opcodes.T_DOUBLE)) { // instrument only if it's an array of floats
-            stats.incrementCounterValue(opcode);
-            instrumenter.instrument(mv, opcode, operand, classPath, methods, reaction, null);
-        } else { // Delegate to parent
-            mv.visitIntInsn(opcode, operand);
-        }
-		*/
     }
     
     
@@ -283,7 +279,6 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
 		
 		Type cojacType = afterFloatReplacement(myType);
 		
-		// TODO - handle arrays casted into object...
 		if(opcode == CHECKCAST && myType.equals(cojacType) == false){
 			if(stackTop().equals(Type.getType(Object.class).getInternalName())){
 				if(cojacType.equals(COJAC_FLOAT_WRAPPER_TYPE)){

@@ -1,7 +1,19 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * *
+ *    Copyright 2014 Frédéric Bapst & Romain Monnard
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
+ *    you may not use this file except in compliance with the License.
+ *    You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ *
  */
 
 package ch.eiafr.cojac;
@@ -15,10 +27,6 @@ import org.objectweb.asm.MethodVisitor;
 import static org.objectweb.asm.Opcodes.*;
 import org.objectweb.asm.Type;
 
-/**
- *
- * @author romain
- */
 public class FloatProxyMethod {
     private final CojacClassVisitor ccv;
     
@@ -44,37 +52,41 @@ public class FloatProxyMethod {
 		
 		checkArraysAfterCall(mv, convertedArrays, desc);
 		
-		Type returnType = Type.getReturnType(desc);
-		Type cojacType = afterFloatReplacement(returnType);
-		if(returnType.equals(cojacType) == false){
-			convertRealToCojacType(returnType, mv);
-		}
-		
-		if(returnType.equals(Type.getType(Object.class))){
-			convertObjectToCojac(mv, returnType);
-		}
-		else if(returnType.getSort() == Type.ARRAY && returnType.getElementType().equals(Type.getType(Object.class))){
-			convertObjectToCojac(mv, returnType);
-		}
+		convertReturnType(mv, desc);
     }
     
     public void nativeCall(MethodVisitor mv, int access, String owner, String name, String desc){
+		HashMap<Integer, Type> convertedArrays;
         boolean isStatic = (access & ACC_STATIC) > 0;
 		
 		String newDesc = replaceFloatMethodDescription(desc);
 		
 		MethodVisitor newMv = ccv.addProxyMethod(access & ~ACC_NATIVE, name, newDesc, null, null);
 
-		HashMap<Integer, Type> convertedArrays = convertArgumentsToReal(newMv, desc, 0, owner);
+		int varIndex = 0;
+		int opcode = INVOKESTATIC;
+		if(!isStatic){
+			newMv.visitVarInsn(ALOAD, 0);
+			varIndex = 1;
+			opcode = INVOKEVIRTUAL;
+		}
+		
+		Type args[] = Type.getArgumentTypes(newDesc);
+		for (Type type : args) {
+			newMv.visitVarInsn(getLoadOpcode(type), varIndex);
+			varIndex += type.getSize();
+		}
 		
 		
+		convertedArrays = convertArgumentsToReal(newMv, desc, opcode, owner);
+
 		
-		if(isStatic)
-            newMv.visitMethodInsn(INVOKESTATIC, owner, name, desc, false);
-        else
-            newMv.visitMethodInsn(INVOKEVIRTUAL, owner, name, desc, false);
+		newMv.visitMethodInsn(opcode, owner, name, desc, false);
+		
         
-		checkArraysAfterCall(mv, convertedArrays, desc);
+		checkArraysAfterCall(newMv, convertedArrays, desc);
+		
+		convertReturnType(newMv, desc);
 		
 		newMv.visitInsn(afterFloatReplacement(Type.getReturnType(desc)).getOpcode(IRETURN));
         newMv.visitMaxs(0, 0);
@@ -143,10 +155,13 @@ public class FloatProxyMethod {
 			}
 		}
 		
-		//if(Arrays.equals(inArgs, outArgs)){
-		//	System.out.println("no convertions");
-		//	return;
-		//}
+		/*
+		// TODO - if no convertion, do not call the convertion but do not forget
+		// to convert the owner in case of invokevirtual...
+		if(Arrays.equals(inArgs, outArgs)){
+			return;
+		}
+		*/
 		
 		String convertDesc = Type.getMethodDescriptor(Type.getType("[Ljava/lang/Object;"), inArgs);
 		
@@ -207,6 +222,21 @@ public class FloatProxyMethod {
 		mv.visitInsn(POP);
 		
 		return convertedArrays;
+	}
+	
+	private void convertReturnType(MethodVisitor mv, String desc){
+		Type returnType = Type.getReturnType(desc);
+		Type cojacType = afterFloatReplacement(returnType);
+		if(returnType.equals(cojacType) == false){
+			convertRealToCojacType(returnType, mv);
+		}
+		
+		if(returnType.equals(Type.getType(Object.class))){
+			convertObjectToCojac(mv, returnType);
+		}
+		else if(returnType.getSort() == Type.ARRAY && returnType.getElementType().equals(Type.getType(Object.class))){
+			convertObjectToCojac(mv, returnType);
+		}
 	}
 	
 	private HashMap<Integer, Type> createConvertMethod(String convertDesc, Type[] inArgs, Type[] outArgs, HashMap<Integer, Type> typeConversions){
@@ -306,16 +336,8 @@ public class FloatProxyMethod {
 		}
 		mv.visitInsn(POP);
 	}
-	
-    private void convertReturnType(String desc, MethodVisitor mv){
-        Type returnType = Type.getReturnType(desc);
-        Type cojacType = afterFloatReplacement(returnType);
-        if(!returnType.equals(cojacType)){
-            convertRealToCojacType(returnType, mv);
-        }
-    }
-    
-    public static void convertRealToCojacType(Type realType, MethodVisitor mv){
+
+	public static void convertRealToCojacType(Type realType, MethodVisitor mv){
         if(realType.equals(Type.FLOAT_TYPE)){
             mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", "(F)"+COJAC_FLOAT_WRAPPER_TYPE_DESCR, false);
         }

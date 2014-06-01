@@ -1,6 +1,6 @@
 /*
  * *
- *    Copyright 2011 Baptiste Wicht & Frédéric Bapst
+ *    Copyright 2014 Frédéric Bapst & Romain Monnard
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -222,8 +222,8 @@ public class BigDecimalDouble extends Number implements Comparable<BigDecimalDou
         return new BigDecimalDouble(a);
     }
 
-	//TODO: define a "magic call" feature: getFloatInfo(float f) ---> call getFloatInfo on the FloatWrapper
 	public static BigDecimalDouble math_sqrt(BigDecimalDouble a){
+		// TODO - make a better sqrt for BigDecimal!
         return new BigDecimalDouble(BigDecimal.valueOf(Math.sqrt(a.doubleValue())));
     }
 	

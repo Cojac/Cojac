@@ -1,6 +1,6 @@
 /*
  * *
- *    Copyright 2011 Baptiste Wicht & Frédéric Bapst
+ *    Copyright 2011-2014 Baptiste Wicht, Frédéric Bapst & Romain Monnard
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ public final class Agent implements ClassFileTransformer {
             }
             byte[] instrumented= instrumenter.instrument(classfileBuffer, loader);
             if (VERBOSE) {
-				// TODO - FAIL in verbose mode when the instrumented application use interfaces
+				// TODO - FAIL in verbose mode when the instrumented application use interfaces (only with -R option)
 				/*
 				The interfaces are loaded by this class, the loading of a class by the agent is done without the instrumentation.
 				One the interface is loaded, it is never reloaded for the same classloader.

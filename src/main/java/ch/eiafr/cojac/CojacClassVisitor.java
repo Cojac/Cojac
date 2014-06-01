@@ -1,6 +1,6 @@
 /*
  * *
- *    Copyright 2011 Baptiste Wicht & Frédéric Bapst
+ *    Copyright 2011-2014 Baptiste Wicht, Frédéric Bapst & Romain Monnard
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -95,26 +95,14 @@ final class CojacClassVisitor extends ClassVisitor {
 		boolean isAbstrac = (access & Opcodes.ACC_ABSTRACT) > 0;
 		boolean isInterface = (access & Opcodes.ACC_INTERFACE) > 0;
        
-        if(isNative && !FloatReplacerMethodVisitor.DONT_INSTRUMENT){
-//            System.out.println("NATIVE METHOD "+name+" "+desc);
-            
-            
-            //cv.visitMethod(access, "$$$COJAC_NATIVE_METHOD$$$_"+name, oldDesc, signature, exceptions);
+        if(isNative && !FloatReplacerMethodVisitor.DONT_INSTRUMENT && desc.equals(oldDesc) == false){
+			/* 
+			If the native method has not the same descriptor, create a method to
+			transform types and call the good native method.
+			*/
             cv.visitMethod(access, name, oldDesc, signature, exceptions);
-            
             fpm.nativeCall(null, access, classPath, name, oldDesc);
-            //mv.visitMethodInsn(INVOKESTATIC, classPath, "$$$COJAC_NATIVE_METHOD$$$_"+name, desc);
-            //mv.visitInsn(Type.getReturnType(desc).getOpcode(IRETURN));
-            
-            //cv.visitMethod(access | Opcodes.ACC_STATIC, "$$$COJAC_NATIVE_METHOD$$$_"+name, oldDesc, signature, exceptions);
-
             return null;
-        }
-        else{
-            if(desc.equals(oldDesc) == false){
-                // Write method proxy for calls from native
-                //fpm.proxyNative(null, access, classPath, name, oldDesc);
-            }
         }
         
         MethodVisitor mv = cv.visitMethod(access, name, desc, signature, exceptions);
@@ -165,19 +153,12 @@ final class CojacClassVisitor extends ClassVisitor {
     public FieldVisitor visitField(int accessFlags, String fieldName, String fieldType, String genericSignature, Object initValStatic) {
         if (args.isSpecified(Arg.REPLACE_FLOATS)) {
 			
-			// TODO - check loaded & std_lib classes
-			
             if (FloatReplacerMethodVisitor.DONT_INSTRUMENT)
                 return super.visitField(accessFlags, fieldName, fieldType, genericSignature, initValStatic);
             if (fieldType.equals("F")) {
-                //TODO correctly handle initial float initialization for static fields
                 return super.visitField(accessFlags, fieldName, COJAC_FLOAT_WRAPPER_TYPE_DESCR, genericSignature, null);
-                //FieldVisitor fv=cv.visitField(accessFlags, fieldName+COJAC_FIELD_SUFFIX, COJAC_FLOAT_WRAPPER, genericSignature, initValStatic);
-                //if (fv!=null) fv.visitEnd();
-                // ...if we want to replace field (instead of adding a new one...)
             }
             if (fieldType.equals("D")) {
-                //TODO correctly handle initial float initialization for static fields
                 return super.visitField(accessFlags, fieldName, COJAC_DOUBLE_WRAPPER_TYPE_DESCR, genericSignature, null);
             }
             
@@ -211,8 +192,6 @@ final class CojacClassVisitor extends ClassVisitor {
             
         }
         return super.visitField(accessFlags, fieldName, fieldType, genericSignature, initValStatic);
-//        FieldVisitor fv = cv.visitField(accessFlags, fieldName, fieldType, genericSignature, initValStatic);
-//        return instrumentField(fv, accessFlags, fieldName, fieldType, genericSignature, initValStatic);
     }
 
 //    private FieldVisitor instrumentField(FieldVisitor parentFv, int arg0, String arg1, String arg2, String arg3, Object arg4) {

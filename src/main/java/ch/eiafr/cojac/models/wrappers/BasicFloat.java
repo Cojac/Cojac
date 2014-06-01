@@ -1,6 +1,6 @@
 /*
  * *
- *    Copyright 2011 Baptiste Wicht & Frédéric Bapst
+ *    Copyright 2014 Frédéric Bapst & Romain Monnard
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
