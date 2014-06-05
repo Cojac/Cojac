@@ -15,3 +15,23 @@ http://osdir.com/ml/java.objectweb.asm/2007-07/msg00007.html).
 I suspect the original problem of failing tests under jdk7 built to have its
 root in the various "inserted methods" (log, print...), which asmified bytecode
 have been gathered quite a long time ago (jvm5 code?). This should be updated.
+
+
+Issues for enriched numbers (option -R)
+
+- Verbose mode & interface: interfaces risk to be loaded by the verifier class
+and to don't get instrumented.
+
+- Array reference through proxy: The proxy break the references with float & double
+arrays. A fix has been done but it do not cover all cases. A test show the problem
+in ch.eiafr.cojac.unit.replace. The name of the test:
+arrayPassedInNotInstrumentedSideModifiedWithAnOtherMethod
+
+- Native methods: The native methods can be called but they cannot call methods or
+access to instance or class fields.
+
+- Callback: The callback written by the user will be instrumented and will not work
+in uninstrumented part if it hanfle the float or double types.
+Test example: arraySortedWithUserDefinedComparator
+
+- Java reflection: not handled
