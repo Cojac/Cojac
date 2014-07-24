@@ -23,7 +23,6 @@ import java.math.MathContext;
 import java.util.Objects;
 
 public class BigDecimalDouble extends Number implements Comparable<BigDecimalDouble>{
-    //private final double val;
 	private final BigDecimal val;
 	private boolean isNaN = false;
 	private boolean isInfinite = false;
@@ -79,7 +78,7 @@ public class BigDecimalDouble extends Number implements Comparable<BigDecimalDou
 			return new BigDecimalDouble(Double.NaN);
 		if(a.isInfinite || b.isInfinite){
 			double aVal = a.getDoubleInfiniteValue();
-			double bVal = a.getDoubleInfiniteValue();
+			double bVal = b.getDoubleInfiniteValue();
 			return new BigDecimalDouble(aVal+bVal);
 		}
         return new BigDecimalDouble(a.val.add(b.val, mathContext));
@@ -90,7 +89,7 @@ public class BigDecimalDouble extends Number implements Comparable<BigDecimalDou
 			return new BigDecimalDouble(Double.NaN);
 		if(a.isInfinite || b.isInfinite){
 			double aVal = a.getDoubleInfiniteValue();
-			double bVal = a.getDoubleInfiniteValue();
+			double bVal = b.getDoubleInfiniteValue();
 			return new BigDecimalDouble(aVal-bVal);
 		}
         return new BigDecimalDouble(a.val.subtract(b.val, mathContext));
@@ -101,7 +100,7 @@ public class BigDecimalDouble extends Number implements Comparable<BigDecimalDou
 			return new BigDecimalDouble(Double.NaN);
 		if(a.isInfinite || b.isInfinite){
 			double aVal = a.getDoubleInfiniteValue();
-			double bVal = a.getDoubleInfiniteValue();
+			double bVal = b.getDoubleInfiniteValue();
 			return new BigDecimalDouble(aVal*bVal);
 		}
         return new BigDecimalDouble(a.val.multiply(b.val, mathContext));
@@ -112,7 +111,7 @@ public class BigDecimalDouble extends Number implements Comparable<BigDecimalDou
 			return new BigDecimalDouble(Double.NaN);
 		if(a.isInfinite || b.isInfinite){
 			double aVal = a.getDoubleInfiniteValue();
-			double bVal = a.getDoubleInfiniteValue();
+			double bVal = b.getDoubleInfiniteValue();
 			return new BigDecimalDouble(aVal/bVal);
 		}
 		if(b.val.equals(BigDecimal.ZERO))
@@ -125,7 +124,7 @@ public class BigDecimalDouble extends Number implements Comparable<BigDecimalDou
 			return new BigDecimalDouble(Double.NaN);
 		if(a.isInfinite || b.isInfinite){
 			double aVal = a.getDoubleInfiniteValue();
-			double bVal = a.getDoubleInfiniteValue();
+			double bVal = b.getDoubleInfiniteValue();
 			return new BigDecimalDouble(aVal%bVal);
 		}
         return new BigDecimalDouble(a.val.remainder(b.val, mathContext)); // is this correct ?
@@ -298,6 +297,8 @@ public class BigDecimalDouble extends Number implements Comparable<BigDecimalDou
 	
 
 	private double getDoubleInfiniteValue(){
+		if(!isInfinite)
+			return val.doubleValue();
 		if(isPositiveInfinite)
 			return Double.POSITIVE_INFINITY;
 		return Double.NEGATIVE_INFINITY;

@@ -83,7 +83,7 @@ public class BigDecimalFloat extends Number implements Comparable<BigDecimalFloa
 			return new BigDecimalFloat(Float.NaN);
 		if(a.isInfinite || b.isInfinite){
 			float aVal = a.getFloatInfiniteValue();
-			float bVal = a.getFloatInfiniteValue();
+			float bVal = b.getFloatInfiniteValue();
 			return new BigDecimalFloat(aVal+bVal);
 		}
         return new BigDecimalFloat(a.val.add(b.val, mathContext));
@@ -94,7 +94,7 @@ public class BigDecimalFloat extends Number implements Comparable<BigDecimalFloa
 			return new BigDecimalFloat(Float.NaN);
 		if(a.isInfinite || b.isInfinite){
 			float aVal = a.getFloatInfiniteValue();
-			float bVal = a.getFloatInfiniteValue();
+			float bVal = b.getFloatInfiniteValue();
 			return new BigDecimalFloat(aVal-bVal);
 		}
         return new BigDecimalFloat(a.val.subtract(b.val, mathContext));
@@ -105,7 +105,7 @@ public class BigDecimalFloat extends Number implements Comparable<BigDecimalFloa
 			return new BigDecimalFloat(Float.NaN);
 		if(a.isInfinite || b.isInfinite){
 			float aVal = a.getFloatInfiniteValue();
-			float bVal = a.getFloatInfiniteValue();
+			float bVal = b.getFloatInfiniteValue();
 			return new BigDecimalFloat(aVal*bVal);
 		}
         return new BigDecimalFloat(a.val.multiply(b.val, mathContext));
@@ -116,7 +116,7 @@ public class BigDecimalFloat extends Number implements Comparable<BigDecimalFloa
 			return new BigDecimalFloat(Float.NaN);
 		if(a.isInfinite || b.isInfinite){
 			float aVal = a.getFloatInfiniteValue();
-			float bVal = a.getFloatInfiniteValue();
+			float bVal = b.getFloatInfiniteValue();
 			return new BigDecimalFloat(aVal/bVal);
 		}
 		if(b.val.equals(BigDecimal.ZERO))
@@ -129,7 +129,7 @@ public class BigDecimalFloat extends Number implements Comparable<BigDecimalFloa
 			return new BigDecimalFloat(Float.NaN);
 		if(a.isInfinite || b.isInfinite){
 			float aVal = a.getFloatInfiniteValue();
-			float bVal = a.getFloatInfiniteValue();
+			float bVal = b.getFloatInfiniteValue();
 			return new BigDecimalFloat(aVal%bVal);
 		}
         return new BigDecimalFloat(a.val.remainder(b.val, mathContext)); // is this correct ?
@@ -288,6 +288,8 @@ public class BigDecimalFloat extends Number implements Comparable<BigDecimalFloa
 	}
 	
 	private float getFloatInfiniteValue(){
+		if(!isInfinite)
+			return val.floatValue();
 		if(isPositiveInfinite)
 			return Float.POSITIVE_INFINITY;
 		return Float.NEGATIVE_INFINITY;
