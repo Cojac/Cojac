@@ -18,6 +18,7 @@
 
 package ch.eiafr.cojac.models.wrappers;
 
+import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_BIGDECIMAL_PRECISION;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Objects;
@@ -29,9 +30,10 @@ public class BigDecimalFloat extends Number implements Comparable<BigDecimalFloa
 	private boolean isInfinite = false;
 	private boolean isPositiveInfinite = false;
 	
-	private static MathContext mathContext = new MathContext(100);
+	private static MathContext mathContext;
 	
 	public BigDecimalFloat(BigDecimal v) {
+		mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
         val = v;
     }
 	
@@ -40,6 +42,7 @@ public class BigDecimalFloat extends Number implements Comparable<BigDecimalFloa
 	}
     
     public BigDecimalFloat(float v) {
+		mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
 		if(Float.isNaN(v)){
 			isNaN = true;
 			val = null;
@@ -55,14 +58,17 @@ public class BigDecimalFloat extends Number implements Comparable<BigDecimalFloa
     }
     
     public BigDecimalFloat(BigDecimalFloat v) {
+		mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
         val = v.val;
     }
     
     public BigDecimalFloat(String v) {
+		mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
         val = new BigDecimal(v, mathContext);
     }
     
     public BigDecimalFloat(BigDecimalDouble v) {
+		mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
         val = v.toBigDecimal();
     }
     

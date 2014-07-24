@@ -61,6 +61,7 @@ public final class CojacReferences {
 
 	private final String floatWrapper;
 	private final String doubleWrapper;
+	private final int bigDecimalPrecision;
 	
     private CojacReferences(CojacReferencesBuilder builder) {
         this.args = builder.args;
@@ -74,6 +75,7 @@ public final class CojacReferences {
         this.loadedClasses = builder.loadedClasses;
 		this.floatWrapper = builder.floatWrapper;
 		this.doubleWrapper = builder.doubleWrapper;
+		this.bigDecimalPrecision = builder.bigDecimalPrecision;
     }
 
 	public String getFloatWrapper() {
@@ -82,6 +84,10 @@ public final class CojacReferences {
 
 	public String getDoubleWrapper() {
 		return doubleWrapper;
+	}
+	
+	public int getBigDecimalPrecision() {
+		return bigDecimalPrecision;
 	}
 
 	public String[] getBypassList(){
@@ -157,6 +163,7 @@ public final class CojacReferences {
         private Splitter splitter;
 		private String floatWrapper;
 		private String doubleWrapper;
+		private int bigDecimalPrecision;
         
         private final String[] loadedClasses;
 
@@ -234,6 +241,15 @@ public final class CojacReferences {
 				else{
 					try {
 						clazz.getMethod("setDoubleWrapper", String.class).invoke(clazz, BasicDouble.class.getCanonicalName());
+					} catch (Exception ex) {
+						Logger.getLogger(CojacReferences.class.getName()).log(Level.SEVERE, null, ex);
+					}
+				}
+
+				if(args.isSpecified(Arg.BIG_DECIMAL_PRECISION)){
+					bigDecimalPrecision = Integer.valueOf(args.getValue(Arg.BIG_DECIMAL_PRECISION));
+					try {
+						clazz.getMethod("setBigDecimalPrecision", int.class).invoke(clazz, bigDecimalPrecision);
 					} catch (Exception ex) {
 						Logger.getLogger(CojacReferences.class.getName()).log(Level.SEVERE, null, ex);
 					}

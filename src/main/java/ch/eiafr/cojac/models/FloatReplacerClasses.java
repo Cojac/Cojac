@@ -34,6 +34,8 @@ public class FloatReplacerClasses {
     public static Type   COJAC_FLOAT_WRAPPER_TYPE;
     public static String COJAC_FLOAT_WRAPPER_TYPE_DESCR;
 	
+	public static int COJAC_BIGDECIMAL_PRECISION = 100; // default precision
+	
 	public static void setDoubleWrapper(String className){
 		try {
 			// Class can be checked with reflexion (ensure that all needed methods are awailable and that the class implements Comparable and extends Numbers)
@@ -56,6 +58,10 @@ public class FloatReplacerClasses {
 		} catch (ClassNotFoundException ex) {
 			Logger.getLogger(FloatReplacerClasses.class.getName()).log(Level.SEVERE, null, ex);
 		}
+	}
+	
+	public static void setBigDecimalPrecision(int precision){
+		COJAC_BIGDECIMAL_PRECISION = precision;
 	}
 	
 }

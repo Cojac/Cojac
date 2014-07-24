@@ -26,6 +26,7 @@ public enum Arg {
     REPLACE_FLOATS("R"),
 	FLOAT_WRAPPER("FW"),
 	DOUBLE_WRAPPER("DW"),
+	BIG_DECIMAL_PRECISION("BDP"),
     HELP("h"),
     ALL("a"),
     PRINT("c"),
@@ -146,10 +147,13 @@ public enum Arg {
             "replacefloats", false, "Replaces floats by CojacFloat objects ");
 		options.addOption(Arg.FLOAT_WRAPPER.shortOpt(),
             "floatwrapper", true, "Select the FloatWrapper wanted (Must be in COJAC or in classpath)" +
-            "Example: -FW ch.eiafr.cojac.models.FloatWrapper use the class as floats replacement object");
+            "Example: -FW cojac.BigDecimalFloat use the class as floats replacement object");
 		options.addOption(Arg.DOUBLE_WRAPPER.shortOpt(),
             "doublewrapper", true, "Select the DoubleWrapper wanted (Must be in COJAC or in classpath)" +
-            "Example: -DW ch.eiafr.cojac.models.DoubleWrapper use the class as doubles replacement object");
+            "Example: -DW cojac.BigDecimalDouble use the class as doubles replacement object");
+		options.addOption(Arg.BIG_DECIMAL_PRECISION.shortOpt(),
+            "BDPrecision", true, "Select the BigDecimal wrapper precision (number of decimal)" +
+            "Example: -BDP 100 set 100 decimals for BigDecimal wrapper");
         options.addOption(Arg.NONE.shortOpt(),
             "none", false, "Don't instrument any instruction");
         options.addOption(Arg.BYPASS.shortOpt(),
