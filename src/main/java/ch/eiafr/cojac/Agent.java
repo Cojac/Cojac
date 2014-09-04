@@ -88,6 +88,8 @@ public final class Agent implements ClassFileTransformer {
 	 * It instrument it to create a static initializer block to set
 	 * all the static variables used by the agent and injected in the 
 	 * instrumented application.
+	 * Warning: this is not the only place to set these variables, see class
+	 * "CojacReferences" !
 	 * This is used when there is more than one classloader in the application
 	 * @param byteCode
 	 * @param loader

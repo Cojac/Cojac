@@ -115,7 +115,6 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
         return new BasicDouble((double)BasicFloat.toFloat(a));
     }
 
-	//TODO: define a "magic call" feature: getFloatInfo(float f) ---> call getFloatInfo on the FloatWrapper
 	public static BasicDouble math_sqrt(BasicDouble a){
         return new BasicDouble(Math.sqrt(a.val));
     }

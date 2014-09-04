@@ -88,7 +88,7 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
             mv.visitInsn(opCode); return; 
         }
         
-        // TODO - check instruction DUP_X2
+        // TODO - make a junit test to check the DUP_X2 instruction...
         // Replace instructions on doubles by instruction on objects when necessary
         if(opCode == DUP2 || opCode == DUP2_X1 || opCode == DUP2_X2 || opCode == POP2){
             if(stackTop().equals(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME)){

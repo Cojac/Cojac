@@ -35,7 +35,6 @@ import static org.objectweb.asm.Opcodes.*;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.LocalVariablesSorter;
 
-// TODO: instrument float arrays instructions...
 
 final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
     private final InstrumentationStats stats;
@@ -60,7 +59,7 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
                 // DOUBLES
                 DRETURN,
                 DCONST_0, DCONST_1,
-                I2D, L2D, D2I, D2L, // TODO - define where to put D2F and F2D
+                I2D, L2D, D2I, D2L, // TODO - define where to put D2F and F2D or make only one wrapper
                 DMUL, DADD, DDIV, DSUB, DREM, DNEG,
                 DCMPG, DCMPL,
         };

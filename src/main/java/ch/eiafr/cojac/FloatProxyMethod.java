@@ -91,56 +91,6 @@ public class FloatProxyMethod {
 		newMv.visitInsn(afterFloatReplacement(Type.getReturnType(desc)).getOpcode(IRETURN));
         newMv.visitMaxs(0, 0);
     }
-    
-    public void proxyNative(MethodVisitor mv, int access, String owner, String name, String desc){
-		System.out.println("PROXY NATIVER NOT IMPLEMENTED");
-        /*
-        HashMap<Integer, Type> typeConversions = new HashMap<>();
-        
-        Type args[] = Type.getArgumentTypes(desc);
-        Type newDescArgs[] = new Type[args.length];
-        for (int i=0 ; i < args.length; i++) {
-            Type type = args[i];
-            Type cojacType = afterFloatReplacement(type);
-            newDescArgs[i] = cojacType;
-            if(!type.equals(cojacType)){
-                typeConversions.put(i, type);
-                args[i] = type;
-            }
-        }
-
-        
-        String newDesc = Type.getMethodDescriptor(afterFloatReplacement(Type.getReturnType(desc)), newDescArgs);
-        
-        boolean isStatic = (access & ACC_STATIC) > 0;
-        
-        MethodVisitor newMv = ccv.addProxyMethod(access, name, desc, null, null);
-        
-        int varIndex = 1;
-        if(isStatic)
-            varIndex = 0;
-        else{
-            newMv.visitVarInsn(ALOAD, 0);
-        }
-        
-        for (int i = 0; i < args.length; i++) {
-            Type type = args[i];
-            newMv.visitVarInsn(getLoadOpcode(type), varIndex);
-            varIndex += type.getSize();
-            if(typeConversions.get(i) != null){
-                convertRealToCojacType(typeConversions.get(i), newMv);
-            }
-        }
-        if(isStatic)
-            newMv.visitMethodInsn(INVOKESTATIC, owner, name, newDesc);
-        else
-            newMv.visitMethodInsn(INVOKESPECIAL, owner, name, newDesc);
-        convertCojacToRealType(Type.getReturnType(desc), newMv);
-        
-        newMv.visitInsn(Type.getReturnType(desc).getOpcode(IRETURN));
-        newMv.visitMaxs(0, 0);
-        */
-    }
 	
 	private HashMap<Integer, Type> convertArgumentsToReal(MethodVisitor mv, String desc, int opcode, String owner){
 		HashMap<Integer, Type> typeConversions = new HashMap<>();
@@ -156,8 +106,9 @@ public class FloatProxyMethod {
 		}
 		
 		/*
-		// TODO - if no convertion, do not call the convertion but do not forget
-		// to convert the owner in case of invokevirtual...
+		// TODO - if no convertion, do not call the convertion to improve a
+		// little bit the performance but do not forget to convert the owner in
+		// case of invokevirtual...
 		if(Arrays.equals(inArgs, outArgs)){
 			return;
 		}
@@ -315,7 +266,6 @@ public class FloatProxyMethod {
 			mv.visitInsn(DUP2_X1); // D D Object D D
 			mv.visitInsn(POP2); // D D Object
 		}
-		// TODO - check tables
 		for(int pos: convertedArrays.keySet()){
 			Type type = convertedArrays.get(pos);
 			mv.visitInsn(DUP);

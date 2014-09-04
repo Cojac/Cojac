@@ -123,8 +123,6 @@ public class BasicFloat extends Number implements Comparable<BasicFloat> {
         return Float.toString(val);
     }
     
-    //TODO: define a "magic call" feature: getFloatInfo(float f) ---> call getFloatInfo on the FloatWrapper
-
     public static boolean isInfiniteProxy(BasicFloat a){
         return Float.isInfinite(a.val);
     }

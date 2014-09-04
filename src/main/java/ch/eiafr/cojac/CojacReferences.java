@@ -119,14 +119,39 @@ public final class CojacReferences {
     }
 
     public boolean hasToBeInstrumented(String className) {
-        // TODO: deal with native methods
         if (args.isSpecified(Arg.REPLACE_FLOATS)){
+			/*
+			TODO: Allow instrumented items to be stored in Lists and Collections.
+			We don't want to lose the enriched information when the application use
+			lists or collections. The proxy has to identify them and decide if a
+			convertion is needed.
+			Currently the classes of lists and collections are identified as
+			belonging to the standard packages. When a method of these classes is
+			called, all instrumented objects are converted (lose of information).
+			
+			Problem to solve:
+			When java/util/ArrayList or/and java/util/Collection are instrumented
+			the JVM will access to some classes in the agent. If the classpath
+			used is the same as the agent, there is no problem but if this is an
+			other classpath, the JVM will not find the classes inside the agent...
+			Example with Java2Demo:
+			"java.lang.NoClassDefFoundError: ch/eiafr/cojac/models/DoubleNumbers"
+			
+			One solution could be to make a little jar with classes needed
+			evrywhere next to the agent jar and to add it to the classpath of the
+			bootstrap classloader with the option "-Xbootclasspath/p:path_of_jar"
+			but it is better to have all cojac in only one jar...
+			
+			Consider to ask a question to the ASM mailing list.
+			*/
+			/*
 			if(className.startsWith("java/util/ArrayList")){ // Do not lose the enriched informations when store float or double in an arraylist
 				return true;
 			}
-			//if(className.startsWith("java/util/Collection")){ // Do not lose the enriched informations when store float or double in an collection
-			//	return true;
-			//}
+			if(className.startsWith("java/util/Collection")){ // Do not lose the enriched informations when store float or double in an collection
+				return true;
+			}
+			*/
 			
 			if(loadedClasses != null){
 				for (String passClass : loadedClasses) {
@@ -202,6 +227,11 @@ public final class CojacReferences {
 				sbBypassList.append(BYPASS_SEPARATOR);
                 sbBypassList.append("ch.eiafr.cojac.unit.replace.FloatProxyNotInstrumented");
 			
+				/*
+				Get the class used to store global variables.
+				Warning: This is not the only place to set the values,
+				see method "setGlobalFields" in class "Agent" !
+				*/
 				Class clazz = null;
 				try {
 					clazz = loader.loadClass("ch.eiafr.cojac.models.FloatReplacerClasses");
@@ -210,10 +240,10 @@ public final class CojacReferences {
 				}
 				
 				if(args.isSpecified(Arg.FLOAT_WRAPPER) && args.getValue(Arg.FLOAT_WRAPPER).length()>0){
+					// TODO - check if the class exist and warn the user if not.
 					floatWrapper = args.getValue(Arg.FLOAT_WRAPPER);
 					if(floatWrapper.startsWith("cojac."))
 						floatWrapper = floatWrapper.replace("cojac.", "ch.eiafr.cojac.models.wrappers.");
-					//FloatReplacerClasses.setFloatWrapper(floatWrapper);
 					try {
 						clazz.getMethod("setFloatWrapper", String.class).invoke(clazz, floatWrapper);
 					} catch (Exception ex) {
@@ -229,6 +259,7 @@ public final class CojacReferences {
 				}
 
 				if(args.isSpecified(Arg.DOUBLE_WRAPPER) && args.getValue(Arg.DOUBLE_WRAPPER).length()>0){
+					// TODO - check if the class exist and warn the user if not.
 					doubleWrapper = args.getValue(Arg.DOUBLE_WRAPPER);
 					if(doubleWrapper.startsWith("cojac."))
 						doubleWrapper = doubleWrapper.replace("cojac.", "ch.eiafr.cojac.models.wrappers.");
