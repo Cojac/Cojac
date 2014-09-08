@@ -170,7 +170,7 @@ public class BigDecimalDouble extends Number implements Comparable<BigDecimalDou
         return a.val.doubleValue();
     }
     
-    // TODO: correctly implement fcmpl and fcmpg
+    // TODO: correctly implement dcmpl and dcmpg
     public static int dcmpl(BigDecimalDouble a, BigDecimalDouble b) {
 		return a.compareTo(b); // is this correct ?
     }

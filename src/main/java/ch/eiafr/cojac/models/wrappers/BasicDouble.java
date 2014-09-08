@@ -78,7 +78,7 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
         return new Double(a.val);
     }
     
-    // TODO: correctly implement fcmpl and fcmpg
+    // TODO: correctly implement dcmpl and dcmpg
     public static int dcmpl(BasicDouble a, BasicDouble b) {
         if (a.val < b.val) return -1;
         if (a.val > b.val) return +1;

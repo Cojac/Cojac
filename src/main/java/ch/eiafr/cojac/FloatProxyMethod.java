@@ -106,7 +106,7 @@ public class FloatProxyMethod {
 		}
 		
 		/*
-		// TODO - if no convertion, do not call the convertion to improve a
+		// TODO - if no conversion, do not call the conversion to improve a
 		// little bit the performance but do not forget to convert the owner in
 		// case of invokevirtual...
 		if(Arrays.equals(inArgs, outArgs)){

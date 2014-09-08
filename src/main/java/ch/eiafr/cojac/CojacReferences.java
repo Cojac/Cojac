@@ -122,12 +122,12 @@ public final class CojacReferences {
         if (args.isSpecified(Arg.REPLACE_FLOATS)){
 			/*
 			TODO: Allow instrumented items to be stored in Lists and Collections.
-			We don't want to lose the enriched information when the application use
+			We don't want to lose the enriched information when the application uses
 			lists or collections. The proxy has to identify them and decide if a
-			convertion is needed.
+			conversion is needed.
 			Currently the classes of lists and collections are identified as
 			belonging to the standard packages. When a method of these classes is
-			called, all instrumented objects are converted (lose of information).
+			called, all instrumented objects are converted (loss of information).
 			
 			Problem to solve:
 			When java/util/ArrayList or/and java/util/Collection are instrumented
@@ -142,7 +142,7 @@ public final class CojacReferences {
 			bootstrap classloader with the option "-Xbootclasspath/p:path_of_jar"
 			but it is better to have all cojac in only one jar...
 			
-			Consider to ask a question to the ASM mailing list.
+			Consider asking a question to the ASM mailing list.
 			*/
 			/*
 			if(className.startsWith("java/util/ArrayList")){ // Do not lose the enriched informations when store float or double in an arraylist
