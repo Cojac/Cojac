@@ -51,8 +51,7 @@ public final class Agent implements ClassFileTransformer {
 
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
-		
-		try {
+        try {
 			if(className.equals("ch/eiafr/cojac/models/FloatReplacerClasses")){
                 if (VERBOSE) {
                     System.out.println("Agent handling the FloatReplacerClasses under "+loader);
