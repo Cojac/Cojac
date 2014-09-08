@@ -35,11 +35,13 @@ public final class Agent implements ClassFileTransformer {
     private final CojacReferences references;
     private final IClassInstrumenter instrumenter;
     private final boolean VERBOSE;
-    
+    private final boolean REPLACE_FLOATS;
+
     public Agent(final CojacReferences references) {
         try {
             this.references = references;
             this.VERBOSE = references.getArgs().isSpecified(Arg.VERBOSE);
+            this.REPLACE_FLOATS = references.getArgs().isSpecified(Arg.REPLACE_FLOATS);
             this.instrumenter = new ClassLoaderInstrumenter(references); 
         } catch (RuntimeException e) {
             e.printStackTrace();
@@ -52,6 +54,9 @@ public final class Agent implements ClassFileTransformer {
 		
 		try {
 			if(className.equals("ch/eiafr/cojac/models/FloatReplacerClasses")){
+                if (VERBOSE) {
+                    System.out.println("Agent handling the FloatReplacerClasses under "+loader);
+                }
 				return setGlobalFields(classfileBuffer, loader);
 			}
             if (!references.hasToBeInstrumented(className)) {
@@ -65,12 +70,13 @@ public final class Agent implements ClassFileTransformer {
             }
             byte[] instrumented= instrumenter.instrument(classfileBuffer, loader);
             if (VERBOSE) {
-				// TODO - FAIL in verbose mode when the instrumented application use interfaces (only with -R option)
+				// TODO - FAIL in verbose mode when the instrumented application uses interfaces (only with -R option)
 				/*
 				The interfaces are loaded by this class, the loading of a class by the agent is done without the instrumentation.
-				One the interface is loaded, it is never reloaded for the same classloader.
+				Once the interface is loaded, it is never reloaded for the same classloader.
 				That means the interface will never be instrumented in verbose mode. 
 				*/
+                if (! REPLACE_FLOATS)
 				CheckClassAdapter.verify(new ClassReader(instrumented), PRINT_INSTR_RESULT, new PrintWriter(System.out));
 			}
 			

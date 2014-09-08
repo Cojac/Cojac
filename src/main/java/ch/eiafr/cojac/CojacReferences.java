@@ -152,7 +152,7 @@ public final class CojacReferences {
 				return true;
 			}
 			*/
-			
+
 			if(loadedClasses != null){
 				for (String passClass : loadedClasses) {
 					if(className.equals(passClass)){
