@@ -52,7 +52,7 @@ public final class Agent implements ClassFileTransformer {
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
         try {
-			if(className.equals("ch/eiafr/cojac/models/FloatReplacerClasses")){
+			if("ch/eiafr/cojac/models/FloatReplacerClasses".equals(className)) {
                 if (VERBOSE) {
                     System.out.println("Agent handling the FloatReplacerClasses under "+loader);
                 }
@@ -76,13 +76,13 @@ public final class Agent implements ClassFileTransformer {
 				That means the interface will never be instrumented in verbose mode. 
 				*/
                 if (! REPLACE_FLOATS)
-				CheckClassAdapter.verify(new ClassReader(instrumented), PRINT_INSTR_RESULT, new PrintWriter(System.out));
+                    CheckClassAdapter.verify(new ClassReader(instrumented), PRINT_INSTR_RESULT, new PrintWriter(System.out));
 			}
 			
-			
             return instrumented;
+            
         } catch (Throwable e) {
-			System.out.println("EXCEPTION FOR CLASS "+className);
+			System.out.println("COJAC-AGENT EXCEPTION FOR CLASS "+className);
             e.printStackTrace();  // Otherwise it'll be hidden!
             throw e;
         }

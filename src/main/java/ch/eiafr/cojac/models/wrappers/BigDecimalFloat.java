@@ -152,19 +152,18 @@ public class BigDecimalFloat extends Number implements Comparable<BigDecimalFloa
     }
 
     public static float toFloat(BigDecimalFloat a) {
+        if(a.isNaN)
+            return Float.NaN;
+        if(a.isInfinite){
+            if(a.isPositiveInfinite)
+                return Float.POSITIVE_INFINITY;
+            /*else*/ return Float.NEGATIVE_INFINITY;
+        }
         return a.val.floatValue();
     }
     
     public static Float toRealFloatWrapper(BigDecimalFloat a){
-        if(a.isNaN)
-			return Float.NaN;
-		if(a.isInfinite){
-			if(a.isPositiveInfinite)
-				return Float.POSITIVE_INFINITY;
-			else
-				return Float.NEGATIVE_INFINITY;
-		}
-        return a.val.floatValue();
+        return toFloat(a);
     }
     
     // TODO: correctly implement fcmpl and fcmpg
@@ -285,12 +284,12 @@ public class BigDecimalFloat extends Number implements Comparable<BigDecimalFloa
 
 	@Override
 	public float floatValue() {
-		return val.floatValue();
+		return toFloat(this);
 	}
 
 	@Override
 	public double doubleValue() {
-		return val.doubleValue();
+		return toFloat(this);
 	}
 	
 	private float getFloatInfiniteValue(){

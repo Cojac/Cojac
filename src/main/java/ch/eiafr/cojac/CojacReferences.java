@@ -119,6 +119,7 @@ public final class CojacReferences {
     }
 
     public boolean hasToBeInstrumented(String className) {
+        if (className==null) return true; // TODO: reconsider that (null for lambdas...)
         if (args.isSpecified(Arg.REPLACE_FLOATS)){
 			/*
 			TODO: Allow instrumented items to be stored in Lists and Collections.
@@ -194,7 +195,8 @@ public final class CojacReferences {
 
         private static final String STANDARD_PACKAGES = "com.sun.;java.;javax.;sun.;sunw.;"
                 + "org.xml.sax.;org.w3c.dom.;org.omg.;org.ietf.jgss.;"
-                + "com.apple.;apple.;" + "ch.eiafr.cojac.models;" + "org.slf4j";
+                + "com.apple.;apple.;" + "ch.eiafr.cojac.models;" 
+                + "jdk.internal;" + "org.slf4j";
 
         public CojacReferencesBuilder() {
             this(new Args(), null);
