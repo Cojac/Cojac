@@ -41,9 +41,12 @@ import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenterFactory;
 import ch.eiafr.cojac.models.Reactions;
 import ch.eiafr.cojac.models.wrappers.BasicDouble;
 import ch.eiafr.cojac.models.wrappers.BasicFloat;
+import ch.eiafr.cojac.models.wrappers.BigDecimalDouble;
+import ch.eiafr.cojac.models.wrappers.BigDecimalFloat;
 import ch.eiafr.cojac.reactions.ClassLoaderReaction;
 import ch.eiafr.cojac.reactions.IReaction;
 import ch.eiafr.cojac.utils.ReflectionUtils;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -223,7 +226,9 @@ public final class CojacReferences {
             this.reaction = new ClassLoaderReaction(args);
             this.sbBypassList = new StringBuilder(STANDARD_PACKAGES);
 
-            
+            if(args.isSpecified(Arg.BIG_DECIMAL_PRECISION)) {
+                args.specify(Arg.REPLACE_FLOATS);
+            }
 			
 			if(args.isSpecified(Arg.REPLACE_FLOATS)){ // Only for proxy tests
 				sbBypassList.append(BYPASS_SEPARATOR);
@@ -254,7 +259,7 @@ public final class CojacReferences {
 				}
 				else{
 					try {
-						clazz.getMethod("setFloatWrapper", String.class).invoke(clazz, BasicFloat.class.getCanonicalName());
+						clazz.getMethod("setFloatWrapper", String.class).invoke(clazz, BigDecimalFloat.class.getCanonicalName());
 					} catch (Exception ex) {
 						Logger.getLogger(CojacReferences.class.getName()).log(Level.SEVERE, null, ex);
 					}
@@ -273,7 +278,7 @@ public final class CojacReferences {
 				}
 				else{
 					try {
-						clazz.getMethod("setDoubleWrapper", String.class).invoke(clazz, BasicDouble.class.getCanonicalName());
+						clazz.getMethod("setDoubleWrapper", String.class).invoke(clazz, BigDecimalDouble.class.getCanonicalName());
 					} catch (Exception ex) {
 						Logger.getLogger(CojacReferences.class.getName()).log(Level.SEVERE, null, ex);
 					}

@@ -168,11 +168,11 @@ public class BigDecimalFloat extends Number implements Comparable<BigDecimalFloa
     
     // TODO: correctly implement fcmpl and fcmpg
     public static int fcmpl(BigDecimalFloat a, BigDecimalFloat b) {
-        return a.val.compareTo(b.val);
+        return a.compareTo(b); // is this correct?
     }
     
     public static int fcmpg(BigDecimalFloat a, BigDecimalFloat b) {
-        return a.val.compareTo(b.val);
+        return a.compareTo(b); // is this correct?
     }
     
     public static int f2i(BigDecimalFloat a) {
@@ -225,6 +225,8 @@ public class BigDecimalFloat extends Number implements Comparable<BigDecimalFloa
 
     @Override
     public String toString(){
+        if(isNaN) return "NaN";
+        if(isInfinite) return (isPositiveInfinite?'+':'-')+"Infinity";
         return val.toString();
     }
     

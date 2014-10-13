@@ -19,6 +19,7 @@
 package ch.eiafr.cojac.models.wrappers;
 
 import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_BIGDECIMAL_PRECISION;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Objects;
@@ -215,6 +216,13 @@ public class BigDecimalDouble extends Number implements Comparable<BigDecimalDou
         return new BigDecimalFloat(a.val);
     }
     
+    @Override
+    public String toString(){
+        if(isNaN) return "NaN";
+        if(isInfinite) return (isPositiveInfinite?'+':'-')+"Infinity";
+        return val.toString();
+    }
+    
     public static BigDecimalDouble i2d(int a) {
         return new BigDecimalDouble(new BigDecimal(a));
     }
@@ -282,25 +290,31 @@ public class BigDecimalDouble extends Number implements Comparable<BigDecimalDou
 
 	@Override
 	public int intValue() {
+	    if(isNaN) return 0;
+	    if (isInfinite) return isPositiveInfinite?Integer.MAX_VALUE:Integer.MIN_VALUE;
 		return val.intValue();
 	}
 
 	@Override
 	public long longValue() {
+        if(isNaN) return 0;
+        if (isInfinite) return isPositiveInfinite?Long.MAX_VALUE:Long.MIN_VALUE;
 		return val.longValue();
 	}
 
 	@Override
 	public float floatValue() {
+        if(isNaN) return Float.NaN;
+        if (isInfinite) return isPositiveInfinite?Float.POSITIVE_INFINITY:Float.NEGATIVE_INFINITY;
 		return val.floatValue();
 	}
 
 	@Override
 	public double doubleValue() {
+        if(isNaN) return Double.NaN;
+        if (isInfinite) return isPositiveInfinite?Double.POSITIVE_INFINITY:Double.NEGATIVE_INFINITY;
 		return val.doubleValue();
 	}
-
-	
 
 	private double getDoubleInfiniteValue(){
 		if(!isInfinite)
