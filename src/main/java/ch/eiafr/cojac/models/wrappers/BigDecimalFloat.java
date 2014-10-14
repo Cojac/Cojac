@@ -301,5 +301,5 @@ public class BigDecimalFloat extends Number implements Comparable<BigDecimalFloa
 			return Float.POSITIVE_INFINITY;
 		return Float.NEGATIVE_INFINITY;
 	}
-
+	
 }

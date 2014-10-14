@@ -324,4 +324,12 @@ public class BigDecimalDouble extends Number implements Comparable<BigDecimalDou
 		return Double.NEGATIVE_INFINITY;
 	}
 
+	public static String COJAC_MAGIC_DOUBLE_toStr(BigDecimalFloat n) {
+	    return n.toString();
+	}
+    public static String COJAC_MAGIC_DOUBLE_toStr(BigDecimalDouble n) {
+        return n.toString();
+    }
+
+
 }
