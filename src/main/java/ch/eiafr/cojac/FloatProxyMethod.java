@@ -231,7 +231,7 @@ public class FloatProxyMethod {
                 if(typeConversions.get(i) != null){
                     convertCojacToRealType(typeConversions.get(i), newMv);
                 }
-				else if(inArgs[i].equals(Type.getType(Object.class))){
+				else if(inArgs[i].equals(Type.getType(Object.class))) { // BAPST: maybe to reconsider...
 					convertObjectToReal(newMv, inArgs[i]);
 				}
 				else if(inArgs[i].getSort() == Type.ARRAY && inArgs[i].getElementType().equals(Type.getType(Object.class))){

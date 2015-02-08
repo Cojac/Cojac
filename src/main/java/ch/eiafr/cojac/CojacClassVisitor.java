@@ -126,7 +126,7 @@ final class CojacClassVisitor extends ClassVisitor {
         
         
         return instrumentMethod(mv, access, desc, name);
-		}
+    }
 
     //        if (args.isSpecified(Arg.REPLACE_FLOATS))
     //          desc=replaceFloatMethodDescription(desc);
