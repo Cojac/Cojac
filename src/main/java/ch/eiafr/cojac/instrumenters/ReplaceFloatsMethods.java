@@ -114,6 +114,8 @@ public class ReplaceFloatsMethods {
         
         // Math Library
         invocations.put(new MethodSignature(MATH_NAME, "sqrt", "(D)D"), new InvokableMethod(CDW_N, "math_sqrt", "("+CDW+")"+CDW, INVOKESTATIC));
+        //invocations.put(new MethodSignature(MATH_NAME, "pow","(D)D"),new InvokableMethod(CDW_N,"math_pow","("+CDW+")"+CDW,INVOKESTATIC));
+        invocations.put(new MethodSignature(MATH_NAME,"sin","(D)D"), new InvokableMethod(CDW_N,"math_sin","("+CDW+")"+CDW,INVOKESTATIC));
         // TODO: add Math.operations other than "sqrt"
         
         allMethodsConversions.add(MATH_NAME);
