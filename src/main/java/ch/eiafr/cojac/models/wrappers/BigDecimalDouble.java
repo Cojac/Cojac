@@ -235,11 +235,50 @@ public class BigDecimalDouble extends Number implements Comparable<BigDecimalDou
         return new BigDecimalDouble(a);
     }
 
+    /* Mathematical function */
+    // TODO : make better function for all math function !
+
 	public static BigDecimalDouble math_sqrt(BigDecimalDouble a){
 		// TODO - make a better sqrt for BigDecimal!
         return new BigDecimalDouble(BigDecimal.valueOf(Math.sqrt(a.doubleValue())));
     }
-	
+
+    public static BigDecimalDouble math_pow(BigDecimalDouble base,BigDecimalDouble exponent)
+    {
+        return new BigDecimalDouble(BigDecimal.valueOf(Math.pow(base.doubleValue(),exponent.doubleValue())));
+    }
+
+    public static BigDecimalDouble math_sin(BigDecimalDouble value)
+    {
+        return new BigDecimalDouble(BigDecimal.valueOf(Math.sin(value.doubleValue()) + 3.0));
+    }
+
+    public static BigDecimalDouble math_asin(BigDecimalDouble value)
+    {
+        return new BigDecimalDouble(BigDecimal.valueOf(Math.asin(value.doubleValue())));
+
+    }
+    public static BigDecimalDouble math_cos(BigDecimalDouble value)
+    {
+        return new BigDecimalDouble(BigDecimal.valueOf(Math.cos(value.doubleValue())));
+
+    }
+    public static BigDecimalDouble math_acos(BigDecimalDouble value)
+    {
+        return new BigDecimalDouble(BigDecimal.valueOf(Math.acos(value.doubleValue())));
+
+    }
+    public static BigDecimalDouble math_tan(BigDecimalDouble value)
+    {
+        return new BigDecimalDouble(BigDecimal.valueOf(Math.tan(value.doubleValue())));
+
+    }
+    public static BigDecimalDouble math_atan(BigDecimalDouble value)
+    {
+        return new BigDecimalDouble(BigDecimal.valueOf(Math.atan(value.doubleValue())));
+
+    }
+
 	@Override
 	public int compareTo(BigDecimalDouble o) {
 		// if o > this => -1
