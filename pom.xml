@@ -248,6 +248,15 @@
 			<artifactId>asm-all</artifactId>
 			<version>5.0.2</version>
 		</dependency>
+
+        <dependency>
+            <groupId>net.java.jinterval</groupId>
+            <artifactId>jinterval</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/benchmark-utils/JInterval_all_include.jar</systemPath>
+        </dependency>
+
 	</dependencies>
 
 	<properties>
