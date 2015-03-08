@@ -358,7 +358,7 @@ public class BigDecimalDouble extends Number implements Comparable<BigDecimalDou
 
     public static BigDecimalDouble math_max(BigDecimalDouble valueA, BigDecimalDouble valueB)
     {
-        if (valueA.compareTo(valueB) < 0)
+        if (valueA.compareTo(valueB) > 0)
         {
             return valueA;
         }
@@ -367,7 +367,7 @@ public class BigDecimalDouble extends Number implements Comparable<BigDecimalDou
 
     public static BigDecimalDouble math_min(BigDecimalDouble valueA, BigDecimalDouble valueB)
     {
-        if (valueA.compareTo(valueB) > 0)
+        if (valueA.compareTo(valueB) < 0)
         {
             return valueA;
         }
