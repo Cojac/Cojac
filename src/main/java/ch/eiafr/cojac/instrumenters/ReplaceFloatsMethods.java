@@ -151,6 +151,12 @@ public class ReplaceFloatsMethods {
                 new InvokableMethod(CDW_N, "math_min", "(" + CDW + CDW + ")" + CDW, INVOKESTATIC));
 
         // for the BigDecimalFloat math function
+        invocations.put(new MethodSignature(MATH_NAME,"abs","(F)F"),
+                new InvokableMethod(CFW_N, "math_abs","(" + CFW +")" + CFW, INVOKESTATIC));
+        invocations.put(new MethodSignature(MATH_NAME,"min","(FF)F"),
+                new InvokableMethod(CFW_N, "math_min","(" + CFW + CFW +")" + CFW, INVOKESTATIC));
+        invocations.put(new MethodSignature(MATH_NAME,"max","(FF)F"),
+                new InvokableMethod(CFW_N, "math_max","(" + CFW + CFW +")" + CFW, INVOKESTATIC));
 
         allMethodsConversions.add(MATH_NAME);
     }
