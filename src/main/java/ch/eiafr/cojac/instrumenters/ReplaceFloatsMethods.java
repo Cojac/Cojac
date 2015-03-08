@@ -146,9 +146,11 @@ public class ReplaceFloatsMethods {
         invocations.put(new MethodSignature(MATH_NAME, "abs", "(D)D"),
                 new InvokableMethod(CDW_N, "math_abs", "(" + CDW + ")" + CDW, INVOKESTATIC));
         invocations.put(new MethodSignature(MATH_NAME, "max", "(DD)D"),
-                new InvokableMethod(CDW_N, "math_min", "(" + CDW + CDW + ")" + CDW, INVOKESTATIC));
-        invocations.put(new MethodSignature(MATH_NAME, "min", "(DD)D"),
                 new InvokableMethod(CDW_N, "math_max", "(" + CDW + CDW + ")" + CDW, INVOKESTATIC));
+        invocations.put(new MethodSignature(MATH_NAME, "min", "(DD)D"),
+                new InvokableMethod(CDW_N, "math_min", "(" + CDW + CDW + ")" + CDW, INVOKESTATIC));
+
+        // for the BigDecimalFloat math function
 
         allMethodsConversions.add(MATH_NAME);
     }
