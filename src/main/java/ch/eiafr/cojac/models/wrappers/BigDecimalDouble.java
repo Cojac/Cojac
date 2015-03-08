@@ -18,357 +18,463 @@
 
 package ch.eiafr.cojac.models.wrappers;
 
-import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_BIGDECIMAL_PRECISION;
-
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Objects;
 
-public class BigDecimalDouble extends Number implements Comparable<BigDecimalDouble>{
-	private final BigDecimal val;
-	private boolean isNaN = false;
-	private boolean isInfinite = false;
-	private boolean isPositiveInfinite = false;
-	
-	private static MathContext mathContext;
-    
-	public BigDecimalDouble(BigDecimal v) {
-		mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
+import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_BIGDECIMAL_PRECISION;
+
+public class BigDecimalDouble extends Number implements Comparable<BigDecimalDouble>
+{
+    private final BigDecimal val;
+    private boolean isNaN = false;
+    private boolean isInfinite = false;
+    private boolean isPositiveInfinite = false;
+
+    private static MathContext mathContext;
+
+    public BigDecimalDouble(BigDecimal v)
+    {
+        mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
         val = v;
     }
-	
-	public BigDecimal toBigDecimal(){
-		return val;
-	}
-	
-    public BigDecimalDouble(double v) {
-		mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
-		if(Double.isNaN(v)){
-			isNaN = true;
-			val = null;
-		}
-		else if(Double.isInfinite(v)){
-			isInfinite = true;
-			isPositiveInfinite = v > 0;
-			val = null;
-		}
-		else{
-			val = new BigDecimal(v, mathContext);
-		}
+
+    public BigDecimal toBigDecimal()
+    {
+        return val;
     }
-    
-    public BigDecimalDouble(BigDecimalDouble v) {
-		mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
+
+    public BigDecimalDouble(double v)
+    {
+        mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
+        if (Double.isNaN(v))
+        {
+            isNaN = true;
+            val = null;
+        } else if (Double.isInfinite(v))
+        {
+            isInfinite = true;
+            isPositiveInfinite = v > 0;
+            val = null;
+        } else
+        {
+            val = new BigDecimal(v, mathContext);
+        }
+    }
+
+    public BigDecimalDouble(BigDecimalDouble v)
+    {
+        mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
         val = v.val;
     }
-    
-    public BigDecimalDouble(String v) {
-		mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
-        val= new BigDecimal(v, mathContext);
+
+    public BigDecimalDouble(String v)
+    {
+        mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
+        val = new BigDecimal(v, mathContext);
     }
-    
-    public BigDecimalDouble(BigDecimalFloat v) {
-		mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
-        val= v.toBigDecimal();
+
+    public BigDecimalDouble(BigDecimalFloat v)
+    {
+        mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
+        val = v.toBigDecimal();
     }
-    
-    public static BigDecimalDouble fromDouble(double a) {
-        return new BigDecimalDouble(a);
-    }
-    
-    public static BigDecimalDouble fromString(String a){
+
+    public static BigDecimalDouble fromDouble(double a)
+    {
         return new BigDecimalDouble(a);
     }
 
-    public static BigDecimalDouble dadd(BigDecimalDouble a, BigDecimalDouble b) {
-		if(a.isNaN || b.isNaN)
-			return new BigDecimalDouble(Double.NaN);
-		if(a.isInfinite || b.isInfinite){
-			double aVal = a.getDoubleInfiniteValue();
-			double bVal = b.getDoubleInfiniteValue();
-			return new BigDecimalDouble(aVal+bVal);
-		}
+    public static BigDecimalDouble fromString(String a)
+    {
+        return new BigDecimalDouble(a);
+    }
+
+    public static BigDecimalDouble dadd(BigDecimalDouble a, BigDecimalDouble b)
+    {
+        if (a.isNaN || b.isNaN)
+            return new BigDecimalDouble(Double.NaN);
+        if (a.isInfinite || b.isInfinite)
+        {
+            double aVal = a.getDoubleInfiniteValue();
+            double bVal = b.getDoubleInfiniteValue();
+            return new BigDecimalDouble(aVal + bVal);
+        }
         return new BigDecimalDouble(a.val.add(b.val, mathContext));
     }
-    
-    public static BigDecimalDouble dsub(BigDecimalDouble a, BigDecimalDouble b) {
-        if(a.isNaN || b.isNaN)
-			return new BigDecimalDouble(Double.NaN);
-		if(a.isInfinite || b.isInfinite){
-			double aVal = a.getDoubleInfiniteValue();
-			double bVal = b.getDoubleInfiniteValue();
-			return new BigDecimalDouble(aVal-bVal);
-		}
+
+    public static BigDecimalDouble dsub(BigDecimalDouble a, BigDecimalDouble b)
+    {
+        if (a.isNaN || b.isNaN)
+            return new BigDecimalDouble(Double.NaN);
+        if (a.isInfinite || b.isInfinite)
+        {
+            double aVal = a.getDoubleInfiniteValue();
+            double bVal = b.getDoubleInfiniteValue();
+            return new BigDecimalDouble(aVal - bVal);
+        }
         return new BigDecimalDouble(a.val.subtract(b.val, mathContext));
     }
 
-    public static BigDecimalDouble dmul(BigDecimalDouble a, BigDecimalDouble b) {
-		if(a.isNaN || b.isNaN)
-			return new BigDecimalDouble(Double.NaN);
-		if(a.isInfinite || b.isInfinite){
-			double aVal = a.getDoubleInfiniteValue();
-			double bVal = b.getDoubleInfiniteValue();
-			return new BigDecimalDouble(aVal*bVal);
-		}
+    public static BigDecimalDouble dmul(BigDecimalDouble a, BigDecimalDouble b)
+    {
+        if (a.isNaN || b.isNaN)
+            return new BigDecimalDouble(Double.NaN);
+        if (a.isInfinite || b.isInfinite)
+        {
+            double aVal = a.getDoubleInfiniteValue();
+            double bVal = b.getDoubleInfiniteValue();
+            return new BigDecimalDouble(aVal * bVal);
+        }
         return new BigDecimalDouble(a.val.multiply(b.val, mathContext));
     }
 
-    public static BigDecimalDouble ddiv(BigDecimalDouble a, BigDecimalDouble b) {
-		if(a.isNaN || b.isNaN)
-			return new BigDecimalDouble(Double.NaN);
-		if(a.isInfinite || b.isInfinite){
-			double aVal = a.getDoubleInfiniteValue();
-			double bVal = b.getDoubleInfiniteValue();
-			return new BigDecimalDouble(aVal/bVal);
-		}
-		if(b.val.equals(BigDecimal.ZERO))
-			return new BigDecimalDouble(a.val.doubleValue()/0.0);
+    public static BigDecimalDouble ddiv(BigDecimalDouble a, BigDecimalDouble b)
+    {
+        if (a.isNaN || b.isNaN)
+            return new BigDecimalDouble(Double.NaN);
+        if (a.isInfinite || b.isInfinite)
+        {
+            double aVal = a.getDoubleInfiniteValue();
+            double bVal = b.getDoubleInfiniteValue();
+            return new BigDecimalDouble(aVal / bVal);
+        }
+        if (b.val.equals(BigDecimal.ZERO))
+            return new BigDecimalDouble(a.val.doubleValue() / 0.0);
         return new BigDecimalDouble(a.val.divide(b.val, mathContext));
     }
 
-    public static BigDecimalDouble drem(BigDecimalDouble a, BigDecimalDouble b) {
-		if(a.isNaN || b.isNaN)
-			return new BigDecimalDouble(Double.NaN);
-		if(a.isInfinite || b.isInfinite){
-			double aVal = a.getDoubleInfiniteValue();
-			double bVal = b.getDoubleInfiniteValue();
-			return new BigDecimalDouble(aVal%bVal);
-		}
+    public static BigDecimalDouble drem(BigDecimalDouble a, BigDecimalDouble b)
+    {
+        if (a.isNaN || b.isNaN)
+            return new BigDecimalDouble(Double.NaN);
+        if (a.isInfinite || b.isInfinite)
+        {
+            double aVal = a.getDoubleInfiniteValue();
+            double bVal = b.getDoubleInfiniteValue();
+            return new BigDecimalDouble(aVal % bVal);
+        }
         return new BigDecimalDouble(a.val.remainder(b.val, mathContext)); // is this correct ?
     }
-    
-    public static BigDecimalDouble dneg(BigDecimalDouble a) {
-		if(a.isNaN)
-			return new BigDecimalDouble(Double.NaN);
-		if(a.isInfinite){
-			double aVal = a.getDoubleInfiniteValue();
-			return new BigDecimalDouble(-aVal);
-		}
+
+    public static BigDecimalDouble dneg(BigDecimalDouble a)
+    {
+        if (a.isNaN)
+            return new BigDecimalDouble(Double.NaN);
+        if (a.isInfinite)
+        {
+            double aVal = a.getDoubleInfiniteValue();
+            return new BigDecimalDouble(-aVal);
+        }
         return new BigDecimalDouble(a.val.negate(mathContext));
     }
 
-    public static double toDouble(BigDecimalDouble a) {
-		if(a.isNaN)
-			return Double.NaN;
-		if(a.isInfinite){
-			if(a.isPositiveInfinite)
-				return Double.POSITIVE_INFINITY;
-			else
-				return Double.NEGATIVE_INFINITY;
-		}
+    public static double toDouble(BigDecimalDouble a)
+    {
+        if (a.isNaN)
+            return Double.NaN;
+        if (a.isInfinite)
+        {
+            if (a.isPositiveInfinite)
+                return Double.POSITIVE_INFINITY;
+            else
+                return Double.NEGATIVE_INFINITY;
+        }
         return a.val.doubleValue();
     }
-    
-    public static Double toRealDoubleWrapper(BigDecimalDouble a){
-		if(a.isNaN)
-			return Double.NaN;
-		if(a.isInfinite){
-			if(a.isPositiveInfinite)
-				return Double.POSITIVE_INFINITY;
-			else
-				return Double.NEGATIVE_INFINITY;
-		}
+
+    public static Double toRealDoubleWrapper(BigDecimalDouble a)
+    {
+        if (a.isNaN)
+            return Double.NaN;
+        if (a.isInfinite)
+        {
+            if (a.isPositiveInfinite)
+                return Double.POSITIVE_INFINITY;
+            else
+                return Double.NEGATIVE_INFINITY;
+        }
         return a.val.doubleValue();
     }
-    
+
     // TODO: correctly implement dcmpl and dcmpg
-    public static int dcmpl(BigDecimalDouble a, BigDecimalDouble b) {
-		return a.compareTo(b); // is this correct ?
+    public static int dcmpl(BigDecimalDouble a, BigDecimalDouble b)
+    {
+        return a.compareTo(b); // is this correct ?
     }
-    
-    public static int dcmpg(BigDecimalDouble a, BigDecimalDouble b) {
-		return a.compareTo(b); // is this correct ?
+
+    public static int dcmpg(BigDecimalDouble a, BigDecimalDouble b)
+    {
+        return a.compareTo(b); // is this correct ?
     }
-    
-    public static int d2i(BigDecimalDouble a) {
-		if(a.isNaN)
-			return (int)Double.NaN;
-		if(a.isInfinite){
-			if(a.isPositiveInfinite)
-				return (int)Double.POSITIVE_INFINITY;
-			else
-				return (int)Double.NEGATIVE_INFINITY;
-		}
+
+    public static int d2i(BigDecimalDouble a)
+    {
+        if (a.isNaN)
+            return (int) Double.NaN;
+        if (a.isInfinite)
+        {
+            if (a.isPositiveInfinite)
+                return (int) Double.POSITIVE_INFINITY;
+            else
+                return (int) Double.NEGATIVE_INFINITY;
+        }
         return a.val.intValue();
     }
-    
-    public static long d2l(BigDecimalDouble a) {
-		if(a.isNaN)
-			return (long)Double.NaN;
-		if(a.isInfinite){
-			if(a.isPositiveInfinite)
-				return (long)Double.POSITIVE_INFINITY;
-			else
-				return (long)Double.NEGATIVE_INFINITY;
-		}
+
+    public static long d2l(BigDecimalDouble a)
+    {
+        if (a.isNaN)
+            return (long) Double.NaN;
+        if (a.isInfinite)
+        {
+            if (a.isPositiveInfinite)
+                return (long) Double.POSITIVE_INFINITY;
+            else
+                return (long) Double.NEGATIVE_INFINITY;
+        }
         return a.val.longValue();
     }
-    
-    public static BigDecimalFloat d2f(BigDecimalDouble a) {
-		if(a.isNaN)
-			return new BigDecimalFloat(Float.NaN);
-		if(a.isInfinite){
-			if(a.isPositiveInfinite)
-				return new BigDecimalFloat(Float.POSITIVE_INFINITY);
-			else
-				return new BigDecimalFloat(Float.NEGATIVE_INFINITY);
-		}
+
+    public static BigDecimalFloat d2f(BigDecimalDouble a)
+    {
+        if (a.isNaN)
+            return new BigDecimalFloat(Float.NaN);
+        if (a.isInfinite)
+        {
+            if (a.isPositiveInfinite)
+                return new BigDecimalFloat(Float.POSITIVE_INFINITY);
+            else
+                return new BigDecimalFloat(Float.NEGATIVE_INFINITY);
+        }
         return new BigDecimalFloat(a.val);
     }
-    
+
     @Override
-    public String toString(){
-        if(isNaN) return "NaN";
-        if(isInfinite) return (isPositiveInfinite?'+':'-')+"Infinity";
+    public String toString()
+    {
+        if (isNaN) return "NaN";
+        if (isInfinite) return (isPositiveInfinite ? '+' : '-') + "Infinity";
         return val.toString();
     }
-    
-    public static BigDecimalDouble i2d(int a) {
-        return new BigDecimalDouble(new BigDecimal(a));
-    }
-    
-    public static BigDecimalDouble l2d(long a) {
+
+    public static BigDecimalDouble i2d(int a)
+    {
         return new BigDecimalDouble(new BigDecimal(a));
     }
 
-    public static BigDecimalDouble f2d(BigDecimalFloat a) {
+    public static BigDecimalDouble l2d(long a)
+    {
+        return new BigDecimalDouble(new BigDecimal(a));
+    }
+
+    public static BigDecimalDouble f2d(BigDecimalFloat a)
+    {
         return new BigDecimalDouble(a);
     }
 
     /* Mathematical function */
     // TODO : make better function for all math function !
 
-	public static BigDecimalDouble math_sqrt(BigDecimalDouble a){
-		// TODO - make a better sqrt for BigDecimal!
-        return new BigDecimalDouble(BigDecimal.valueOf(Math.sqrt(a.doubleValue())));
+    public static BigDecimalDouble math_sqrt(BigDecimalDouble a)
+    {
+        return new BigDecimalDouble(Math.sqrt(a.doubleValue()));
     }
 
-    public static BigDecimalDouble math_pow(BigDecimalDouble base,BigDecimalDouble exponent)
+    public static BigDecimalDouble math_pow(BigDecimalDouble base, BigDecimalDouble exponent)
     {
-        return new BigDecimalDouble(BigDecimal.valueOf(Math.pow(base.doubleValue(),exponent.doubleValue())));
+        return new BigDecimalDouble(Math.pow(base.doubleValue(), exponent.doubleValue()));
     }
 
     public static BigDecimalDouble math_sin(BigDecimalDouble value)
     {
-        return new BigDecimalDouble(BigDecimal.valueOf(Math.sin(value.doubleValue()) + 3.0));
+        return new BigDecimalDouble(Math.sin(value.doubleValue()));
     }
 
     public static BigDecimalDouble math_asin(BigDecimalDouble value)
     {
-        return new BigDecimalDouble(BigDecimal.valueOf(Math.asin(value.doubleValue())));
-
+        return new BigDecimalDouble(Math.asin(value.doubleValue()));
     }
+
     public static BigDecimalDouble math_cos(BigDecimalDouble value)
     {
-        return new BigDecimalDouble(BigDecimal.valueOf(Math.cos(value.doubleValue())));
-
+        return new BigDecimalDouble(Math.cos(value.doubleValue()));
     }
+
     public static BigDecimalDouble math_acos(BigDecimalDouble value)
     {
-        return new BigDecimalDouble(BigDecimal.valueOf(Math.acos(value.doubleValue())));
-
+        return new BigDecimalDouble(Math.acos(value.doubleValue()));
     }
+
     public static BigDecimalDouble math_tan(BigDecimalDouble value)
     {
-        return new BigDecimalDouble(BigDecimal.valueOf(Math.tan(value.doubleValue())));
-
+        return new BigDecimalDouble(Math.tan(value.doubleValue()));
     }
+
     public static BigDecimalDouble math_atan(BigDecimalDouble value)
     {
-        return new BigDecimalDouble(BigDecimal.valueOf(Math.atan(value.doubleValue())));
-
+        return new BigDecimalDouble(Math.atan(value.doubleValue()));
     }
 
-	@Override
-	public int compareTo(BigDecimalDouble o) {
-		// if o > this => -1
-		// if o < this => 1
-		// if o == this => 0
-		
-		if(isNaN && o.isNaN)
-			return 0;
-		if(isNaN)
-			return 1;
-		if(o.isNaN)
-			return -1;
-		
-		if(isInfinite || o.isInfinite){
-			Double aVal = getDoubleInfiniteValue();
-			Double bVal = o.getDoubleInfiniteValue();
-			return aVal.compareTo(bVal);
-		}
-		
-		return val.compareTo(o.val);
-	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		if(obj instanceof BigDecimalDouble == false)
-			return false;
-		BigDecimalDouble bdd = (BigDecimalDouble)obj;
-		if(isNaN && bdd.isNaN)
-			return true;
-		if(isNaN || bdd.isNaN)
-			return false;
-		
-		if(isInfinite || bdd.isInfinite){
-			Double aVal = getDoubleInfiniteValue();
-			Double bVal = bdd.getDoubleInfiniteValue();
-			return aVal.equals(bVal);
-		}
-		
+    public static BigDecimalDouble math_toRadians(BigDecimalDouble value)
+    {
+        return new BigDecimalDouble(Math.toRadians(value.doubleValue()));
+    }
+
+    public static BigDecimalDouble math_toDegrees(BigDecimalDouble value)
+    {
+        return new BigDecimalDouble(Math.toDegrees(value.doubleValue()));
+    }
+
+    public static BigDecimalDouble math_exp(BigDecimalDouble value)
+    {
+        return new BigDecimalDouble(Math.exp(value.doubleValue()));
+    }
+
+    public static BigDecimalDouble math_log(BigDecimalDouble value)
+    {
+        return new BigDecimalDouble(Math.log(value.doubleValue()));
+    }
+
+    public static BigDecimalDouble math_abs(BigDecimalDouble value)
+    {
+        return new BigDecimalDouble(Math.abs(value.doubleValue()));
+    }
+
+    public static BigDecimalDouble math_sinh(BigDecimalDouble value)
+    {
+        return new BigDecimalDouble(Math.sinh(value.doubleValue()));
+    }
+
+    public static BigDecimalDouble math_cosh(BigDecimalDouble value)
+    {
+        return new BigDecimalDouble(Math.cosh(value.doubleValue()));
+    }
+
+    public static BigDecimalDouble math_tanh(BigDecimalDouble value)
+    {
+        return new BigDecimalDouble(Math.tanh(value.doubleValue()));
+    }
+
+    public static BigDecimalDouble math_max(BigDecimalDouble valueA, BigDecimalDouble valueB)
+    {
+        if (valueA.compareTo(valueB) < 0)
+        {
+            return valueA;
+        }
+        return valueB;
+    }
+
+    public static BigDecimalDouble math_min(BigDecimalDouble valueA, BigDecimalDouble valueB)
+    {
+        if (valueA.compareTo(valueB) > 0)
+        {
+            return valueA;
+        }
+        return valueB;
+    }
+
+    @Override
+    public int compareTo(BigDecimalDouble o)
+    {
+        // if o > this => -1
+        // if o < this => 1
+        // if o == this => 0
+
+        if (isNaN && o.isNaN)
+            return 0;
+        if (isNaN)
+            return 1;
+        if (o.isNaN)
+            return -1;
+
+        if (isInfinite || o.isInfinite)
+        {
+            Double aVal = getDoubleInfiniteValue();
+            Double bVal = o.getDoubleInfiniteValue();
+            return aVal.compareTo(bVal);
+        }
+
+        return val.compareTo(o.val);
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj instanceof BigDecimalDouble == false)
+            return false;
+        BigDecimalDouble bdd = (BigDecimalDouble) obj;
+        if (isNaN && bdd.isNaN)
+            return true;
+        if (isNaN || bdd.isNaN)
+            return false;
+
+        if (isInfinite || bdd.isInfinite)
+        {
+            Double aVal = getDoubleInfiniteValue();
+            Double bVal = bdd.getDoubleInfiniteValue();
+            return aVal.equals(bVal);
+        }
+
         return val.equals(bdd.val);
     }
 
-	@Override
-	public int hashCode() {
-		int hash = 7;
-		hash = 97 * hash + Objects.hashCode(this.val);
-		return hash;
-	}
+    @Override
+    public int hashCode()
+    {
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.val);
+        return hash;
+    }
 
-	@Override
-	public int intValue() {
-	    if(isNaN) return 0;
-	    if (isInfinite) return isPositiveInfinite?Integer.MAX_VALUE:Integer.MIN_VALUE;
-		return val.intValue();
-	}
+    @Override
+    public int intValue()
+    {
+        if (isNaN) return 0;
+        if (isInfinite) return isPositiveInfinite ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+        return val.intValue();
+    }
 
-	@Override
-	public long longValue() {
-        if(isNaN) return 0;
-        if (isInfinite) return isPositiveInfinite?Long.MAX_VALUE:Long.MIN_VALUE;
-		return val.longValue();
-	}
+    @Override
+    public long longValue()
+    {
+        if (isNaN) return 0;
+        if (isInfinite) return isPositiveInfinite ? Long.MAX_VALUE : Long.MIN_VALUE;
+        return val.longValue();
+    }
 
-	@Override
-	public float floatValue() {
-        if(isNaN) return Float.NaN;
-        if (isInfinite) return isPositiveInfinite?Float.POSITIVE_INFINITY:Float.NEGATIVE_INFINITY;
-		return val.floatValue();
-	}
+    @Override
+    public float floatValue()
+    {
+        if (isNaN) return Float.NaN;
+        if (isInfinite) return isPositiveInfinite ? Float.POSITIVE_INFINITY : Float.NEGATIVE_INFINITY;
+        return val.floatValue();
+    }
 
-	@Override
-	public double doubleValue() {
-        if(isNaN) return Double.NaN;
-        if (isInfinite) return isPositiveInfinite?Double.POSITIVE_INFINITY:Double.NEGATIVE_INFINITY;
-		return val.doubleValue();
-	}
+    @Override
+    public double doubleValue()
+    {
+        if (isNaN) return Double.NaN;
+        if (isInfinite) return isPositiveInfinite ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
+        return val.doubleValue();
+    }
 
-	private double getDoubleInfiniteValue(){
-		if(!isInfinite)
-			return val.doubleValue();
-		if(isPositiveInfinite)
-			return Double.POSITIVE_INFINITY;
-		return Double.NEGATIVE_INFINITY;
-	}
+    private double getDoubleInfiniteValue()
+    {
+        if (!isInfinite)
+            return val.doubleValue();
+        if (isPositiveInfinite)
+            return Double.POSITIVE_INFINITY;
+        return Double.NEGATIVE_INFINITY;
+    }
 
-	public static String COJAC_MAGIC_DOUBLE_toStr(BigDecimalFloat n) {
-	    return n.toString();
-	}
-    public static String COJAC_MAGIC_DOUBLE_toStr(BigDecimalDouble n) {
+    public static String COJAC_MAGIC_DOUBLE_toStr(BigDecimalFloat n)
+    {
         return n.toString();
     }
 
-
+    public static String COJAC_MAGIC_DOUBLE_toStr(BigDecimalDouble n)
+    {
+        return n.toString();
+    }
 }
