@@ -223,6 +223,31 @@ public class BigDecimalFloat extends Number implements Comparable<BigDecimalFloa
         return new BigDecimalFloat(a.toBigDecimal());
     }
 
+    /* Mathematical function */
+    // TODO make better function !
+    public static BigDecimalFloat math_abs(BigDecimalFloat value)
+    {
+        return new BigDecimalFloat(Math.abs(value.floatValue()));
+    }
+
+    public static BigDecimalFloat math_max(BigDecimalFloat valueA, BigDecimalFloat valueB)
+    {
+        if(valueA.compareTo(valueB) > 0)
+        {
+            return valueA;
+        }
+        return valueB;
+    }
+
+    public static BigDecimalFloat math_min(BigDecimalFloat valueA, BigDecimalFloat valueB)
+    {
+        if (valueA.compareTo(valueB) < 0)
+        {
+            return valueA;
+        }
+        return valueB;
+    }
+
     @Override
     public String toString(){
         if(isNaN) return "NaN";
