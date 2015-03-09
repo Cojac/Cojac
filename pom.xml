@@ -251,12 +251,18 @@
 
         <dependency>
             <groupId>net.java.jinterval</groupId>
-            <artifactId>jinterval</artifactId>
-            <version>1.0</version>
+            <artifactId>jinterval-rational-java</artifactId>
+            <version>0.1-SNAPSHOT</version>
             <scope>system</scope>
-            <systemPath>${basedir}/benchmark-utils/JInterval_all_include.jar</systemPath>
+            <systemPath>${basedir}/benchmark-utils/jinterval-rational-java-0.1-SNAPSHOT.jar</systemPath>
         </dependency>
-
+        <dependency>
+            <groupId>net.java.jinterval</groupId>
+            <artifactId>jinterval-interval-java</artifactId>
+            <version>0.1-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/benchmark-utils/jinterval-interval-java-0.1-SNAPSHOT.jar</systemPath>
+        </dependency>
 	</dependencies>
 
 	<properties>
