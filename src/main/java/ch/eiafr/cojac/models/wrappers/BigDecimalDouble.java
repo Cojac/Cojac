@@ -338,7 +338,7 @@ public class BigDecimalDouble extends Number implements Comparable<BigDecimalDou
 
     public static BigDecimalDouble math_abs(BigDecimalDouble value)
     {
-        return new BigDecimalDouble(Math.abs(value.doubleValue()));
+        return new BigDecimalDouble(value.val.abs());
     }
 
     public static BigDecimalDouble math_sinh(BigDecimalDouble value)
