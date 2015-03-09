@@ -1,14 +1,12 @@
 package ch.eiafr.cojac.models.wrappers;
 
-import com.kenai.jinterval.rational_bounds.RealInterval;
-
 /**
  * Created by Snipy on 07.03.15.
  */
 public class EnrichedFloat extends Number
 {
     private float value;
-    private RealInterval interval;
+    //private RealInterval interval;
 
     @Override
     public int intValue()

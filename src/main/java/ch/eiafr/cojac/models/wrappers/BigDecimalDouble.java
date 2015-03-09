@@ -283,6 +283,7 @@ public class BigDecimalDouble extends Number implements Comparable<BigDecimalDou
 
     public static BigDecimalDouble math_pow(BigDecimalDouble base, BigDecimalDouble exponent)
     {
+        // TODO : use the pow method from BigDecimal
         return new BigDecimalDouble(Math.pow(base.doubleValue(), exponent.doubleValue()));
     }
 

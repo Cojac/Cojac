@@ -1,6 +1,11 @@
 package ch.eiafr.cojac.models.wrappers;
 
-import com.kenai.jinterval.rational_bounds.RealInterval;
+import net.java.jinterval.interval.Interval;
+import net.java.jinterval.interval.IntervalContext;
+import net.java.jinterval.interval.Utils;
+import net.java.jinterval.interval.classic.ClassicInterval;
+import net.java.jinterval.interval.kaucher.KaucherInterval;
+import net.java.jinterval.interval.kaucher.KaucherIntervalOps;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
@@ -15,7 +20,7 @@ import java.util.function.ToLongFunction;
 public class EnrichedDouble extends Number implements Comparable<EnrichedDouble>
 {
     private double value;
-    private RealInterval interval;
+    //private RealInterval interval;
     private boolean isNan;
     private boolean isInfinite;
     private boolean isPositiveInfinite;
@@ -23,25 +28,25 @@ public class EnrichedDouble extends Number implements Comparable<EnrichedDouble>
     public EnrichedDouble(double value)
     {
         this.value = value;
-        this.interval = RealInterval.valueOf(value,value);
+        //this.interval = Utils.kaucher(value,value);
     }
 
     public EnrichedDouble(int value)
     {
         this.value = (double)value;
-        this.interval = RealInterval.valueOf((double)value,(double)value);
+        //this.interval = RealInterval.valueOf((double)value,(double)value);
     }
 
     public EnrichedDouble(long value)
     {
         this.value = (double)value;
-        this.interval = RealInterval.valueOf((double)value,(double)value);
+        //this.interval = RealInterval.valueOf((double)value,(double)value);
     }
 
     public EnrichedDouble(float value)
     {
         this.value = (double)value;
-        this.interval = RealInterval.valueOf((double)value,(double)value);
+        //this.interval = RealInterval.valueOf((double)value,(double)value);
     }
 
 
@@ -135,7 +140,7 @@ public class EnrichedDouble extends Number implements Comparable<EnrichedDouble>
         // reference : BigDecimalDouble.java
         if(isNan) return "Nan";
         if(isInfinite) return (isPositiveInfinite?'+':'-')+"Infinity";
-        return String.format("%f ; [%f,%f]",value,interval.doubleInf(),interval.doubleSup());
+        return String.format("%f",value);
     }
 
     /* Mathematical function */
@@ -143,7 +148,7 @@ public class EnrichedDouble extends Number implements Comparable<EnrichedDouble>
     public static EnrichedDouble math_sqrt(EnrichedDouble a)
     {
         a.value = Math.sqrt(a.value);
-        a.interval.sqrt();
+        //a.interval.sqrt();
         return a;
     }
 
