@@ -1,8 +1,5 @@
 package ch.eiafr.cojac.interval;
 
-/**
- * Created by Snipy on 11.03.15.
- */
 public class DoubleInterval implements Comparable<DoubleInterval>
 {
     private double inf;
@@ -22,58 +19,90 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         return 0;
     }
 
-    /* Mathematical operations */
-
-    public static DoubleInterval add (DoubleInterval valueA, DoubleInterval valueB)
+    /*
+        value < inf -> 1 , the value is under the set
+        value > inf && value < sup -> 0 , the value is in the set !
+        value > sup -> -1 , the value is over the set
+     */
+    public int compareTo(double value)
     {
-        return null;
+        if (value < inf)
+        {
+            return 1;
+        }
+        if (value > sup)
+        {
+            return -1;
+        }
+        return 0;
     }
 
-    public static DoubleInterval sub (DoubleInterval valueA, DoubleInterval valueB)
+
+    @Override
+    public String toString()
+    {
+        return String.format("[%f;%f]", this.inf, this.sup);
+    }
+
+     /* Mathematical operations */
+    // Todo : complete this
+
+
+    public static DoubleInterval add(DoubleInterval a, DoubleInterval b)
+    {
+        double v1 = a.inf + b.inf;
+        double v2 = a.sup + b.sup;
+        return new DoubleInterval(v1 - Math.ulp(v1), v2 + Math.ulp(v2));
+    }
+
+    public static DoubleInterval sub(DoubleInterval a, DoubleInterval b)
     {
         return null;
     }
 
-    public static DoubleInterval mul (DoubleInterval valueA, DoubleInterval valueB)
+    public static DoubleInterval mul(DoubleInterval a, DoubleInterval b)
     {
         return null;
     }
 
-    public static DoubleInterval div (DoubleInterval valueA, DoubleInterval valueB)
+    public static DoubleInterval div(DoubleInterval a, DoubleInterval b)
     {
         return null;
     }
 
-    public static DoubleInterval pow2 (DoubleInterval base)
+    public static DoubleInterval pow2(DoubleInterval base)
     {
         return null;
     }
 
-    public static DoubleInterval pow (DoubleInterval base,double exponent)
+    public static DoubleInterval pow(DoubleInterval base, double exponent)
     {
         return null;
     }
 
-    public static DoubleInterval pow (DoubleInterval base,DoubleInterval exponent)
+    public static DoubleInterval pow(DoubleInterval base, DoubleInterval exponent)
     {
         return null;
     }
 
-    public static DoubleInterval exp (DoubleInterval value)
+    public static DoubleInterval exp(DoubleInterval a)
     {
         return null;
     }
 
-    public static DoubleInterval log (DoubleInterval value)
+    public static DoubleInterval log(DoubleInterval a)
     {
         return null;
     }
-    public static DoubleInterval log2 (DoubleInterval value)
+
+    public static DoubleInterval log2(DoubleInterval a)
     {
         return null;
     }
-    public static DoubleInterval log10 (DoubleInterval value)
+
+    public static DoubleInterval log10(DoubleInterval a)
     {
         return null;
     }
 }
+
