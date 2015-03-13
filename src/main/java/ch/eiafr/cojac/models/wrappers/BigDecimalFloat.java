@@ -227,7 +227,7 @@ public class BigDecimalFloat extends Number implements Comparable<BigDecimalFloa
     // TODO make better function !
     public static BigDecimalFloat math_abs(BigDecimalFloat value)
     {
-        return new BigDecimalFloat(Math.abs(value.floatValue()));
+        return new BigDecimalFloat(value.val.abs());
     }
 
     public static BigDecimalFloat math_max(BigDecimalFloat valueA, BigDecimalFloat valueB)

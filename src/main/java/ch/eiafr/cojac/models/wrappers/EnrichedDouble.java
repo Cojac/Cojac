@@ -1,12 +1,5 @@
 package ch.eiafr.cojac.models.wrappers;
 
-import net.java.jinterval.interval.Interval;
-import net.java.jinterval.interval.IntervalContext;
-import net.java.jinterval.interval.Utils;
-import net.java.jinterval.interval.classic.ClassicInterval;
-import net.java.jinterval.interval.kaucher.KaucherInterval;
-import net.java.jinterval.interval.kaucher.KaucherIntervalOps;
-
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.function.Function;
@@ -20,7 +13,6 @@ import java.util.function.ToLongFunction;
 public class EnrichedDouble extends Number implements Comparable<EnrichedDouble>
 {
     private double value;
-    //private RealInterval interval;
     private boolean isNan;
     private boolean isInfinite;
     private boolean isPositiveInfinite;
