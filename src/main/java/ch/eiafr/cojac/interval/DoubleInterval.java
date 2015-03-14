@@ -1,7 +1,5 @@
 package ch.eiafr.cojac.interval;
 
-import ch.eiafr.cojac.Methods;
-
 public class DoubleInterval implements Comparable<DoubleInterval>
 {
     private double inf;
@@ -11,16 +9,18 @@ public class DoubleInterval implements Comparable<DoubleInterval>
 
     /**
      * Constructor
+     *
      * @param inf need to be smaller than sup
      * @param sup need to be bigger than inf
      */
     public DoubleInterval(double inf, double sup)
     {
-        if(Double.isNaN(inf) || Double.isNaN(sup))
+        if (Double.isNaN(inf) || Double.isNaN(sup))
         {
+            this.inf = Double.NaN;
+            this.sup = Double.NaN;
             this.isNan = true;
-        }
-        else
+        } else
         {
             this.inf = inf;
             this.sup = sup;
@@ -30,15 +30,15 @@ public class DoubleInterval implements Comparable<DoubleInterval>
 
     /**
      * Constructor
+     *
      * @param value value of the created interval, same has new DoubleInterval(a,a);
      */
     public DoubleInterval(double value)
     {
-        if(Double.isNaN(inf) || Double.isNaN(sup))
+        if (Double.isNaN(inf) || Double.isNaN(sup))
         {
             this.isNan = true;
-        }
-        else
+        } else
         {
             this.inf = this.sup = value;
             this.isNan = false;
@@ -48,44 +48,61 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     /**
      * @param o another DoubleInterval to be compared with this
      *
-     * @return
-     *      - 1 if this is absolutely bigger than o
-     *      - 0 if there is some shared region
-     *      - -1 if this is absolutely smaller than o
+     * @return - 1 if this is absolutely bigger than o
+     * - 0 if there is some shared region
+     * - -1 if this is absolutely smaller than o
      */
     @Override
     public int compareTo(DoubleInterval o)
     {
-        if(this.isNan && o.isNan)
+        if (this.isNan && o.isNan)
         {
             return 0;
         }
-        if(this.isNan)
+        if (this.isNan)
         {
             return -1;
         }
-        if(o.isNan)
+        if (o.isNan)
         {
             return 1;
         }
-        if(o.sup < this.inf)
+        if (o.sup < this.inf)
         {
             return 1;
         }
-        if(o.inf > this.sup)
+        if (o.inf > this.sup)
         {
             return -1;
         }
         return 0;
     }
 
-    /*
-        value < inf -> 1 , the value is under the set
-        value > inf && value < sup -> 0 , the value is in the set !
-        value > sup -> -1 , the value is over the set
+    /**
+     * <p>
+     *     Note : the comparaison with infinity are the same with some basic double...
+     *     [NEGATIVE_INFINITY;POSITIVE_INFINITY] includes NEGATIVE_INFINITY and POSITIVE_INFINITY
+     * </p>
+     * @param value dobule that's is compared with this (see has a set)
+     *
+     * @return - value < inf -> 1 , the value is under the set
+     * - value > inf && value < sup -> 0 , the value is in the set !
+     * - value > sup -> -1 , the value is over the set
      */
     public int compareTo(double value)
     {
+        if (this.isNan && Double.isNaN(value))
+        {
+            return 0;
+        }
+        if (this.isNan)
+        {
+            return -1;
+        }
+        if (Double.isNaN(value))
+        {
+            return 1;
+        }
         if (value < inf)
         {
             return 1;
@@ -104,6 +121,10 @@ public class DoubleInterval implements Comparable<DoubleInterval>
      */
     public boolean strictCompareTo(DoubleInterval o)
     {
+        if (o.isNan || this.isNan)
+        {
+            return false;
+        }
         return (this.inf == o.inf && this.sup == o.sup);
     }
 
@@ -116,14 +137,20 @@ public class DoubleInterval implements Comparable<DoubleInterval>
 
     /**
      * Test if b is in the interval a
+     *
      * @param a DoubleInterval see has a set
      * @param b double b to test
      *
      * @return true if b is in a, else false
+     * if the interval isNan, return false
      */
     /* Interval operation */
     public static boolean isIn(DoubleInterval a, double b)
     {
+        if (a.isNan)
+        {
+            return false;
+        }
         return (b >= a.inf && b <= a.sup);
     }
 
@@ -140,20 +167,31 @@ public class DoubleInterval implements Comparable<DoubleInterval>
 
 
     /**
+     * @return true if the interval is bounding NaN
+     */
+    public boolean isNan()
+    {
+        return isNan;
+    }
+
+    /**
      * Used for some test... test if the Interval is Degenerated
      * <p>
-     *     Note : is the Interval is NaN, return true...
+     * Note : is the Interval is NaN, return true...
+     * See DoubleInterval.isNan()
      * </p>
+     *
      * @return true if the interval ins't degenerated : this.inf <= this.sup, else false
      */
     public boolean testBounds()
     {
-        if(this.isNan)
+        if (this.isNan)
         {
             return true;
         }
         return this.inf <= this.sup;
     }
+
 
      /* Mathematical operations */
     // Todo : complete this
@@ -168,7 +206,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     {
         double v1 = a.inf + b.inf;
         double v2 = a.sup + b.sup;
-        return roundedInterval(v1,v2);
+        return roundedInterval(v1, v2);
     }
 
     public static DoubleInterval sub(DoubleInterval a, DoubleInterval b)
@@ -223,7 +261,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
 
     private static DoubleInterval roundedInterval(double v1, double v2)
     {
-        return new DoubleInterval(v1 - Math.ulp(v1),v2 + Math.ulp(v2));
+        return new DoubleInterval(v1 - Math.ulp(v1), v2 + Math.ulp(v2));
     }
 }
 
