@@ -1,5 +1,13 @@
 package ch.eiafr.cojac.interval;
 
+/**
+ * <p>
+ *     Note : the mathematical operation does not treat operation with overflow
+ *     In the future, maybe implments some features to frame those special event
+ *     Example : [-MAX_VALUE;MAX_VALUE] + [0.0;0.0] is giving [-infinity;infinity]
+ * </p>
+ *  @version 0.1
+ */
 public class DoubleInterval implements Comparable<DoubleInterval>
 {
     private double inf;
@@ -35,8 +43,10 @@ public class DoubleInterval implements Comparable<DoubleInterval>
      */
     public DoubleInterval(double value)
     {
-        if (Double.isNaN(inf) || Double.isNaN(sup))
+        if (Double.isNaN(inf) || Double.isNaN(sup) || Double.isNaN(value))
         {
+            this.inf = Double.NaN;
+            this.sup = Double.NaN;
             this.isNan = true;
         } else
         {
@@ -194,16 +204,21 @@ public class DoubleInterval implements Comparable<DoubleInterval>
 
 
      /* Mathematical operations */
+
     // Todo : complete this
 
     /**
      * @param a 1st operand of the addition
      * @param b 2st operand of the addition
      *
-     * @return a new DoubleInterval that's the result of the a + b operation
+     * @return a new DoubleInterval that's the result of the a + b operation on interval
      */
     public static DoubleInterval add(DoubleInterval a, DoubleInterval b)
     {
+        if(a.isNan || b.isNan)
+        {
+            return new DoubleInterval(Double.NaN);
+        }
         double v1 = a.inf + b.inf;
         double v2 = a.sup + b.sup;
         return roundedInterval(v1, v2);
