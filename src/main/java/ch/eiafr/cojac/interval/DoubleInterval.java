@@ -135,7 +135,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
      */
     public static boolean isIn(DoubleInterval a, DoubleInterval b)
     {
-        return (b.inf > a.inf && b.sup < a.sup);
+        return (b.inf >= a.inf && b.sup <= a.sup);
     }
 
 
@@ -152,7 +152,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         {
             return true;
         }
-        return this.inf > this.sup;
+        return this.inf <= this.sup;
     }
 
      /* Mathematical operations */
