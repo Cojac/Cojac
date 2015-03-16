@@ -2,11 +2,12 @@ package ch.eiafr.cojac.interval;
 
 /**
  * <p>
- *     Note : the mathematical operation does not treat operation with overflow
- *     In the future, maybe implments some features to frame those special event
- *     Example : [-MAX_VALUE;MAX_VALUE] + [0.0;0.0] is giving [-infinity;infinity]
+ * Note : the mathematical operation does not treat operation with overflow
+ * In the future, maybe implments some features to frame those special event
+ * Example : [-MAX_VALUE;MAX_VALUE] + [0.0;0.0] is giving [-infinity;infinity]
  * </p>
- *  @version 0.1
+ *
+ * @version 0.1
  */
 public class DoubleInterval implements Comparable<DoubleInterval>
 {
@@ -28,7 +29,8 @@ public class DoubleInterval implements Comparable<DoubleInterval>
             this.inf = Double.NaN;
             this.sup = Double.NaN;
             this.isNan = true;
-        } else
+        }
+        else
         {
             this.inf = inf;
             this.sup = sup;
@@ -48,7 +50,8 @@ public class DoubleInterval implements Comparable<DoubleInterval>
             this.inf = Double.NaN;
             this.sup = Double.NaN;
             this.isNan = true;
-        } else
+        }
+        else
         {
             this.inf = this.sup = value;
             this.isNan = false;
@@ -90,9 +93,10 @@ public class DoubleInterval implements Comparable<DoubleInterval>
 
     /**
      * <p>
-     *     Note : the comparaison with infinity are the same with some basic double...
-     *     [NEGATIVE_INFINITY;POSITIVE_INFINITY] includes NEGATIVE_INFINITY and POSITIVE_INFINITY
+     * Note : the comparaison with infinity are the same with some basic double...
+     * [NEGATIVE_INFINITY;POSITIVE_INFINITY] includes NEGATIVE_INFINITY and POSITIVE_INFINITY
      * </p>
+     *
      * @param value dobule that's is compared with this (see has a set)
      *
      * @return - value < inf -> 1 , the value is under the set
@@ -215,7 +219,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
      */
     public static DoubleInterval add(DoubleInterval a, DoubleInterval b)
     {
-        if(a.isNan || b.isNan)
+        if (a.isNan || b.isNan)
         {
             return new DoubleInterval(Double.NaN);
         }
@@ -226,51 +230,92 @@ public class DoubleInterval implements Comparable<DoubleInterval>
 
     public static DoubleInterval sub(DoubleInterval a, DoubleInterval b)
     {
+        if (a.isNan || b.isNan)
+        {
+            return new DoubleInterval(Double.NaN);
+        }
+
         return null;
     }
 
     public static DoubleInterval mul(DoubleInterval a, DoubleInterval b)
     {
+        if (a.isNan || b.isNan)
+        {
+            return new DoubleInterval(Double.NaN);
+        }
         return null;
     }
 
     public static DoubleInterval div(DoubleInterval a, DoubleInterval b)
     {
+        if (a.isNan || b.isNan)
+        {
+            return new DoubleInterval(Double.NaN);
+        }
         return null;
     }
 
     public static DoubleInterval pow2(DoubleInterval base)
     {
+        if (base.isNan)
+        {
+            return new DoubleInterval(Double.NaN);
+        }
         return null;
     }
 
     public static DoubleInterval pow(DoubleInterval base, double exponent)
     {
+        if (base.isNan || Double.isNaN(exponent))
+        {
+            return new DoubleInterval(Double.NaN);
+        }
         return null;
     }
 
     public static DoubleInterval pow(DoubleInterval base, DoubleInterval exponent)
     {
+        if (base.isNan || exponent.isNan)
+        {
+            return new DoubleInterval(Double.NaN);
+        }
         return null;
     }
 
     public static DoubleInterval exp(DoubleInterval a)
     {
+        if (a.isNan)
+        {
+            return new DoubleInterval(Double.NaN);
+        }
         return null;
     }
 
     public static DoubleInterval log(DoubleInterval a)
     {
+        if (a.isNan)
+        {
+            return new DoubleInterval(Double.NaN);
+        }
         return null;
     }
 
     public static DoubleInterval log2(DoubleInterval a)
     {
+        if (a.isNan)
+        {
+            return new DoubleInterval(Double.NaN);
+        }
         return null;
     }
 
     public static DoubleInterval log10(DoubleInterval a)
     {
+        if (a.isNan)
+        {
+            return new DoubleInterval(Double.NaN);
+        }
         return null;
     }
 
