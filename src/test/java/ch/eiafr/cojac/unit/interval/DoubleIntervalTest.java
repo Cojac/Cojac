@@ -220,7 +220,7 @@ public class DoubleIntervalTest
         DoubleInterval dd = DoubleInterval.sub(d,d);
 
         assertTrue(String.format("Test 0 E (a - a) : %f E (%s - %s)",0.0,a,a),DoubleInterval.isIn(aa,0));
-        assertTrue(String.format("Test 0 E (b - b) : %f E (%s - %s)",0.0,b,b),DoubleInterval.isIn(bb,0));
+        assertTrue(String.format("Test 0 E (b - b) : %f E (%s - %s)", 0.0, b, b), DoubleInterval.isIn(bb, 0));
         assertTrue(String.format("Test 0 E (c - c) : %f E (%s - %s)",0.0,c,c),DoubleInterval.isIn(cc,0));
         assertTrue(String.format("Test 0 E (d - d) : %f E (%s - %s)",0.0,d,d),DoubleInterval.isIn(dd,0));
 
@@ -237,12 +237,46 @@ public class DoubleIntervalTest
 
         // Test ab == -ba
         assertTrue(String.format("Test ab == ba : %s == %s",abRes,baRes),ab.strictCompareTo(DoubleInterval.neg(ba)));
+
+        // Test NaN
+        DoubleInterval nan = new DoubleInterval(this.nan);
+        DoubleInterval something = new DoubleInterval(-rDouble());
+        DoubleInterval res = DoubleInterval.sub(nan,something);
+        assertTrue(String.format("Test anything - NaN (or inverse) : %s - %s",nan,something),res.isNan());
     }
 
     @Test
     public void testMul() throws Exception
     {
+        DoubleInterval a = new DoubleInterval(6.0,15.0);
+        DoubleInterval b = new DoubleInterval(-13.5,12.0);
+        DoubleInterval c = new DoubleInterval(-20.0,-8.0);
+        DoubleInterval d = new DoubleInterval(nul,nul);
 
+        // a * b = [-81.0;180.0]
+        DoubleInterval abRes = new DoubleInterval(-81.0,180.0);
+        DoubleInterval ab = DoubleInterval.mul(a,b);
+        assertTrue(String.format("Test abRes E (a * b) : %s E (%s * %s)",abRes,a,b),DoubleInterval.isIn(ab,abRes));
+
+        // a * c = [-300.0;-48.0]
+        DoubleInterval acRes = new DoubleInterval(-300.0,-48.0);
+        DoubleInterval ac = DoubleInterval.mul(a,c);
+        assertTrue(String.format("Test abRes E (a * c) : %s E (%s * %s)",acRes,a,c),DoubleInterval.isIn(ac,acRes));
+
+        // b * c = [-240;270.0]
+        DoubleInterval bcRes = new DoubleInterval(-240.0,270.0);
+        DoubleInterval bc = DoubleInterval.mul(b,c);
+        assertTrue(String.format("Test abRes E (b * c) : %s E (%s * %s)",bcRes,b,c),DoubleInterval.isIn(bc,bcRes));
+
+        // test a * b == b * a
+        DoubleInterval ba = DoubleInterval.mul(b,a);
+        assertTrue(String.format("Test a*b == b*a : %s == %s",ab,ba),ab.strictCompareTo(ba));
+
+        // test NaN
+        DoubleInterval nan = new DoubleInterval(this.nan);
+        DoubleInterval something = new DoubleInterval(-rDouble());
+        DoubleInterval res = DoubleInterval.mul(nan,something);
+        assertTrue(String.format("Test anything - NaN (or inverse) : %s - %s",nan,something),res.isNan());
     }
 
     @Test
