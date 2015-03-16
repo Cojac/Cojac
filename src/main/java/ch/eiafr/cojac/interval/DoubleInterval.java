@@ -319,6 +319,24 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         return null;
     }
 
+    public static DoubleInterval abs(DoubleInterval a)
+    {
+        if (a.isNan)
+        {
+            return new DoubleInterval(Double.NaN);
+        }
+        return null;
+    }
+
+    public static DoubleInterval neg(DoubleInterval a)
+    {
+        if (a.isNan)
+        {
+            return new DoubleInterval(Double.NaN);
+        }
+        return null;
+    }
+
     private static DoubleInterval roundedInterval(double v1, double v2)
     {
         return new DoubleInterval(v1 - Math.ulp(v1), v2 + Math.ulp(v2));
