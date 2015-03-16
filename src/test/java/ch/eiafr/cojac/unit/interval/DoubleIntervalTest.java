@@ -4,7 +4,6 @@ import ch.eiafr.cojac.interval.DoubleInterval;
 import org.junit.Test;
 
 import static ch.eiafr.cojac.unit.interval.DoubleUtils.getBiggerDouble;
-import static ch.eiafr.cojac.unit.interval.DoubleUtils.getSmallerNegativeDouble;
 import static ch.eiafr.cojac.unit.interval.DoubleUtils.rDouble;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -202,12 +201,42 @@ public class DoubleIntervalTest
         assertTrue(String.format("Test isNan ab : %s)", ab), ab.isNan());
         ba = DoubleInterval.add(b,a); testIntervalBounds(ba);
         assertTrue(String.format("Test isNan ba : %s)",ba),ba.isNan());
+
+        // Todo : test with max min neg ans pos if needed
+        // 0.0 not interresting
     }
 
     @Test
     public void testSub() throws Exception
     {
+        DoubleInterval a = new DoubleInterval(3.0,5.9);
+        DoubleInterval b = new DoubleInterval(0.0,12.0);
+        DoubleInterval c = new DoubleInterval(-23.5,-7.8);
+        DoubleInterval d = new DoubleInterval(-10.0,10.0);
 
+        DoubleInterval aa = DoubleInterval.sub(a,a);
+        DoubleInterval bb = DoubleInterval.sub(b,b);
+        DoubleInterval cc = DoubleInterval.sub(c,c);
+        DoubleInterval dd = DoubleInterval.sub(d,d);
+
+        assertTrue(String.format("Test 0 E (a - a) : %f E (%s - %s)",0.0,a,a),DoubleInterval.isIn(aa,0));
+        assertTrue(String.format("Test 0 E (b - b) : %f E (%s - %s)",0.0,b,b),DoubleInterval.isIn(bb,0));
+        assertTrue(String.format("Test 0 E (c - c) : %f E (%s - %s)",0.0,c,c),DoubleInterval.isIn(cc,0));
+        assertTrue(String.format("Test 0 E (d - d) : %f E (%s - %s)",0.0,d,d),DoubleInterval.isIn(dd,0));
+
+        DoubleInterval ab = DoubleInterval.sub(a,b);
+        DoubleInterval ba = DoubleInterval.sub(b,a);
+
+        // a - b = [-9.0;-5.9]
+        DoubleInterval abRes = new DoubleInterval(-9.0,-5.9);
+        assertTrue(String.format("Test [-9.0;-5.9] E (a - b) : %s E (%s - %s)",abRes,a,b),DoubleInterval.isIn(ab,abRes));
+
+        // b - a = [-5.9;9.0]
+        DoubleInterval baRes = new DoubleInterval(-5.9,9.0);
+        assertTrue(String.format("Test [-9.0;-5.9] E (a - b) : %s E (%s - %s)",baRes,b,a),DoubleInterval.isIn(ba,baRes));
+
+        // Test ab == -ba
+        assertTrue(String.format("Test ab == ba : %s == %s",abRes,baRes),ab.strictCompareTo(DoubleInterval.neg(ba)));
     }
 
     @Test
