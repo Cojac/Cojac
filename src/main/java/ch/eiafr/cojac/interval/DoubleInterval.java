@@ -229,8 +229,8 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     }
 
     /**
-     * @param a 1st operand of the soustraction
-     * @param b 2st operand of the soustraction
+     * @param a 1st operand of the subtraction
+     * @param b 2st operand of the subtraction
      *
      * @return a new DoubleInterval that's the result of the a - b operation on interval
      */
@@ -245,13 +245,21 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         return roundedInterval(v1,v2);
     }
 
+    /**
+     * @param a 1st operand of the multiplication
+     * @param b 2st operand of the multiplication
+     *
+     * @return a new DoubleInterval that's the result of the a * b operation on interval
+     */
     public static DoubleInterval mul(DoubleInterval a, DoubleInterval b)
     {
         if (a.isNan || b.isNan)
         {
             return new DoubleInterval(Double.NaN);
         }
-        return null;
+        double v1 = Math.min(Math.min(a.inf*b.inf,a.inf*b.sup),Math.min(a.sup*b.inf,a.sup*b.sup));
+        double v2 = Math.max(Math.max(a.inf*b.inf,a.inf*b.sup),Math.max(a.sup*b.inf,a.sup*b.sup));
+        return roundedInterval(v1,v2);
     }
 
     public static DoubleInterval div(DoubleInterval a, DoubleInterval b)
