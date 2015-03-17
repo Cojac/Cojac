@@ -146,6 +146,10 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     @Override
     public String toString()
     {
+        if(isNan)
+        {
+            return "[NaN;NaN]";
+        }
         return String.format("[%f;%f]", this.inf, this.sup);
     }
 
@@ -258,17 +262,26 @@ public class DoubleInterval implements Comparable<DoubleInterval>
             return new DoubleInterval(Double.NaN);
         }
         double v1 = Math.min(Math.min(a.inf*b.inf,a.inf*b.sup),Math.min(a.sup*b.inf,a.sup*b.sup));
-        double v2 = Math.max(Math.max(a.inf*b.inf,a.inf*b.sup),Math.max(a.sup*b.inf,a.sup*b.sup));
+        double v2 = Math.max(Math.max(a.inf * b.inf, a.inf * b.sup), Math.max(a.sup * b.inf, a.sup * b.sup));
         return roundedInterval(v1,v2);
     }
 
+    /**
+     * @param a 1st operand of the division
+     * @param b 2st operand of the division
+     *
+     * @return a DoubleInterval that's the result of the a/b operation
+     *      - if the b interval contains 0.0, the result interval is NaN
+     */
     public static DoubleInterval div(DoubleInterval a, DoubleInterval b)
     {
-        if (a.isNan || b.isNan)
+        if (a.isNan || b.isNan || isIn(b,0.0))
         {
             return new DoubleInterval(Double.NaN);
         }
-        return null;
+        double v1 = Math.min(Math.min(a.inf/b.inf,a.inf/b.sup),Math.min(a.sup/b.inf,a.sup/b.sup));
+        double v2 = Math.max(Math.max(a.inf / b.inf, a.inf / b.sup), Math.max(a.sup / b.inf, a.sup / b.sup));
+        return roundedInterval(v1,v2);
     }
 
     public static DoubleInterval pow2(DoubleInterval base)
@@ -277,7 +290,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         {
             return new DoubleInterval(Double.NaN);
         }
-        return null;
+        return pow(base,2.0);
     }
 
     public static DoubleInterval pow(DoubleInterval base, double exponent)
@@ -298,40 +311,52 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         return null;
     }
 
+    /**
+     * @param a argument for the exponential function
+     *
+     * @return a new DoubleInterval that's the result of the exponential function
+     */
     public static DoubleInterval exp(DoubleInterval a)
     {
         if (a.isNan)
         {
             return new DoubleInterval(Double.NaN);
         }
-        return null;
+        double v1 = Math.exp(a.inf);
+        double v2 = Math.exp(a.sup);
+        return roundedInterval(v1,v2);
     }
 
+    /**
+     * @param a argument for the logarithmic function
+     *
+     * @return a new DoubleInterval that's the result of the logarithmic function (ln)
+     */
     public static DoubleInterval log(DoubleInterval a)
     {
-        if (a.isNan)
+        if (a.isNan || a.inf < 0)
         {
             return new DoubleInterval(Double.NaN);
         }
-        return null;
+        double v1 = Math.log(a.inf);
+        double v2 = Math.log(a.sup);
+        return roundedInterval(v1,v2);
     }
 
-    public static DoubleInterval log2(DoubleInterval a)
-    {
-        if (a.isNan)
-        {
-            return new DoubleInterval(Double.NaN);
-        }
-        return null;
-    }
-
+    /**
+     * @param a argument for the logarithmic base 10 function
+     *
+     * @return a new DoubleInterval that's the result of the logarithmic function
+     */
     public static DoubleInterval log10(DoubleInterval a)
     {
-        if (a.isNan)
+        if (a.isNan || a.inf < 0)
         {
             return new DoubleInterval(Double.NaN);
         }
-        return null;
+        double v1 = Math.log10(a.inf);
+        double v2 = Math.log10(a.sup);
+        return roundedInterval(v1,v2);
     }
 
     public static DoubleInterval abs(DoubleInterval a)
