@@ -365,7 +365,21 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         {
             return new DoubleInterval(Double.NaN);
         }
-        return null;
+        if(isIn(a,0.0))
+        {
+            double v1 = 0.0;
+            double v2 = Math.max(-a.inf,a.sup);
+            v2 = v2 + Math.ulp(v2);
+            return new DoubleInterval(v1,v2);
+        }
+        else if(a.sup < 0)
+        {
+            return new DoubleInterval(-a.sup,-a.inf);
+        }
+        else //(a.inf > 0)
+        {
+            return new DoubleInterval(a.inf,a.sup); // No need rounded, the result is already know
+        }
     }
 
     public static DoubleInterval neg(DoubleInterval a)
