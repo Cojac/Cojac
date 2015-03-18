@@ -2,6 +2,8 @@ package ch.eiafr.cojac.unit.interval;
 
 import java.util.Random;
 
+import static java.lang.Double.*;
+
 /**
  * Use to generate random value for the DoubleInterval Test
  */
@@ -14,121 +16,80 @@ public class DoubleUtils
      */
     public static double rDouble()
     {
-        return ((double)r.nextInt(Integer.MAX_VALUE-1)) + r.nextDouble();
+        return r.nextDouble() * MAX_VALUE;
     }
 
     /**
      * @param value reference fot the computation
+     *              PRE : value is part of [0.0,Double.MAX_VALUE[
      *
      * @return a double bigger than value and positive
-     *      - if value == Double.MaxValue, return Double.MaxValue
-     *      - if value == NaN, return NaN
-     *      - if value == POSITIVE_INFINITY, return MAX_VALUE
      *
      * For example with a value 20.0 the return could be 30.0
      */
     public static double getBiggerDouble(double value)
     {
-        if(Double.isNaN(value))
+        assert(value >= 0.0);
+        assert(value < MAX_VALUE);
+        if(value >= 0.0 && value < MAX_VALUE)
         {
-            return Double.NaN;
+            return  value + r.nextDouble() * (MAX_VALUE - value);
         }
-        if(value == Double.POSITIVE_INFINITY)
-        {
-            return Double.MAX_VALUE;
-        }
-        if(value < 0.0)
-        {
-            return rDouble();
-        }
-        if(value == Double.MAX_VALUE)
-        {
-            return Double.MAX_VALUE;
-        }
-        return value + ((double)r.nextInt(Integer.MAX_VALUE - 1 - (int)value )) + r.nextDouble();
+        return NaN;
     }
 
     /**
      * @param value reference fot the computation
+     *              PRE : value is part of [0.0,Double.MAX_VALUE[
      *
      * @return a double smaller than value and positive
-     *      - if value == 0.0, return 0.0
-     *      - if value == NaN, return NaN
-     *      - if value == MIN_VALUE, return 0.0;
-     *      - if value < 0, return a random positive double
      *
      * For example with a value 20.0 the return could be 10.0
      */
     public static double getSmallerDouble(double value)
     {
-        if(Double.isNaN(value))
+        assert(value >= 0.0);
+        assert(value < MAX_VALUE);
+        if(value >= 0.0 && value < MAX_VALUE)
         {
-            return Double.NaN;
+            return r.nextDouble() * value;
         }
-        if(value == Double.MIN_VALUE)
-        {
-            return 0.0;
-        }
-        if((value) == 0.0)
-        {
-            return 0.0;
-        }
-        if(value < 0.0)
-        {
-            return ((double)r.nextInt((int)-value)) + r.nextDouble();
-        }
-        if(value < 1.0)
-        {
-            return r.nextDouble();
-        }
-        return ((double)r.nextInt((int)value)) + r.nextDouble();
+        return NaN;
     }
 
     /**
      * @param value reference fot the computation
+     *              PRE : value is part of ]-Double.MAX_VALUE,Double.MAX_VALUE[
      *
      * @return a double that's is bigger (in absolute) than value and negative
-     *      - if value == NaN, return NaN
-     *      - if value == 0.0, return a random negative double
-     *      - if abs(value) == MAX_VALUE, return - MAX_VALUE
-     *      - if value == NEGATIVE_INFINITY, return NEGATIVE_INFINITY
-     *      - if value == POSITIVE_INFINITY, return NEGATIVE_INFINITY
      *
      * For example with a value -20.0 the return could be -30.0
      */
     public static double getBiggerNegativeDouble(double value)
     {
-        if(Double.isNaN(value))
+        assert(value > -MAX_VALUE && value < MAX_VALUE);
+        if(value > -MAX_VALUE && value < MAX_VALUE)
         {
-            return Double.NaN;
+            return - getBiggerDouble(Math.abs(value));
         }
-        if(value == Double.NEGATIVE_INFINITY || value == Double.POSITIVE_INFINITY)
-        {
-            return Double.NEGATIVE_INFINITY;
-        }
-        return - getBiggerDouble(Math.abs(value));
+        return NaN;
     }
 
     /**
      * @param value reference fot the computation
+     *              PRE : value is part of ]-Double.MAX_VALUE,Double.MAX_VALUE[
      *
      * @return a double that's is smaller (in absolute) than value and negative
      *
      * For example with a value -20.0 the return could be -10.0
-     *      - if value == NaN, return NaN
-     *      - if value == 0.0, return 0.0;
-     *      - if abs(value) == MIN_VALUE, return 0.0
      */
     public static double getSmallerNegativeDouble(double value)
     {
-        if(Double.isNaN(value))
+        assert(value >= -MAX_VALUE && value < MAX_VALUE);
+        if(value >= -MAX_VALUE && value < MAX_VALUE)
         {
-            return Double.NaN;
+            return - getSmallerDouble(Math.abs(value));
         }
-        if(value == Double.NEGATIVE_INFINITY || value == Double.POSITIVE_INFINITY)
-        {
-            return -rDouble();
-        }
-        return - getSmallerDouble(Math.abs(value));
+        return NaN;
     }
 }
