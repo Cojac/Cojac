@@ -3,9 +3,11 @@ package ch.eiafr.cojac.unit.interval;
 import ch.eiafr.cojac.interval.DoubleInterval;
 import org.junit.Test;
 
-import static ch.eiafr.cojac.unit.interval.DoubleUtils.getBiggerDouble;
-import static ch.eiafr.cojac.unit.interval.DoubleUtils.rDouble;
+import static ch.eiafr.cojac.unit.interval.DoubleUtils.getBiggerRndDouble;
+import static ch.eiafr.cojac.unit.interval.DoubleUtils.rndDouble;
+import static java.lang.Double.*;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -16,47 +18,40 @@ import static org.junit.Assert.assertTrue;
  */
 public class DoubleIntervalTest
 {
-    private double nul = 0.0;
-    private double nan = Double.NaN;
-    private double max = Double.MAX_VALUE;
-    private double min = Double.MIN_VALUE;
-    private double pos = Double.POSITIVE_INFINITY;
-    private double neg = Double.NEGATIVE_INFINITY;
-
     private int nbrLoopExecution = 1000;
 
     @Test
     public void testIsIn() throws Exception
     {
-        double v1 = rDouble();
-        double v2 = getBiggerDouble(v1);
+        double v1 = rndDouble();
+        double v2 = getBiggerRndDouble(v1);
         DoubleInterval a = new DoubleInterval(v1,v2);
 
         assertTrue(String.format("Test v1 E a : %f E %s",v1,a),DoubleInterval.isIn(a,v1));
         assertTrue(String.format("Test v2 E a : %f E %s",v2,a),DoubleInterval.isIn(a,v2));
 
-        double v3 = getBiggerDouble(v2);
+        double v3 = getBiggerRndDouble(v2);
         a = new DoubleInterval(v1,v3);
         assertTrue(String.format("Test v2 E a : %f E %s",v2,a),DoubleInterval.isIn(a,v2));
 
         // Test special number
         // NaN
-        DoubleInterval b = new DoubleInterval(0.0,nan);
+        DoubleInterval b = new DoubleInterval(0.0, NaN);
         assertTrue(String.format("Test nan interval : %s", b), b.isNan());
 
         // positive and negative infinity
-        b = new DoubleInterval(neg,pos);
+        b = new DoubleInterval(NEGATIVE_INFINITY, POSITIVE_INFINITY);
         for(int i=0; i<nbrLoopExecution; i++)
         {
-            DoubleInterval c = new DoubleInterval(-rDouble(), rDouble());
+            DoubleInterval c = new DoubleInterval(-rndDouble(), rndDouble());
             assertTrue(String.format("c is in b : %s isIn %s",c,b),DoubleInterval.isIn(b,c));
         }
 
         // max value... same has up (positive and negative infinity)
-        b = new DoubleInterval(-max,max);
+        b = new DoubleInterval(-MAX_VALUE,MAX_VALUE);
         for(int i=0; i<nbrLoopExecution; i++)
         {
-            DoubleInterval c = new DoubleInterval(-rDouble(), rDouble());
+            DoubleInterval c = new DoubleInterval(-rndDouble(), rndDouble());
             assertTrue(String.format("c is in b : %s isIn %s",c,b),DoubleInterval.isIn(b,c));
         }
 
@@ -67,11 +62,11 @@ public class DoubleIntervalTest
     public void testCompareTo() throws Exception
     {
         // Simple compare with non inclusive interval
-        double v1 = rDouble();
-        double v2 = getBiggerDouble(v1);
+        double v1 = rndDouble();
+        double v2 = getBiggerRndDouble(v1);
         DoubleInterval a = new DoubleInterval(v1, v2);
-        v1 = getBiggerDouble(v2);
-        v2 = getBiggerDouble(v1);
+        v1 = getBiggerRndDouble(v2);
+        v2 = getBiggerRndDouble(v1);
         DoubleInterval b = new DoubleInterval(v1, v2);
 
         assertTrue(String.format("a > b  : %s > %s", a, b), a.compareTo(b) < 0);
@@ -79,11 +74,11 @@ public class DoubleIntervalTest
         assertTrue(String.format("b == b : %s == %s", b, b), b.compareTo(b) == 0);
 
         // Same but negative
-        v1 = - rDouble();
-        v2 = DoubleUtils.getSmallerNegativeDouble(v1);
+        v1 = - rndDouble();
+        v2 = DoubleUtils.getSmallerRndNegativeDouble(v1);
         a = new DoubleInterval(v1,v2);
-        v1 = DoubleUtils.getSmallerNegativeDouble(v2);
-        v2 = DoubleUtils.getSmallerNegativeDouble(v1);
+        v1 = DoubleUtils.getSmallerRndNegativeDouble(v2);
+        v2 = DoubleUtils.getSmallerRndNegativeDouble(v1);
         b = new DoubleInterval(v1,v2);
 
         assertTrue(String.format("a < b  : %s < %s", a, b), a.compareTo(b) < 0);
@@ -98,13 +93,13 @@ public class DoubleIntervalTest
         assertTrue(String.format("Test a < b : %s < %s",a,b),b.compareTo(a) == 0);
 
         // Same interval...
-        a = new DoubleInterval(rDouble());
+        a = new DoubleInterval(rndDouble());
         assertTrue(String.format("Test a == a : %s == %s",a,a),a.compareTo(a) == 0);
 
         // Test special number
-        a = new DoubleInterval(Double.NaN, rDouble());
-        v1 = rDouble();
-        v2 = getBiggerDouble(v1);
+        a = new DoubleInterval(NaN, rndDouble());
+        v1 = rndDouble();
+        v2 = getBiggerRndDouble(v1);
         b = new DoubleInterval(v1,v2);
         assertTrue(String.format("Test a <=> b : %s <=> %s",a,b),a.compareTo(b) == -1);
 
@@ -124,9 +119,9 @@ public class DoubleIntervalTest
         assertFalse(String.format("Test c != a : %s != %s (??? : [0.0;0.0] + [0.0;0.0] != [0.0;0.0])", c, a), c.strictCompareTo(a));
 
         // NaN
-        a = new DoubleInterval(nan,nan);
-        double v1 = rDouble();
-        double v2 = getBiggerDouble(v1);
+        a = new DoubleInterval(NaN,NaN);
+        double v1 = rndDouble();
+        double v2 = getBiggerRndDouble(v1);
         b = new DoubleInterval(v1,v2);
         assertFalse(String.format("Test NaN : %s <=> %s",a,b),a.strictCompareTo(b));
         assertFalse(String.format("Test NaN : %s <=> %s",b,a),b.strictCompareTo(a));
@@ -136,29 +131,29 @@ public class DoubleIntervalTest
     public void testCompareToDouble() throws Exception
     {
         // Simple compare with a double...
-        double v1 = rDouble();
-        double v2 = getBiggerDouble(v1);
+        double v1 = rndDouble();
+        double v2 = getBiggerRndDouble(v1);
         DoubleInterval a = new DoubleInterval(v1,v2);
 
-        double v3 = DoubleUtils.getSmallerDouble(v1);
+        double v3 = DoubleUtils.getSmallerRndDouble(v1);
         assertTrue(String.format("Test v3 > a : %f > %s",v3,a),a.compareTo(v3) == 1);
-        v3 = getBiggerDouble(v2);
+        v3 = getBiggerRndDouble(v2);
         assertTrue(String.format("Test v3 < a : %f < %s",v3,a),a.compareTo(v3) == -1);
-        v3 = (v1 + v2) / 2.0;
+        v3 = (v1/2.0 + v2/2.0); // if we do (v1 + v2) / 2, there could be overflow...
         assertTrue(String.format("Test v3 == a : %f == %s",v3,a),a.compareTo(v3) == 0);
 
         // NaN
-        a = new DoubleInterval(nan, rDouble());
-        v1 = rDouble();
+        a = new DoubleInterval(NaN, rndDouble());
+        v1 = rndDouble();
         assertTrue(String.format("Test a <=> v1 : %s == %f",a,v1),a.compareTo(v1) == -1);
-        v1 = nan;
+        v1 = NaN;
         assertTrue(String.format("Test a <=> v1 : %s == %f",a,v1),a.compareTo(v1) == 0);
-        a = new DoubleInterval(-rDouble(), rDouble());
+        a = new DoubleInterval(-rndDouble(), rndDouble());
         assertTrue(String.format("Test a <=> v1 : %s == %f",a,v1),a.compareTo(v1) == 1);
 
         // Positive infinity and negative infinity
-        a = new DoubleInterval(neg,pos);
-        assertTrue(String.format("Test neg <=> [neg,pos]  : %s == %s",neg,a),a.compareTo(neg) == 0);
+        a = new DoubleInterval(NEGATIVE_INFINITY,POSITIVE_INFINITY);
+        assertTrue(String.format("Test neg <=> [neg,pos]  : %s == %s",NEGATIVE_INFINITY,a),a.compareTo(NEGATIVE_INFINITY) == 0);
     }
 
     @Test
@@ -195,8 +190,8 @@ public class DoubleIntervalTest
 
         // Test special number
         // NaN
-        a = new DoubleInterval(nan, rDouble());
-        b = new DoubleInterval(-rDouble(),rDouble());
+        a = new DoubleInterval(NaN, rndDouble());
+        b = new DoubleInterval(-rndDouble(), rndDouble());
         ab = DoubleInterval.add(a,b); testIntervalBounds(ab);
         assertTrue(String.format("Test isNan ab : %s)", ab), ab.isNan());
         ba = DoubleInterval.add(b,a); testIntervalBounds(ba);
@@ -214,10 +209,10 @@ public class DoubleIntervalTest
         DoubleInterval c = new DoubleInterval(-23.5,-7.8);
         DoubleInterval d = new DoubleInterval(-10.0,10.0);
 
-        DoubleInterval aa = DoubleInterval.sub(a,a);
-        DoubleInterval bb = DoubleInterval.sub(b,b);
-        DoubleInterval cc = DoubleInterval.sub(c,c);
-        DoubleInterval dd = DoubleInterval.sub(d,d);
+        DoubleInterval aa = DoubleInterval.sub(a,a); testIntervalBounds(aa);
+        DoubleInterval bb = DoubleInterval.sub(b,b); testIntervalBounds(bb);
+        DoubleInterval cc = DoubleInterval.sub(c,c); testIntervalBounds(cc);
+        DoubleInterval dd = DoubleInterval.sub(d,d); testIntervalBounds(dd);
 
         assertTrue(String.format("Test 0 E (a - a) : %f E (%s - %s)",0.0,a,a),DoubleInterval.isIn(aa,0));
         assertTrue(String.format("Test 0 E (b - b) : %f E (%s - %s)", 0.0, b, b), DoubleInterval.isIn(bb, 0));
@@ -239,8 +234,8 @@ public class DoubleIntervalTest
         assertTrue(String.format("Test ab == ba : %s == %s",abRes,baRes),ab.strictCompareTo(DoubleInterval.neg(ba)));
 
         // Test NaN
-        DoubleInterval nan = new DoubleInterval(this.nan);
-        DoubleInterval something = new DoubleInterval(-rDouble());
+        DoubleInterval nan = new DoubleInterval(NaN);
+        DoubleInterval something = new DoubleInterval(-rndDouble());
         DoubleInterval res = DoubleInterval.sub(nan,something);
         assertTrue(String.format("Test anything - NaN (or inverse) : %s - %s",nan,something),res.isNan());
     }
@@ -251,21 +246,21 @@ public class DoubleIntervalTest
         DoubleInterval a = new DoubleInterval(6.0,15.0);
         DoubleInterval b = new DoubleInterval(-13.5,12.0);
         DoubleInterval c = new DoubleInterval(-20.0,-8.0);
-        DoubleInterval d = new DoubleInterval(nul,nul);
+        DoubleInterval d = new DoubleInterval(0.0,0.0);
 
         // a * b = [-81.0;180.0]
         DoubleInterval abRes = new DoubleInterval(-81.0,180.0);
-        DoubleInterval ab = DoubleInterval.mul(a,b);
+        DoubleInterval ab = DoubleInterval.mul(a,b); testIntervalBounds(ab);
         assertTrue(String.format("Test abRes E (a * b) : %s E (%s * %s)",abRes,a,b),DoubleInterval.isIn(ab,abRes));
 
         // a * c = [-300.0;-48.0]
         DoubleInterval acRes = new DoubleInterval(-300.0,-48.0);
-        DoubleInterval ac = DoubleInterval.mul(a,c);
+        DoubleInterval ac = DoubleInterval.mul(a,c); testIntervalBounds(ac);
         assertTrue(String.format("Test abRes E (a * c) : %s E (%s * %s)",acRes,a,c),DoubleInterval.isIn(ac,acRes));
 
         // b * c = [-240;270.0]
         DoubleInterval bcRes = new DoubleInterval(-240.0,270.0);
-        DoubleInterval bc = DoubleInterval.mul(b,c);
+        DoubleInterval bc = DoubleInterval.mul(b,c); testIntervalBounds(bc);
         assertTrue(String.format("Test abRes E (b * c) : %s E (%s * %s)",bcRes,b,c),DoubleInterval.isIn(bc,bcRes));
 
         // test a * b == b * a
@@ -273,34 +268,108 @@ public class DoubleIntervalTest
         assertTrue(String.format("Test a*b == b*a : %s == %s",ab,ba),ab.strictCompareTo(ba));
 
         // test NaN
-        DoubleInterval nan = new DoubleInterval(this.nan);
-        DoubleInterval something = new DoubleInterval(-rDouble());
-        DoubleInterval res = DoubleInterval.mul(nan,something);
+        DoubleInterval nan = new DoubleInterval(NaN);
+        DoubleInterval something = new DoubleInterval(-rndDouble());
+        DoubleInterval res = DoubleInterval.mul(nan, something);
         assertTrue(String.format("Test anything - NaN (or inverse) : %s - %s",nan,something),res.isNan());
     }
 
     @Test
     public void testDiv() throws Exception
     {
+        DoubleInterval a = new DoubleInterval(10.0); testIntervalBounds(a);
+        DoubleInterval b = new DoubleInterval(3.0); testIntervalBounds(b);
 
+        // Res of a / b = [3.33;3.33]
+        DoubleInterval ab = DoubleInterval.div(a,b);
+        DoubleInterval abRes = new DoubleInterval(10.0/3.0);
+
+        assertTrue(String.format("Test [3.33;3.33] E a/b : %s E %s",abRes,ab),DoubleInterval.isIn(ab,abRes));
+
+        // Test that's a/b * b/a == 1 --> 1 E a/b * b/a
+        DoubleInterval abba = DoubleInterval.mul(DoubleInterval.div(a, b), DoubleInterval.div(b, a));
+        assertTrue(String.format("Test 1.0 E a/b : %f E %s", 1.0, abba), DoubleInterval.isIn(abba, 1.0));
+
+        // Test 0 interval
+        double v1;
+        a = new DoubleInterval(-rndDouble(), rndDouble()); testIntervalBounds(a);
+        b = new DoubleInterval(v1 = rndDouble(), getBiggerRndDouble(v1)); testIntervalBounds(b);
+        ab = DoubleInterval.div(a,b);
+        DoubleInterval ba = DoubleInterval.div(b,a);
+        assertTrue(String.format("Test a/b !is NaN : %s", ab),!ab.isNan());
+        assertTrue(String.format("Test b/a is NaN : %s", ba), ba.isNan());
     }
 
     @Test
     public void testPow2() throws Exception
     {
+        DoubleInterval a = new DoubleInterval(2.0,3.0);
+        DoubleInterval b = new DoubleInterval(-2.0,5.0);
+        DoubleInterval c = new DoubleInterval(-10.0,-6.0);
 
+        DoubleInterval aa = DoubleInterval.pow2(a);
+        DoubleInterval bb = DoubleInterval.pow2(b);
+        DoubleInterval cc = DoubleInterval.pow2(c);
+
+        DoubleInterval aRes = new DoubleInterval(4.0,9.0);
+        DoubleInterval bRes = new DoubleInterval(0.0,25.0);
+        DoubleInterval cRes = new DoubleInterval(36.0,100.0);
+
+        assertTrue(String.format("Test a^2 : %s^2 = %s", a, aRes), DoubleInterval.isIn(aa, aRes));
+        assertTrue(String.format("Test b^2 : %s^2 = %s", b, bRes), DoubleInterval.isIn(bb, bRes));
+        assertTrue(String.format("Test c^2 : %s^2 = %s", c, cRes), DoubleInterval.isIn(cc, cRes));
+
+        // Test a*a ~= a^2
+        // The width of the interval with the mul operation instead of
+        // using the pow2 is bigger w(aa) <= w(aaMul)
+        DoubleInterval aaMul = DoubleInterval.mul(a,a);
+        DoubleInterval bbMul = DoubleInterval.mul(b,b);
+        DoubleInterval ccMul = DoubleInterval.mul(c,c);
+
+        assertTrue(String.format("Test a^2 isIn a*a : %s inIn %s",aa,aaMul),DoubleInterval.isIn(aaMul,aa));
+        assertTrue(String.format("Test b^2 isIn b*b : %s inIn %s",bb,bbMul),DoubleInterval.isIn(bbMul,bb));
+        assertTrue(String.format("Test c^2 isIn c*c : %s inIn %s",cc,ccMul),DoubleInterval.isIn(ccMul,cc));
     }
 
     @Test
     public void testPow() throws Exception
     {
+        // Simple pow usage
+        DoubleInterval a = new DoubleInterval(4.0,5.0);
+        DoubleInterval b = new DoubleInterval(0.0,9.0);
 
+        DoubleInterval a3 = DoubleInterval.pow(a,3.0);
+        DoubleInterval b6 = DoubleInterval.pow(b,6.0);
+
+        DoubleInterval aRes = new DoubleInterval(64.0,125.0);
+        DoubleInterval bRes = new DoubleInterval(0.0,531441.0);
+
+        assertTrue(String.format("Test a^3 : %s isIn %s", a3, aRes), DoubleInterval.isIn(a3, aRes));
+        assertTrue(String.format("Test b^6 : %s isIn %s", b6, bRes), DoubleInterval.isIn(b6, bRes));
+
+        // Test relation between pow2(a) and pow(a,2.0)
+        DoubleInterval aPow2 = DoubleInterval.pow2(a);
+        DoubleInterval aPow  = DoubleInterval.pow(a,2.0);
+
+        assertTrue(String.format("Test pow2(a) == pow(a,2.0) : %s == %s", aPow2, aPow), aPow2.strictCompareTo(aPow));
     }
 
     @Test
-    public void testPow1() throws Exception
+    public void testPowWithInterval() throws Exception
     {
+        // Simple pow usage
+        DoubleInterval a = new DoubleInterval(0.0,5.0);
+        DoubleInterval b = new DoubleInterval(3.0,7.0);
 
+        DoubleInterval ab = DoubleInterval.pow(a,b);
+        DoubleInterval ba = DoubleInterval.pow(b,a);
+
+        DoubleInterval abRes = new DoubleInterval(0.0,78125.0);
+        DoubleInterval baRes = new DoubleInterval(1.0,16807.0);
+
+
+        assertTrue(String.format("Test a^b : %s^%s isIn %s", a,b, abRes), DoubleInterval.isIn(ab, abRes));
+        assertTrue(String.format("Test b^a : %s^%s isIn %s", b,a, baRes), DoubleInterval.isIn(ba, baRes));
     }
 
     @Test
@@ -311,12 +380,6 @@ public class DoubleIntervalTest
 
     @Test
     public void testLog() throws Exception
-    {
-
-    }
-
-    @Test
-    public void testLog2() throws Exception
     {
 
     }
