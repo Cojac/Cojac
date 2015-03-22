@@ -14,7 +14,7 @@ public class DoubleUtils
     /**
      * @return a random positive double that's part of the interval [0.0;Double.MAX_VALUE]
      */
-    public static double rDouble()
+    public static double rndDouble()
     {
         return r.nextDouble() * MAX_VALUE;
     }
@@ -27,7 +27,7 @@ public class DoubleUtils
      *
      * For example with a value 20.0 the return could be 30.0
      */
-    public static double getBiggerDouble(double value)
+    public static double getBiggerRndDouble(double value)
     {
         assert(value >= 0.0);
         assert(value < MAX_VALUE);
@@ -46,7 +46,7 @@ public class DoubleUtils
      *
      * For example with a value 20.0 the return could be 10.0
      */
-    public static double getSmallerDouble(double value)
+    public static double getSmallerRndDouble(double value)
     {
         assert(value >= 0.0);
         assert(value < MAX_VALUE);
@@ -65,12 +65,12 @@ public class DoubleUtils
      *
      * For example with a value -20.0 the return could be -30.0
      */
-    public static double getBiggerNegativeDouble(double value)
+    public static double getBiggerRndNegativeDouble(double value)
     {
         assert(value > -MAX_VALUE && value < MAX_VALUE);
         if(value > -MAX_VALUE && value < MAX_VALUE)
         {
-            return - getBiggerDouble(Math.abs(value));
+            return - getBiggerRndDouble(Math.abs(value));
         }
         return NaN;
     }
@@ -83,12 +83,12 @@ public class DoubleUtils
      *
      * For example with a value -20.0 the return could be -10.0
      */
-    public static double getSmallerNegativeDouble(double value)
+    public static double getSmallerRndNegativeDouble(double value)
     {
         assert(value >= -MAX_VALUE && value < MAX_VALUE);
         if(value >= -MAX_VALUE && value < MAX_VALUE)
         {
-            return - getSmallerDouble(Math.abs(value));
+            return - getSmallerRndDouble(Math.abs(value));
         }
         return NaN;
     }

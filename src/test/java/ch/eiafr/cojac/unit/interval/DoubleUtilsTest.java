@@ -4,33 +4,31 @@ import org.junit.Test;
 
 import static ch.eiafr.cojac.unit.interval.DoubleUtils.*;
 import static java.lang.Double.MAX_VALUE;
-import static java.lang.Double.MIN_VALUE;
 import static org.junit.Assert.assertTrue;
-import static java.lang.Double.NaN;
 
 public class DoubleUtilsTest
 {
     private int repeat_times = 10000;
 
     @Test
-    public void testRDouble() throws Exception
+    public void testRndDouble() throws Exception
     {
         for (int counter = 0; counter< repeat_times; counter++)
         {
-            double a = rDouble();
+            double a = rndDouble();
             assertTrue(String.format("%f > 0", a), a >= 0.0);
             assertTrue(String.format("%f < %f", a, Double.MAX_VALUE), a <= Double.MAX_VALUE);
         }
     }
 
     @Test
-    public void testGetBiggerDouble() throws Exception
+    public void testGetBiggerRndDouble() throws Exception
     {
         for (int counter = 0; counter < repeat_times; counter++)
         {
-            double a = rDouble();
-            double b = getBiggerDouble(a);
-            double c = getBiggerDouble(b);
+            double a = rndDouble();
+            double b = getBiggerRndDouble(a);
+            double c = getBiggerRndDouble(b);
 
             // Test domain
             assertTrue(String.format("Test a > 0 : %f > %f", a, 0.0), a > 0.0);
@@ -42,20 +40,20 @@ public class DoubleUtilsTest
             assertTrue(String.format("Test c > d : %f > %f", c, b), c > b);
 
             // Test special number
-            double f = getBiggerDouble(0.0);
+            double f = getBiggerRndDouble(0.0);
 
             assertTrue(String.format("Test f > 0.0 : %f > %f", f, 0.0), f > 0.0);
         }
     }
 
     @Test
-    public void testGetSmallerDouble() throws Exception
+    public void testGetSmallerRndDouble() throws Exception
     {
         for (int counter = 0; counter < repeat_times; counter++)
         {
-            double a = rDouble();
-            double c = getSmallerDouble(a);
-            double e = getSmallerDouble(c);
+            double a = rndDouble();
+            double c = getSmallerRndDouble(a);
+            double e = getSmallerRndDouble(c);
 
             // Test domain
             assertTrue(String.format("Test a >= 0.0 : %f >= %f", a, 0.0), a >= 0.0);
@@ -68,22 +66,22 @@ public class DoubleUtilsTest
             assertTrue(String.format("Test a > e : %f, %f", a, e), a > e);
 
             // Test special number
-            double h = getSmallerDouble(0.0);
+            double h = getSmallerRndDouble(0.0);
             assertTrue(String.format("Test h == 0.0 : %f == %f", h, 0.0), h == 0.0);
         }
     }
 
     @Test
-    public void testGetBiggerNegativeDouble() throws Exception
+    public void testGetBiggerNegativeRndDouble() throws Exception
     {
         for (int counter = 0; counter < repeat_times; counter++)
         {
-            double a = rDouble();
-            double b = getBiggerNegativeDouble(a);
-            double c = getBiggerNegativeDouble(b);
-            double d = -rDouble();
-            double e = getBiggerNegativeDouble(d);
-            double f = getBiggerNegativeDouble(e);
+            double a = rndDouble();
+            double b = getBiggerRndNegativeDouble(a);
+            double c = getBiggerRndNegativeDouble(b);
+            double d = -rndDouble();
+            double e = getBiggerRndNegativeDouble(d);
+            double f = getBiggerRndNegativeDouble(e);
 
             // Test domain
             assertTrue(String.format("Test a >= 0 : %f >= %f", a, 0.0), a >= 0.0);
@@ -100,7 +98,7 @@ public class DoubleUtilsTest
             assertTrue(String.format("Test f < e : %f < %f", f, e), f < e);
 
             // Test special number
-            double i = getBiggerNegativeDouble(0.0);
+            double i = getBiggerRndNegativeDouble(0.0);
 
             assertTrue(String.format("Test i <= 0.0 : %f <= %f", i,0.0), i <= 0.0);
             assertTrue(String.format("Test i >= -MAX_VALUE : %f >= %f)",i,-MAX_VALUE), i >= -MAX_VALUE);
@@ -108,16 +106,16 @@ public class DoubleUtilsTest
     }
 
     @Test
-    public void testGetSmallerNegativeDouble() throws Exception
+    public void testGetSmallerNegativeRndDouble() throws Exception
     {
         for (int counter = 0; counter < repeat_times; counter++)
         {
-            double a = rDouble();
-            double b = getSmallerNegativeDouble(a);
-            double c = getSmallerNegativeDouble(b);
-            double d = -rDouble();
-            double e = getSmallerNegativeDouble(c);
-            double f = getSmallerNegativeDouble(e);
+            double a = rndDouble();
+            double b = getSmallerRndNegativeDouble(a);
+            double c = getSmallerRndNegativeDouble(b);
+            double d = -rndDouble();
+            double e = getSmallerRndNegativeDouble(c);
+            double f = getSmallerRndNegativeDouble(e);
 
             // Test domain
             assertTrue(String.format("Test a >= 0 : %f >= %f", a, 0.0), a >= 0.0);
@@ -134,7 +132,7 @@ public class DoubleUtilsTest
             assertTrue(String.format("Test f > e : %f > %f", f, e), f > e);    // abs(f) < abs(e)
 
             // Test special number
-            double i = getSmallerNegativeDouble(0.0);
+            double i = getSmallerRndNegativeDouble(0.0);
             assertTrue(String.format("Test i == 0.0 : %f == %f", i, 0.0), i == 0.0);
         }
     }
