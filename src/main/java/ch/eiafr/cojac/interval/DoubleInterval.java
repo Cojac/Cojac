@@ -1,7 +1,5 @@
 package ch.eiafr.cojac.interval;
 
-import java.util.Map;
-
 /**
  * <p>
  * Note : the mathematical operation does not treat operation with overflow
@@ -148,7 +146,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     @Override
     public String toString()
     {
-        if(isNan)
+        if (isNan)
         {
             return "[NaN;NaN]";
         }
@@ -215,8 +213,6 @@ public class DoubleInterval implements Comparable<DoubleInterval>
 
      /* Mathematical operations */
 
-    // Todo : complete this
-
     /**
      * @param a 1st operand of the addition
      * @param b 2st operand of the addition
@@ -248,7 +244,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         }
         double v1 = a.inf - b.sup;
         double v2 = a.sup - b.inf;
-        return roundedInterval(v1,v2);
+        return roundedInterval(v1, v2);
     }
 
     /**
@@ -263,9 +259,9 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         {
             return new DoubleInterval(Double.NaN);
         }
-        double v1 = Math.min(Math.min(a.inf*b.inf,a.inf*b.sup),Math.min(a.sup*b.inf,a.sup*b.sup));
+        double v1 = Math.min(Math.min(a.inf * b.inf, a.inf * b.sup), Math.min(a.sup * b.inf, a.sup * b.sup));
         double v2 = Math.max(Math.max(a.inf * b.inf, a.inf * b.sup), Math.max(a.sup * b.inf, a.sup * b.sup));
-        return roundedInterval(v1,v2);
+        return roundedInterval(v1, v2);
     }
 
     /**
@@ -273,37 +269,51 @@ public class DoubleInterval implements Comparable<DoubleInterval>
      * @param b 2st operand of the division
      *
      * @return a DoubleInterval that's the result of the a/b operation
-     *      - if the b interval contains 0.0, the result interval is NaN
+     * - if the b interval contains 0.0, the result interval is NaN
      */
     public static DoubleInterval div(DoubleInterval a, DoubleInterval b)
     {
-        if (a.isNan || b.isNan || isIn(b,0.0))
+        if (a.isNan || b.isNan || isIn(b, 0.0))
         {
             return new DoubleInterval(Double.NaN);
         }
-        double v1 = Math.min(Math.min(a.inf/b.inf,a.inf/b.sup),Math.min(a.sup/b.inf,a.sup/b.sup));
+        double v1 = Math.min(Math.min(a.inf / b.inf, a.inf / b.sup), Math.min(a.sup / b.inf, a.sup / b.sup));
         double v2 = Math.max(Math.max(a.inf / b.inf, a.inf / b.sup), Math.max(a.sup / b.inf, a.sup / b.sup));
-        return roundedInterval(v1,v2);
+        return roundedInterval(v1, v2);
     }
 
     /**
      * @param base 1st operand of the power 2 operation
-     *             PRE : base.inf >= 0.0
      *
      * @return a new DoubleInterval that's the result of the pow operation on an interval
      */
     public static DoubleInterval pow2(DoubleInterval base)
     {
-        assert(base.inf >= 0.0);
         if (base.isNan)
         {
             return new DoubleInterval(Double.NaN);
         }
-        return pow(base,2.0);
+        if(base.inf > 0.0)
+        {
+            double v1 = Math.pow(base.inf,2.0);
+            double v2 = Math.pow(base.sup,2.0);
+            return roundedInterval(v1,v2);
+        }
+        else if(base.sup < 0.0)
+        {
+            double v1 = Math.pow(base.sup,2.0);
+            double v2 = Math.pow(base.inf,2.0);
+            return roundedInterval(v1,v2);
+        }
+        else // 0 is in the base interval
+        {
+            return new DoubleInterval(0.0,Math.max(Math.pow(base.inf,2.0),Math.pow(base.sup,2.0)));
+        }
     }
+
     /**
-     * @param base 1st operand of the power exponent operation
-     *             PRE : base.inf >= 0.0
+     * @param base     1st operand of the power exponent operation
+     *                 PRE : base.inf >= 0.0
      * @param exponent 2st operand of the operation
      *
      * @return a new DoubleInterval that's the result of the pow operation on an interval
@@ -314,19 +324,19 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         {
             return new DoubleInterval(Double.NaN);
         }
-        assert(base.inf >= 0.0);
-        double v1 = Math.pow(base.inf,exponent);
-        double v2 = Math.pow(base.sup,exponent);
-        return roundedInterval(v1,v2);
+        assert (base.inf >= 0.0);
+        double v1 = Math.pow(base.inf, exponent);
+        double v2 = Math.pow(base.sup, exponent);
+        return roundedInterval(v1, v2);
     }
 
     /**
-     * @param base 1st operand of the power exponent operation
-     *             PRE : base.inf >= 0.0
+     * @param base     1st operand of the power exponent operation
+     *                 PRE : base.inf >= 0.0
      * @param exponent 2st operand of the operation
      *
      * @return a new DoubleInterval that's the result of the base^exponent operation
-     *         because the pow function is monotone, the result is esay to compute
+     * because the pow function is monotone, the result is esay to compute
      */
     public static DoubleInterval pow(DoubleInterval base, DoubleInterval exponent)
     {
@@ -334,8 +344,12 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         {
             return new DoubleInterval(Double.NaN);
         }
-        assert(base.inf >= 0.0);
-        return null;
+        assert (base.inf >= 0.0);
+        double v1 = Math.min(Math.min(Math.pow(base.inf, exponent.inf), Math.pow(base.inf, exponent.sup)),
+                Math.min(Math.pow(base.sup, exponent.inf), Math.pow(base.sup, exponent.sup)));
+        double v2 = Math.max(Math.max(Math.pow(base.inf, exponent.inf), Math.pow(base.inf, exponent.sup)),
+                Math.max(Math.pow(base.sup, exponent.inf), Math.pow(base.sup, exponent.sup)));
+        return roundedInterval(v1,v2);
     }
 
     /**
@@ -351,7 +365,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         }
         double v1 = Math.exp(a.inf);
         double v2 = Math.exp(a.sup);
-        return roundedInterval(v1,v2);
+        return roundedInterval(v1, v2);
     }
 
     /**
@@ -367,7 +381,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         }
         double v1 = Math.log(a.inf);
         double v2 = Math.log(a.sup);
-        return roundedInterval(v1,v2);
+        return roundedInterval(v1, v2);
     }
 
     /**
@@ -383,12 +397,13 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         }
         double v1 = Math.log10(a.inf);
         double v2 = Math.log10(a.sup);
-        return roundedInterval(v1,v2);
+        return roundedInterval(v1, v2);
     }
 
     /**
      * @param a operand of the square 2 operation
      *          PRE : the interval must be positive (a.inf >= 0.0)
+     *
      * @return a new DoubleInterval that's the result of the sqrt operation
      */
     public static DoubleInterval sqrt(DoubleInterval a)
@@ -397,32 +412,37 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         {
             return new DoubleInterval(Double.NaN);
         }
-        assert(a.inf >= 0.0);
+        assert (a.inf >= 0.0);
         double v1 = Math.sqrt(a.inf);
         double v2 = Math.sqrt(a.sup);
-        return roundedInterval(v1,v2);
+        return roundedInterval(v1, v2);
     }
 
+    /**
+     * @param a operand of the absolute operation
+     *
+     * @return a new DoubleInterval that's the absolute interval of the operand
+     */
     public static DoubleInterval abs(DoubleInterval a)
     {
         if (a.isNan)
         {
             return new DoubleInterval(Double.NaN);
         }
-        if(isIn(a,0.0))
+        if (isIn(a, 0.0))
         {
             double v1 = 0.0;
-            double v2 = Math.max(-a.inf,a.sup);
+            double v2 = Math.max(-a.inf, a.sup);
             v2 = v2 + Math.ulp(v2);
-            return new DoubleInterval(v1,v2);
+            return new DoubleInterval(v1, v2);
         }
-        else if(a.sup < 0)
+        else if (a.sup < 0)
         {
-            return new DoubleInterval(-a.sup,-a.inf);
+            return new DoubleInterval(-a.sup, -a.inf);
         }
         else //(a.inf > 0)
         {
-            return new DoubleInterval(a.inf,a.sup); // No need rounded, the result is already know
+            return new DoubleInterval(a.inf, a.sup); // No need rounded, the result is already know
         }
     }
 
@@ -437,7 +457,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         {
             return new DoubleInterval(Double.NaN);
         }
-        return new DoubleInterval(-a.sup,-a.inf);
+        return new DoubleInterval(-a.sup, -a.inf);
     }
 
     /**
@@ -448,7 +468,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
      */
     private static DoubleInterval roundedInterval(double inf, double sup)
     {
-        if(Double.isNaN(inf) || Double.isNaN(sup))
+        if (Double.isNaN(inf) || Double.isNaN(sup))
         {
             return new DoubleInterval(Double.NaN);
         }
