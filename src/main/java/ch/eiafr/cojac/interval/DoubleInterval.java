@@ -370,6 +370,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
 
     /**
      * @param a argument for the logarithmic function
+     *          PRE : param a must be >= 0
      *
      * @return a new DoubleInterval that's the result of the logarithmic function (ln)
      */
@@ -379,6 +380,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         {
             return new DoubleInterval(Double.NaN);
         }
+        assert(a.inf >= 0.0);
         double v1 = Math.log(a.inf);
         double v2 = Math.log(a.sup);
         return roundedInterval(v1, v2);
@@ -386,6 +388,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
 
     /**
      * @param a argument for the logarithmic base 10 function
+     *          PRE : param a must be >= 0
      *
      * @return a new DoubleInterval that's the result of the logarithmic function
      */
@@ -395,6 +398,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         {
             return new DoubleInterval(Double.NaN);
         }
+        assert(a.inf >= 0.0);
         double v1 = Math.log10(a.inf);
         double v2 = Math.log10(a.sup);
         return roundedInterval(v1, v2);
