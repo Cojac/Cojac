@@ -375,19 +375,49 @@ public class DoubleIntervalTest
     @Test
     public void testExp() throws Exception
     {
+        DoubleInterval a = new DoubleInterval(0.0,4.5);
+        DoubleInterval b = new DoubleInterval(-4.5,9.0);
 
+        DoubleInterval aExp = DoubleInterval.exp(a);
+        DoubleInterval bExp = DoubleInterval.exp(b);
+
+        DoubleInterval aRes = new DoubleInterval(1.0,90.01713130052181);
+        DoubleInterval bRes = new DoubleInterval(0.011108996538242306,8103.083927575384);
+
+        assertTrue(String.format("Test exp(a) : %s isIn %s", aRes,aExp), DoubleInterval.isIn(aExp,aRes));
+        assertTrue(String.format("Test exp(b) : %s isIn %s", bRes,bExp), DoubleInterval.isIn(bExp,bRes));
     }
 
     @Test
     public void testLog() throws Exception
     {
+        DoubleInterval a = new DoubleInterval(4.0,9.0);
+        DoubleInterval b = new DoubleInterval(0.00004,0.00005);
 
+        DoubleInterval aLog = DoubleInterval.log(a);
+        DoubleInterval bLog = DoubleInterval.log(b);
+
+        DoubleInterval aRes = new DoubleInterval(1.3862943611198906,2.1972245773362196);
+        DoubleInterval bRes = new DoubleInterval(-10.126631103850338,-9.903487552536127);
+
+        assertTrue(String.format("Test log(a) : %s isIn %s", aRes,aLog), DoubleInterval.isIn(aLog,aRes));
+        assertTrue(String.format("Test log(b) : %s isIn %s", bRes,bLog), DoubleInterval.isIn(bLog,bRes));
     }
 
     @Test
     public void testLog10() throws Exception
     {
+        DoubleInterval a = new DoubleInterval(2.0,10.0);
+        DoubleInterval b = new DoubleInterval(0.00004,0.00005);
 
+        DoubleInterval aLog = DoubleInterval.log10(a);
+        DoubleInterval bLog = DoubleInterval.log10(b);
+
+        DoubleInterval aRes = new DoubleInterval(0.3010299956639812,1.0);
+        DoubleInterval bRes = new DoubleInterval(-4.3979400086720375,-4.301029995663981);
+
+        assertTrue(String.format("Test log(a) : %s isIn %s", aRes,aLog), DoubleInterval.isIn(aLog,aRes));
+        assertTrue(String.format("Test log(b) : %s isIn %s", bRes,bLog), DoubleInterval.isIn(bLog,bRes));
     }
 
     private void testIntervalBounds(DoubleInterval a) throws Exception
