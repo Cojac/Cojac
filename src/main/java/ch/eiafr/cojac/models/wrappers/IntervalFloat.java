@@ -3,7 +3,7 @@ package ch.eiafr.cojac.models.wrappers;
 /**
  * Created by Snipy on 07.03.15.
  */
-public class EnrichedFloat extends Number
+public class IntervalFloat extends Number
 {
     private float value;
     //private RealInterval interval;
