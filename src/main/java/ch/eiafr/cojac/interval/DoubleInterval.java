@@ -1,5 +1,7 @@
 package ch.eiafr.cojac.interval;
 
+import java.util.Map;
+
 /**
  * <p>
  * Note : the mathematical operation does not treat operation with overflow
@@ -11,10 +13,15 @@ package ch.eiafr.cojac.interval;
  */
 public class DoubleInterval implements Comparable<DoubleInterval>
 {
-    private double inf;
-    private double sup;
+    public double inf;
+    public double sup;
 
     private boolean isNan;
+
+    private static final double PI_2 = Math.PI / 2.0;
+    private static final double PI3_2 = Math.PI * 1.5;
+    private static final double PI2 = Math.PI * 2.0;
+
 
     /**
      * Constructor
@@ -154,6 +161,21 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     }
 
     /**
+     * @param a DoubleInterval to use
+     *
+     * @return the width of the interval
+     */
+    public static double width(DoubleInterval a)
+    {
+        if (a.isNan)
+        {
+            return Double.NaN;
+        }
+        assert (a.sup >= a.inf);
+        return a.sup - a.inf;
+    }
+
+    /**
      * Test if b is in the interval a
      *
      * @param a DoubleInterval see has a set
@@ -180,6 +202,10 @@ public class DoubleInterval implements Comparable<DoubleInterval>
      */
     public static boolean isIn(DoubleInterval a, DoubleInterval b)
     {
+        if (a.isNan)
+        {
+            return false;
+        }
         return (b.inf >= a.inf && b.sup <= a.sup);
     }
 
@@ -293,21 +319,21 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         {
             return new DoubleInterval(Double.NaN);
         }
-        if(base.inf > 0.0)
+        if (base.inf > 0.0)
         {
-            double v1 = Math.pow(base.inf,2.0);
-            double v2 = Math.pow(base.sup,2.0);
-            return roundedInterval(v1,v2);
+            double v1 = Math.pow(base.inf, 2.0);
+            double v2 = Math.pow(base.sup, 2.0);
+            return roundedInterval(v1, v2);
         }
-        else if(base.sup < 0.0)
+        else if (base.sup < 0.0)
         {
-            double v1 = Math.pow(base.sup,2.0);
-            double v2 = Math.pow(base.inf,2.0);
-            return roundedInterval(v1,v2);
+            double v1 = Math.pow(base.sup, 2.0);
+            double v2 = Math.pow(base.inf, 2.0);
+            return roundedInterval(v1, v2);
         }
         else // 0 is in the base interval
         {
-            return new DoubleInterval(0.0,Math.max(Math.pow(base.inf,2.0),Math.pow(base.sup,2.0)));
+            return new DoubleInterval(0.0, Math.max(Math.pow(base.inf, 2.0), Math.pow(base.sup, 2.0)));
         }
     }
 
@@ -349,7 +375,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
                 Math.min(Math.pow(base.sup, exponent.inf), Math.pow(base.sup, exponent.sup)));
         double v2 = Math.max(Math.max(Math.pow(base.inf, exponent.inf), Math.pow(base.inf, exponent.sup)),
                 Math.max(Math.pow(base.sup, exponent.inf), Math.pow(base.sup, exponent.sup)));
-        return roundedInterval(v1,v2);
+        return roundedInterval(v1, v2);
     }
 
     /**
@@ -370,7 +396,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
 
     /**
      * @param a argument for the logarithmic function
-     *          PRE : param a must be >= 0
+     *          PRE : param a must be > 0
      *
      * @return a new DoubleInterval that's the result of the logarithmic function (ln)
      */
@@ -380,7 +406,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         {
             return new DoubleInterval(Double.NaN);
         }
-        assert(a.inf >= 0.0);
+        assert (a.inf > 0.0);
         double v1 = Math.log(a.inf);
         double v2 = Math.log(a.sup);
         return roundedInterval(v1, v2);
@@ -388,7 +414,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
 
     /**
      * @param a argument for the logarithmic base 10 function
-     *          PRE : param a must be >= 0
+     *          PRE : param a must be > 0
      *
      * @return a new DoubleInterval that's the result of the logarithmic function
      */
@@ -398,7 +424,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         {
             return new DoubleInterval(Double.NaN);
         }
-        assert(a.inf >= 0.0);
+        assert (a.inf > 0.0);
         double v1 = Math.log10(a.inf);
         double v2 = Math.log10(a.sup);
         return roundedInterval(v1, v2);
@@ -465,6 +491,153 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     }
 
     /**
+     * Max and min are in pi/2 and 3*pi/2
+     *
+     * @param a operand of the sinus operation on interval
+     *
+     * @return a new DoubleInterval that's the result of the sinus operation
+     */
+    public static DoubleInterval sin(DoubleInterval a)
+    {
+        if (a.isNan)
+        {
+            return new DoubleInterval(Double.NaN);
+        }
+        if (width(a) >= 2 * Math.PI)
+        {
+            return new DoubleInterval(-1.0, 1.0);
+        }
+        double inf;
+        double sup;
+        // convert the interval into the [-2*pi ; 2*pi]
+        if(a.inf < -PI2)
+        {
+            if(a.sup < -PI2)
+            {
+                inf = a.inf % PI2;
+                sup = a.sup % PI2;
+                // inf and sup are between -2*pi and 0
+            }
+            else
+            {
+                inf = a.inf + PI2;
+                sup = a.sup + PI2;
+            }
+        }
+        else if(a.sup > PI2)
+        {
+            if(a.inf > PI2)
+            {
+                inf = a.inf % PI2;
+                sup = a.sup % PI2;
+            }
+            else
+            {
+                inf = a.inf - PI2;
+                sup = a.sup - PI2;
+            }
+        }
+        else
+        {
+            inf = a.inf;
+            sup = a.sup;
+        }
+        assert (inf > -PI2 && inf < PI2);
+        assert (sup > -PI2 && sup < PI2);
+
+        if(inf < -PI3_2) // inf is in section a
+        {
+            assert (inf > -PI2 && inf < -PI3_2);
+            if(sup < -PI3_2) // both are in section a
+            {
+                assert (sup > -PI2 && sup < -PI3_2);
+                return roundedInterval(Math.sin(inf),Math.sin(sup));
+            }
+            else if(sup < -PI_2) // sup is in section b
+            {
+                assert (sup < -PI_2 && sup > -PI3_2);
+                double v1 = Math.min(Math.sin(inf),Math.sin(sup));
+                return new DoubleInterval(v1 - Math.ulp(v1),1.0);
+            }
+            else // sup in int the c section
+            {
+                assert (sup > -PI_2 && sup  < PI_2);
+                return new DoubleInterval(-1.0,1.0);
+            }
+        }
+        else if(inf < -PI_2) // inf is in b section
+        {
+            assert (inf < -PI_2 && inf > -PI3_2);
+            if(sup < -PI_2) // both in b section
+            {
+                assert (sup < -PI_2 && sup > -PI3_2);
+                double v1 = Math.sin(sup);
+                double v2 = Math.sin(inf);
+                return roundedInterval(v1,v2);
+            }
+            else if(sup < PI_2) // sup is in c section
+            {
+                assert (sup > -PI_2 && sup  < PI_2);
+                double v1 = -1.0;
+                double v2 = Math.max(Math.sin(inf),Math.sin(sup));
+                return new DoubleInterval(v1,v2 + Math.ulp(v2));
+            }
+            else // sup is in d section
+            {
+                assert (sup > PI_2 && sup < PI3_2);
+                return new DoubleInterval(-1.0,1.0);
+            }
+        }
+        else if(inf < PI_2) // inf is in the c section
+        {
+            assert (inf > -PI_2 && inf  < PI_2);
+            if(sup < PI_2) // both in c section
+            {
+                assert (sup > -PI_2 && sup  < PI_2);
+                return roundedInterval(Math.sin(inf),Math.sin(sup));
+            }
+            else if(sup < PI3_2) // sup in d section
+            {
+                assert (sup > PI_2 && sup < PI3_2);
+                double v1 = Math.min(Math.sin(inf),Math.sin(sup));
+                double v2 = 1.0;
+                return new DoubleInterval(v1 - Math.ulp(v1),v2);
+            }
+            else // sup is in e section
+            {
+                assert (sup < PI2 && sup > PI3_2);
+                return new DoubleInterval(-1.0,1.0);
+            }
+        }
+        else if(inf < PI3_2) // inf is in d section
+        {
+            assert (inf > PI_2 && inf < PI3_2);
+            if(sup < PI3_2) // sup is in d section
+            {
+                assert (sup > PI_2 && sup < PI3_2);
+                double v1 = Math.sin(sup);
+                double v2 = Math.sin(inf);
+                return roundedInterval(v1,v2);
+            }
+            else // sup is in e section
+            {
+                assert (sup < PI2 && sup > PI3_2);
+                double v1 = -1.0;
+                double v2 = Math.max(Math.sin(inf),Math.sin(sup));
+                return new DoubleInterval(v1,v2 + Math.ulp(v2));
+            }
+        }
+        else // both in e section
+        {
+            assert (inf > PI3_2 && inf < PI2);
+            assert (sup > PI3_2 && sup < PI2);
+            double v1 = Math.sin(inf);
+            double v2 = Math.sin(sup);
+            return roundedInterval(v1,v2);
+        }
+    }
+
+    /**
      * @param inf inferior bound of the interval
      * @param sup superior bound of the interval
      *
@@ -478,5 +651,6 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         }
         return new DoubleInterval(inf - Math.ulp(inf), sup + Math.ulp(sup));
     }
+
 }
 
