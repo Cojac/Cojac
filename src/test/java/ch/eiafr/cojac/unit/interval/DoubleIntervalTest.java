@@ -1,6 +1,7 @@
 package ch.eiafr.cojac.unit.interval;
 
 import ch.eiafr.cojac.interval.DoubleInterval;
+import ch.eiafr.cojac.perfs.scimark.Random;
 import org.junit.Test;
 
 import static ch.eiafr.cojac.unit.interval.DoubleUtils.getBiggerRndDouble;
@@ -418,6 +419,48 @@ public class DoubleIntervalTest
 
         assertTrue(String.format("Test log(a) : %s isIn %s", aRes,aLog), DoubleInterval.isIn(aLog,aRes));
         assertTrue(String.format("Test log(b) : %s isIn %s", bRes,bLog), DoubleInterval.isIn(bLog,bRes));
+    }
+
+    // TODO
+    @Test
+    public void testSin() throws Exception
+    {
+        double v1,v2,min = 10.0,max = -10.0;
+        double itr,itrSin,step = 0.001;
+        DoubleInterval a,aRes;
+        Random r = new Random();
+
+        for(int i=0; i<1000; i++)
+        {
+            v1 = r.nextDouble() * 10.0;
+            v2 = r.nextDouble() * 10.0;
+            if(v1 < v2)
+            {
+                a = new DoubleInterval(v1,v2);
+            }
+            else
+            {
+                a = new DoubleInterval(v2,v1);
+            }
+            aRes = DoubleInterval.sin(a);
+            itr = a.inf + step; // if we start at itr = a.inf, it's failing...
+            while(itr < a.sup)
+            {
+                itrSin = Math.sin(itr);
+                if(itrSin < min)
+                {
+                    min = itrSin;
+                }
+                if(itrSin > max)
+                {
+                    max = itrSin;
+                }
+                assertTrue(String.format("sin(%s) is in %s", itr, aRes),itrSin <= aRes.sup && itrSin >= aRes.inf);
+                itr+=step;
+            }
+            assertTrue("Test min : ",min + step > aRes.inf || min - step < aRes.inf);
+            assertTrue("Test max : ",max + step > aRes.sup || max - step < aRes.sup);
+        }
     }
 
     private void testIntervalBounds(DoubleInterval a) throws Exception
