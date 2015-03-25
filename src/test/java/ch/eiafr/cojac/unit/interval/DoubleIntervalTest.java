@@ -1,14 +1,13 @@
 package ch.eiafr.cojac.unit.interval;
 
 import ch.eiafr.cojac.interval.DoubleInterval;
-import ch.eiafr.cojac.perfs.scimark.Random;
+import java.util.Random;
 import org.junit.Test;
 
 import static ch.eiafr.cojac.unit.interval.DoubleUtils.getBiggerRndDouble;
 import static ch.eiafr.cojac.unit.interval.DoubleUtils.rndDouble;
 import static java.lang.Double.*;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -171,8 +170,8 @@ public class DoubleIntervalTest
         DoubleInterval ba = DoubleInterval.add(a,b); testIntervalBounds(ba);
         DoubleInterval ac = DoubleInterval.add(a,c); testIntervalBounds(ac);
         DoubleInterval ad = DoubleInterval.add(a,c); testIntervalBounds(ad);
-        DoubleInterval cd = DoubleInterval.add(a,c); testIntervalBounds(cd);
-        DoubleInterval dc = DoubleInterval.add(a,c); testIntervalBounds(dc);
+        DoubleInterval cd = DoubleInterval.add(a,d); testIntervalBounds(cd);
+        DoubleInterval dc = DoubleInterval.add(d,c); testIntervalBounds(dc);
 
         assertTrue(String.format("Test a+b >= a : %s >= %s",ab,a),ab.compareTo(a) >= 0);
         assertTrue(String.format("Test b+a >= b : %s >= %s",ba,b),ba.compareTo(b) >= 0);
@@ -421,7 +420,6 @@ public class DoubleIntervalTest
         assertTrue(String.format("Test log(b) : %s isIn %s", bRes,bLog), DoubleInterval.isIn(bLog,bRes));
     }
 
-    // TODO
     @Test
     public void testSin() throws Exception
     {
@@ -430,10 +428,10 @@ public class DoubleIntervalTest
         DoubleInterval a,aRes;
         Random r = new Random();
 
-        for(int i=0; i<1000; i++)
+        for(int i=0; i<nbrLoopExecution; i++)
         {
-            v1 = r.nextDouble() * 10.0;
-            v2 = r.nextDouble() * 10.0;
+            v1 = r.nextDouble() * 20.0; v1 = r.nextBoolean() ? v1:-v1;
+            v2 = r.nextDouble() * 20.0; v2 = r.nextBoolean() ? v2:-v2;
             if(v1 < v2)
             {
                 a = new DoubleInterval(v1,v2);
@@ -456,6 +454,47 @@ public class DoubleIntervalTest
                     max = itrSin;
                 }
                 assertTrue(String.format("sin(%s) is in %s", itr, aRes),itrSin <= aRes.sup && itrSin >= aRes.inf);
+                itr+=step;
+            }
+            assertTrue("Test min : ",min + step > aRes.inf || min - step < aRes.inf);
+            assertTrue("Test max : ",max + step > aRes.sup || max - step < aRes.sup);
+        }
+    }
+
+    @Test
+    public void testCos() throws Exception
+    {
+        double v1,v2,min = 20.0,max = -20.0;
+        double itr,itrCos,step = 0.001;
+        DoubleInterval a,aRes;
+        Random r = new Random();
+
+        for(int i=0; i<nbrLoopExecution; i++)
+        {
+            v1 = r.nextDouble() * 20.0; v1 = r.nextBoolean() ? v1:-v1;
+            v2 = r.nextDouble() * 20.0; v2 = r.nextBoolean() ? v2:-v2;
+            if(v1 < v2)
+            {
+                a = new DoubleInterval(v1,v2);
+            }
+            else
+            {
+                a = new DoubleInterval(v2,v1);
+            }
+            aRes = DoubleInterval.cos(a);
+            itr = a.inf + step; // if we start at itr = a.inf, it's failing...
+            while(itr < a.sup)
+            {
+                itrCos = Math.cos(itr);
+                if(itrCos < min)
+                {
+                    min = itrCos;
+                }
+                if(itrCos > max)
+                {
+                    max = itrCos;
+                }
+                assertTrue(String.format("cos(%s) is in %s", itr, aRes),itrCos <= aRes.sup && itrCos >= aRes.inf);
                 itr+=step;
             }
             assertTrue("Test min : ",min + step > aRes.inf || min - step < aRes.inf);
