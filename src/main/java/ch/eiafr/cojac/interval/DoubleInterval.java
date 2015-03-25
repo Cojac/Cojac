@@ -1,6 +1,6 @@
 package ch.eiafr.cojac.interval;
 
-import java.util.Map;
+import static java.lang.Math.PI;
 
 /**
  * <p>
@@ -18,9 +18,9 @@ public class DoubleInterval implements Comparable<DoubleInterval>
 
     private boolean isNan;
 
-    private static final double PI_2 = Math.PI / 2.0;
-    private static final double PI3_2 = Math.PI * 1.5;
-    private static final double PI2 = Math.PI * 2.0;
+    private static final double PI_2 = PI / 2.0;
+    private static final double PI3_2 = PI * 1.5;
+    private static final double PI2 = PI * 2.0;
 
 
     /**
@@ -503,16 +503,16 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         {
             return new DoubleInterval(Double.NaN);
         }
-        if (width(a) >= 2 * Math.PI)
+        if (width(a) >= 2 * PI)
         {
             return new DoubleInterval(-1.0, 1.0);
         }
         double inf;
         double sup;
         // convert the interval into the [-2*pi ; 2*pi]
-        if(a.inf < -PI2)
+        if (a.inf < -PI2)
         {
-            if(a.sup < -PI2)
+            if (a.sup < -PI2)
             {
                 inf = a.inf % PI2;
                 sup = a.sup % PI2;
@@ -524,9 +524,9 @@ public class DoubleInterval implements Comparable<DoubleInterval>
                 sup = a.sup + PI2;
             }
         }
-        else if(a.sup > PI2)
+        else if (a.sup > PI2)
         {
-            if(a.inf > PI2)
+            if (a.inf > PI2)
             {
                 inf = a.inf % PI2;
                 sup = a.sup % PI2;
@@ -544,95 +544,246 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         }
         assert (inf > -PI2 && inf < PI2);
         assert (sup > -PI2 && sup < PI2);
-
-        if(inf < -PI3_2) // inf is in section a
+        if(inf > sup)
         {
-            assert (inf > -PI2 && inf < -PI3_2);
-            if(sup < -PI3_2) // both are in section a
+            if(inf > 0.0)
             {
-                assert (sup > -PI2 && sup < -PI3_2);
-                return roundedInterval(Math.sin(inf),Math.sin(sup));
+                inf -= PI2;
             }
-            else if(sup < -PI_2) // sup is in section b
+            else
             {
-                assert (sup < -PI_2 && sup > -PI3_2);
-                double v1 = Math.min(Math.sin(inf),Math.sin(sup));
-                return new DoubleInterval(v1 - Math.ulp(v1),1.0);
+                sup += PI2;
+            }
+        }
+        assert (inf <= sup);
+
+        if (inf <= -PI3_2) // inf is in section a
+        {
+            assert (inf > -PI2 && inf <= -PI3_2);
+            if (sup <= -PI3_2) // both are in section a
+            {
+                assert (sup > -PI2 && sup <= -PI3_2);
+                return roundedInterval(Math.sin(inf), Math.sin(sup));
+            }
+            else if (sup <= -PI_2) // sup is in section b
+            {
+                assert (sup <= -PI_2 && sup > -PI3_2);
+                double v1 = Math.min(Math.sin(inf), Math.sin(sup));
+                return new DoubleInterval(v1 - Math.ulp(v1), 1.0);
             }
             else // sup in int the c section
             {
-                assert (sup > -PI_2 && sup  < PI_2);
-                return new DoubleInterval(-1.0,1.0);
+                assert (sup > -PI_2 && sup <= PI_2);
+                return new DoubleInterval(-1.0, 1.0);
             }
         }
-        else if(inf < -PI_2) // inf is in b section
+        else if (inf <= -PI_2) // inf is in b section
         {
-            assert (inf < -PI_2 && inf > -PI3_2);
-            if(sup < -PI_2) // both in b section
+            assert (inf <= -PI_2 && inf > -PI3_2);
+            if (sup <= -PI_2) // both in b section
             {
-                assert (sup < -PI_2 && sup > -PI3_2);
+                assert (sup <= -PI_2 && sup > -PI3_2);
                 double v1 = Math.sin(sup);
                 double v2 = Math.sin(inf);
-                return roundedInterval(v1,v2);
+                return roundedInterval(v1, v2);
             }
-            else if(sup < PI_2) // sup is in c section
+            else if (sup <= PI_2) // sup is in c section
             {
-                assert (sup > -PI_2 && sup  < PI_2);
+                assert (sup > -PI_2 && sup <= PI_2);
                 double v1 = -1.0;
-                double v2 = Math.max(Math.sin(inf),Math.sin(sup));
-                return new DoubleInterval(v1,v2 + Math.ulp(v2));
+                double v2 = Math.max(Math.sin(inf), Math.sin(sup));
+                return new DoubleInterval(v1, v2 + Math.ulp(v2));
             }
             else // sup is in d section
             {
-                assert (sup > PI_2 && sup < PI3_2);
-                return new DoubleInterval(-1.0,1.0);
+                assert (sup > PI_2 && sup <= PI3_2);
+                return new DoubleInterval(-1.0, 1.0);
             }
         }
-        else if(inf < PI_2) // inf is in the c section
+        else if (inf <= PI_2) // inf is in the c section
         {
-            assert (inf > -PI_2 && inf  < PI_2);
-            if(sup < PI_2) // both in c section
+            assert (inf > -PI_2 && inf <= PI_2);
+            if (sup <= PI_2) // both in c section
             {
-                assert (sup > -PI_2 && sup  < PI_2);
-                return roundedInterval(Math.sin(inf),Math.sin(sup));
+                assert (sup > -PI_2 && sup <= PI_2);
+                return roundedInterval(Math.sin(inf), Math.sin(sup));
             }
-            else if(sup < PI3_2) // sup in d section
+            else if (sup <= PI3_2) // sup in d section
             {
-                assert (sup > PI_2 && sup < PI3_2);
-                double v1 = Math.min(Math.sin(inf),Math.sin(sup));
+                assert (sup > PI_2 && sup <= PI3_2);
+                double v1 = Math.min(Math.sin(inf), Math.sin(sup));
                 double v2 = 1.0;
-                return new DoubleInterval(v1 - Math.ulp(v1),v2);
+                return new DoubleInterval(v1 - Math.ulp(v1), v2);
             }
             else // sup is in e section
             {
-                assert (sup < PI2 && sup > PI3_2);
-                return new DoubleInterval(-1.0,1.0);
+                assert (sup <= PI2 && sup > PI3_2);
+                return new DoubleInterval(-1.0, 1.0);
             }
         }
-        else if(inf < PI3_2) // inf is in d section
+        else if (inf <= PI3_2) // inf is in d section
         {
-            assert (inf > PI_2 && inf < PI3_2);
-            if(sup < PI3_2) // sup is in d section
+            assert (inf > PI_2 && inf <= PI3_2);
+            if (sup <= PI3_2) // sup is in d section
             {
-                assert (sup > PI_2 && sup < PI3_2);
+                assert (sup > PI_2 && sup <= PI3_2);
                 double v1 = Math.sin(sup);
                 double v2 = Math.sin(inf);
-                return roundedInterval(v1,v2);
+                return roundedInterval(v1, v2);
             }
             else // sup is in e section
             {
-                assert (sup < PI2 && sup > PI3_2);
+                assert (sup <= PI2 && sup > PI3_2);
                 double v1 = -1.0;
-                double v2 = Math.max(Math.sin(inf),Math.sin(sup));
-                return new DoubleInterval(v1,v2 + Math.ulp(v2));
+                double v2 = Math.max(Math.sin(inf), Math.sin(sup));
+                return new DoubleInterval(v1, v2 + Math.ulp(v2));
             }
         }
         else // both in e section
         {
-            assert (inf > PI3_2 && inf < PI2);
-            assert (sup > PI3_2 && sup < PI2);
+            assert (inf > PI3_2 && inf <= PI2);
+            assert (sup > PI3_2 && sup <= PI2);
             double v1 = Math.sin(inf);
             double v2 = Math.sin(sup);
+            return roundedInterval(v1, v2);
+        }
+    }
+
+    public static DoubleInterval cos(DoubleInterval a)
+    {
+        // using sin(x + 2*pi) = cos(x)
+        //return sin(new DoubleInterval(a.inf + PI_2,a.sup + PI_2));
+        assert (a.inf <= a.sup);
+        if (a.isNan)
+        {
+            return new DoubleInterval(Double.NaN);
+        }
+        if (width(a) >= 2 * PI)
+        {
+            return new DoubleInterval(-1.0, 1.0);
+        }
+        double inf;
+        double sup;
+        // convert the interval into the [-2*pi ; 2*pi]
+        if (a.inf < -PI2)
+        {
+            if (a.sup < -PI2)
+            {
+                inf = a.inf % PI2;
+                sup = a.sup % PI2;
+                // inf and sup are between -2*pi and 0
+            }
+            else
+            {
+                inf = a.inf + PI2;
+                sup = a.sup + PI2;
+            }
+        }
+        else if (a.sup > PI2)
+        {
+            if (a.inf > PI2)
+            {
+                inf = a.inf % PI2;
+                sup = a.sup % PI2;
+            }
+            else
+            {
+                inf = a.inf - PI2;
+                sup = a.sup - PI2;
+            }
+        }
+        else
+        {
+            inf = a.inf;
+            sup = a.sup;
+        }
+
+        assert (inf > -PI2 && inf < PI2);
+        assert (sup > -PI2 && sup < PI2);
+        if(inf > sup)
+        {
+            if(inf > 0.0)
+            {
+                inf -= PI2;
+            }
+            else
+            {
+                sup += PI2;
+            }
+        }
+        assert (inf <= sup);
+
+        if(inf < -PI) // inf is in the a section
+        {
+            assert (inf < -PI && inf >= -PI2);
+            if(sup < -PI)
+            {
+                assert (sup >= -PI2 && sup < -PI);
+                double v1 = Math.cos(sup);
+                double v2 = Math.cos(inf);
+                return roundedInterval(v1,v2);
+            }
+            else if(sup < 0.0)
+            {
+                assert (sup >= -PI && sup < 0.0);
+                double v1 = -1.0;
+                double v2 = Math.max(Math.cos(inf),Math.cos(sup));
+                return new DoubleInterval(v1,v2 + Math.ulp(v2));
+            }
+            else
+            {
+                assert (sup >= 0.0 & sup <= PI);
+                return new DoubleInterval(-1.0,1.0);
+            }
+        }
+        else if(inf < 0.0) // inf is in the b section
+        {
+            assert (inf < 0.0 && inf >= -PI);
+            if(sup < 0.0) // sup is in the b section
+            {
+                assert (sup < 0.0 & sup >= -PI);
+                double v1 = Math.cos(inf);
+                double v2 = Math.cos(sup);
+                return roundedInterval(v1,v2);
+            }
+            else if(sup < PI) // sup is in the c section
+            {
+                assert (sup < PI && sup >= 0.0);
+                double v1 = Math.min(Math.cos(inf),Math.cos(sup));
+                double v2 = 1.0;
+                return new DoubleInterval(v1 - Math.ulp(v1),v2);
+            }
+            else // sup is in the d section
+            {
+                assert (sup > PI && sup <= PI2);
+                return new DoubleInterval(-1.0,1.0);
+            }
+        }
+        else if(inf < PI) // inf is in the c section
+        {
+            assert (inf < PI && inf >= 0.0);
+            if(sup < PI) // sup is in the c section
+            {
+                assert (sup < PI && sup >= 0.0);
+                double v1 = Math.cos(sup);
+                double v2 = Math.cos(inf);
+                return roundedInterval(v1,v2);
+            }
+            else // sup is in the d section
+            {
+                assert (sup >= PI && sup <= PI2);
+                double v1 = -1.0;
+                double v2 = Math.max(Math.cos(inf),Math.cos(sup));
+                return new DoubleInterval(v1,v2 + Math.ulp(v2));
+            }
+
+        }
+        else // inf is in the d section and sup too
+        {
+            assert (inf <= PI2 && inf >= -PI2);
+            assert (inf <= PI2 && inf >= -PI2);
+            double v1 = Math.cos(inf);
+            double v2 = Math.cos(sup);
             return roundedInterval(v1,v2);
         }
     }
