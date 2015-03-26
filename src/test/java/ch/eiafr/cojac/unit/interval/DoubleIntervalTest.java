@@ -198,7 +198,7 @@ public class DoubleIntervalTest
         assertTrue(String.format("Test isNan ba : %s)",ba),ba.isNan());
 
         // Todo : test with max min neg ans pos if needed
-        // 0.0 not interresting
+        // 0.0 not interesting
     }
 
     @Test
@@ -246,7 +246,6 @@ public class DoubleIntervalTest
         DoubleInterval a = new DoubleInterval(6.0,15.0);
         DoubleInterval b = new DoubleInterval(-13.5,12.0);
         DoubleInterval c = new DoubleInterval(-20.0,-8.0);
-        DoubleInterval d = new DoubleInterval(0.0,0.0);
 
         // a * b = [-81.0;180.0]
         DoubleInterval abRes = new DoubleInterval(-81.0,180.0);

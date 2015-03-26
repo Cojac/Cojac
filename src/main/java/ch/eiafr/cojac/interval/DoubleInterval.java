@@ -104,7 +104,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
      * [NEGATIVE_INFINITY;POSITIVE_INFINITY] includes NEGATIVE_INFINITY and POSITIVE_INFINITY
      * </p>
      *
-     * @param value dobule that's is compared with this (see has a set)
+     * @param value double that's is compared with this (see has a set)
      *
      * @return - value < inf -> 1 , the value is under the set
      * - value > inf && value < sup -> 0 , the value is in the set !
@@ -142,11 +142,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
      */
     public boolean strictCompareTo(DoubleInterval o)
     {
-        if (o.isNan || this.isNan)
-        {
-            return false;
-        }
-        return (this.inf == o.inf && this.sup == o.sup);
+        return !(o.isNan || this.isNan) && (this.inf == o.inf && this.sup == o.sup);
     }
 
 
@@ -187,11 +183,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     /* Interval operation */
     public static boolean isIn(DoubleInterval a, double b)
     {
-        if (a.isNan)
-        {
-            return false;
-        }
-        return (b >= a.inf && b <= a.sup);
+        return !a.isNan && (b >= a.inf && b <= a.sup);
     }
 
     /**
@@ -202,11 +194,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
      */
     public static boolean isIn(DoubleInterval a, DoubleInterval b)
     {
-        if (a.isNan)
-        {
-            return false;
-        }
-        return (b.inf >= a.inf && b.sup <= a.sup);
+        return !a.isNan && (b.inf >= a.inf && b.sup <= a.sup);
     }
 
 
@@ -229,11 +217,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
      */
     public boolean testBounds()
     {
-        if (this.isNan)
-        {
-            return true;
-        }
-        return this.inf <= this.sup;
+        return this.isNan || this.inf <= this.sup;
     }
 
 
@@ -649,6 +633,13 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         }
     }
 
+    /**
+     * Max and min are in pi/2 and 3*pi/2
+     *
+     * @param a operand of the cosinus operation on interval
+     *
+     * @return a new DoubleInterval that's the result of the cosinus operation
+     */
     public static DoubleInterval cos(DoubleInterval a)
     {
         // using sin(x + 2*pi) = cos(x)
