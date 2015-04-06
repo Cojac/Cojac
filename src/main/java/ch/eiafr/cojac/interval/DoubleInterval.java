@@ -475,8 +475,6 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     }
 
     /**
-     * Max and min are in pi/2 and 3*pi/2
-     *
      * @param a operand of the sinus operation on interval
      *
      * @return a new DoubleInterval that's the result of the sinus operation
@@ -528,9 +526,10 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         }
         assert (inf > -PI2 && inf < PI2);
         assert (sup > -PI2 && sup < PI2);
-        if(inf > sup)
+
+        if (inf > sup)
         {
-            if(inf > 0.0)
+            if (inf > 0.0)
             {
                 inf -= PI2;
             }
@@ -634,8 +633,6 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     }
 
     /**
-     * Max and min are in pi/2 and 3*pi/2
-     *
      * @param a operand of the cosinus operation on interval
      *
      * @return a new DoubleInterval that's the result of the cosinus operation
@@ -643,8 +640,119 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     public static DoubleInterval cos(DoubleInterval a)
     {
         // using sin(x + 2*pi) = cos(x)
-        return sin(new DoubleInterval(a.inf + PI_2,a.sup + PI_2));
+        return sin(new DoubleInterval(a.inf + PI_2, a.sup + PI_2));
     }
+
+    /**
+     * Max and min are in -pi & pi
+     *
+     * @param a operand of the cosinus operation on interval
+     *
+     * @return a new DoubleInterval that's the result of the cosinus operation
+     */
+    public static DoubleInterval tan(DoubleInterval a)
+    {
+        if (a.isNan)
+        {
+            return new DoubleInterval(Double.NaN);
+        }
+        if (width(a) >= PI)
+        {
+            return new DoubleInterval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+        }
+        double inf;
+        double sup;
+        // convert the interval into the [-2*pi ; 2*pi]
+        if (a.inf < -PI)
+        {
+            if (a.sup < -PI)
+            {
+                inf = a.inf % PI;
+                sup = a.sup % PI;
+                // inf and sup are between -2*pi and 0
+            }
+            else
+            {
+                inf = a.inf + PI;
+                sup = a.sup + PI;
+            }
+        }
+        else if (a.sup > PI)
+        {
+            if (a.inf > PI)
+            {
+                inf = a.inf % PI;
+                sup = a.sup % PI;
+            }
+            else
+            {
+                inf = a.inf - PI;
+                sup = a.sup - PI;
+            }
+        }
+        else
+        {
+            inf = a.inf;
+            sup = a.sup;
+        }
+        assert (inf > -PI && inf < PI);
+        assert (sup > -PI && sup < PI);
+
+        if (inf > sup)
+        {
+            if (inf > 0.0)
+            {
+                inf -= PI;
+            }
+            else
+            {
+                sup += PI;
+            }
+        }
+        assert (inf <= sup);
+
+        if(inf < -PI_2) // inf is in the a section
+        {
+            assert (inf > -PI && inf < -PI_2);
+            if(sup < -PI_2) // sup is in the a section
+            {
+                assert (sup > -PI && sup < -PI_2);
+                double v1 = Math.tan(inf);
+                double v2 = Math.tan(sup);
+                return roundedInterval(v1,v2);
+            }
+            else // sup is in the b section
+            {
+                assert (sup >= -PI_2 && sup < PI_2);
+                return new DoubleInterval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+            }
+        }
+        else if (inf < PI_2) // inf is in the b section
+        {
+            assert (inf >= -PI_2 && inf < PI_2);
+            if(sup < PI_2) // sup is in the b section
+            {
+                assert (sup > -PI_2 && sup < PI_2);
+                double v1 = Math.tan(inf);
+                double v2 = Math.tan(sup);
+                return roundedInterval(v1,v2);
+            }
+            else // sup is in the c section
+            {
+                return new DoubleInterval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+            }
+        }
+        else // inf is in the c section
+        {
+            assert (inf >= PI_2 && inf < PI);
+            assert (sup >= PI_2 && sup < PI);
+            double v1 = Math.tan(inf);
+            double v2 = Math.tan(sup);
+            return roundedInterval(v1,v2);
+        }
+    }
+
+
 
     /**
      * @param inf inferior bound of the interval
