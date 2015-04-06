@@ -752,6 +752,58 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         }
     }
 
+    /**
+     * @param a operand of the sinh operation
+     *
+     * @return a new DoubleInterval that's the negative the operand
+     */
+    public static DoubleInterval sinh(DoubleInterval a)
+    {
+        if (a.isNan)
+        {
+            return new DoubleInterval(Double.NaN);
+        }
+        double v1 = Math.sinh(a.inf);
+        double v2 = Math.sinh(a.sup);
+        return roundedInterval(v1, v2);
+    }
+
+    /**
+     * @param a operand of the cosh operation
+     *
+     * @return a new DoubleInterval that's the negative the operand
+     */
+    public static DoubleInterval cosh(DoubleInterval a)
+    {
+        if (a.isNan)
+        {
+            return new DoubleInterval(Double.NaN);
+        }
+        double v1 = Math.cosh(a.inf);
+        double v2 = Math.cosh(a.sup);
+        if (v1 < v2)
+        {
+            return roundedInterval(v1, v2);
+        }
+        else
+        {
+            return roundedInterval(v2, v1);
+        }
+    }
+
+    /**
+     * @param a operand of the tanh operation
+     *
+     * @return a new DoubleInterval that's the negative the operand
+     */
+    public static DoubleInterval tanh(DoubleInterval a)
+    {
+        if (a.isNan)
+        {
+            return new DoubleInterval(Double.NaN);
+        }
+        return null;
+    }
 
 
     /**
