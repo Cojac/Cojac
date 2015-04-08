@@ -338,8 +338,8 @@ public class DoubleIntervalTest
         DoubleInterval a = new DoubleInterval(4.0,5.0);
         DoubleInterval b = new DoubleInterval(0.0,9.0);
 
-        DoubleInterval a3 = DoubleInterval.pow(a,3.0);
-        DoubleInterval b6 = DoubleInterval.pow(b,6.0);
+        DoubleInterval a3 = DoubleInterval.pow(a, 3.0);
+        DoubleInterval b6 = DoubleInterval.pow(b, 6.0);
 
         DoubleInterval aRes = new DoubleInterval(64.0,125.0);
         DoubleInterval bRes = new DoubleInterval(0.0,531441.0);
@@ -572,6 +572,59 @@ public class DoubleIntervalTest
     {
         Random r = new Random();
         double v1,v2;
+        DoubleInterval a,aArcSin,aArcCos,aArcTan;
+        double itr,itrFuncValue,step = 0.01;
+
+        // Test cosh and sinh, restricted domain
+        for (int i = 0; i < nbrLoopExecution; i++)
+        {
+            v1 = r.nextDouble(); v1 = r.nextBoolean()?v1:-v1;
+            v2 = r.nextDouble(); v2 = r.nextBoolean()?v2:-v2;
+            a = v1 < v2 ? new DoubleInterval(v1,v2) : new DoubleInterval(v2,v1);
+            testIntervalBounds(a);
+
+            itr = a.inf + step;
+
+            aArcCos = DoubleInterval.acos(a);
+            aArcSin = DoubleInterval.asin(a);
+            while(itr < a.sup)
+            {
+                itrFuncValue = Math.acos(itr);
+                assertTrue(String.format("acos(%s) is in %s : acos(%s) = %s\nInterval used is : %s\n", itr, aArcCos,itr,itrFuncValue,a),
+                        itrFuncValue <= aArcCos.sup && itrFuncValue >= aArcCos.inf);
+                itrFuncValue = Math.asin(itr);
+                assertTrue(String.format("asin(%s) is in %s : asin(%s) = %s\nInterval used is : %s\n", itr, aArcSin,itr,itrFuncValue,a),
+                        itrFuncValue <= aArcSin.sup && itrFuncValue >= aArcSin.inf);
+                itr += step;
+            }
+        }
+
+        // Test tanh
+        for (int i = 0; i < nbrLoopExecution; i++)
+        {
+            v1 = r.nextDouble() * MAX_SUP; v1 = r.nextBoolean()?v1:-v1;
+            v2 = r.nextDouble() * MAX_SUP; v2 = r.nextBoolean()?v2:-v2;
+            a = v1 < v2 ? new DoubleInterval(v1,v2) : new DoubleInterval(v2,v1);
+            testIntervalBounds(a);
+
+            itr = a.inf + step;
+
+            aArcTan = DoubleInterval.atan(a);
+            while(itr < a.sup)
+            {
+                itrFuncValue = Math.atan(itr);
+                assertTrue(String.format("atan(%s) is in %s : atan(%s) = %s\nInterval used is : %s\n", itr, aArcTan,itr,itrFuncValue,a),
+                        itrFuncValue <= aArcTan.sup && itrFuncValue >= aArcTan.inf);
+                itr += step;
+            }
+        }
+    }
+
+    @Test
+    public void testHyperbolic() throws Exception
+    {
+        Random r = new Random();
+        double v1,v2;
         DoubleInterval a,aSinh,aCosh,aTanh;
         double itr,itrFuncValue,step = 0.01;
 
@@ -598,32 +651,6 @@ public class DoubleIntervalTest
                 itr += step;
             }
         }
-
-        // Test tanh
-        for (int i = 0; i < nbrLoopExecution; i++)
-        {
-            v1 = r.nextDouble() * MAX_SUP; v1 = r.nextBoolean()?v1:-v1;
-            v2 = r.nextDouble() * MAX_SUP; v2 = r.nextBoolean()?v2:-v2;
-            a = v1 < v2 ? new DoubleInterval(v1,v2) : new DoubleInterval(v2,v1);
-            testIntervalBounds(a);
-
-            itr = a.inf + step;
-
-            aTanh = DoubleInterval.tanh(a);
-            while(itr < a.sup)
-            {
-                itrFuncValue = Math.tanh(itr);
-                assertTrue(String.format("tanh(%s) is in %s : tanh(%s) = %s\nInterval used is : %s\n", itr, aTanh,itr,itrFuncValue,a),
-                        itrFuncValue <= aTanh.sup && itrFuncValue >= aTanh.inf);
-                itr += step;
-            }
-        }
-    }
-
-    @Test
-    public void testHyperbolic() throws Exception
-    {
-
     }
 
     private void testIntervalBounds(DoubleInterval a) throws Exception
