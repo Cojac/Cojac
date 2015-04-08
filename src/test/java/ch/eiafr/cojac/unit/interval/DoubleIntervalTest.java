@@ -197,9 +197,6 @@ public class DoubleIntervalTest
         assertTrue(String.format("Test isNan ab : %s)", ab), ab.isNan());
         ba = DoubleInterval.add(b, a); testIntervalBounds(ba);
         assertTrue(String.format("Test isNan ba : %s)",ba),ba.isNan());
-
-        // Todo : test with max min neg ans pos if needed
-        // 0.0 not interesting
     }
 
     @Test
@@ -640,6 +637,8 @@ public class DoubleIntervalTest
 
             aCosh = DoubleInterval.cosh(a);
             aSinh = DoubleInterval.sinh(a);
+            aTanh = DoubleInterval.tanh(a);
+
             while(itr < a.sup)
             {
                 itrFuncValue = Math.cosh(itr);
@@ -648,6 +647,9 @@ public class DoubleIntervalTest
                 itrFuncValue = Math.sinh(itr);
                 assertTrue(String.format("sinh(%s) is in %s : sinh(%s) = %s\nInterval used is : %s\n", itr, aSinh,itr,itrFuncValue,a),
                         itrFuncValue <= aSinh.sup && itrFuncValue >= aSinh.inf);
+                itrFuncValue = Math.tanh(itr);
+                assertTrue(String.format("tanh(%s) is in %s : tanh(%s) = %s\nInterval used is : %s\n", itr, aTanh,itr,itrFuncValue,a),
+                        itrFuncValue <= aTanh.sup && itrFuncValue >= aTanh.inf);
                 itr += step;
             }
         }
