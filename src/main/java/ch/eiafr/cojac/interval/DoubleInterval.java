@@ -711,15 +711,15 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         }
         assert (inf <= sup);
 
-        if(inf < -PI_2) // inf is in the a section
+        if (inf < -PI_2) // inf is in the a section
         {
             assert (inf > -PI && inf < -PI_2);
-            if(sup < -PI_2) // sup is in the a section
+            if (sup < -PI_2) // sup is in the a section
             {
                 assert (sup > -PI && sup < -PI_2);
                 double v1 = Math.tan(inf);
                 double v2 = Math.tan(sup);
-                return roundedInterval(v1,v2);
+                return roundedInterval(v1, v2);
             }
             else // sup is in the b section
             {
@@ -730,12 +730,12 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         else if (inf < PI_2) // inf is in the b section
         {
             assert (inf >= -PI_2 && inf < PI_2);
-            if(sup < PI_2) // sup is in the b section
+            if (sup < PI_2) // sup is in the b section
             {
                 assert (sup > -PI_2 && sup < PI_2);
                 double v1 = Math.tan(inf);
                 double v2 = Math.tan(sup);
-                return roundedInterval(v1,v2);
+                return roundedInterval(v1, v2);
             }
             else // sup is in the c section
             {
@@ -748,7 +748,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
             assert (sup >= PI_2 && sup < PI);
             double v1 = Math.tan(inf);
             double v2 = Math.tan(sup);
-            return roundedInterval(v1,v2);
+            return roundedInterval(v1, v2);
         }
     }
 
@@ -779,16 +779,8 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         {
             return new DoubleInterval(Double.NaN);
         }
-        double v1 = Math.cosh(a.inf);
-        double v2 = Math.cosh(a.sup);
-        if (v1 < v2)
-        {
-            return roundedInterval(v1, v2);
-        }
-        else
-        {
-            return roundedInterval(v2, v1);
-        }
+        double sup = Math.max(Math.cosh(a.inf), Math.cosh(a.sup));
+        return roundedInterval(0.0, sup);
     }
 
     /**
@@ -804,7 +796,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         }
         double v1 = Math.tanh(a.inf);
         double v2 = Math.tanh(a.sup);
-        return roundedInterval(v1,v2);
+        return roundedInterval(v1, v2);
     }
 
     /**
@@ -822,10 +814,10 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         }
         double v1 = Math.asin(a.inf);
         double v2 = Math.asin(a.sup);
-        return roundedInterval(v1,v2);
+        return roundedInterval(v1, v2);
     }
 
-     /**
+    /**
      * @param a operand of the acos operation
      *          PRE : the interval must be in [-1;1]
      *
@@ -840,7 +832,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         }
         double v1 = Math.acos(a.sup);
         double v2 = Math.acos(a.inf);
-        return roundedInterval(v1,v2);
+        return roundedInterval(v1, v2);
     }
 
     /**
@@ -856,7 +848,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         }
         double v1 = Math.atan(a.sup);
         double v2 = Math.atan(a.inf);
-        return roundedInterval(v1,v2);
+        return roundedInterval(v1, v2);
     }
 
     /**
