@@ -222,11 +222,11 @@ public class DoubleIntervalTest
 
         // a - b = [-9.0;-5.9]
         DoubleInterval abRes = new DoubleInterval(-9.0,-5.9);
-        assertTrue(String.format("Test [-9.0;-5.9] E (a - b) : %s E (%s - %s)",abRes,a,b),DoubleInterval.isIn(ab,abRes));
+        assertTrue(String.format("Test [-9.0;-5.9] E (a - b) : %s E (%s - %s)",abRes,a,b),DoubleInterval.isIn(ab, abRes));
 
         // b - a = [-5.9;9.0]
         DoubleInterval baRes = new DoubleInterval(-5.9,9.0);
-        assertTrue(String.format("Test [-9.0;-5.9] E (a - b) : %s E (%s - %s)",baRes,b,a),DoubleInterval.isIn(ba,baRes));
+        assertTrue(String.format("Test [-9.0;-5.9] E (a - b) : %s E (%s - %s)",baRes,b,a),DoubleInterval.isIn(ba, baRes));
 
         // Test ab == -ba
         assertTrue(String.format("Test ab == ba : %s == %s",abRes,baRes),ab.strictCompareTo(DoubleInterval.neg(ba)));
@@ -281,7 +281,7 @@ public class DoubleIntervalTest
         DoubleInterval ab = DoubleInterval.div(a,b);
         DoubleInterval abRes = new DoubleInterval(10.0/3.0);
 
-        assertTrue(String.format("Test [3.33;3.33] E a/b : %s E %s",abRes,ab),DoubleInterval.isIn(ab,abRes));
+        assertTrue(String.format("Test [3.33;3.33] E a/b : %s E %s",abRes,ab),DoubleInterval.isIn(ab, abRes));
 
         // Test that's a/b * b/a == 1 --> 1 E a/b * b/a
         DoubleInterval abba = DoubleInterval.mul(DoubleInterval.div(a, b), DoubleInterval.div(b, a));
@@ -414,7 +414,7 @@ public class DoubleIntervalTest
         DoubleInterval bRes = new DoubleInterval(-4.3979400086720375,-4.301029995663981);
 
         assertTrue(String.format("Test log(a) : %s isIn %s", aRes,aLog), DoubleInterval.isIn(aLog,aRes));
-        assertTrue(String.format("Test log(b) : %s isIn %s", bRes,bLog), DoubleInterval.isIn(bLog,bRes));
+        assertTrue(String.format("Test log(b) : %s isIn %s", bRes,bLog), DoubleInterval.isIn(bLog, bRes));
     }
 
     @Test
@@ -543,25 +543,76 @@ public class DoubleIntervalTest
     @Test
     public void testWidth() throws Exception
     {
-
+        Random r = new Random();
+        DoubleInterval a;
+        double v1,v2;
+        for (int i = 0; i < nbrLoopExecution; i++)
+        {
+            v1 = r.nextDouble() * MAX_SUP; v1 = r.nextBoolean() ? v1:-v1;
+            v2 = r.nextDouble() * MAX_SUP; v2 = r.nextBoolean() ? v2:-v2;
+            a = v1 < v2 ? new DoubleInterval(v1,v2) : new DoubleInterval(v2,v1);
+            assertTrue(DoubleInterval.width(a) == a.sup - a.inf);
+        }
     }
 
     @Test
     public void testSqrt() throws Exception
     {
+        Random r = new Random();
+        double v1,v2;
+        DoubleInterval a,aRes;
+        double itr,itrSqrt,step = 0.1;
 
+        for (int i = 0; i < nbrLoopExecution; i++)
+        {
+            v1 = r.nextDouble() * MAX_SUP;
+            v2 = r.nextDouble() * MAX_SUP;
+            a = v1 < v2 ? new DoubleInterval(v1, v2) : new DoubleInterval(v2, v1);
+            testIntervalBounds(a);
+
+            itr = a.inf + step;
+
+            aRes = DoubleInterval.sqrt(a);
+            while (itr < a.sup)
+            {
+                itrSqrt = Math.sqrt(itr);
+                assertTrue(String.format("sqrt(%s) is in %s : sqrt(%s) = %s\nInterval used is : %s\n", itr, aRes, itr, itrSqrt, a),
+                        itrSqrt <= aRes.sup && itrSqrt >= aRes.inf);
+                itr += step;
+            }
+        }
     }
 
     @Test
     public void testAbs() throws Exception
     {
+        DoubleInterval a = new DoubleInterval(3.0,4.0);
+        DoubleInterval b = new DoubleInterval(-2.0,5.0);
+        DoubleInterval c = new DoubleInterval(-7.0,-5.0);
 
+        DoubleInterval aRes = new DoubleInterval(3.0,4.0);
+        DoubleInterval bRes = new DoubleInterval(0.0,5.0);
+        DoubleInterval cRes = new DoubleInterval(5.0,7.0);
+
+        assertTrue(DoubleInterval.abs(a).strictCompareTo(aRes));
+        assertTrue(DoubleInterval.abs(b).strictCompareTo(bRes));
+        assertTrue(DoubleInterval.abs(c).strictCompareTo(cRes));
     }
 
     @Test
     public void testNeg() throws Exception
     {
+        DoubleInterval a = new DoubleInterval(3.0,4.0);
+        DoubleInterval b = new DoubleInterval(-2.0,5.0);
+        DoubleInterval c = new DoubleInterval(-7.0,-5.0);
 
+        DoubleInterval aRes = new DoubleInterval(-4.0,-3.0);
+        DoubleInterval bRes = new DoubleInterval(-5.0,2.0);
+        DoubleInterval cRes = new DoubleInterval(5.0,7.0);
+
+        assertTrue(DoubleInterval.neg(a).strictCompareTo(aRes));
+        assertTrue(DoubleInterval.neg(b).strictCompareTo(bRes));
+        assertTrue(DoubleInterval.neg(c).strictCompareTo(cRes));
     }
 
     @Test

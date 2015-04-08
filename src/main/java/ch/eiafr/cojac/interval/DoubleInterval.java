@@ -447,7 +447,6 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         {
             double v1 = 0.0;
             double v2 = Math.max(-a.inf, a.sup);
-            v2 = v2 + Math.ulp(v2);
             return new DoubleInterval(v1, v2);
         }
         else if (a.sup < 0)
