@@ -805,6 +805,57 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         return null;
     }
 
+    /**
+     * @param a operand of the asin operation
+     *          PRE : the interval must be in [-1;1]
+     *
+     * @return a new DoubleInterval that's the negative the operand
+     */
+    public static DoubleInterval asin(DoubleInterval a)
+    {
+        assert (a.inf >= -1.0 && a.sup <= 1.0);
+        if (a.isNan)
+        {
+            return new DoubleInterval(Double.NaN);
+        }
+        double v1 = Math.asin(a.inf);
+        double v2 = Math.asin(a.sup);
+        return roundedInterval(v1,v2);
+    }
+
+     /**
+     * @param a operand of the acos operation
+     *          PRE : the interval must be in [-1;1]
+     *
+     * @return a new DoubleInterval that's the negative the operand
+     */
+    public static DoubleInterval acos(DoubleInterval a)
+    {
+        assert (a.inf >= -1.0 && a.sup <= 1.0);
+        if (a.isNan)
+        {
+            return new DoubleInterval(Double.NaN);
+        }
+        double v1 = Math.acos(a.sup);
+        double v2 = Math.acos(a.inf);
+        return roundedInterval(v1,v2);
+    }
+
+    /**
+     * @param a operand of the atan operation
+     *
+     * @return a new DoubleInterval that's the negative the operand
+     */
+    public static DoubleInterval atan(DoubleInterval a)
+    {
+        if (a.isNan)
+        {
+            return new DoubleInterval(Double.NaN);
+        }
+        double v1 = Math.atan(a.sup);
+        double v2 = Math.atan(a.inf);
+        return roundedInterval(v1,v2);
+    }
 
     /**
      * @param inf inferior bound of the interval
