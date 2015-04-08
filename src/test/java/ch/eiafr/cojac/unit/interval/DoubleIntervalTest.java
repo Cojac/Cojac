@@ -568,7 +568,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testHyperbolic() throws Exception
+    public void testArcFunction() throws Exception
     {
         Random r = new Random();
         double v1,v2;
@@ -621,19 +621,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testAsin() throws Exception
-    {
-
-    }
-
-    @Test
-    public void testAcos() throws Exception
-    {
-
-    }
-
-    @Test
-    public void testAtan() throws Exception
+    public void testHyperbolic() throws Exception
     {
 
     }
