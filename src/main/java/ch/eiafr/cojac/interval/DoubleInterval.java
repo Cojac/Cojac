@@ -802,7 +802,9 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         {
             return new DoubleInterval(Double.NaN);
         }
-        return null;
+        double v1 = Math.tanh(a.inf);
+        double v2 = Math.tanh(a.sup);
+        return roundedInterval(v1,v2);
     }
 
     /**
