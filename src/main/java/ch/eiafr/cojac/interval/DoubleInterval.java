@@ -6,7 +6,11 @@ import static java.lang.Math.PI;
  * <p>
  * Note : the mathematical operation does not treat operation with overflow
  * In the future, maybe implments some features to frame those special event
- * Example : [-MAX_VALUE;MAX_VALUE] + [0.0;0.0] is giving [-infinity;infinity]
+ * Example : [-MAX_VALUE;MAX_VALUE] + [0.0;0.0] is giving [-infinity;infinity] :
+ *
+ *      DoubleInterval b = new DoubleInterval(-Double.MAX_VALUE,Double.MAX_VALUE);
+ *      DoubleInterval c = new DoubleInterval(0.0);
+ *      System.out.println(DoubleInterval.add(b,c)); // [-NEGATIVE_INFINITY,Infinity]
  * </p>
  *
  * @version 0.1
@@ -848,6 +852,33 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         double v1 = Math.atan(a.inf);
         double v2 = Math.atan(a.sup);
         return roundedInterval(v1, v2);
+    }
+
+    /**
+     * <p>
+     *     Notes : the retourned Interval is pessimist
+     * </p>
+     * @param a 1st operand of the modulo
+     * @param b 2st operand of the modulo
+     *
+     * @return a new DoubleInterval that's the result of the a%b operation
+     */
+    public static DoubleInterval modulo(DoubleInterval a, DoubleInterval b)
+    {
+        if (a.isNan || b.isNan)
+        {
+            return new DoubleInterval(Double.NaN);
+        }
+        if(isIn(b,0.0))
+        {
+            return new DoubleInterval(Double.NaN);
+        }
+        double max = Math.max(Math.abs(b.inf),Math.abs(b.sup));
+        if(isIn(a,0.0))
+        {
+            return new DoubleInterval(-max,max);
+        }
+        return a.inf > 0 ? new DoubleInterval(0.0,max) : new DoubleInterval(-max,0.0);
     }
 
     /**
