@@ -8,6 +8,7 @@ import static ch.eiafr.cojac.unit.interval.DoubleUtils.getBiggerRndDouble;
 import static ch.eiafr.cojac.unit.interval.DoubleUtils.rndDouble;
 import static java.lang.Double.*;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -229,7 +230,7 @@ public class DoubleIntervalTest
         assertTrue(String.format("Test [-9.0;-5.9] E (a - b) : %s E (%s - %s)",baRes,b,a),DoubleInterval.isIn(ba, baRes));
 
         // Test ab == -ba
-        assertTrue(String.format("Test ab == ba : %s == %s",abRes,baRes),ab.strictCompareTo(DoubleInterval.neg(ba)));
+        assertTrue(String.format("Test ab == ba : %s == %s", abRes, baRes), ab.strictCompareTo(DoubleInterval.neg(ba)));
 
         // Test NaN
         DoubleInterval nan = new DoubleInterval(NaN);
@@ -704,6 +705,32 @@ public class DoubleIntervalTest
                 itr += step;
             }
         }
+    }
+
+    @Test
+    public void testModulo() throws Exception
+    {
+        DoubleInterval a = new DoubleInterval(4.0,5.0);
+        DoubleInterval b = new DoubleInterval(-3.0,5.0);
+        DoubleInterval c = new DoubleInterval(-6.0,-2.0);
+        DoubleInterval d = new DoubleInterval(0.0,5.0);
+
+        DoubleInterval ab = DoubleInterval.modulo(a,b);
+        DoubleInterval ba = DoubleInterval.modulo(b,a);
+        DoubleInterval ac = DoubleInterval.modulo(a,c);
+        DoubleInterval ca = DoubleInterval.modulo(c,a);
+        DoubleInterval ad = DoubleInterval.modulo(a,d);
+
+        DoubleInterval baRes = new DoubleInterval(-3.0,5.0);
+        DoubleInterval acRes = new DoubleInterval(0.0,5.0);
+        DoubleInterval caRes = new DoubleInterval(-5.0,0.0);
+
+
+        assertTrue(String.format("Test a %% b : NaN",a,b),ab.isNan());
+        assertTrue(String.format("Test a %% d : NaN",a,d),ad.isNan());
+        assertTrue(String.format("Test b %% a : %s %% %s = %s ; res : %s",b,a,baRes,ba),DoubleInterval.isIn(ba,baRes));
+        assertTrue(String.format("Test a %% c : %s %% %s = %s ; res : %s",a,c,acRes,ac),DoubleInterval.isIn(ac,acRes));
+        assertTrue(String.format("Test c %% a : %s %% %s = %s ; res : %s",c,a,caRes,ca),DoubleInterval.isIn(ca,caRes));
     }
 
     private void testIntervalBounds(DoubleInterval a) throws Exception
