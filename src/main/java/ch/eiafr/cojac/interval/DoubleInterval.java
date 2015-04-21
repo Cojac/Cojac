@@ -70,6 +70,27 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     }
 
     /**
+     * Constructor
+     *
+     * @param a value of the DoubleInterval to "copy"
+     */
+    public DoubleInterval(DoubleInterval a)
+    {
+        if(a.isNan())
+        {
+            this.inf = Double.NaN;
+            this.sup = Double.NaN;
+            this.isNan = true;
+        }
+        else
+        {
+            this.inf = a.inf;
+            this.sup = a.sup;
+            this.isNan = false;
+        }
+    }
+
+    /**
      * @param o another DoubleInterval to be compared with this
      *
      * @return - 1 if this is absolutely bigger than o
