@@ -46,6 +46,8 @@ public enum Arg {
     JMX_PORT("jmxport"),
     JMX_NAME("jmxname"),
     VERBOSE("v"),
+    INTERVAL("I"),
+    INTERVAL_COMP("IC"),
 
     INTS("ints"),
     FLOATS("floats"),
@@ -173,6 +175,10 @@ public enum Arg {
             "stats", false, "Print instrumentation statistics");
         options.addOption(Arg.RUNTIME_STATS.shortOpt(),
             "summary", false, "Print runtime statistics");
+        options.addOption(Arg.INTERVAL.shortOpt(),
+                "interval",true,"Replaces double and float by Cojac's Interval Object");
+        options.addOption(Arg.INTERVAL_COMP.shortOpt(),
+                "interval",false,"Replaces double and float by Cojac's Interval Object and check only the comparaison");
 
         options.addOption(Arg.MATHS.shortOpt(),
             false, "Detect problems in (Strict)Math.XXX() methods");
