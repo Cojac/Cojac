@@ -11,6 +11,9 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
     protected boolean isInfinite = false;
     protected boolean isPositiveInfinite = false;
 
+    private static float threshold;
+    private static boolean checkComp;
+
     /* TODO
         infinite and NaN verification
      */
@@ -102,6 +105,18 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
             this.interval = new DoubleInterval(a.interval);
             this.isNan = false;
         }
+    }
+
+    @SuppressWarnings("unused")
+    public static void setThreshold(float value)
+    {
+        threshold = value;
+    }
+
+    @SuppressWarnings("unused")
+    public static void setCheckComp(boolean value)
+    {
+        checkComp = value;
     }
 
     public static IntervalFloat fromDouble(double a)
