@@ -14,8 +14,8 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
     protected boolean isInfinite = false;
     protected boolean isPositiveInfinite = false;
 
-    private static double threshold;
-    private static boolean checkComp;
+    private static double threshold = 1.0;
+    private static boolean checkComp = false;
 
     /* TODO
         infinite and NaN verification
