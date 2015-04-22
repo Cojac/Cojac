@@ -18,35 +18,25 @@
 
 package ch.eiafr.cojac;
 
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.net.MalformedURLException;
-import java.rmi.registry.LocateRegistry;
-import java.util.Map;
-
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.MBeanRegistrationException;
-import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
-import javax.management.NotCompliantMBeanException;
-import javax.management.ObjectName;
-import javax.management.remote.JMXConnectorServer;
-import javax.management.remote.JMXConnectorServerFactory;
-import javax.management.remote.JMXServiceURL;
-
-import org.objectweb.asm.ClassWriter;
-
 import ch.eiafr.cojac.instrumenters.ClassLoaderInstrumenterFactory;
 import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenterFactory;
 import ch.eiafr.cojac.models.Reactions;
-import ch.eiafr.cojac.models.wrappers.BasicDouble;
-import ch.eiafr.cojac.models.wrappers.BasicFloat;
 import ch.eiafr.cojac.models.wrappers.BigDecimalDouble;
 import ch.eiafr.cojac.models.wrappers.BigDecimalFloat;
 import ch.eiafr.cojac.reactions.ClassLoaderReaction;
 import ch.eiafr.cojac.reactions.IReaction;
 import ch.eiafr.cojac.utils.ReflectionUtils;
+import org.objectweb.asm.ClassWriter;
 
+import javax.management.*;
+import javax.management.remote.JMXConnectorServer;
+import javax.management.remote.JMXConnectorServerFactory;
+import javax.management.remote.JMXServiceURL;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.net.MalformedURLException;
+import java.rmi.registry.LocateRegistry;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -59,13 +49,13 @@ public final class CojacReferences {
     private final IOpcodeInstrumenterFactory factory;
     private final MBeanServer mbServer;
     private final String[] bypassList;
-    
+
     private final String[] loadedClasses;
 
 	private final String floatWrapper;
 	private final String doubleWrapper;
 	private final int bigDecimalPrecision;
-	
+
     private CojacReferences(CojacReferencesBuilder builder) {
         this.args = builder.args;
         this.stats = builder.stats;
@@ -74,7 +64,7 @@ public final class CojacReferences {
         this.mbServer = builder.mbServer;
         this.bypassList = builder.bypassList;
         Reactions.stats = stats;
-        
+
         this.loadedClasses = builder.loadedClasses;
 		this.floatWrapper = builder.floatWrapper;
 		this.doubleWrapper = builder.doubleWrapper;
@@ -88,7 +78,7 @@ public final class CojacReferences {
 	public String getDoubleWrapper() {
 		return doubleWrapper;
 	}
-	
+
 	public int getBigDecimalPrecision() {
 		return bigDecimalPrecision;
 	}
@@ -96,11 +86,11 @@ public final class CojacReferences {
 	public String[] getBypassList(){
 		return bypassList;
 	}
-	
+
     public String[] getLoadedClasses(){
         return loadedClasses;
     }
-    
+
     public Args getArgs() {
         return args;
     }
@@ -132,7 +122,7 @@ public final class CojacReferences {
 			Currently the classes of lists and collections are identified as
 			belonging to the standard packages. When a method of these classes is
 			called, all instrumented objects are converted (loss of information).
-			
+
 			Problem to solve:
 			When java/util/ArrayList or/and java/util/Collection are instrumented
 			the JVM will access to some classes in the agent. If the classpath
@@ -140,12 +130,12 @@ public final class CojacReferences {
 			other classpath, the JVM will not find the classes inside the agent...
 			Example with Java2Demo:
 			"java.lang.NoClassDefFoundError: ch/eiafr/cojac/models/DoubleNumbers"
-			
+
 			One solution could be to make a little jar with classes needed
 			evrywhere next to the agent jar and to add it to the classpath of the
 			bootstrap classloader with the option "-Xbootclasspath/p:path_of_jar"
 			but it is better to have all cojac in only one jar...
-			
+
 			Consider asking a question to the ASM mailing list.
 			*/
 			/*
@@ -164,7 +154,7 @@ public final class CojacReferences {
 					}
 				}
 			}
-			
+
         }
         for (String standardPackage : bypassList) {
             if (className.startsWith(standardPackage)) {
@@ -193,7 +183,7 @@ public final class CojacReferences {
 		private String floatWrapper;
 		private String doubleWrapper;
 		private int bigDecimalPrecision;
-        
+
         private final String[] loadedClasses;
 
         private static final String STANDARD_PACKAGES = "com.sun.;java.;javax.;sun.;sunw.;"
@@ -204,7 +194,7 @@ public final class CojacReferences {
         public CojacReferencesBuilder() {
             this(new Args(), null);
         }
-        
+
         public CojacReferencesBuilder(final Args args) {
             this(args, null);
         }
@@ -229,11 +219,11 @@ public final class CojacReferences {
             if(args.isSpecified(Arg.BIG_DECIMAL_PRECISION)) {
                 args.specify(Arg.REPLACE_FLOATS);
             }
-			
+
 			if(args.isSpecified(Arg.REPLACE_FLOATS)){ // Only for proxy tests
 				sbBypassList.append(BYPASS_SEPARATOR);
                 sbBypassList.append("ch.eiafr.cojac.unit.replace.FloatProxyNotInstrumented");
-			
+
 				/*
 				Get the class used to store global variables.
 				Warning: This is not the only place to set the values,
@@ -245,7 +235,7 @@ public final class CojacReferences {
 				} catch (ClassNotFoundException ex) {
 					Logger.getLogger(CojacReferences.class.getName()).log(Level.SEVERE, null, ex);
 				}
-				
+
 				if(args.isSpecified(Arg.FLOAT_WRAPPER) && args.getValue(Arg.FLOAT_WRAPPER).length()>0){
 					// TODO - check if the class exist and warn the user if not.
 					floatWrapper = args.getValue(Arg.FLOAT_WRAPPER);
@@ -292,10 +282,52 @@ public final class CojacReferences {
 						Logger.getLogger(CojacReferences.class.getName()).log(Level.SEVERE, null, ex);
 					}
 				}
+
+                if(args.isSpecified(Arg.INTERVAL))
+                {
+                    double threshold = Double.valueOf(args.getValue(Arg.INTERVAL));
+                    try
+                    {
+                        //Class clazz = loader.loadClass("ch.eiafr.cojac.models.FloatReplacerClasses");
+                        clazz.getMethod("setDoubleWrapper", String.class).invoke(clazz, "ch.eiafr.cojac.models.wrappers.IntervalDouble");
+                        clazz.getMethod("setFloatWrapper", String.class).invoke(clazz, "ch.eiafr.cojac.models.wrappers.IntervalFloat");
+                        Class doubleWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.IntervalDouble");
+                        Class floatWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.IntervalFloat");
+
+                        this.floatWrapper = "ch.eiafr.cojac.models.wrappers.IntervalFloat";
+                        this.doubleWrapper = "ch.eiafr.cojac.models.wrappers.IntervalDouble";
+
+                        doubleWrapperClass.getMethod("setThreshold", double.class).invoke(doubleWrapperClass, threshold);
+                        floatWrapperClass.getMethod("setThreshold", float.class).invoke(floatWrapperClass, (float) threshold);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.getLogger(CojacReferences.class.getName()).log(Level.SEVERE, null, e);
+                    }
+                }
+
+                if (args.isSpecified(Arg.INTERVAL_COMP))
+                {
+                    try
+                    {
+                        Class doubleWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.IntervalDouble");
+                        Class floatWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.IntervalFloat");
+                        doubleWrapperClass.getMethod("setCheckComp", boolean.class).invoke(doubleWrapperClass, true);
+                        floatWrapperClass.getMethod("setCheckComp", boolean.class).invoke(floatWrapperClass, true);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.getLogger(CojacReferences.class.getName()).log(Level.SEVERE, null, e);
+                    }
+                }
+
 			}
-			
-			this.factory = new ClassLoaderInstrumenterFactory(args, stats); // Must be instantiate after the set of the Wrappers
-			
+
+
+
+
+            this.factory = new ClassLoaderInstrumenterFactory(args, stats); // Must be instantiate after the set of the Wrappers
+
             if (args.isSpecified(Arg.FILTER)) {
                 ReflectionUtils.setStaticFieldValue(loader, "ch.eiafr.cojac.models.Reactions", "filtering", true);
             }
@@ -318,9 +350,7 @@ public final class CojacReferences {
                 sbBypassList.append(BYPASS_SEPARATOR);
                 sbBypassList.append(args.getValue(Arg.BYPASS));
             }
-			
-			
-			
+
             bypassList = splitter.split(sbBypassList.toString());
 
             if (args.isSpecified(Arg.RUNTIME_STATS)) {
