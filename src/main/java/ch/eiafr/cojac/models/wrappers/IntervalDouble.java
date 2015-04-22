@@ -116,22 +116,22 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
 
     public static IntervalDouble dadd(IntervalDouble a, IntervalDouble b)
     {
-        return new IntervalDouble(a.value + a.value, DoubleInterval.add(a.interval, b.interval));
+        return new IntervalDouble(a.value + b.value, DoubleInterval.add(a.interval, b.interval));
     }
 
     public static IntervalDouble dsub(IntervalDouble a, IntervalDouble b)
     {
-        return new IntervalDouble(a.value - a.value, DoubleInterval.sub(a.interval, b.interval));
+        return new IntervalDouble(a.value - b.value, DoubleInterval.sub(a.interval, b.interval));
     }
 
     public static IntervalDouble dmul(IntervalDouble a, IntervalDouble b)
     {
-        return new IntervalDouble(a.value * a.value, DoubleInterval.mul(a.interval, b.interval));
+        return new IntervalDouble(a.value * b.value, DoubleInterval.mul(a.interval, b.interval));
     }
 
     public static IntervalDouble ddiv(IntervalDouble a, IntervalDouble b)
     {
-        return new IntervalDouble(a.value / a.value, DoubleInterval.div(a.interval, b.interval));
+        return new IntervalDouble(a.value / b.value, DoubleInterval.div(a.interval, b.interval));
     }
 
     public static IntervalDouble drem(IntervalDouble a, IntervalDouble b)
@@ -215,6 +215,20 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
     public static String COJAC_MAGIC_DOUBLE_toStr(IntervalFloat n)
     {
         return n.toString();
+    }
+
+    public static boolean COJAC_MAGIC_DOUBLE_isIn(IntervalDouble n)
+    {
+        return DoubleInterval.isIn(n.interval, n.value);
+    }
+
+    public static int COJAC_MAGIC_DOUBLE_IntervalcompareTo(IntervalDouble a, IntervalDouble b)
+    {
+        return a.compareTo(b);
+    }
+    public static IntervalDouble COJAC_MAGIC_DOUBLE_width(IntervalDouble a)
+    {
+        return new IntervalDouble(DoubleInterval.width(a.interval));
     }
 
     public static IntervalDouble math_sqrt(IntervalDouble a)

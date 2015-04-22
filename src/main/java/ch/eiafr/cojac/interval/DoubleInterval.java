@@ -1,5 +1,7 @@
 package ch.eiafr.cojac.interval;
 
+import java.util.Random;
+
 import static java.lang.Math.PI;
 
 /**
@@ -25,7 +27,6 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     private static final double PI_2 = PI / 2.0;
     private static final double PI3_2 = PI * 1.5;
     private static final double PI2 = PI * 2.0;
-
 
     /**
      * Constructor
@@ -170,7 +171,6 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         return !(o.isNan || this.isNan) && (this.inf == o.inf && this.sup == o.sup);
     }
 
-
     @Override
     public String toString()
     {
@@ -178,7 +178,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
         {
             return "[NaN;NaN]";
         }
-        return String.format("[%f;%f]", this.inf, this.sup);
+        return "["+this.inf+";"+this.sup+"]";
     }
 
     /**
