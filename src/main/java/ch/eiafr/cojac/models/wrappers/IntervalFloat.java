@@ -400,8 +400,6 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
     @Override
     public int compareTo(IntervalFloat o)
     {
-        return this.interval.compareTo(o.interval);
-        /*
         int compResult = this.interval.compareTo(o.interval);
         if (compResult != 0)
         {
@@ -416,6 +414,5 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
             return 1;
         }
         return 0;
-        */
     }
 }
