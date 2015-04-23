@@ -1,21 +1,16 @@
 package ch.eiafr.cojac.models.wrappers;
 
-import ch.eiafr.cojac.CojacReferences;
 import ch.eiafr.cojac.interval.DoubleInterval;
-
-import java.io.PrintStream;
 
 public class IntervalDouble extends Number implements Comparable<IntervalDouble>
 {
+    private static double threshold = 1.0;
+    private static boolean checkComp = false;
     protected double value;
     protected DoubleInterval interval;
-
     protected boolean isNan = false;
     protected boolean isInfinite = false;
     protected boolean isPositiveInfinite = false;
-
-    private static double threshold = 1.0;
-    private static boolean checkComp = false;
 
     /* TODO
         infinite and NaN verification
@@ -122,7 +117,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
 
     public static IntervalDouble dadd(IntervalDouble a, IntervalDouble b)
     {
-        if(a.isNan || b.isNan)
+        if (a.isNan || b.isNan)
         {
             return new IntervalDouble(Double.NaN);
         }
@@ -133,18 +128,18 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
 
     public static IntervalDouble dsub(IntervalDouble a, IntervalDouble b)
     {
-        if(a.isNan || b.isNan)
+        if (a.isNan || b.isNan)
         {
             return new IntervalDouble(Double.NaN);
         }
-        IntervalDouble res =  new IntervalDouble(a.value - b.value, DoubleInterval.sub(a.interval, b.interval));
+        IntervalDouble res = new IntervalDouble(a.value - b.value, DoubleInterval.sub(a.interval, b.interval));
         res.checkStability();
         return res;
     }
 
     public static IntervalDouble dmul(IntervalDouble a, IntervalDouble b)
     {
-        if(a.isNan || b.isNan)
+        if (a.isNan || b.isNan)
         {
             return new IntervalDouble(Double.NaN);
         }
@@ -155,7 +150,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
 
     public static IntervalDouble ddiv(IntervalDouble a, IntervalDouble b)
     {
-        if(a.isNan || b.isNan)
+        if (a.isNan || b.isNan)
         {
             return new IntervalDouble(Double.NaN);
         }
@@ -166,7 +161,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
 
     public static IntervalDouble drem(IntervalDouble a, IntervalDouble b)
     {
-        if(a.isNan || b.isNan)
+        if (a.isNan || b.isNan)
         {
             return new IntervalDouble(Double.NaN);
         }
@@ -206,9 +201,9 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
         return a.intValue();
     }
 
-    public static float d2f(IntervalDouble a)
+    public static IntervalFloat d2f(IntervalDouble a)
     {
-        return a.floatValue();
+        return new IntervalFloat(a);
     }
 
     public static IntervalDouble i2d(int a)
@@ -216,7 +211,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
         return new IntervalDouble(a);
     }
 
-    public static IntervalDouble f2d(float a)
+    public static IntervalDouble f2d(IntervalFloat a)
     {
         return new IntervalDouble(a);
     }
@@ -286,7 +281,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
         {
             return new IntervalDouble(Double.NaN);
         }
-        IntervalDouble res =  new IntervalDouble(Math.pow(a.value, b.value), DoubleInterval.pow(a.interval, b.interval));
+        IntervalDouble res = new IntervalDouble(Math.pow(a.value, b.value), DoubleInterval.pow(a.interval, b.interval));
         res.checkStability();
         return res;
     }
@@ -297,7 +292,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
         {
             return new IntervalDouble(Double.NaN);
         }
-        IntervalDouble res =  new IntervalDouble(Math.sin(a.value), DoubleInterval.sin(a.interval));
+        IntervalDouble res = new IntervalDouble(Math.sin(a.value), DoubleInterval.sin(a.interval));
         res.checkStability();
         return res;
     }
@@ -308,7 +303,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
         {
             return new IntervalDouble(Double.NaN);
         }
-        IntervalDouble res =  new IntervalDouble(Math.cos(a.value), DoubleInterval.cos(a.interval));
+        IntervalDouble res = new IntervalDouble(Math.cos(a.value), DoubleInterval.cos(a.interval));
         res.checkStability();
         return res;
     }
@@ -319,7 +314,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
         {
             return new IntervalDouble(Double.NaN);
         }
-        IntervalDouble res =  new IntervalDouble(Math.tan(a.value), DoubleInterval.tan(a.interval));
+        IntervalDouble res = new IntervalDouble(Math.tan(a.value), DoubleInterval.tan(a.interval));
         res.checkStability();
         return res;
     }
@@ -330,7 +325,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
         {
             return new IntervalDouble(Double.NaN);
         }
-        IntervalDouble res =  new IntervalDouble(Math.sinh(a.value), DoubleInterval.sinh(a.interval));
+        IntervalDouble res = new IntervalDouble(Math.sinh(a.value), DoubleInterval.sinh(a.interval));
         res.checkStability();
         return res;
     }
@@ -341,7 +336,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
         {
             return new IntervalDouble(Double.NaN);
         }
-        IntervalDouble res =  new IntervalDouble(Math.cosh(a.value), DoubleInterval.cosh(a.interval));
+        IntervalDouble res = new IntervalDouble(Math.cosh(a.value), DoubleInterval.cosh(a.interval));
         res.checkStability();
         return res;
     }
@@ -352,7 +347,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
         {
             return new IntervalDouble(Double.NaN);
         }
-        IntervalDouble res =  new IntervalDouble(Math.tanh(a.value), DoubleInterval.tanh(a.interval));
+        IntervalDouble res = new IntervalDouble(Math.tanh(a.value), DoubleInterval.tanh(a.interval));
         res.checkStability();
         return res;
     }
@@ -365,7 +360,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
         {
             return new IntervalDouble(Double.NaN);
         }
-        IntervalDouble res =  new IntervalDouble(Math.acos(a.value), DoubleInterval.acos(a.interval));
+        IntervalDouble res = new IntervalDouble(Math.acos(a.value), DoubleInterval.acos(a.interval));
         res.checkStability();
         return res;
     }
@@ -376,7 +371,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
         {
             return new IntervalDouble(Double.NaN);
         }
-        IntervalDouble res =  new IntervalDouble(Math.atan(a.value), DoubleInterval.atan(a.interval));
+        IntervalDouble res = new IntervalDouble(Math.atan(a.value), DoubleInterval.atan(a.interval));
         res.checkStability();
         return res;
     }
@@ -389,7 +384,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
         {
             return new IntervalDouble(Double.NaN);
         }
-        IntervalDouble res =  new IntervalDouble(Math.asin(a.value), DoubleInterval.asin(a.interval));
+        IntervalDouble res = new IntervalDouble(Math.asin(a.value), DoubleInterval.asin(a.interval));
         res.checkStability();
         return res;
     }
@@ -400,7 +395,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
         {
             return new IntervalDouble(Double.NaN);
         }
-        IntervalDouble res =  new IntervalDouble(Math.exp(a.value), DoubleInterval.exp(a.interval));
+        IntervalDouble res = new IntervalDouble(Math.exp(a.value), DoubleInterval.exp(a.interval));
         res.checkStability();
         return res;
     }
@@ -411,7 +406,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
         {
             return new IntervalDouble(Double.NaN);
         }
-        IntervalDouble res =  new IntervalDouble(Math.log(a.value), DoubleInterval.log(a.interval));
+        IntervalDouble res = new IntervalDouble(Math.log(a.value), DoubleInterval.log(a.interval));
         res.checkStability();
         return res;
     }
@@ -422,7 +417,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
         {
             return new IntervalDouble(Double.NaN);
         }
-        IntervalDouble res =  new IntervalDouble(Math.log10(a.value), DoubleInterval.log10(a.interval));
+        IntervalDouble res = new IntervalDouble(Math.log10(a.value), DoubleInterval.log10(a.interval));
         res.checkStability();
         return res;
     }
@@ -433,7 +428,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
         {
             return new IntervalDouble(Double.NaN);
         }
-        IntervalDouble res =  new IntervalDouble(Math.abs(a.value), DoubleInterval.abs(a.interval));
+        IntervalDouble res = new IntervalDouble(Math.abs(a.value), DoubleInterval.abs(a.interval));
         res.checkStability();
         return res;
     }
@@ -444,7 +439,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
         {
             return new IntervalDouble(Double.NaN);
         }
-        IntervalDouble res =  new IntervalDouble(-a.value, DoubleInterval.neg(a.interval));
+        IntervalDouble res = new IntervalDouble(-a.value, DoubleInterval.neg(a.interval));
         res.checkStability();
         return res;
     }
@@ -507,7 +502,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
     public int compareTo(IntervalDouble o)
     {
         int compResult = this.interval.compareTo(o.interval);
-        if(checkComp)
+        if (checkComp)
         {
             checkComp(compResult);
         }
@@ -528,15 +523,9 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
 
     private void checkStability()
     {
-        try
+        if (threshold < relativeError())
         {
-            if(threshold < relativeError())
-            {
-                throw new CojacStabilityException();
-            }
-        }
-        catch (CojacStabilityException e)
-        {
+            CojacStabilityException e = new CojacStabilityException();
             System.err.println("Cojac has destected a unstable operation :");
             e.printStackTrace(System.err);
         }
@@ -544,15 +533,9 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
 
     private void checkComp(int compResult)
     {
-        try
+        if (compResult == 0)
         {
-            if(compResult == 0)
-            {
-                throw new CojacStabilityComparaisonException();
-            }
-        }
-        catch (CojacStabilityComparaisonException e)
-        {
+            CojacStabilityComparaisonException e = new CojacStabilityComparaisonException();
             System.err.println("Cojac has destected a unstable comparaison :");
             e.printStackTrace(System.err);
         }
@@ -560,12 +543,12 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
 
     private double relativeError()
     {
-        if(this.isNan)
+        if (this.isNan)
         {
             return Double.NaN;
         }
-        double numerator = Math.min(Math.abs(this.interval.inf),Math.abs(this.interval.sup));
-        if(numerator == 0.0)
+        double numerator = Math.min(Math.abs(this.interval.inf), Math.abs(this.interval.sup));
+        if (numerator == 0.0)
         {
             return Double.NaN;
         }

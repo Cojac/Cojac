@@ -4,7 +4,7 @@ import ch.eiafr.cojac.interval.DoubleInterval;
 
 public class IntervalFloat extends Number implements Comparable<IntervalFloat>
 {
-    protected double value;
+    protected float value;
     protected DoubleInterval interval;
 
     protected boolean isNan = false;
@@ -22,13 +22,13 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
     {
         if (Double.isNaN(value))
         {
-            this.value = Double.NaN;
+            this.value = (float)Double.NaN;
             this.interval = new DoubleInterval(Double.NaN);
             this.isNan = true;
         }
         else
         {
-            this.value = value;
+            this.value = (float)value;
             this.interval = new DoubleInterval(value);
             this.isNan = false;
         }
@@ -39,13 +39,13 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
         double a = Double.parseDouble(value);
         if (Double.isNaN(a))
         {
-            this.value = Double.NaN;
+            this.value = (float)Double.NaN;
             this.interval = new DoubleInterval(Double.NaN);
             this.isNan = true;
         }
         else
         {
-            this.value = a;
+            this.value = (float)a;
             this.interval = new DoubleInterval(a);
             this.isNan = false;
         }
@@ -53,23 +53,23 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
 
     public IntervalFloat(int value)
     {
-        this.value = (double) value;
+        this.value = (float)value;
         this.interval = new DoubleInterval((double) value);
     }
 
     public IntervalFloat(long value)
     {
-        this.value = (double) value;
+        this.value = (float) value;
         this.interval = new DoubleInterval((double) value);
     }
 
     public IntervalFloat(float value)
     {
-        this.value = (double) value;
+        this.value = value;
         this.interval = new DoubleInterval((double) value);
     }
 
-    public IntervalFloat(double value, DoubleInterval interval)
+    public IntervalFloat(float value, DoubleInterval interval)
     {
         this.value = value;
         this.interval = interval;
@@ -79,13 +79,13 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
     {
         if(a.isNan)
         {
-            this.value = Double.NaN;
+            this.value = (float) Double.NaN;
             this.interval = new DoubleInterval(Double.NaN);
             this.isNan = true;
         }
         else
         {
-            this.value = a.value;
+            this.value = (float) a.value;
             this.interval = new DoubleInterval(a.interval);
             this.isNan = false;
         }
@@ -95,7 +95,7 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
     {
         if(a.isNan)
         {
-            this.value = Double.NaN;
+            this.value = (float) Double.NaN;
             this.interval = new DoubleInterval(Double.NaN);
             this.isNan = true;
         }
@@ -136,6 +136,10 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
 
     public static IntervalFloat fadd(IntervalFloat a, IntervalFloat b)
     {
+        if (a.isNan || b.isNan)
+        {
+            return new IntervalFloat(Double.NaN);
+        }
         return new IntervalFloat(a.value + b.value, DoubleInterval.add(a.interval, b.interval));
     }
 
@@ -188,9 +192,9 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
         return a.intValue();
     }
 
-    public static double f2d(IntervalFloat a)
+    public static IntervalDouble f2d(IntervalFloat a)
     {
-        return a.doubleValue();
+        return new IntervalDouble(a);
     }
 
     public static IntervalFloat i2f(int a)
@@ -198,7 +202,7 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
         return new IntervalFloat(a);
     }
 
-    public static IntervalFloat d2f(double a)
+    public static IntervalFloat d2f(IntervalDouble a)
     {
         return new IntervalFloat(a);
     }
@@ -221,154 +225,6 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
     public static Float toRealFloat(IntervalFloat a)
     {
         return new Float(a.value);
-    }
-
-    public static IntervalFloat math_sqrt(IntervalFloat a)
-    {
-        if (a.isNan)
-        {
-            return new IntervalFloat(Double.NaN);
-        }
-        return new IntervalFloat(Math.sqrt(a.value), DoubleInterval.sqrt(a.interval));
-    }
-
-    public static IntervalFloat math_pow(IntervalFloat a, IntervalFloat b)
-    {
-        if (a.isNan)
-        {
-            return new IntervalFloat(Double.NaN);
-        }
-        return new IntervalFloat(Math.pow(a.value, b.value), DoubleInterval.pow(a.interval, b.interval));
-    }
-
-    public static IntervalFloat math_sin(IntervalFloat a)
-    {
-        if (a.isNan)
-        {
-            return new IntervalFloat(Double.NaN);
-        }
-        return new IntervalFloat(Math.sin(a.value), DoubleInterval.sin(a.interval));
-    }
-
-    public static IntervalFloat math_cos(IntervalFloat a)
-    {
-        if (a.isNan)
-        {
-            return new IntervalFloat(Double.NaN);
-        }
-        return new IntervalFloat(Math.cos(a.value), DoubleInterval.cos(a.interval));
-    }
-
-    /* Magic Method */
-
-    public static IntervalFloat math_tan(IntervalFloat a)
-    {
-        if (a.isNan)
-        {
-            return new IntervalFloat(Double.NaN);
-        }
-        return new IntervalFloat(Math.tan(a.value), DoubleInterval.tan(a.interval));
-    }
-
-    public static IntervalFloat math_sinh(IntervalFloat a)
-    {
-        if (a.isNan)
-        {
-            return new IntervalFloat(Double.NaN);
-        }
-        return new IntervalFloat(Math.sinh(a.value), DoubleInterval.sinh(a.interval));
-    }
-
-     /* Mathematical function */
-
-    public static IntervalFloat math_cosh(IntervalFloat a)
-    {
-        if (a.isNan)
-        {
-            return new IntervalFloat(Double.NaN);
-        }
-        return new IntervalFloat(Math.cosh(a.value), DoubleInterval.cosh(a.interval));
-    }
-
-    public static IntervalFloat math_tanh(IntervalFloat a)
-    {
-        if (a.isNan)
-        {
-            return new IntervalFloat(Double.NaN);
-        }
-        return new IntervalFloat(Math.tanh(a.value), DoubleInterval.tanh(a.interval));
-    }
-
-    public static IntervalFloat math_acos(IntervalFloat a)
-    {
-        if (a.isNan)
-        {
-            return new IntervalFloat(Double.NaN);
-        }
-        return new IntervalFloat(Math.acos(a.value), DoubleInterval.acos(a.interval));
-    }
-
-    public static IntervalFloat math_atan(IntervalFloat a)
-    {
-        if (a.isNan)
-        {
-            return new IntervalFloat(Double.NaN);
-        }
-        return new IntervalFloat(Math.atan(a.value), DoubleInterval.atan(a.interval));
-    }
-
-    public static IntervalFloat math_asin(IntervalFloat a)
-    {
-        if (a.isNan)
-        {
-            return new IntervalFloat(Double.NaN);
-        }
-        return new IntervalFloat(Math.asin(a.value), DoubleInterval.asin(a.interval));
-    }
-
-    public static IntervalFloat math_exp(IntervalFloat a)
-    {
-        if (a.isNan)
-        {
-            return new IntervalFloat(Double.NaN);
-        }
-        return new IntervalFloat(Math.exp(a.value), DoubleInterval.exp(a.interval));
-    }
-
-    public static IntervalFloat math_log(IntervalFloat a)
-    {
-        if (a.isNan)
-        {
-            return new IntervalFloat(Double.NaN);
-        }
-        return new IntervalFloat(Math.log(a.value), DoubleInterval.log(a.interval));
-    }
-
-    public static IntervalFloat math_log10(IntervalFloat a)
-    {
-        if (a.isNan)
-        {
-            return new IntervalFloat(Double.NaN);
-        }
-        return new IntervalFloat(Math.log10(a.value), DoubleInterval.log10(a.interval));
-    }
-
-    public static IntervalFloat math_abs(IntervalFloat a)
-    {
-        if (a.isNan)
-        {
-            return new IntervalFloat(Double.NaN);
-        }
-        return new IntervalFloat(Math.abs(a.value), DoubleInterval.abs(a.interval));
-    }
-
-    public static IntervalFloat math_neg(IntervalFloat a)
-    {
-        if (a.isNan)
-        {
-            return new IntervalFloat(Double.NaN);
-        }
-        return new IntervalFloat(-a.value, DoubleInterval.neg(a.interval));
     }
 
     @Override
@@ -429,5 +285,39 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
             return 1;
         }
         return 0;
+    }
+
+    private void checkStability()
+    {
+        if (threshold < relativeError())
+        {
+            CojacStabilityException e = new CojacStabilityException();
+            System.err.println("Cojac has destected a unstable operation :");
+            e.printStackTrace(System.err);
+        }
+    }
+
+    private void checkComp(int compResult)
+    {
+        if (compResult == 0)
+        {
+            CojacStabilityComparaisonException e = new CojacStabilityComparaisonException();
+            System.err.println("Cojac has destected a unstable comparaison :");
+            e.printStackTrace(System.err);
+        }
+    }
+
+    private double relativeError()
+    {
+        if (this.isNan)
+        {
+            return Double.NaN;
+        }
+        double numerator = Math.min(Math.abs(this.interval.inf), Math.abs(this.interval.sup));
+        if (numerator == 0.0)
+        {
+            return Double.NaN;
+        }
+        return DoubleInterval.width(this.interval) / numerator;
     }
 }

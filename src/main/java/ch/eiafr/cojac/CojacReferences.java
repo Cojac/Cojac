@@ -220,6 +220,15 @@ public final class CojacReferences {
                 args.specify(Arg.REPLACE_FLOATS);
             }
 
+            if(args.isSpecified(Arg.INTERVAL))
+            {
+                args.specify(Arg.REPLACE_FLOATS);
+                args.specify(Arg.FLOAT_WRAPPER);
+                args.specify(Arg.DOUBLE_WRAPPER);
+                args.setValue(Arg.FLOAT_WRAPPER,"ch.eiafr.cojac.models.wrappers.IntervalFloat");
+                args.setValue(Arg.DOUBLE_WRAPPER,"ch.eiafr.cojac.models.wrappers.IntervalDouble");
+            }
+
 			if(args.isSpecified(Arg.REPLACE_FLOATS)){ // Only for proxy tests
 				sbBypassList.append(BYPASS_SEPARATOR);
                 sbBypassList.append("ch.eiafr.cojac.unit.replace.FloatProxyNotInstrumented");
@@ -289,14 +298,8 @@ public final class CojacReferences {
                     try
                     {
                         //Class clazz = loader.loadClass("ch.eiafr.cojac.models.FloatReplacerClasses");
-                        clazz.getMethod("setDoubleWrapper", String.class).invoke(clazz, "ch.eiafr.cojac.models.wrappers.IntervalDouble");
-                        clazz.getMethod("setFloatWrapper", String.class).invoke(clazz, "ch.eiafr.cojac.models.wrappers.IntervalFloat");
                         Class doubleWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.IntervalDouble");
                         Class floatWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.IntervalFloat");
-
-                        this.floatWrapper = "ch.eiafr.cojac.models.wrappers.IntervalFloat";
-                        this.doubleWrapper = "ch.eiafr.cojac.models.wrappers.IntervalDouble";
-
                         doubleWrapperClass.getMethod("setThreshold", double.class).invoke(doubleWrapperClass, threshold);
                         floatWrapperClass.getMethod("setThreshold", float.class).invoke(floatWrapperClass, (float) threshold);
                     }
