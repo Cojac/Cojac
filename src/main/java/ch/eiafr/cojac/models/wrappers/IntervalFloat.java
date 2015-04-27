@@ -4,15 +4,14 @@ import ch.eiafr.cojac.interval.DoubleInterval;
 
 public class IntervalFloat extends Number implements Comparable<IntervalFloat>
 {
+    private static float threshold;
+    private static boolean checkComp;
+
     protected float value;
     protected DoubleInterval interval;
-
     protected boolean isNan = false;
     protected boolean isInfinite = false;
     protected boolean isPositiveInfinite = false;
-
-    private static float threshold;
-    private static boolean checkComp;
 
     /* TODO
         infinite and NaN verification
@@ -22,13 +21,13 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
     {
         if (Double.isNaN(value))
         {
-            this.value = (float)Double.NaN;
+            this.value = (float) Double.NaN;
             this.interval = new DoubleInterval(Double.NaN);
             this.isNan = true;
         }
         else
         {
-            this.value = (float)value;
+            this.value = (float) value;
             this.interval = new DoubleInterval(value);
             this.isNan = false;
         }
@@ -39,13 +38,13 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
         double a = Double.parseDouble(value);
         if (Double.isNaN(a))
         {
-            this.value = (float)Double.NaN;
+            this.value = (float) Double.NaN;
             this.interval = new DoubleInterval(Double.NaN);
             this.isNan = true;
         }
         else
         {
-            this.value = (float)a;
+            this.value = (float) a;
             this.interval = new DoubleInterval(a);
             this.isNan = false;
         }
@@ -53,7 +52,7 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
 
     public IntervalFloat(int value)
     {
-        this.value = (float)value;
+        this.value = (float) value;
         this.interval = new DoubleInterval((double) value);
     }
 
@@ -77,7 +76,7 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
 
     public IntervalFloat(IntervalDouble a)
     {
-        if(a.isNan)
+        if (a.isNan)
         {
             this.value = (float) Double.NaN;
             this.interval = new DoubleInterval(Double.NaN);
@@ -93,7 +92,7 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
 
     public IntervalFloat(IntervalFloat a)
     {
-        if(a.isNan)
+        if (a.isNan)
         {
             this.value = (float) Double.NaN;
             this.interval = new DoubleInterval(Double.NaN);
@@ -140,27 +139,53 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
         {
             return new IntervalFloat(Double.NaN);
         }
-        return new IntervalFloat(a.value + b.value, DoubleInterval.add(a.interval, b.interval));
+        IntervalFloat res = new IntervalFloat(a.value + b.value, DoubleInterval.add(a.interval, b.interval));
+        res.checkStability();
+        return res;
     }
 
     public static IntervalFloat fsub(IntervalFloat a, IntervalFloat b)
     {
-        return new IntervalFloat(a.value - b.value, DoubleInterval.sub(a.interval, b.interval));
+        if (a.isNan || b.isNan)
+        {
+            return new IntervalFloat(Double.NaN);
+        }
+        IntervalFloat res = new IntervalFloat(a.value - b.value, DoubleInterval.sub(a.interval, b.interval));
+        res.checkStability();
+        return res;
     }
 
     public static IntervalFloat fmul(IntervalFloat a, IntervalFloat b)
     {
-        return new IntervalFloat(a.value * b.value, DoubleInterval.mul(a.interval, b.interval));
+        if (a.isNan || b.isNan)
+        {
+            return new IntervalFloat(Double.NaN);
+        }
+        IntervalFloat res = new IntervalFloat(a.value * b.value, DoubleInterval.mul(a.interval, b.interval));
+        res.checkStability();
+        return res;
     }
 
     public static IntervalFloat fdiv(IntervalFloat a, IntervalFloat b)
     {
-        return new IntervalFloat(a.value / b.value, DoubleInterval.div(a.interval, b.interval));
+        if (a.isNan || b.isNan)
+        {
+            return new IntervalFloat(Double.NaN);
+        }
+        IntervalFloat res = new IntervalFloat(a.value / b.value, DoubleInterval.div(a.interval, b.interval));
+        res.checkStability();
+        return res;
     }
 
     public static IntervalFloat frem(IntervalFloat a, IntervalFloat b)
     {
-        return new IntervalFloat(a.value % b.value, DoubleInterval.modulo(a.interval, b.interval));
+        if (a.isNan || b.isNan)
+        {
+            return new IntervalFloat(Double.NaN);
+        }
+        IntervalFloat res = new IntervalFloat(a.value % b.value, DoubleInterval.modulo(a.interval, b.interval));
+        res.checkStability();
+        return res;
     }
 
     public static IntervalFloat fneg(IntervalFloat a)
@@ -169,7 +194,9 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
         {
             return new IntervalFloat(Double.NaN);
         }
-        return new IntervalFloat(-a.value, DoubleInterval.neg(a.interval));
+        IntervalFloat res = new IntervalFloat(-a.value, DoubleInterval.neg(a.interval));
+        res.checkStability();
+        return res;
     }
 
     public static int fcmpl(IntervalFloat a, IntervalFloat b)
@@ -177,6 +204,7 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
         return a.compareTo(b);
     }
 
+    // Todo : is this correct ?
     public static int fcmpg(IntervalFloat a, IntervalFloat b)
     {
         return a.compareTo(b);
@@ -219,7 +247,7 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
 
     public static float toFloat(IntervalFloat a)
     {
-        return (float)a.value;
+        return (float) a.value;
     }
 
     public static Float toRealFloat(IntervalFloat a)
@@ -272,6 +300,10 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
     public int compareTo(IntervalFloat o)
     {
         int compResult = this.interval.compareTo(o.interval);
+        if(checkComp)
+        {
+            checkComp(compResult);
+        }
         if (compResult != 0)
         {
             return compResult;
