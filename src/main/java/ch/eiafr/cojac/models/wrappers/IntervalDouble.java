@@ -264,6 +264,11 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
         return new IntervalDouble(DoubleInterval.width(a.interval));
     }
 
+    public static double COJAC_MAGIC_DOUBLE_relativeError(IntervalDouble n)
+    {
+        return n.relativeError();
+    }
+
     public static IntervalDouble math_sqrt(IntervalDouble a)
     {
         if (a.isNan)
@@ -523,6 +528,13 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
 
     private void checkStability()
     {
+        if(this.interval.inf > this.value || this.interval.sup < this.value)
+        {
+            CojacStabilityException e = new CojacStabilityException("The value is out of the interval !");
+            System.err.println("Cojac has destected a unstable operation :");
+            e.printStackTrace(System.err);
+        }
+
         if (threshold < relativeError())
         {
             CojacStabilityException e = new CojacStabilityException();
