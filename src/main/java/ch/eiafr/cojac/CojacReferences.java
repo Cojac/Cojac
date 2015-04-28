@@ -229,6 +229,15 @@ public final class CojacReferences {
                 args.setValue(Arg.DOUBLE_WRAPPER,"ch.eiafr.cojac.models.wrappers.IntervalDouble");
             }
 
+            if(args.isSpecified(Arg.STOCHASTIC))
+            {
+                args.specify(Arg.REPLACE_FLOATS);
+                args.specify(Arg.FLOAT_WRAPPER);
+                args.specify(Arg.DOUBLE_WRAPPER);
+                args.setValue(Arg.FLOAT_WRAPPER,"ch.eiafr.cojac.models.wrappers.StochasticFloat");
+                args.setValue(Arg.DOUBLE_WRAPPER,"ch.eiafr.cojac.models.wrappers.StochasticDouble");
+            }
+
 			if(args.isSpecified(Arg.REPLACE_FLOATS)){ // Only for proxy tests
 				sbBypassList.append(BYPASS_SEPARATOR);
                 sbBypassList.append("ch.eiafr.cojac.unit.replace.FloatProxyNotInstrumented");
@@ -297,7 +306,6 @@ public final class CojacReferences {
                     double threshold = Double.valueOf(args.getValue(Arg.INTERVAL));
                     try
                     {
-                        //Class clazz = loader.loadClass("ch.eiafr.cojac.models.FloatReplacerClasses");
                         Class doubleWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.IntervalDouble");
                         Class floatWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.IntervalFloat");
                         doubleWrapperClass.getMethod("setThreshold", double.class).invoke(doubleWrapperClass, threshold);
@@ -324,6 +332,37 @@ public final class CojacReferences {
                     }
                 }
 
+                if(args.isSpecified(Arg.STOCHASTIC))
+                {
+                    double threshold = Double.valueOf(args.getValue(Arg.STOCHASTIC));
+                    try
+                    {
+                        Class doubleWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.StochasticDouble");
+                        Class floatWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.StochasticFloat");
+                        doubleWrapperClass.getMethod("setThreshold", double.class).invoke(doubleWrapperClass, threshold);
+                        floatWrapperClass.getMethod("setThreshold", double.class).invoke(floatWrapperClass, threshold);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.getLogger(CojacReferences.class.getName()).log(Level.SEVERE, null, e);
+                    }
+                }
+
+                if(args.isSpecified(Arg.STOCHASTIC_NBR_PARALLEL_NUMBER))
+                {
+                    int nbrParallelNumber = Integer.valueOf(args.getValue(Arg.STOCHASTIC_NBR_PARALLEL_NUMBER));
+                    try
+                    {
+                        Class doubleWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.StochasticDouble");
+                        Class floatWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.StochasticFloat");
+                        doubleWrapperClass.getMethod("setNbrParallelNumber", int.class).invoke(doubleWrapperClass, nbrParallelNumber);
+                        floatWrapperClass.getMethod("setNbrParallelNumber", int.class).invoke(floatWrapperClass,nbrParallelNumber);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.getLogger(CojacReferences.class.getName()).log(Level.SEVERE, null, e);
+                    }
+                }
 			}
 
 
