@@ -48,6 +48,8 @@ public enum Arg {
     VERBOSE("v"),
     INTERVAL("I"),
     INTERVAL_COMP("IC"),
+    STOCHASTIC("STO"),
+    STOCHASTIC_NBR_PARALLEL_NUMBER("STON"),
 
     INTS("ints"),
     FLOATS("floats"),
@@ -179,6 +181,10 @@ public enum Arg {
                 "interval",true,"Replaces double and float by Cojac's Interval Object");
         options.addOption(Arg.INTERVAL_COMP.shortOpt(),
                 "interval",false,"Replaces double and float by Cojac's Interval Object and check only the comparaison");
+        options.addOption(Arg.STOCHASTIC.shortOpt(),
+                "stochastic",true,"Use the discret stochastic arithmetic to check number stability");
+        options.addOption(Arg.STOCHASTIC_NBR_PARALLEL_NUMBER.shortOpt(),
+                "stochasticNumber",true,"the number of stochastic number to maintain in parallel");
 
         options.addOption(Arg.MATHS.shortOpt(),
             false, "Detect problems in (Strict)Math.XXX() methods");
