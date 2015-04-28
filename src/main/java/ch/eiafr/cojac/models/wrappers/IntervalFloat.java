@@ -321,6 +321,16 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
 
     private void checkStability()
     {
+        // Todo
+        /*
+        if(this.interval.inf > this.value || this.interval.sup < this.value)
+        {
+            CojacStabilityException e = new CojacStabilityException("The value is out of the interval !");
+            System.err.println("Cojac has destected a unstable operation :");
+            e.printStackTrace(System.err);
+        }
+        */
+
         if (threshold < relativeError())
         {
             CojacStabilityException e = new CojacStabilityException();
