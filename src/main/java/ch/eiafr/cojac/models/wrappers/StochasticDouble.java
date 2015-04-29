@@ -1,6 +1,5 @@
 package ch.eiafr.cojac.models.wrappers;
 
-import java.util.Comparator;
 import java.util.Random;
 
 public class StochasticDouble extends Number implements Comparable<StochasticDouble>
@@ -11,6 +10,7 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
     protected double value;
     protected double[] stochasticValue;
     protected boolean isNan = false;
+    protected boolean isUnStable = false;
 
     /* Constructor */
 
@@ -92,6 +92,11 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         {
             res.stochasticValue[i] = rndRoundDouble(a.stochasticValue[i] + b.stochasticValue[i]);
         }
+        if (a.isUnStable || b.isUnStable)
+        {
+            res.isUnStable = true;
+        }
+        res.checkStability();
         return res;
     }
 
@@ -107,6 +112,11 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         {
             res.stochasticValue[i] = rndRoundDouble(a.stochasticValue[i] / b.stochasticValue[i]);
         }
+        if (a.isUnStable || b.isUnStable)
+        {
+            res.isUnStable = true;
+        }
+        res.checkStability();
         return res;
     }
 
@@ -122,6 +132,11 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         {
             res.stochasticValue[i] = rndRoundDouble(a.stochasticValue[i] % b.stochasticValue[i]);
         }
+        if (a.isUnStable || b.isUnStable)
+        {
+            res.isUnStable = true;
+        }
+        res.checkStability();
         return res;
     }
 
@@ -137,6 +152,11 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         {
             res.stochasticValue[i] = rndRoundDouble(a.stochasticValue[i] - b.stochasticValue[i]);
         }
+        if (a.isUnStable || b.isUnStable)
+        {
+            res.isUnStable = true;
+        }
+        res.checkStability();
         return res;
     }
 
@@ -152,6 +172,11 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         {
             res.stochasticValue[i] = rndRoundDouble(a.stochasticValue[i] * b.stochasticValue[i]);
         }
+        if (a.isUnStable || b.isUnStable)
+        {
+            res.isUnStable = true;
+        }
+        res.checkStability();
         return res;
     }
 
@@ -177,6 +202,11 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         {
             res.stochasticValue[i] = -res.stochasticValue[i];
         }
+        if (a.isUnStable)
+        {
+            res.isUnStable = true;
+        }
+        res.checkStability();
         return res;
     }
 
@@ -256,23 +286,6 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         }
     }
 
-    @Override
-    public String toString()
-    {
-        // reference : BigDecimalDouble.java
-        if (isNan) return "Nan";
-        String res = "" + value + " : [%s]";
-        String tmp = "";
-        for (int i = 0; i < nbrParallelNumber; i++)
-        {
-            tmp+=(""+stochasticValue[i]);
-            if(i == nbrParallelNumber-1)
-                break;
-            tmp+=";";
-        }
-        return String.format(res,tmp);
-    }
-
     /* Mathematical function */
     public static StochasticDouble math_sqrt(StochasticDouble a)
     {
@@ -286,6 +299,11 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         {
             res.stochasticValue[i] = rndRoundDouble(Math.sqrt(a.stochasticValue[i]));
         }
+        if (a.isUnStable)
+        {
+            res.isUnStable = true;
+        }
+        res.checkStability();
         return res;
     }
 
@@ -301,6 +319,11 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         {
             res.stochasticValue[i] = rndRoundDouble(Math.pow(a.stochasticValue[i], b.stochasticValue[i]));
         }
+        if (a.isUnStable || b.isUnStable)
+        {
+            res.isUnStable = true;
+        }
+        res.checkStability();
         return res;
     }
 
@@ -316,6 +339,11 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         {
             res.stochasticValue[i] = rndRoundDouble(Math.sin(a.stochasticValue[i]));
         }
+        if (a.isUnStable)
+        {
+            res.isUnStable = true;
+        }
+        res.checkStability();
         return res;
     }
 
@@ -331,6 +359,11 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         {
             res.stochasticValue[i] = rndRoundDouble(Math.cos(a.stochasticValue[i]));
         }
+        if (a.isUnStable)
+        {
+            res.isUnStable = true;
+        }
+        res.checkStability();
         return res;
     }
 
@@ -346,6 +379,11 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         {
             res.stochasticValue[i] = rndRoundDouble(Math.tan(a.stochasticValue[i]));
         }
+        if (a.isUnStable)
+        {
+            res.isUnStable = true;
+        }
+        res.checkStability();
         return res;
     }
 
@@ -361,6 +399,11 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         {
             res.stochasticValue[i] = rndRoundDouble(Math.sinh(a.stochasticValue[i]));
         }
+        if (a.isUnStable)
+        {
+            res.isUnStable = true;
+        }
+        res.checkStability();
         return res;
     }
 
@@ -376,6 +419,11 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         {
             res.stochasticValue[i] = rndRoundDouble(Math.cosh(a.stochasticValue[i]));
         }
+        if (a.isUnStable)
+        {
+            res.isUnStable = true;
+        }
+        res.checkStability();
         return res;
     }
 
@@ -391,6 +439,11 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         {
             res.stochasticValue[i] = rndRoundDouble(Math.tanh(a.stochasticValue[i]));
         }
+        if (a.isUnStable)
+        {
+            res.isUnStable = true;
+        }
+        res.checkStability();
         return res;
     }
 
@@ -406,6 +459,11 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         {
             res.stochasticValue[i] = rndRoundDouble(Math.acos(a.stochasticValue[i]));
         }
+        if (a.isUnStable)
+        {
+            res.isUnStable = true;
+        }
+        res.checkStability();
         return res;
     }
 
@@ -421,6 +479,11 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         {
             res.stochasticValue[i] = rndRoundDouble(Math.atan(a.stochasticValue[i]));
         }
+        if (a.isUnStable)
+        {
+            res.isUnStable = true;
+        }
+        res.checkStability();
         return res;
     }
 
@@ -436,6 +499,11 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         {
             res.stochasticValue[i] = rndRoundDouble(Math.asin(a.stochasticValue[i]));
         }
+        if (a.isUnStable)
+        {
+            res.isUnStable = true;
+        }
+        res.checkStability();
         return res;
     }
 
@@ -451,6 +519,11 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         {
             res.stochasticValue[i] = rndRoundDouble(Math.exp(a.stochasticValue[i]));
         }
+        if (a.isUnStable)
+        {
+            res.isUnStable = true;
+        }
+        res.checkStability();
         return res;
     }
 
@@ -466,6 +539,11 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         {
             res.stochasticValue[i] = rndRoundDouble(Math.log(a.stochasticValue[i]));
         }
+        if (a.isUnStable)
+        {
+            res.isUnStable = true;
+        }
+        res.checkStability();
         return res;
     }
 
@@ -481,6 +559,11 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         {
             res.stochasticValue[i] = rndRoundDouble(Math.log10(a.stochasticValue[i]));
         }
+        if (a.isUnStable)
+        {
+            res.isUnStable = true;
+        }
+        res.checkStability();
         return res;
     }
 
@@ -496,7 +579,57 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         {
             res.stochasticValue[i] = Math.abs(a.stochasticValue[i]);
         }
+        if (a.isUnStable)
+        {
+            res.isUnStable = true;
+        }
+        res.checkStability();
         return res;
+    }
+
+    @SuppressWarnings("unused")
+    public static void setThreshold(double value)
+    {
+        threshold = value;
+    }
+
+    @SuppressWarnings("unused")
+    public static void setNbrParallelNumber(int value)
+    {
+        nbrParallelNumber = value;
+    }
+
+    /* Magic method */
+    public static String COJAC_MAGIC_DOUBLE_toStr(StochasticDouble n)
+    {
+        return n.toString();
+    }
+
+    public static String COJAC_MAGIC_DOUBLE_toStr(StochasticFloat n)
+    {
+        return n.toString();
+    }
+
+    public static StochasticDouble COJAC_MAGIC_DOUBLE_relativeError(StochasticDouble n)
+    {
+        return new StochasticDouble(n.relativeError());
+    }
+
+    @Override
+    public String toString()
+    {
+        // reference : BigDecimalDouble.java
+        if (isNan) return "Nan";
+        String res = "" + value + " : [%s]";
+        String tmp = "";
+        for (int i = 0; i < nbrParallelNumber; i++)
+        {
+            tmp += ("" + stochasticValue[i]);
+            if (i == nbrParallelNumber - 1)
+                break;
+            tmp += ";";
+        }
+        return String.format(res, tmp);
     }
 
     @Override
@@ -549,25 +682,17 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         return this.value;
     }
 
-    @SuppressWarnings("unused")
-    public static void setThreshold(double value)
-    {
-        threshold = value;
-    }
-
-    @SuppressWarnings("unused")
-    public static void setNbrParallelNumber(int value)
-    {
-        nbrParallelNumber = value;
-    }
-
     private void checkStability()
     {
+        if (isUnStable)
+            return;
         if (threshold < relativeError())
         {
             CojacStabilityException e = new CojacStabilityException();
-            System.err.println("Cojac has destected a unstable operation :");
+            System.err.println("Cojac has destected a unstable operation");
+            System.err.println("Relative error is : " + relativeError());
             e.printStackTrace(System.err);
+            this.isUnStable = true;
         }
     }
 
@@ -581,29 +706,9 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         double numerator = 0.0;
         for (int i = 0; i < nbrParallelNumber; i++)
         {
-            numerator += this.stochasticValue[i];
+            numerator += (Math.abs(value - this.stochasticValue[i]));
         }
-        numerator /= (double)nbrParallelNumber;
-        if (numerator == 0.0)
-        {
-            return Double.NaN;
-        }
-        return this.value / numerator;
-    }
-
-    /* Magic method */
-    public static String COJAC_MAGIC_DOUBLE_toStr(StochasticDouble n)
-    {
-        return n.toString();
-    }
-
-    public static String COJAC_MAGIC_DOUBLE_toStr(StochasticFloat n)
-    {
-        return n.toString();
-    }
-
-    public static StochasticDouble COJAC_MAGIC_DOUBLE_relativeError(StochasticDouble n)
-    {
-        return new StochasticDouble(n.relativeError());
+        numerator = numerator / (double) nbrParallelNumber;
+        return numerator;
     }
 }
