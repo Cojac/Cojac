@@ -396,6 +396,22 @@ public class StochasticFloat extends Number implements Comparable<StochasticFloa
             numerator += (tmp >= 0.0F ? tmp : -tmp);
         }
         numerator = numerator / (float) nbrParallelNumber;
-        return numerator;
+        return numerator / value;
+    }
+
+    public static String COJAC_MAGIC_FLOAT_toStr(StochasticFloat n)
+    {
+        return n.toString();
+    }
+
+    // Todo correct ?
+    public static StochasticFloat COJAC_MAGIC_FLOAT_relativeError(StochasticFloat n)
+    {
+        return new StochasticFloat(n.relativeError());
+    }
+
+    public static float toFloat(IntervalFloat a)
+    {
+        return (float) a.value;
     }
 }

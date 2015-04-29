@@ -245,14 +245,15 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
         return new IntervalFloat(a);
     }
 
-    public static String COJAC_MAGIC_DOUBLE_toStr(IntervalFloat n)
+    public static String COJAC_MAGIC_FLOAT_toStr(IntervalFloat n)
     {
         return n.toString();
     }
 
-    public static IntervalDouble COJAC_MAGIC_DOUBLE_relativeError(IntervalFloat n)
+    // Todo correct ?
+    public static IntervalFloat COJAC_MAGIC_FLOAT_relativeError(IntervalFloat n)
     {
-        return new IntervalDouble(n.relativeError());
+        return new IntervalFloat(n.relativeError());
     }
 
     public static float toFloat(IntervalFloat a)

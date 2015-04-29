@@ -251,7 +251,7 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         switch (r.nextInt(4))
         {
             case 0:
-                // round to the smalles number (2.4 -> 2, 2.6 -> 3)
+                // round to the smallest number (2.4 -> 2, 2.6 -> 3)
                 if ((int) value - ((int) (value + 0.5)) == 0)
                 {
                     return value - Math.ulp(value);
@@ -704,6 +704,6 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
             numerator += (Math.abs(value - this.stochasticValue[i]));
         }
         numerator = numerator / (double) nbrParallelNumber;
-        return numerator;
+        return numerator / value;
     }
 }
