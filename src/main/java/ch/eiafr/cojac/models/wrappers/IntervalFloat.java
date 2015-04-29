@@ -12,6 +12,7 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
     protected boolean isNan = false;
     protected boolean isInfinite = false;
     protected boolean isPositiveInfinite = false;
+    protected boolean isUnStable = false;
 
     /* TODO
         infinite and NaN verification
@@ -140,6 +141,7 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
             return new IntervalFloat(Double.NaN);
         }
         IntervalFloat res = new IntervalFloat(a.value + b.value, DoubleInterval.add(a.interval, b.interval));
+        res.isUnStable = a.isUnStable || b.isUnStable;
         res.checkStability();
         return res;
     }
@@ -151,6 +153,7 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
             return new IntervalFloat(Double.NaN);
         }
         IntervalFloat res = new IntervalFloat(a.value - b.value, DoubleInterval.sub(a.interval, b.interval));
+        res.isUnStable = a.isUnStable || b.isUnStable;
         res.checkStability();
         return res;
     }
@@ -162,6 +165,7 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
             return new IntervalFloat(Double.NaN);
         }
         IntervalFloat res = new IntervalFloat(a.value * b.value, DoubleInterval.mul(a.interval, b.interval));
+        res.isUnStable = a.isUnStable || b.isUnStable;
         res.checkStability();
         return res;
     }
@@ -173,6 +177,7 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
             return new IntervalFloat(Double.NaN);
         }
         IntervalFloat res = new IntervalFloat(a.value / b.value, DoubleInterval.div(a.interval, b.interval));
+        res.isUnStable = a.isUnStable || b.isUnStable;
         res.checkStability();
         return res;
     }
@@ -184,6 +189,7 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
             return new IntervalFloat(Double.NaN);
         }
         IntervalFloat res = new IntervalFloat(a.value % b.value, DoubleInterval.modulo(a.interval, b.interval));
+        res.isUnStable = a.isUnStable || b.isUnStable;
         res.checkStability();
         return res;
     }
@@ -195,16 +201,15 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
             return new IntervalFloat(Double.NaN);
         }
         IntervalFloat res = new IntervalFloat(-a.value, DoubleInterval.neg(a.interval));
-        res.checkStability();
         return res;
     }
 
+    // Todo : is this correct ?
     public static int fcmpl(IntervalFloat a, IntervalFloat b)
     {
         return a.compareTo(b);
     }
 
-    // Todo : is this correct ?
     public static int fcmpg(IntervalFloat a, IntervalFloat b)
     {
         return a.compareTo(b);
@@ -243,6 +248,11 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
     public static String COJAC_MAGIC_DOUBLE_toStr(IntervalFloat n)
     {
         return n.toString();
+    }
+
+    public static IntervalDouble COJAC_MAGIC_DOUBLE_relativeError(IntervalFloat n)
+    {
+        return new IntervalDouble(n.relativeError());
     }
 
     public static float toFloat(IntervalFloat a)
@@ -330,12 +340,16 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
             e.printStackTrace(System.err);
         }
         */
-
+        if(this.isUnStable)
+        {
+            return;
+        }
         if (threshold < relativeError())
         {
             CojacStabilityException e = new CojacStabilityException();
             System.err.println("Cojac has destected a unstable operation :");
             e.printStackTrace(System.err);
+            this.isUnStable = true;
         }
     }
 

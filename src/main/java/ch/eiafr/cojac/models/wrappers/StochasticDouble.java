@@ -202,11 +202,6 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         {
             res.stochasticValue[i] = -res.stochasticValue[i];
         }
-        if (a.isUnStable)
-        {
-            res.isUnStable = true;
-        }
-        res.checkStability();
         return res;
     }
 

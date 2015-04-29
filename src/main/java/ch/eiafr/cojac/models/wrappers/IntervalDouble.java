@@ -11,6 +11,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
     protected boolean isNan = false;
     protected boolean isInfinite = false;
     protected boolean isPositiveInfinite = false;
+    protected boolean isUnStable;
 
     /* TODO
         infinite and NaN verification
@@ -122,6 +123,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
             return new IntervalDouble(Double.NaN);
         }
         IntervalDouble res = new IntervalDouble(a.value + b.value, DoubleInterval.add(a.interval, b.interval));
+        res.isUnStable = a.isUnStable || b.isUnStable;
         res.checkStability();
         return res;
     }
@@ -133,6 +135,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
             return new IntervalDouble(Double.NaN);
         }
         IntervalDouble res = new IntervalDouble(a.value - b.value, DoubleInterval.sub(a.interval, b.interval));
+        res.isUnStable = a.isUnStable || b.isUnStable;
         res.checkStability();
         return res;
     }
@@ -144,6 +147,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
             return new IntervalDouble(Double.NaN);
         }
         IntervalDouble res = new IntervalDouble(a.value * b.value, DoubleInterval.mul(a.interval, b.interval));
+        res.isUnStable = a.isUnStable || b.isUnStable;
         res.checkStability();
         return res;
     }
@@ -155,6 +159,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
             return new IntervalDouble(Double.NaN);
         }
         IntervalDouble res = new IntervalDouble(a.value / b.value, DoubleInterval.div(a.interval, b.interval));
+        res.isUnStable = a.isUnStable || b.isUnStable;
         res.checkStability();
         return res;
     }
@@ -166,6 +171,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
             return new IntervalDouble(Double.NaN);
         }
         IntervalDouble res = new IntervalDouble(a.value % b.value, DoubleInterval.modulo(a.interval, b.interval));
+        res.isUnStable = a.isUnStable || b.isUnStable;
         res.checkStability();
         return res;
     }
@@ -264,9 +270,9 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
         return new IntervalDouble(DoubleInterval.width(a.interval));
     }
 
-    public static double COJAC_MAGIC_DOUBLE_relativeError(IntervalDouble n)
+    public static IntervalDouble COJAC_MAGIC_DOUBLE_relativeError(IntervalDouble n)
     {
-        return n.relativeError();
+        return new IntervalDouble(n.relativeError());
     }
 
     public static IntervalDouble math_sqrt(IntervalDouble a)
@@ -276,6 +282,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
             return new IntervalDouble(Double.NaN);
         }
         IntervalDouble res = new IntervalDouble(Math.sqrt(a.value), DoubleInterval.sqrt(a.interval));
+        res.isUnStable = a.isUnStable ;
         res.checkStability();
         return res;
     }
@@ -287,6 +294,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
             return new IntervalDouble(Double.NaN);
         }
         IntervalDouble res = new IntervalDouble(Math.pow(a.value, b.value), DoubleInterval.pow(a.interval, b.interval));
+        res.isUnStable = a.isUnStable || b.isUnStable;
         res.checkStability();
         return res;
     }
@@ -298,6 +306,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
             return new IntervalDouble(Double.NaN);
         }
         IntervalDouble res = new IntervalDouble(Math.sin(a.value), DoubleInterval.sin(a.interval));
+        res.isUnStable = a.isUnStable ;
         res.checkStability();
         return res;
     }
@@ -309,6 +318,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
             return new IntervalDouble(Double.NaN);
         }
         IntervalDouble res = new IntervalDouble(Math.cos(a.value), DoubleInterval.cos(a.interval));
+        res.isUnStable = a.isUnStable ;
         res.checkStability();
         return res;
     }
@@ -320,6 +330,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
             return new IntervalDouble(Double.NaN);
         }
         IntervalDouble res = new IntervalDouble(Math.tan(a.value), DoubleInterval.tan(a.interval));
+        res.isUnStable = a.isUnStable ;
         res.checkStability();
         return res;
     }
@@ -331,6 +342,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
             return new IntervalDouble(Double.NaN);
         }
         IntervalDouble res = new IntervalDouble(Math.sinh(a.value), DoubleInterval.sinh(a.interval));
+        res.isUnStable = a.isUnStable ;
         res.checkStability();
         return res;
     }
@@ -342,6 +354,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
             return new IntervalDouble(Double.NaN);
         }
         IntervalDouble res = new IntervalDouble(Math.cosh(a.value), DoubleInterval.cosh(a.interval));
+        res.isUnStable = a.isUnStable ;
         res.checkStability();
         return res;
     }
@@ -353,6 +366,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
             return new IntervalDouble(Double.NaN);
         }
         IntervalDouble res = new IntervalDouble(Math.tanh(a.value), DoubleInterval.tanh(a.interval));
+        res.isUnStable = a.isUnStable ;
         res.checkStability();
         return res;
     }
@@ -366,6 +380,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
             return new IntervalDouble(Double.NaN);
         }
         IntervalDouble res = new IntervalDouble(Math.acos(a.value), DoubleInterval.acos(a.interval));
+        res.isUnStable = a.isUnStable ;
         res.checkStability();
         return res;
     }
@@ -377,6 +392,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
             return new IntervalDouble(Double.NaN);
         }
         IntervalDouble res = new IntervalDouble(Math.atan(a.value), DoubleInterval.atan(a.interval));
+        res.isUnStable = a.isUnStable ;
         res.checkStability();
         return res;
     }
@@ -390,6 +406,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
             return new IntervalDouble(Double.NaN);
         }
         IntervalDouble res = new IntervalDouble(Math.asin(a.value), DoubleInterval.asin(a.interval));
+        res.isUnStable = a.isUnStable ;
         res.checkStability();
         return res;
     }
@@ -401,6 +418,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
             return new IntervalDouble(Double.NaN);
         }
         IntervalDouble res = new IntervalDouble(Math.exp(a.value), DoubleInterval.exp(a.interval));
+        res.isUnStable = a.isUnStable ;
         res.checkStability();
         return res;
     }
@@ -412,6 +430,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
             return new IntervalDouble(Double.NaN);
         }
         IntervalDouble res = new IntervalDouble(Math.log(a.value), DoubleInterval.log(a.interval));
+        res.isUnStable = a.isUnStable ;
         res.checkStability();
         return res;
     }
@@ -423,6 +442,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
             return new IntervalDouble(Double.NaN);
         }
         IntervalDouble res = new IntervalDouble(Math.log10(a.value), DoubleInterval.log10(a.interval));
+        res.isUnStable = a.isUnStable ;
         res.checkStability();
         return res;
     }
@@ -434,6 +454,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
             return new IntervalDouble(Double.NaN);
         }
         IntervalDouble res = new IntervalDouble(Math.abs(a.value), DoubleInterval.abs(a.interval));
+        res.isUnStable = a.isUnStable ;
         res.checkStability();
         return res;
     }
@@ -445,6 +466,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
             return new IntervalDouble(Double.NaN);
         }
         IntervalDouble res = new IntervalDouble(-a.value, DoubleInterval.neg(a.interval));
+        res.isUnStable = a.isUnStable ;
         res.checkStability();
         return res;
     }
@@ -528,18 +550,24 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
 
     private void checkStability()
     {
+        // Todo
+        /*
         if(this.interval.inf > this.value || this.interval.sup < this.value)
         {
             CojacStabilityException e = new CojacStabilityException("The value is out of the interval !");
             System.err.println("Cojac has destected a unstable operation :");
             e.printStackTrace(System.err);
+        }*/
+        if(this.isUnStable)
+        {
+            return;
         }
-
         if (threshold < relativeError())
         {
             CojacStabilityException e = new CojacStabilityException();
             System.err.println("Cojac has destected a unstable operation :");
             e.printStackTrace(System.err);
+            this.isUnStable = true;
         }
     }
 

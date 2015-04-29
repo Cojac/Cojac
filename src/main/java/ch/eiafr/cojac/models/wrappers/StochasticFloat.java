@@ -206,11 +206,6 @@ public class StochasticFloat extends Number implements Comparable<StochasticFloa
         {
             res.stochasticValue[i] = -a.stochasticValue[i];
         }
-        if (a.isUnStable)
-        {
-            res.isUnStable = true;
-        }
-        res.checkStability();
         return res;
     }
 
