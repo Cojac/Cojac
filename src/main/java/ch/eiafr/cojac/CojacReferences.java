@@ -238,6 +238,15 @@ public final class CojacReferences {
                 args.setValue(Arg.DOUBLE_WRAPPER,"ch.eiafr.cojac.models.wrappers.StochasticDouble");
             }
 
+            if(args.isSpecified(Arg.AUTOMATIC_DERIVATION))
+            {
+                args.specify(Arg.REPLACE_FLOATS);
+                args.specify(Arg.FLOAT_WRAPPER);
+                args.specify(Arg.DOUBLE_WRAPPER);
+                args.setValue(Arg.FLOAT_WRAPPER,"ch.eiafr.cojac.models.wrappers.DerivationFloat");
+                args.setValue(Arg.DOUBLE_WRAPPER,"ch.eiafr.cojac.models.wrappers.DerivationDouble");
+            }
+
 			if(args.isSpecified(Arg.REPLACE_FLOATS)){ // Only for proxy tests
 				sbBypassList.append(BYPASS_SEPARATOR);
                 sbBypassList.append("ch.eiafr.cojac.unit.replace.FloatProxyNotInstrumented");

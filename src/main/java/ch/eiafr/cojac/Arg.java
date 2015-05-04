@@ -50,6 +50,7 @@ public enum Arg {
     INTERVAL_COMP("IC"),
     STOCHASTIC("STO"),
     STOCHASTIC_NBR_PARALLEL_NUMBER("STON"),
+    AUTOMATIC_DERIVATION("AD"),
 
     INTS("ints"),
     FLOATS("floats"),
@@ -185,6 +186,7 @@ public enum Arg {
                 "stochastic",true,"Use the discret stochastic arithmetic to check number stability");
         options.addOption(Arg.STOCHASTIC_NBR_PARALLEL_NUMBER.shortOpt(),
                 "stochasticNumber",true,"the number of stochastic number to maintain in parallel");
+        options.addOption(Arg.AUTOMATIC_DERIVATION.shortOpt(),"automatic differentiation",false,"procede automatic differentiation");
 
         options.addOption(Arg.MATHS.shortOpt(),
             false, "Detect problems in (Strict)Math.XXX() methods");
