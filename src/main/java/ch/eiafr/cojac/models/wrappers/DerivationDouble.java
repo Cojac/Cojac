@@ -160,9 +160,8 @@ public class DerivationDouble extends Number implements Comparable<DerivationDou
             return new DerivationDouble(Double.NaN);
         }
         double value = Math.pow(a.value, b.value);
-        double dValue = 1.0;
-        // Todo
-        return null;
+        double dValue = Math.pow(a.value,b.value) * (((b.value*a.dValue)/a.value) + Math.log(a.value) * b.dValue);
+        return new DerivationDouble(value,dValue);
     }
 
     public static DerivationDouble math_sin(DerivationDouble a)
