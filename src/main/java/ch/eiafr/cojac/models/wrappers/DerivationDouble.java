@@ -153,12 +153,14 @@ public class DerivationDouble extends Number implements Comparable<DerivationDou
         return new DerivationDouble(value, dValue);
     }
 
+
     public static DerivationDouble math_pow(DerivationDouble a, DerivationDouble b)
     {
         if (a.isNaN || b.isNaN)
         {
             return new DerivationDouble(Double.NaN);
         }
+        assert (a.value >= 0.0);
         double value = Math.pow(a.value, b.value);
         double dValue = Math.pow(a.value,b.value) * (((b.value*a.dValue)/a.value) + Math.log(a.value) * b.dValue);
         return new DerivationDouble(value,dValue);
