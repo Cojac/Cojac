@@ -7,6 +7,8 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
     private static int nbrParallelNumber = 3;
     private static double threshold = 1.0;
     private static Random r = new Random();
+    private double Tb = 4.303;
+
     protected double value;
     protected double[] stochasticValue;
     protected boolean isNan = false;
@@ -610,6 +612,11 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         return new StochasticDouble(n.relativeError());
     }
 
+    public static StochasticDouble COJAC_MAGIC_DOUBLE_correctSignifiantNumber(StochasticDouble n)
+    {
+        return new StochasticDouble(n.correctSignifiantNumber());
+    }
+
     @Override
     public String toString()
     {
@@ -698,6 +705,7 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         {
             return Double.NaN;
         }
+
         double numerator = 0.0;
         for (int i = 0; i < nbrParallelNumber; i++)
         {
@@ -705,5 +713,26 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         }
         numerator = numerator / (double) nbrParallelNumber;
         return numerator / value;
+    }
+
+    private double correctSignifiantNumber()
+    {
+        double mean = 0.0;
+        for (int i = 0; i < nbrParallelNumber; i++)
+        {
+            mean += this.stochasticValue[i];
+        }
+        mean = mean / (double) nbrParallelNumber;
+
+        double squareSum = 0.0;
+        for (int i = 0; i < nbrParallelNumber; i++)
+        {
+            squareSum += Math.pow(this.stochasticValue[i]-this.value,2.0);
+        }
+
+        double sigmaSquare = (1.0/(double)(nbrParallelNumber-1)) * squareSum;
+
+        double Cr = Math.log10((Math.sqrt((double)nbrParallelNumber) * Math.abs(mean))/(Math.sqrt(sigmaSquare)*Tb));
+        return Cr;
     }
 }
