@@ -278,7 +278,7 @@ public class BigDecimalDouble extends Number implements Comparable<BigDecimalDou
 
     public static BigDecimalDouble math_sqrt(BigDecimalDouble a)
     {
-        return new BigDecimalDouble(Math.sqrt(a.doubleValue()));
+        return new BigDecimalDouble(sqrtHeron(a.val));
     }
 
     public static BigDecimalDouble math_pow(BigDecimalDouble base, BigDecimalDouble exponent)
@@ -477,5 +477,19 @@ public class BigDecimalDouble extends Number implements Comparable<BigDecimalDou
     public static String COJAC_MAGIC_DOUBLE_toStr(BigDecimalDouble n)
     {
         return n.toString();
+    }
+
+    private static BigDecimal sqrtHeron(BigDecimal x)
+    {
+        BigDecimal epsilon = new BigDecimal(10.0).pow(-COJAC_BIGDECIMAL_PRECISION,mathContext); // precision
+        BigDecimal root = new BigDecimal(1.0,mathContext);
+        BigDecimal lroot = x.abs(mathContext);
+
+        while(root.subtract(lroot,mathContext).abs(mathContext).compareTo(epsilon) == 1)
+        {
+            lroot = root.abs(mathContext);
+            root = root.add(x.divide(root,mathContext)).divide(new BigDecimal(2.0,mathContext),mathContext);
+        }
+        return root;
     }
 }
