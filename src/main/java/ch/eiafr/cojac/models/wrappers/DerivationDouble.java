@@ -59,10 +59,23 @@ public class DerivationDouble extends Number implements Comparable<DerivationDou
         return new DerivationDouble(value, dValue);
     }
 
-    // Todo Correct ?
     public static DerivationDouble drem(DerivationDouble a, DerivationDouble b)
     {
-        return new DerivationDouble(a.value % b.value, a.dValue % b.dValue);
+        if(a.isNaN || b.isNaN)
+        {
+            return new DerivationDouble(Double.NaN);
+        }
+        double value = a.value % b.value;
+        if(b.dValue != 0.0)
+        {
+            double dValue = Double.NaN;
+            return new DerivationDouble(value,dValue);
+        }
+        else
+        {
+            double dValue = a.dValue;
+            return new DerivationDouble(value,dValue);
+        }
     }
 
     public static DerivationDouble dsub(DerivationDouble a, DerivationDouble b)
@@ -137,9 +150,9 @@ public class DerivationDouble extends Number implements Comparable<DerivationDou
         return new DerivationDouble(a.dValue);
     }
 
-    public static void COJAC_MAGIC_DOUBLE_specifieToDerivate(DerivationDouble a)
+    public static DerivationDouble COJAC_MAGIC_DOUBLE_specifieToDerivate(DerivationDouble a)
     {
-        a.dValue = 1.0;
+        return new DerivationDouble(a.value,1.0);
     }
 
     public static DerivationDouble math_sqrt(DerivationDouble a)
@@ -287,7 +300,6 @@ public class DerivationDouble extends Number implements Comparable<DerivationDou
         return new DerivationDouble(value, dValue);
     }
 
-    // todo correct ?
     public static DerivationDouble math_log10(DerivationDouble a)
     {
         if (a.isNaN)
@@ -301,9 +313,16 @@ public class DerivationDouble extends Number implements Comparable<DerivationDou
 
     public static DerivationDouble math_abs(DerivationDouble a)
     {
-        RuntimeException exception = new RuntimeException("abs'(x) : not derivable !");
-        exception.printStackTrace(System.err);
-        return null;
+        if (a.isNaN)
+        {
+            return new DerivationDouble(Double.NaN);
+        }
+        double value = Math.abs(a.value);
+        double dValue = a.dValue < 0.0 ? -a.dValue : a.dValue;
+
+        //RuntimeException exception = new RuntimeException("abs'(x) : not derivable !");
+        //exception.printStackTrace(System.err);
+        return new DerivationDouble(value,dValue);
     }
 
     @Override

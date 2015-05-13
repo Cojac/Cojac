@@ -733,6 +733,15 @@ public class DoubleIntervalTest
         assertTrue(String.format("Test c %% a : %s %% %s = %s ; res : %s",c,a,caRes,ca),DoubleInterval.isIn(ca,caRes));
     }
 
+    @Test
+    public void testgenral() throws Exception
+    {
+        DoubleInterval a = new DoubleInterval(-Double.MAX_VALUE,Double.MAX_VALUE);
+        DoubleInterval b = new DoubleInterval(0.0);
+        System.out.println(DoubleInterval.add(a,b));
+        System.out.println(DoubleInterval.sub(b,b));
+    }
+
     private void testIntervalBounds(DoubleInterval a) throws Exception
     {
         assertTrue(String.format("DoubleInterval %s is degenerated",a),a.testBounds());

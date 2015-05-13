@@ -5,7 +5,8 @@ import java.util.Random;
 public class StochasticFloat extends Number implements Comparable<StochasticFloat>
 {
     private static int nbrParallelNumber = 3;
-    private static float threshold = 1.0F;
+    private static float threshold = 0.1F;
+    private double Tb = 4.303; // see chenaux 1988
     private static Random r = new Random();
     protected float value;
     protected float[] stochasticValue;
@@ -253,15 +254,8 @@ public class StochasticFloat extends Number implements Comparable<StochasticFloa
         switch (r.nextInt(4))
         {
             case 0:
-                // round to the smalles number (2.4 -> 2, 2.6 -> 3)
-                if ((int) value - ((int) (value + 0.5)) == 0)
-                {
-                    return value - Math.ulp(value);
-                }
-                else
-                {
-                    return value + Math.ulp(value);
-                }
+                // default rounding mode in Java
+                return value;
             case 1:
                 // round to 0
                 if (value < 0.0)
@@ -371,7 +365,7 @@ public class StochasticFloat extends Number implements Comparable<StochasticFloa
         {
             return;
         }
-        if (threshold < relativeError())
+        if (Math.abs(threshold) < relativeError())
         {
             CojacStabilityException e = new CojacStabilityException();
             System.err.println("Cojac has destected a unstable operation");
@@ -385,6 +379,7 @@ public class StochasticFloat extends Number implements Comparable<StochasticFloa
     // compute the relative error as the value divide by the mean of all the distance from value to the stochasticValue's values
     private float relativeError()
     {
+        /*
         if (this.isNan)
         {
             return Float.NaN;
@@ -398,5 +393,24 @@ public class StochasticFloat extends Number implements Comparable<StochasticFloa
         }
         numerator = numerator / (float) nbrParallelNumber;
         return numerator / value;
+        */
+
+        double mean = 0.0F;
+        for (int i = 0; i < nbrParallelNumber; i++)
+        {
+            mean += this.stochasticValue[i];
+        }
+        mean = mean / (float) nbrParallelNumber;
+
+        double squareSum = 0.0;
+        for (int i = 0; i < nbrParallelNumber; i++)
+        {
+            squareSum += Math.pow(this.stochasticValue[i]-this.value,2.0);
+        }
+
+        double sigmaSquare = (1.0/(double)(nbrParallelNumber-1)) * squareSum;
+
+        double Cr = (Math.sqrt((double)nbrParallelNumber) * Math.abs(mean))/(Math.sqrt(sigmaSquare)*Tb);
+        return (float)Math.pow(10.0,-Cr);
     }
 }

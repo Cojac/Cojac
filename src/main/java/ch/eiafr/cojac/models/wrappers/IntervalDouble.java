@@ -567,6 +567,8 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
             CojacStabilityException e = new CojacStabilityException();
             System.err.println("Cojac has destected a unstable operation :");
             e.printStackTrace(System.err);
+            System.err.println("interval value :" + this.toString());
+            System.err.println("relative error :" + relativeError());
             this.isUnStable = true;
         }
     }

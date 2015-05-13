@@ -7,7 +7,7 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
     private static int nbrParallelNumber = 3;
     private static double threshold = 0.1;
     private static Random r = new Random();
-    private double Tb = 4.303;
+    private double Tb = 4.303; // see chenaux 1988
 
     protected double value;
     protected double[] stochasticValue;
@@ -240,7 +240,8 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
     {
         switch (r.nextInt(4))
         {
-            case 0: // standard rounding, nothing to do
+            case 0:
+                // default rounding mode in Java
                 return value;
             case 1:
                 // round to 0
