@@ -1,3 +1,8 @@
+// compile this to a jar and launch it with the following command :
+/*
+    java -javaagent:cojac.jar="-STO=threshold" -jar myJar.jar # or
+    java -javaagent:cojac.jar="-I=0.1" -jar myJar.jar
+ */
 public class StochasticOrIntervalTest
 {
     public static void main(String[] args)

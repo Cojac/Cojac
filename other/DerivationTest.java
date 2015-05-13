@@ -1,6 +1,6 @@
 // compile this to a jar and launch it with the following command :
 /*
-    java -javaagent:cojac.jar="-AD" -jar myJar.jar
+    java -javaagent:cojac.jar="-AD" -jar $CojacUsePath
  */
 
 public class DerivationTest
