@@ -18,24 +18,15 @@
 
 package ch.eiafr.cojac.models.wrappers;
 
+import java.util.function.DoubleBinaryOperator;
+import java.util.function.DoubleUnaryOperator;
+
 
 public class BasicDouble extends Number implements Comparable<BasicDouble>{
     private final double val;
     
-    public BasicDouble(double v) {
+    private BasicDouble(double v) {
         val=v;
-    }
-    
-    public BasicDouble(BasicDouble v) {
-        val=v.val;
-    }
-    
-    public BasicDouble(String v) {
-        val=Double.valueOf(v);
-    }
-    
-    public BasicDouble(BasicFloat v) {
-        val=BasicFloat.toFloat(v);
     }
     
     public static BasicDouble fromDouble(double a) {
@@ -100,7 +91,7 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
     }
     
     public static BasicFloat d2f(BasicDouble a) {
-        return new BasicFloat((float)a.val);
+        return BasicFloat.fromFloat((float)a.val);
     }
     
     public static BasicDouble i2d(int a) {
@@ -116,21 +107,51 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
     }
 
 	public static BasicDouble math_sqrt(BasicDouble a){
+//	    return a.afterUnaryOp(Math::sqrt);
         return new BasicDouble(Math.sqrt(a.val));
     }
 	
+	private BasicDouble afterUnaryOp(DoubleUnaryOperator op) {
+	    return new BasicDouble(op.applyAsDouble(this.val));
+	}
+	
+	private BasicDouble afterBinaryOp(DoubleBinaryOperator op, BasicDouble arg) {
+	    return new BasicDouble(op.applyAsDouble(this.val, arg.val));
+	}
+
+	
+	/*
+    public static MyWrapper math_abs(MyWrapper a) {
+    public static MyWrapper math_sqrt(MyWrapper a) {
+    public static MyWrapper math_sin(MyWrapper a) {
+    public static MyWrapper math_cos(MyWrapper a) {
+    public static MyWrapper math_tan(MyWrapper a) {
+    public static MyWrapper math_sinh(MyWrapper a) {
+    public static MyWrapper math_cosh(MyWrapper a) {
+    public static MyWrapper math_tanh(MyWrapper a) {
+    public static MyWrapper math_acos(MyWrapper a) {
+    public static MyWrapper math_atan(MyWrapper a) {
+    public static MyWrapper math_asin(MyWrapper a) {
+    public static MyWrapper math_exp(MyWrapper a) {
+    public static MyWrapper math_log(MyWrapper a) {
+    public static MyWrapper math_log10(MyWrapper a) {
+    public static MyWrapper math_pow(MyWrapper a, MyWrapper b) {
+	 */
+	
 	@Override
 	public int compareTo(BasicDouble o) {
-		if(val > o.val)
-			return 1;
-		if(val < o.val)
-			return -1;
-		return 0;
+        return Double.compare(this.val, o.val);
+//		if(val > o.val)
+//			return 1;
+//		if(val < o.val)
+//			return -1;
+//		return 0;
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
-        return (obj instanceof BasicDouble) && (((BasicDouble)obj).val == val);
+	    return new Double(this.val).equals(obj);
+//        return (obj instanceof BasicDouble) && (((BasicDouble)obj).val == val);
     }
 
 	@Override

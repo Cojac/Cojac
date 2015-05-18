@@ -21,20 +21,8 @@ package ch.eiafr.cojac.models.wrappers;
 public class BasicFloat extends Number implements Comparable<BasicFloat> {
     private final float val;
     
-    public BasicFloat(float v) {
+    private BasicFloat(float v) {
         val=v;
-    }
-    
-    public BasicFloat(BasicFloat v) {
-        val=v.val;
-    }
-    
-    public BasicFloat(String v) {
-        val=Float.valueOf(v);
-    }
-    
-    public BasicFloat(BasicDouble v) {
-        val=(float)BasicDouble.toDouble(v);
     }
     
     public static BasicFloat fromFloat(float a) {
@@ -103,7 +91,7 @@ public class BasicFloat extends Number implements Comparable<BasicFloat> {
     }
     
     public static BasicDouble f2d(BasicFloat a) {
-        return new BasicDouble(a.val);
+        return BasicDouble.fromDouble(a.val);
     }
     
     public static BasicFloat i2f(int a) {
@@ -129,16 +117,18 @@ public class BasicFloat extends Number implements Comparable<BasicFloat> {
 
 	@Override
 	public int compareTo(BasicFloat o) {
-		if(val > o.val)
-			return 1;
-		if(val < o.val)
-			return -1;
-		return 0;
+	    return Float.compare(this.val, o.val);
+//		if(val > o.val)
+//			return 1;
+//		if(val < o.val)
+//			return -1;
+//		return 0;
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
-        return (obj instanceof BasicFloat) && (((BasicFloat)obj).val == val);
+	    return new Float(this.val).equals(obj);
+//        return (obj instanceof BasicFloat) && (((BasicFloat)obj).val == val);
     }
 
 	@Override
