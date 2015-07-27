@@ -1,28 +1,25 @@
 package ch.eiafr.cojac.interval;
 
-import java.util.Random;
-
 import static java.lang.Math.PI;
 
 /**
  * <p>
- * Note : the mathematical operation does not treat operation with overflow
- * In the future, maybe implments some features to frame those special event
+ * Note : the mathematical operation does not treat operation with overflow In
+ * the future, maybe implments some features to frame those special event
  * Example : [-MAX_VALUE;MAX_VALUE] + [0.0;0.0] is giving [-infinity;infinity] :
  *
- *      DoubleInterval b = new DoubleInterval(-Double.MAX_VALUE,Double.MAX_VALUE);
- *      DoubleInterval c = new DoubleInterval(0.0);
- *      System.out.println(DoubleInterval.add(b,c)); // [-NEGATIVE_INFINITY,Infinity]
+ * DoubleInterval b = new DoubleInterval(-Double.MAX_VALUE,Double.MAX_VALUE);
+ * DoubleInterval c = new DoubleInterval(0.0);
+ * System.out.println(DoubleInterval.add(b,c)); // [-NEGATIVE_INFINITY,Infinity]
  * </p>
  *
  * @version 0.1
  */
-public class DoubleInterval implements Comparable<DoubleInterval>
-{
+public class DoubleInterval implements Comparable<DoubleInterval> {
     public final double inf;
     public final double sup;
 
-    private final boolean isNan;  // TODO: remove that  field 
+    private final boolean isNan; // TODO: remove that field
 
     private static final double HALF_PI = PI / 2.0;
     private static final double ONE_AND_HALF_PI = PI * 1.5;
@@ -31,19 +28,17 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     /**
      * Constructor
      *
-     * @param inf need to be smaller than sup
-     * @param sup need to be bigger than inf
+     * @param inf
+     *            need to be smaller than sup
+     * @param sup
+     *            need to be bigger than inf
      */
-    public DoubleInterval(double inf, double sup)
-    {
-        if (Double.isNaN(inf) || Double.isNaN(sup))
-        {
+    public DoubleInterval(double inf, double sup) {
+        if (Double.isNaN(inf) || Double.isNaN(sup)) {
             this.inf = Double.NaN;
             this.sup = Double.NaN;
             this.isNan = true;
-        }
-        else
-        {
+        } else {
             this.inf = inf;
             this.sup = sup;
             this.isNan = false;
@@ -53,19 +48,17 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     /**
      * Constructor
      *
-     * @param value value of the created interval, same has new DoubleInterval(a,a);
+     * @param value
+     *            value of the created interval, same has new
+     *            DoubleInterval(a,a);
      */
-    public DoubleInterval(double value)
-    {
-        //this(value, value);
-        if (Double.isNaN(value))
-        {
+    public DoubleInterval(double value) {
+        // this(value, value);
+        if (Double.isNaN(value)) {
             this.inf = Double.NaN;
             this.sup = Double.NaN;
             this.isNan = true;
-        }
-        else
-        {
+        } else {
             this.inf = this.sup = value;
             this.isNan = false;
         }
@@ -74,18 +67,15 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     /**
      * Constructor
      *
-     * @param a value of the DoubleInterval to "copy"
+     * @param a
+     *            value of the DoubleInterval to "copy"
      */
-    public DoubleInterval(DoubleInterval a)
-    {
-        if(a.isNan())
-        {
+    public DoubleInterval(DoubleInterval a) {
+        if (a.isNan()) {
             this.inf = Double.NaN;
             this.sup = Double.NaN;
             this.isNan = true;
-        }
-        else
-        {
+        } else {
             this.inf = a.inf;
             this.sup = a.sup;
             this.isNan = false;
@@ -93,33 +83,27 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     }
 
     /**
-     * @param o another DoubleInterval to be compared with this
+     * @param o
+     *            another DoubleInterval to be compared with this
      *
-     * @return - 1 if this is absolutely bigger than o
-     * - 0 if there is some shared region
-     * - -1 if this is absolutely smaller than o
+     * @return - 1 if this is absolutely bigger than o - 0 if there is some
+     *         shared region - -1 if this is absolutely smaller than o
      */
     @Override
-    public int compareTo(DoubleInterval o)
-    {
-        if (this.isNan && o.isNan)
-        {
+    public int compareTo(DoubleInterval o) {
+        if (this.isNan && o.isNan) {
             return 0;
         }
-        if (this.isNan)
-        {
+        if (this.isNan) {
             return -1;
         }
-        if (o.isNan)
-        {
+        if (o.isNan) {
             return 1;
         }
-        if (o.sup < this.inf)
-        {
+        if (o.sup < this.inf) {
             return 1;
         }
-        if (o.inf > this.sup)
-        {
+        if (o.inf > this.sup) {
             return -1;
         }
         return 0;
@@ -127,70 +111,64 @@ public class DoubleInterval implements Comparable<DoubleInterval>
 
     /**
      * <p>
-     * Note : the comparaison with infinity are the same with some basic double...
-     * [NEGATIVE_INFINITY;POSITIVE_INFINITY] includes NEGATIVE_INFINITY and POSITIVE_INFINITY
+     * Note : the comparaison with infinity are the same with some basic
+     * double... [NEGATIVE_INFINITY;POSITIVE_INFINITY] includes
+     * NEGATIVE_INFINITY and POSITIVE_INFINITY
      * </p>
      *
-     * @param value double that's is compared with this (see has a set)
+     * @param value
+     *            double that's is compared with this (see has a set)
      *
-     * @return - value < inf -> 1 , the value is under the set
-     * - value > inf && value < sup -> 0 , the value is in the set !
-     * - value > sup -> -1 , the value is over the set
+     * @return - value < inf -> 1 , the value is under the set - value > inf &&
+     *         value < sup -> 0 , the value is in the set ! - value > sup -> -1
+     *         , the value is over the set
      */
-    public int compareTo(double value)
-    {
-        if (this.isNan && Double.isNaN(value))
-        {
+    public int compareTo(double value) {
+        if (this.isNan && Double.isNaN(value)) {
             return 0;
         }
-        if (this.isNan)
-        {
+        if (this.isNan) {
             return -1;
         }
-        if (Double.isNaN(value))
-        {
+        if (Double.isNaN(value)) {
             return 1;
         }
-        if (value < inf)
-        {
+        if (value < inf) {
             return 1;
         }
-        if (value > sup)
-        {
+        if (value > sup) {
             return -1;
         }
         return 0;
     }
 
     /**
-     * @param o DoubleInterval to be compared with this
+     * @param o
+     *            DoubleInterval to be compared with this
      *
      * @return true only if the Interval are strictly equals
      */
-    public boolean strictCompareTo(DoubleInterval o)
-    {
-        return !(o.isNan || this.isNan) && (this.inf == o.inf && this.sup == o.sup);
+    public boolean strictCompareTo(DoubleInterval o) {
+        return !(o.isNan || this.isNan) &&
+                (this.inf == o.inf && this.sup == o.sup);
     }
 
     @Override
-    public String toString()
-    {
-        if (isNan)
-        {
+    public String toString() {
+        if (isNan) {
             return "[NaN;NaN]";
         }
-        return "["+this.inf+";"+this.sup+"]";
+        return "[" + this.inf + ";" + this.sup + "]";
     }
 
     /**
-     * @param a DoubleInterval to use
+     * @param a
+     *            DoubleInterval to use
      *
      * @return the width of the interval
      */
-    public static double width(DoubleInterval a)
-    {
-        if (a.isNan)
-        {
+    public static double width(DoubleInterval a) {
+        if (a.isNan) {
             return Double.NaN;
         }
         assert (a.sup >= a.inf);
@@ -198,67 +176,56 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     }
 
     /**
-     * Test if b is in the interval a
+     * Test if b is in the interval
      *
-     * @param a DoubleInterval see has a set
-     * @param b double b to test
+     * @param b
+     *            double b to test
      *
-     * @return true if b is in a, else false
-     * if the interval isNan, return false
+     * @return true if b is inside, else false
      */
     /* Interval operation */
-    public static boolean isIn(DoubleInterval a, double b)
-    {
-        return !a.isNan && (b >= a.inf && b <= a.sup);
+    public boolean contains(double b) {
+        return  b >= this.inf && b <= this.sup;
     }
 
-    /**
-     * @param a DoubleInterval supposed to bee the encompassing one
-     * @param b DoubleInterval supposed to be inside the DoubleInterval a
-     *
-     * @return true if b is completely in the Interval a, false otherwise
-     */
-    public static boolean isIn(DoubleInterval a, DoubleInterval b)
-    {
-        return !a.isNan && (b.inf >= a.inf && b.sup <= a.sup);
+    /** @return true if b is completely in the Interval, false otherwise */
+    public boolean contains(DoubleInterval b) {
+        return  b.inf >= this.inf && b.sup <= this.sup;
     }
-
 
     /**
      * @return true if the interval is bounding NaN
      */
-    public boolean isNan()
-    {
+    public boolean isNan() {
         return isNan;
     }
 
     /**
      * Used for some test... test if the Interval is Degenerated
      * <p>
-     * Note : is the Interval is NaN, return true...
-     * See DoubleInterval.isNan()
+     * Note : is the Interval is NaN, return true... See DoubleInterval.isNan()
      * </p>
      *
-     * @return true if the interval ins't degenerated : this.inf <= this.sup, else false
+     * @return true if the interval ins't degenerated : this.inf <= this.sup,
+     *         else false
      */
-    public boolean testBounds()
-    {
+    public boolean testBounds() {
         return this.isNan || this.inf <= this.sup;
     }
 
-
-     /* Mathematical operations */
+    /* Mathematical operations */
 
     /**
-     * @param a 1st operand of the addition
-     * @param b 2st operand of the addition
+     * @param a
+     *            1st operand of the addition
+     * @param b
+     *            2st operand of the addition
      *
-     * @return a new DoubleInterval that's the result of the a + b operation on interval
+     * @return a new DoubleInterval that's the result of the a + b operation on
+     *         interval
      */
-    public static DoubleInterval add(DoubleInterval a, DoubleInterval b)
-    {
-        if (a.isNan || b.isNan)
-        {
+    public static DoubleInterval add(DoubleInterval a, DoubleInterval b) {
+        if (a.isNan || b.isNan) {
             return new DoubleInterval(Double.NaN);
         }
         double v1 = a.inf + b.inf;
@@ -267,15 +234,16 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     }
 
     /**
-     * @param a 1st operand of the subtraction
-     * @param b 2st operand of the subtraction
+     * @param a
+     *            1st operand of the subtraction
+     * @param b
+     *            2st operand of the subtraction
      *
-     * @return a new DoubleInterval that's the result of the a - b operation on interval
+     * @return a new DoubleInterval that's the result of the a - b operation on
+     *         interval
      */
-    public static DoubleInterval sub(DoubleInterval a, DoubleInterval b)
-    {
-        if (a.isNan || b.isNan)
-        {
+    public static DoubleInterval sub(DoubleInterval a, DoubleInterval b) {
+        if (a.isNan || b.isNan) {
             return new DoubleInterval(Double.NaN);
         }
         double v1 = a.inf - b.sup;
@@ -284,80 +252,82 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     }
 
     /**
-     * @param a 1st operand of the multiplication
-     * @param b 2st operand of the multiplication
+     * @param a
+     *            1st operand of the multiplication
+     * @param b
+     *            2st operand of the multiplication
      *
-     * @return a new DoubleInterval that's the result of the a * b operation on interval
+     * @return a new DoubleInterval that's the result of the a * b operation on
+     *         interval
      */
-    public static DoubleInterval mul(DoubleInterval a, DoubleInterval b)
-    {
-        if (a.isNan || b.isNan)
-        {
+    public static DoubleInterval mul(DoubleInterval a, DoubleInterval b) {
+        if (a.isNan || b.isNan) {
             return new DoubleInterval(Double.NaN);
         }
-        double v1 = Math.min(Math.min(a.inf * b.inf, a.inf * b.sup), Math.min(a.sup * b.inf, a.sup * b.sup));
-        double v2 = Math.max(Math.max(a.inf * b.inf, a.inf * b.sup), Math.max(a.sup * b.inf, a.sup * b.sup));
+        double v1 = Math.min(Math.min(a.inf * b.inf, a.inf * b.sup), Math.min(a.sup *
+                b.inf, a.sup * b.sup));
+        double v2 = Math.max(Math.max(a.inf * b.inf, a.inf * b.sup), Math.max(a.sup *
+                b.inf, a.sup * b.sup));
         return roundedInterval(v1, v2);
     }
 
     /**
-     * @param a 1st operand of the division
-     * @param b 2st operand of the division
+     * @param a
+     *            1st operand of the division
+     * @param b
+     *            2st operand of the division
      *
-     * @return a DoubleInterval that's the result of the a/b operation
-     * - if the b interval contains 0.0, the result interval is NaN
+     * @return a DoubleInterval that's the result of the a/b operation - if the
+     *         b interval contains 0.0, the result interval is NaN
      */
-    public static DoubleInterval div(DoubleInterval a, DoubleInterval b)
-    {
-        if (a.isNan || b.isNan || isIn(b, 0.0))
-        {
+    public static DoubleInterval div(DoubleInterval a, DoubleInterval b) {
+        if (a.isNan || b.isNan || b.contains(0.0)) {
             return new DoubleInterval(Double.NaN);
         }
-        double v1 = Math.min(Math.min(a.inf / b.inf, a.inf / b.sup), Math.min(a.sup / b.inf, a.sup / b.sup));
-        double v2 = Math.max(Math.max(a.inf / b.inf, a.inf / b.sup), Math.max(a.sup / b.inf, a.sup / b.sup));
+        double v1 = Math.min(Math.min(a.inf / b.inf, a.inf / b.sup), Math.min(a.sup /
+                b.inf, a.sup / b.sup));
+        double v2 = Math.max(Math.max(a.inf / b.inf, a.inf / b.sup), Math.max(a.sup /
+                b.inf, a.sup / b.sup));
         return roundedInterval(v1, v2);
     }
 
     /**
-     * @param base 1st operand of the power 2 operation
+     * @param base
+     *            1st operand of the power 2 operation
      *
-     * @return a new DoubleInterval that's the result of the pow operation on an interval
+     * @return a new DoubleInterval that's the result of the pow operation on an
+     *         interval
      */
-    public static DoubleInterval pow2(DoubleInterval base)
-    {
-        if (base.isNan)
-        {
+    public static DoubleInterval pow2(DoubleInterval base) {
+        if (base.isNan) {
             return new DoubleInterval(Double.NaN);
         }
-        if (base.inf > 0.0)
-        {
+        if (base.inf > 0.0) {
             double v1 = Math.pow(base.inf, 2.0);
             double v2 = Math.pow(base.sup, 2.0);
             return roundedInterval(v1, v2);
-        }
-        else if (base.sup < 0.0)
-        {
+        } else if (base.sup < 0.0) {
             double v1 = Math.pow(base.sup, 2.0);
             double v2 = Math.pow(base.inf, 2.0);
             return roundedInterval(v1, v2);
-        }
-        else // 0 is in the base interval
+        } else // 0 is in the base interval
         {
             return new DoubleInterval(0.0, Math.max(Math.pow(base.inf, 2.0), Math.pow(base.sup, 2.0)));
         }
     }
 
     /**
-     * @param base     1st operand of the power exponent operation
-     *                 PRE : base.inf >= 0.0
-     * @param exponent 2st operand of the operation
+     * @param base
+     *            1st operand of the power exponent operation PRE : base.inf >=
+     *            0.0
+     * @param exponent
+     *            2st operand of the operation
      *
-     * @return a new DoubleInterval that's the result of the pow operation on an interval
+     * @return a new DoubleInterval that's the result of the pow operation on an
+     *         interval
      */
-    public static DoubleInterval pow(DoubleInterval base, double exponent)
-    {
-        if (base.isNan || Double.isNaN(exponent))
-        {
+    public static DoubleInterval pow(DoubleInterval base, double exponent) {
+        if (base.isNan || Double.isNaN(exponent)) {
             return new DoubleInterval(Double.NaN);
         }
         assert (base.inf >= 0.0);
@@ -367,36 +337,35 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     }
 
     /**
-     * @param base     1st operand of the power exponent operation
-     *                 PRE : base.inf >= 0.0
-     * @param exponent 2st operand of the operation
+     * @param base
+     *            1st operand of the power exponent operation PRE : base.inf >=
+     *            0.0
+     * @param exponent
+     *            2st operand of the operation
      *
-     * @return a new DoubleInterval that's the result of the base^exponent operation
-     * because the pow function is monotone, the result is esay to compute
+     * @return a new DoubleInterval that's the result of the base^exponent
+     *         operation because the pow function is monotone, the result is
+     *         esay to compute
      */
-    public static DoubleInterval pow(DoubleInterval base, DoubleInterval exponent)
-    {
-        if (base.isNan || exponent.isNan)
-        {
+    public static DoubleInterval pow(DoubleInterval base, DoubleInterval exponent) {
+        if (base.isNan || exponent.isNan) {
             return new DoubleInterval(Double.NaN);
         }
         assert (base.inf >= 0.0);
-        double v1 = Math.min(Math.min(Math.pow(base.inf, exponent.inf), Math.pow(base.inf, exponent.sup)),
-                Math.min(Math.pow(base.sup, exponent.inf), Math.pow(base.sup, exponent.sup)));
-        double v2 = Math.max(Math.max(Math.pow(base.inf, exponent.inf), Math.pow(base.inf, exponent.sup)),
-                Math.max(Math.pow(base.sup, exponent.inf), Math.pow(base.sup, exponent.sup)));
+        double v1 = Math.min(Math.min(Math.pow(base.inf, exponent.inf), Math.pow(base.inf, exponent.sup)), Math.min(Math.pow(base.sup, exponent.inf), Math.pow(base.sup, exponent.sup)));
+        double v2 = Math.max(Math.max(Math.pow(base.inf, exponent.inf), Math.pow(base.inf, exponent.sup)), Math.max(Math.pow(base.sup, exponent.inf), Math.pow(base.sup, exponent.sup)));
         return roundedInterval(v1, v2);
     }
 
     /**
-     * @param a argument for the exponential function
+     * @param a
+     *            argument for the exponential function
      *
-     * @return a new DoubleInterval that's the result of the exponential function
+     * @return a new DoubleInterval that's the result of the exponential
+     *         function
      */
-    public static DoubleInterval exp(DoubleInterval a)
-    {
-        if (a.isNan)
-        {
+    public static DoubleInterval exp(DoubleInterval a) {
+        if (a.isNan) {
             return new DoubleInterval(Double.NaN);
         }
         double v1 = Math.exp(a.inf);
@@ -405,15 +374,15 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     }
 
     /**
-     * @param a argument for the logarithmic function
-     *          PRE : param a must be > 0
+     * @param a
+     *            argument for the logarithmic function PRE : param a must be >
+     *            0
      *
-     * @return a new DoubleInterval that's the result of the logarithmic function (ln)
+     * @return a new DoubleInterval that's the result of the logarithmic
+     *         function (ln)
      */
-    public static DoubleInterval log(DoubleInterval a)
-    {
-        if (a.isNan || a.inf < 0)
-        {
+    public static DoubleInterval log(DoubleInterval a) {
+        if (a.isNan || a.inf < 0) {
             return new DoubleInterval(Double.NaN);
         }
         assert (a.inf > 0.0);
@@ -423,15 +392,15 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     }
 
     /**
-     * @param a argument for the logarithmic base 10 function
-     *          PRE : param a must be > 0
+     * @param a
+     *            argument for the logarithmic base 10 function PRE : param a
+     *            must be > 0
      *
-     * @return a new DoubleInterval that's the result of the logarithmic function
+     * @return a new DoubleInterval that's the result of the logarithmic
+     *         function
      */
-    public static DoubleInterval log10(DoubleInterval a)
-    {
-        if (a.isNan || a.inf < 0)
-        {
+    public static DoubleInterval log10(DoubleInterval a) {
+        if (a.isNan || a.inf < 0) {
             return new DoubleInterval(Double.NaN);
         }
         assert (a.inf > 0.0);
@@ -441,15 +410,14 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     }
 
     /**
-     * @param a operand of the square 2 operation
-     *          PRE : the interval must be positive (a.inf >= 0.0)
+     * @param a
+     *            operand of the square 2 operation PRE : the interval must be
+     *            positive (a.inf >= 0.0)
      *
      * @return a new DoubleInterval that's the result of the sqrt operation
      */
-    public static DoubleInterval sqrt(DoubleInterval a)
-    {
-        if (a.isNan)
-        {
+    public static DoubleInterval sqrt(DoubleInterval a) {
+        if (a.isNan) {
             return new DoubleInterval(Double.NaN);
         }
         assert (a.inf >= 0.0);
@@ -459,107 +427,85 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     }
 
     /**
-     * @param a operand of the absolute operation
+     * @param a
+     *            operand of the absolute operation
      *
      * @return a new DoubleInterval that's the absolute interval of the operand
      */
-    public static DoubleInterval abs(DoubleInterval a)
-    {
-        if (a.isNan)
-        {
+    public static DoubleInterval abs(DoubleInterval a) {
+        if (a.isNan) {
             return new DoubleInterval(Double.NaN);
         }
-        if (isIn(a, 0.0))
-        {
+        if (a.contains(0.0)) {
             double v1 = 0.0;
             double v2 = Math.max(-a.inf, a.sup);
             return new DoubleInterval(v1, v2);
-        }
-        else if (a.sup < 0)
-        {
+        } else if (a.sup < 0) {
             return new DoubleInterval(-a.sup, -a.inf);
-        }
-        else //(a.inf > 0)
+        } else // (a.inf > 0)
         {
-            return new DoubleInterval(a.inf, a.sup); // No need rounded, the result is already know
+            return new DoubleInterval(a.inf, a.sup); // No need rounded, the
+                                                     // result is already know
         }
     }
 
     /**
-     * @param a operand of the negative operation
+     * @param a
+     *            operand of the negative operation
      *
      * @return a new DoubleInterval that's the negative the operand
      */
-    public static DoubleInterval neg(DoubleInterval a)
-    {
-        if (a.isNan)
-        {
+    public static DoubleInterval neg(DoubleInterval a) {
+        if (a.isNan) {
             return new DoubleInterval(Double.NaN);
         }
         return new DoubleInterval(-a.sup, -a.inf);
     }
 
     /**
-     * @param a operand of the sinus operation on interval
+     * @param a
+     *            operand of the sinus operation on interval
      *
      * @return a new DoubleInterval that's the result of the sinus operation
      */
-    public static DoubleInterval sin(DoubleInterval a)
-    {
-        if (a.isNan)
-        {
+    public static DoubleInterval sin(DoubleInterval a) {
+        if (a.isNan) {
             return new DoubleInterval(Double.NaN);
         }
-        if (width(a) >= 2 * PI)
-        {
+        if (width(a) >= 2 * PI) {
             return new DoubleInterval(-1.0, 1.0);
         }
         double inf;
         double sup;
         // convert the interval into the [-2*pi ; 2*pi]
-        if (a.inf < -TWO_PI)
-        {
-            if (a.sup < -TWO_PI)
-            {
+        if (a.inf < -TWO_PI) {
+            if (a.sup < -TWO_PI) {
                 inf = a.inf % TWO_PI;
                 sup = a.sup % TWO_PI;
                 // inf and sup are between -2*pi and 0
-            }
-            else
-            {
+            } else {
                 inf = a.inf + TWO_PI;
                 sup = a.sup + TWO_PI;
             }
-        }
-        else if (a.sup > TWO_PI)
-        {
-            if (a.inf > TWO_PI)
-            {
+        } else if (a.sup > TWO_PI) {
+            if (a.inf > TWO_PI) {
                 inf = a.inf % TWO_PI;
                 sup = a.sup % TWO_PI;
-            }
-            else
-            {
+            } else {
                 inf = a.inf - TWO_PI;
                 sup = a.sup - TWO_PI;
             }
-        }
-        else
-        {
+        } else {
             inf = a.inf;
             sup = a.sup;
         }
         assert (inf > -TWO_PI && inf < TWO_PI);
         assert (sup > -TWO_PI && sup < TWO_PI);
 
-        if (inf > sup)
-        {
-            if (inf > 0.0)
-            {
+        if (inf > sup) {
+            if (inf > 0.0) {
                 inf -= TWO_PI;
-            }
-            else
-            {
+            } else {
                 sup += TWO_PI;
             }
         }
@@ -572,20 +518,17 @@ public class DoubleInterval implements Comparable<DoubleInterval>
             {
                 assert (sup > -TWO_PI && sup <= -ONE_AND_HALF_PI);
                 return roundedInterval(Math.sin(inf), Math.sin(sup));
-            }
-            else if (sup <= -HALF_PI) // sup is in section b
+            } else if (sup <= -HALF_PI) // sup is in section b
             {
                 assert (sup <= -HALF_PI && sup > -ONE_AND_HALF_PI);
                 double v1 = Math.min(Math.sin(inf), Math.sin(sup));
                 return new DoubleInterval(v1 - Math.ulp(v1), 1.0);
-            }
-            else // sup in int the c section
+            } else // sup in int the c section
             {
                 assert (sup > -HALF_PI && sup <= HALF_PI);
                 return new DoubleInterval(-1.0, 1.0);
             }
-        }
-        else if (inf <= -HALF_PI) // inf is in b section
+        } else if (inf <= -HALF_PI) // inf is in b section
         {
             assert (inf <= -HALF_PI && inf > -ONE_AND_HALF_PI);
             if (sup <= -HALF_PI) // both in b section
@@ -594,42 +537,36 @@ public class DoubleInterval implements Comparable<DoubleInterval>
                 double v1 = Math.sin(sup);
                 double v2 = Math.sin(inf);
                 return roundedInterval(v1, v2);
-            }
-            else if (sup <= HALF_PI) // sup is in c section
+            } else if (sup <= HALF_PI) // sup is in c section
             {
                 assert (sup > -HALF_PI && sup <= HALF_PI);
                 double v1 = -1.0;
                 double v2 = Math.max(Math.sin(inf), Math.sin(sup));
                 return new DoubleInterval(v1, v2 + Math.ulp(v2));
-            }
-            else // sup is in d section
+            } else // sup is in d section
             {
                 assert (sup > HALF_PI && sup <= ONE_AND_HALF_PI);
                 return new DoubleInterval(-1.0, 1.0);
             }
-        }
-        else if (inf <= HALF_PI) // inf is in the c section
+        } else if (inf <= HALF_PI) // inf is in the c section
         {
             assert (inf > -HALF_PI && inf <= HALF_PI);
             if (sup <= HALF_PI) // both in c section
             {
                 assert (sup > -HALF_PI && sup <= HALF_PI);
                 return roundedInterval(Math.sin(inf), Math.sin(sup));
-            }
-            else if (sup <= ONE_AND_HALF_PI) // sup in d section
+            } else if (sup <= ONE_AND_HALF_PI) // sup in d section
             {
                 assert (sup > HALF_PI && sup <= ONE_AND_HALF_PI);
                 double v1 = Math.min(Math.sin(inf), Math.sin(sup));
                 double v2 = 1.0;
                 return new DoubleInterval(v1 - Math.ulp(v1), v2);
-            }
-            else // sup is in e section
+            } else // sup is in e section
             {
                 assert (sup <= TWO_PI && sup > ONE_AND_HALF_PI);
                 return new DoubleInterval(-1.0, 1.0);
             }
-        }
-        else if (inf <= ONE_AND_HALF_PI) // inf is in d section
+        } else if (inf <= ONE_AND_HALF_PI) // inf is in d section
         {
             assert (inf > HALF_PI && inf <= ONE_AND_HALF_PI);
             if (sup <= ONE_AND_HALF_PI) // sup is in d section
@@ -638,16 +575,14 @@ public class DoubleInterval implements Comparable<DoubleInterval>
                 double v1 = Math.sin(sup);
                 double v2 = Math.sin(inf);
                 return roundedInterval(v1, v2);
-            }
-            else // sup is in e section
+            } else // sup is in e section
             {
                 assert (sup <= TWO_PI && sup > ONE_AND_HALF_PI);
                 double v1 = -1.0;
                 double v2 = Math.max(Math.sin(inf), Math.sin(sup));
                 return new DoubleInterval(v1, v2 + Math.ulp(v2));
             }
-        }
-        else // both in e section
+        } else // both in e section
         {
             assert (inf > ONE_AND_HALF_PI && inf <= TWO_PI);
             assert (sup > ONE_AND_HALF_PI && sup <= TWO_PI);
@@ -658,12 +593,12 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     }
 
     /**
-     * @param a operand of the cosinus operation on interval
+     * @param a
+     *            operand of the cosinus operation on interval
      *
      * @return a new DoubleInterval that's the result of the cosinus operation
      */
-    public static DoubleInterval cos(DoubleInterval a)
-    {
+    public static DoubleInterval cos(DoubleInterval a) {
         // using sin(x + 2*pi) = cos(x)
         return sin(new DoubleInterval(a.inf + HALF_PI, a.sup + HALF_PI));
     }
@@ -671,66 +606,49 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     /**
      * Max and min are in -pi & pi
      *
-     * @param a operand of the cosinus operation on interval
+     * @param a
+     *            operand of the cosinus operation on interval
      *
      * @return a new DoubleInterval that's the result of the cosinus operation
      */
-    public static DoubleInterval tan(DoubleInterval a)
-    {
-        if (a.isNan)
-        {
+    public static DoubleInterval tan(DoubleInterval a) {
+        if (a.isNan) {
             return new DoubleInterval(Double.NaN);
         }
-        if (width(a) >= PI)
-        {
+        if (width(a) >= PI) {
             return new DoubleInterval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
         }
         double inf;
         double sup;
         // convert the interval into the [-2*pi ; 2*pi]
-        if (a.inf < -PI)
-        {
-            if (a.sup < -PI)
-            {
+        if (a.inf < -PI) {
+            if (a.sup < -PI) {
                 inf = a.inf % PI;
                 sup = a.sup % PI;
                 // inf and sup are between -2*pi and 0
-            }
-            else
-            {
+            } else {
                 inf = a.inf + PI;
                 sup = a.sup + PI;
             }
-        }
-        else if (a.sup > PI)
-        {
-            if (a.inf > PI)
-            {
+        } else if (a.sup > PI) {
+            if (a.inf > PI) {
                 inf = a.inf % PI;
                 sup = a.sup % PI;
-            }
-            else
-            {
+            } else {
                 inf = a.inf - PI;
                 sup = a.sup - PI;
             }
-        }
-        else
-        {
+        } else {
             inf = a.inf;
             sup = a.sup;
         }
         assert (inf > -PI && inf < PI);
         assert (sup > -PI && sup < PI);
 
-        if (inf > sup)
-        {
-            if (inf > 0.0)
-            {
+        if (inf > sup) {
+            if (inf > 0.0) {
                 inf -= PI;
-            }
-            else
-            {
+            } else {
                 sup += PI;
             }
         }
@@ -745,14 +663,12 @@ public class DoubleInterval implements Comparable<DoubleInterval>
                 double v1 = Math.tan(inf);
                 double v2 = Math.tan(sup);
                 return roundedInterval(v1, v2);
-            }
-            else // sup is in the b section
+            } else // sup is in the b section
             {
                 assert (sup >= -HALF_PI && sup < HALF_PI);
                 return new DoubleInterval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
             }
-        }
-        else if (inf < HALF_PI) // inf is in the b section
+        } else if (inf < HALF_PI) // inf is in the b section
         {
             assert (inf >= -HALF_PI && inf < HALF_PI);
             if (sup < HALF_PI) // sup is in the b section
@@ -761,13 +677,11 @@ public class DoubleInterval implements Comparable<DoubleInterval>
                 double v1 = Math.tan(inf);
                 double v2 = Math.tan(sup);
                 return roundedInterval(v1, v2);
-            }
-            else // sup is in the c section
+            } else // sup is in the c section
             {
                 return new DoubleInterval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
             }
-        }
-        else // inf is in the c section
+        } else // inf is in the c section
         {
             assert (inf >= HALF_PI && inf < PI);
             assert (sup >= HALF_PI && sup < PI);
@@ -778,14 +692,13 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     }
 
     /**
-     * @param a operand of the sinh operation
+     * @param a
+     *            operand of the sinh operation
      *
      * @return a new DoubleInterval that's the negative the operand
      */
-    public static DoubleInterval sinh(DoubleInterval a)
-    {
-        if (a.isNan)
-        {
+    public static DoubleInterval sinh(DoubleInterval a) {
+        if (a.isNan) {
             return new DoubleInterval(Double.NaN);
         }
         double v1 = Math.sinh(a.inf);
@@ -794,14 +707,13 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     }
 
     /**
-     * @param a operand of the cosh operation
+     * @param a
+     *            operand of the cosh operation
      *
      * @return a new DoubleInterval that's the negative the operand
      */
-    public static DoubleInterval cosh(DoubleInterval a)
-    {
-        if (a.isNan)
-        {
+    public static DoubleInterval cosh(DoubleInterval a) {
+        if (a.isNan) {
             return new DoubleInterval(Double.NaN);
         }
         double sup = Math.max(Math.cosh(a.inf), Math.cosh(a.sup));
@@ -809,14 +721,13 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     }
 
     /**
-     * @param a operand of the tanh operation
+     * @param a
+     *            operand of the tanh operation
      *
      * @return a new DoubleInterval that's the negative the operand
      */
-    public static DoubleInterval tanh(DoubleInterval a)
-    {
-        if (a.isNan)
-        {
+    public static DoubleInterval tanh(DoubleInterval a) {
+        if (a.isNan) {
             return new DoubleInterval(Double.NaN);
         }
         double v1 = Math.tanh(a.inf);
@@ -825,16 +736,15 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     }
 
     /**
-     * @param a operand of the asin operation
-     *          PRE : the interval must be in [-1;1]
+     * @param a
+     *            operand of the asin operation PRE : the interval must be in
+     *            [-1;1]
      *
      * @return a new DoubleInterval that's the negative the operand
      */
-    public static DoubleInterval asin(DoubleInterval a)
-    {
+    public static DoubleInterval asin(DoubleInterval a) {
         assert (a.inf >= -1.0 && a.sup <= 1.0);
-        if (a.isNan)
-        {
+        if (a.isNan) {
             return new DoubleInterval(Double.NaN);
         }
         double v1 = Math.asin(a.inf);
@@ -843,16 +753,15 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     }
 
     /**
-     * @param a operand of the acos operation
-     *          PRE : the interval must be in [-1;1]
+     * @param a
+     *            operand of the acos operation PRE : the interval must be in
+     *            [-1;1]
      *
      * @return a new DoubleInterval that's the negative the operand
      */
-    public static DoubleInterval acos(DoubleInterval a)
-    {
+    public static DoubleInterval acos(DoubleInterval a) {
         assert (a.inf >= -1.0 && a.sup <= 1.0);
-        if (a.isNan)
-        {
+        if (a.isNan) {
             return new DoubleInterval(Double.NaN);
         }
         double v1 = Math.acos(a.sup);
@@ -861,14 +770,13 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     }
 
     /**
-     * @param a operand of the atan operation
+     * @param a
+     *            operand of the atan operation
      *
      * @return a new DoubleInterval that's the negative the operand
      */
-    public static DoubleInterval atan(DoubleInterval a)
-    {
-        if (a.isNan)
-        {
+    public static DoubleInterval atan(DoubleInterval a) {
+        if (a.isNan) {
             return new DoubleInterval(Double.NaN);
         }
         double v1 = Math.atan(a.inf);
@@ -878,45 +786,44 @@ public class DoubleInterval implements Comparable<DoubleInterval>
 
     /**
      * <p>
-     *     Notes : the retourned Interval is pessimist
+     * Notes : the retourned Interval is pessimist
      * </p>
-     * @param a 1st operand of the modulo
-     * @param b 2st operand of the modulo
+     * 
+     * @param a
+     *            1st operand of the modulo
+     * @param b
+     *            2st operand of the modulo
      *
      * @return a new DoubleInterval that's the result of the a%b operation
      */
-    public static DoubleInterval modulo(DoubleInterval a, DoubleInterval b)
-    {
-        if (a.isNan || b.isNan)
-        {
+    public static DoubleInterval modulo(DoubleInterval a, DoubleInterval b) {
+        if (a.isNan || b.isNan) {
             return new DoubleInterval(Double.NaN);
         }
-        if(isIn(b,0.0))
-        {
+        if (b.contains(0.0)) {
             return new DoubleInterval(Double.NaN);
         }
-        double max = Math.max(Math.abs(b.inf),Math.abs(b.sup));
-        if(isIn(a,0.0))
-        {
-            return new DoubleInterval(-max,max);
+        double max = Math.max(Math.abs(b.inf), Math.abs(b.sup));
+        if (a.contains(0.0)) {
+            return new DoubleInterval(-max, max);
         }
-        return a.inf > 0 ? new DoubleInterval(0.0,max) : new DoubleInterval(-max,0.0);
+        return a.inf > 0 ? new DoubleInterval(0.0, max)
+                : new DoubleInterval(-max, 0.0);
     }
 
     /**
-     * @param inf inferior bound of the interval
-     * @param sup superior bound of the interval
+     * @param inf
+     *            inferior bound of the interval
+     * @param sup
+     *            superior bound of the interval
      *
      * @return a new DoubleInterval with the inf minus ulp and the sup bonus ulp
      */
-    private static DoubleInterval roundedInterval(double inf, double sup)
-    {
-        if (Double.isNaN(inf) || Double.isNaN(sup))
-        {
+    private static DoubleInterval roundedInterval(double inf, double sup) {
+        if (Double.isNaN(inf) || Double.isNaN(sup)) {
             return new DoubleInterval(Double.NaN);
         }
         return new DoubleInterval(inf - Math.ulp(inf), sup + Math.ulp(sup));
     }
 
 }
-

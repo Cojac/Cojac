@@ -29,12 +29,12 @@ public class DoubleIntervalTest
         double v2 = getBiggerRndDouble(v1);
         DoubleInterval a = new DoubleInterval(v1,v2);
 
-        assertTrue(String.format("Test v1 E a : %f E %s",v1,a),DoubleInterval.isIn(a,v1));
-        assertTrue(String.format("Test v2 E a : %f E %s",v2,a),DoubleInterval.isIn(a,v2));
+        assertTrue(String.format("Test v1 E a : %f E %s",v1,a), a.contains(v1));
+        assertTrue(String.format("Test v2 E a : %f E %s",v2,a), a.contains(v2));
 
         double v3 = getBiggerRndDouble(v2);
         a = new DoubleInterval(v1,v3);
-        assertTrue(String.format("Test v2 E a : %f E %s",v2,a),DoubleInterval.isIn(a,v2));
+        assertTrue(String.format("Test v2 E a : %f E %s",v2,a), a.contains(v2));
 
         // Test special number
         // NaN
@@ -46,7 +46,7 @@ public class DoubleIntervalTest
         for(int i=0; i<nbrLoopExecution; i++)
         {
             DoubleInterval c = new DoubleInterval(-rndDouble(), rndDouble());
-            assertTrue(String.format("c is in b : %s isIn %s",c,b),DoubleInterval.isIn(b,c));
+            assertTrue(String.format("c is in b : %s isIn %s",c,b),b.contains(c));
         }
 
         // max value... same has up (positive and negative infinity)
@@ -54,7 +54,7 @@ public class DoubleIntervalTest
         for(int i=0; i<nbrLoopExecution; i++)
         {
             DoubleInterval c = new DoubleInterval(-rndDouble(), rndDouble());
-            assertTrue(String.format("c is in b : %s isIn %s",c,b),DoubleInterval.isIn(b,c));
+            assertTrue(String.format("c is in b : %s isIn %s",c,b), b.contains(c));
         }
 
         // nothing special with min value
@@ -179,12 +179,12 @@ public class DoubleIntervalTest
         assertTrue(String.format("Test d + c == c + d : %s == %s",dc,cd),dc.compareTo(cd) == 0);
 
         DoubleInterval abCorrect = new DoubleInterval(5.5,12.0);
-        assertTrue(String.format("Test %s E %s",abCorrect,ab),DoubleInterval.isIn(ab,abCorrect));
+        assertTrue(String.format("Test %s E %s",abCorrect,ab), ab.contains(abCorrect));
 
         DoubleInterval e = new DoubleInterval(0.0);
         e = DoubleInterval.add(e,e); testIntervalBounds(e);
-        assertTrue(String.format("Test 0.0 E e : %f isiN %s", 0.0, e), DoubleInterval.isIn(e, 0.0));
-        assertTrue(String.format("Test e E e : %s isiN %s",e,e),DoubleInterval.isIn(e, e));
+        assertTrue(String.format("Test 0.0 E e : %f isiN %s", 0.0, e), e.contains(0.0));
+        assertTrue(String.format("Test e E e : %s isiN %s",e,e), e.contains(e));
 
         // Test special number
         // NaN
@@ -208,21 +208,21 @@ public class DoubleIntervalTest
         DoubleInterval cc = DoubleInterval.sub(c,c); testIntervalBounds(cc);
         DoubleInterval dd = DoubleInterval.sub(d,d); testIntervalBounds(dd);
 
-        assertTrue(String.format("Test 0 E (a - a) : %f E (%s - %s)",0.0,a,a),DoubleInterval.isIn(aa,0));
-        assertTrue(String.format("Test 0 E (b - b) : %f E (%s - %s)", 0.0, b, b), DoubleInterval.isIn(bb, 0));
-        assertTrue(String.format("Test 0 E (c - c) : %f E (%s - %s)", 0.0, c, c), DoubleInterval.isIn(cc, 0));
-        assertTrue(String.format("Test 0 E (d - d) : %f E (%s - %s)",0.0,d,d),DoubleInterval.isIn(dd,0));
+        assertTrue(String.format("Test 0 E (a - a) : %f E (%s - %s)",0.0,a,a), aa.contains(0));
+        assertTrue(String.format("Test 0 E (b - b) : %f E (%s - %s)", 0.0, b, b), bb.contains(0));
+        assertTrue(String.format("Test 0 E (c - c) : %f E (%s - %s)", 0.0, c, c), cc.contains(0));
+        assertTrue(String.format("Test 0 E (d - d) : %f E (%s - %s)",0.0,d,d), dd.contains(0));
 
         DoubleInterval ab = DoubleInterval.sub(a,b);
         DoubleInterval ba = DoubleInterval.sub(b,a);
 
         // a - b = [-9.0;-5.9]
         DoubleInterval abRes = new DoubleInterval(-9.0,-5.9);
-        assertTrue(String.format("Test [-9.0;-5.9] E (a - b) : %s E (%s - %s)",abRes,a,b),DoubleInterval.isIn(ab, abRes));
+        assertTrue(String.format("Test [-9.0;-5.9] E (a - b) : %s E (%s - %s)",abRes,a,b), ab.contains(abRes));
 
         // b - a = [-5.9;9.0]
         DoubleInterval baRes = new DoubleInterval(-5.9,9.0);
-        assertTrue(String.format("Test [-9.0;-5.9] E (a - b) : %s E (%s - %s)",baRes,b,a),DoubleInterval.isIn(ba, baRes));
+        assertTrue(String.format("Test [-9.0;-5.9] E (a - b) : %s E (%s - %s)",baRes,b,a), ba.contains(baRes));
 
         // Test ab == -ba
         assertTrue(String.format("Test ab == ba : %s == %s", abRes, baRes), ab.strictCompareTo(DoubleInterval.neg(ba)));
@@ -243,17 +243,17 @@ public class DoubleIntervalTest
         // a * b = [-81.0;180.0]
         DoubleInterval abRes = new DoubleInterval(-81.0,180.0);
         DoubleInterval ab = DoubleInterval.mul(a, b); testIntervalBounds(ab);
-        assertTrue(String.format("Test abRes E (a * b) : %s E (%s * %s)",abRes,a,b),DoubleInterval.isIn(ab, abRes));
+        assertTrue(String.format("Test abRes E (a * b) : %s E (%s * %s)",abRes,a,b), ab.contains(abRes));
 
         // a * c = [-300.0;-48.0]
         DoubleInterval acRes = new DoubleInterval(-300.0,-48.0);
         DoubleInterval ac = DoubleInterval.mul(a,c); testIntervalBounds(ac);
-        assertTrue(String.format("Test abRes E (a * c) : %s E (%s * %s)",acRes,a,c),DoubleInterval.isIn(ac, acRes));
+        assertTrue(String.format("Test abRes E (a * c) : %s E (%s * %s)",acRes,a,c), ac.contains(acRes));
 
         // b * c = [-240;270.0]
         DoubleInterval bcRes = new DoubleInterval(-240.0,270.0);
         DoubleInterval bc = DoubleInterval.mul(b,c); testIntervalBounds(bc);
-        assertTrue(String.format("Test abRes E (b * c) : %s E (%s * %s)",bcRes,b,c),DoubleInterval.isIn(bc,bcRes));
+        assertTrue(String.format("Test abRes E (b * c) : %s E (%s * %s)",bcRes,b,c), bc.contains(bcRes));
 
         // test a * b == b * a
         DoubleInterval ba = DoubleInterval.mul(b,a);
@@ -275,11 +275,11 @@ public class DoubleIntervalTest
         DoubleInterval ab = DoubleInterval.div(a,b);
         DoubleInterval abRes = new DoubleInterval(10.0/3.0);
 
-        assertTrue(String.format("Test [3.33;3.33] E a/b : %s E %s",abRes,ab),DoubleInterval.isIn(ab, abRes));
+        assertTrue(String.format("Test [3.33;3.33] E a/b : %s E %s",abRes,ab), ab.contains(abRes));
 
         // Test that's a/b * b/a == 1 --> 1 E a/b * b/a
         DoubleInterval abba = DoubleInterval.mul(DoubleInterval.div(a, b), DoubleInterval.div(b, a));
-        assertTrue(String.format("Test 1.0 E a/b : %f E %s", 1.0, abba), DoubleInterval.isIn(abba, 1.0));
+        assertTrue(String.format("Test 1.0 E a/b : %f E %s", 1.0, abba),  abba.contains(1.0));
 
         // Test 0 interval
         double v1;
@@ -305,9 +305,9 @@ public class DoubleIntervalTest
         DoubleInterval bRes = new DoubleInterval(0.0,25.0);
         DoubleInterval cRes = new DoubleInterval(36.0,100.0);
 
-        assertTrue(String.format("Test a^2 : %s^2 = %s", a, aRes), DoubleInterval.isIn(aa, aRes));
-        assertTrue(String.format("Test b^2 : %s^2 = %s", b, bRes), DoubleInterval.isIn(bb, bRes));
-        assertTrue(String.format("Test c^2 : %s^2 = %s", c, cRes), DoubleInterval.isIn(cc, cRes));
+        assertTrue(String.format("Test a^2 : %s^2 = %s", a, aRes), aa.contains(aRes));
+        assertTrue(String.format("Test b^2 : %s^2 = %s", b, bRes), bb.contains(bRes));
+        assertTrue(String.format("Test c^2 : %s^2 = %s", c, cRes), cc.contains(cRes));
 
         // Test a*a ~= a^2
         // The width of the interval with the mul operation instead of
@@ -316,9 +316,9 @@ public class DoubleIntervalTest
         DoubleInterval bbMul = DoubleInterval.mul(b,b);
         DoubleInterval ccMul = DoubleInterval.mul(c, c);
 
-        assertTrue(String.format("Test a^2 isIn a*a : %s inIn %s",aa,aaMul),DoubleInterval.isIn(aaMul,aa));
-        assertTrue(String.format("Test b^2 isIn b*b : %s inIn %s",bb,bbMul),DoubleInterval.isIn(bbMul, bb));
-        assertTrue(String.format("Test c^2 isIn c*c : %s inIn %s",cc,ccMul),DoubleInterval.isIn(ccMul, cc));
+        assertTrue(String.format("Test a^2 isIn a*a : %s inIn %s",aa,aaMul), aaMul.contains(aa));
+        assertTrue(String.format("Test b^2 isIn b*b : %s inIn %s",bb,bbMul), bbMul.contains(bb));
+        assertTrue(String.format("Test c^2 isIn c*c : %s inIn %s",cc,ccMul), ccMul.contains(cc));
     }
 
     @Test
@@ -333,8 +333,8 @@ public class DoubleIntervalTest
         DoubleInterval aRes = new DoubleInterval(64.0,125.0);
         DoubleInterval bRes = new DoubleInterval(0.0,531441.0);
 
-        assertTrue(String.format("Test a^3 : %s isIn %s", a3, aRes), DoubleInterval.isIn(a3, aRes));
-        assertTrue(String.format("Test b^6 : %s isIn %s", b6, bRes), DoubleInterval.isIn(b6, bRes));
+        assertTrue(String.format("Test a^3 : %s isIn %s", a3, aRes), a3.contains(aRes));
+        assertTrue(String.format("Test b^6 : %s isIn %s", b6, bRes), b6.contains(bRes));
 
         // Test relation between pow2(a) and pow(a,2.0)
         DoubleInterval aPow2 = DoubleInterval.pow2(a);
@@ -355,8 +355,8 @@ public class DoubleIntervalTest
         DoubleInterval abRes = new DoubleInterval(0.0,78125.0);
         DoubleInterval baRes = new DoubleInterval(1.0,16807.0);
 
-        assertTrue(String.format("Test a^b : %s^%s isIn %s", a,b, abRes), DoubleInterval.isIn(ab, abRes));
-        assertTrue(String.format("Test b^a : %s^%s isIn %s", b,a, baRes), DoubleInterval.isIn(ba, baRes));
+        assertTrue(String.format("Test a^b : %s^%s isIn %s", a,b, abRes), ab.contains(abRes));
+        assertTrue(String.format("Test b^a : %s^%s isIn %s", b,a, baRes), ba.contains(baRes));
     }
 
     @Test
@@ -370,8 +370,8 @@ public class DoubleIntervalTest
         DoubleInterval aRes = new DoubleInterval(1.0,90.01713130052181);
         DoubleInterval bRes = new DoubleInterval(0.011108996538242306,8103.083927575384);
 
-        assertTrue(String.format("Test exp(a) : %s isIn %s", aRes,aExp), DoubleInterval.isIn(aExp,aRes));
-        assertTrue(String.format("Test exp(b) : %s isIn %s", bRes,bExp), DoubleInterval.isIn(bExp,bRes));
+        assertTrue(String.format("Test exp(a) : %s isIn %s", aRes,aExp), aExp.contains(aRes));
+        assertTrue(String.format("Test exp(b) : %s isIn %s", bRes,bExp), bExp.contains(bRes));
     }
 
     @Test
@@ -385,8 +385,8 @@ public class DoubleIntervalTest
         DoubleInterval aRes = new DoubleInterval(1.3862943611198906,2.1972245773362196);
         DoubleInterval bRes = new DoubleInterval(-10.126631103850338,-9.903487552536127);
 
-        assertTrue(String.format("Test log(a) : %s isIn %s", aRes,aLog), DoubleInterval.isIn(aLog,aRes));
-        assertTrue(String.format("Test log(b) : %s isIn %s", bRes,bLog), DoubleInterval.isIn(bLog, bRes));
+        assertTrue(String.format("Test log(a) : %s isIn %s", aRes,aLog), aLog.contains(aRes));
+        assertTrue(String.format("Test log(b) : %s isIn %s", bRes,bLog), bLog.contains(bRes));
     }
 
     @Test
@@ -400,8 +400,8 @@ public class DoubleIntervalTest
         DoubleInterval aRes = new DoubleInterval(0.3010299956639812,1.0);
         DoubleInterval bRes = new DoubleInterval(-4.3979400086720375,-4.301029995663981);
 
-        assertTrue(String.format("Test log(a) : %s isIn %s", aRes,aLog), DoubleInterval.isIn(aLog,aRes));
-        assertTrue(String.format("Test log(b) : %s isIn %s", bRes,bLog), DoubleInterval.isIn(bLog, bRes));
+        assertTrue(String.format("Test log(a) : %s isIn %s", aRes,aLog), aLog.contains(aRes));
+        assertTrue(String.format("Test log(b) : %s isIn %s", bRes,bLog), bLog.contains(bRes));
     }
 
     @Test
@@ -666,9 +666,9 @@ public class DoubleIntervalTest
 
         assertTrue(String.format("Test a %% b : NaN",a,b),ab.isNan());
         assertTrue(String.format("Test a %% d : NaN",a,d),ad.isNan());
-        assertTrue(String.format("Test b %% a : %s %% %s = %s ; res : %s",b,a,baRes,ba),DoubleInterval.isIn(ba,baRes));
-        assertTrue(String.format("Test a %% c : %s %% %s = %s ; res : %s",a,c,acRes,ac),DoubleInterval.isIn(ac,acRes));
-        assertTrue(String.format("Test c %% a : %s %% %s = %s ; res : %s",c,a,caRes,ca),DoubleInterval.isIn(ca,caRes));
+        assertTrue(String.format("Test b %% a : %s %% %s = %s ; res : %s",b,a,baRes,ba), ba.contains(baRes));
+        assertTrue(String.format("Test a %% c : %s %% %s = %s ; res : %s",a,c,acRes,ac), ac.contains(acRes));
+        assertTrue(String.format("Test c %% a : %s %% %s = %s ; res : %s",c,a,caRes,ca), ca.contains(caRes));
     }
 
     @Test

@@ -257,7 +257,7 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
 
     public static boolean COJAC_MAGIC_DOUBLE_isIn(IntervalDouble n)
     {
-        return DoubleInterval.isIn(n.interval, n.value);
+        return n.interval.contains(n.value);
     }
 
     public static int COJAC_MAGIC_DOUBLE_IntervalcompareTo(IntervalDouble a, IntervalDouble b)
