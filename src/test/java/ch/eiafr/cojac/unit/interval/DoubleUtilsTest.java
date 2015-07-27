@@ -8,7 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 public class DoubleUtilsTest
 {
-    private int repeat_times = 10000;
+    private int repeat_times = 1000;
 
     @Test
     public void testRndDouble() throws Exception

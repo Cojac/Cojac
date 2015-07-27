@@ -2,11 +2,12 @@ package ch.eiafr.cojac.models.wrappers;
 
 public class DerivationDouble extends Number implements Comparable<DerivationDouble>
 {
-    protected boolean isNaN; // Todo
+    protected boolean isNaN; // TODO: remove that isNaN field 
 
     protected double value;
     protected double dValue;
 
+    //TODO: if relevant declare constructor private (public <=> specified by the wrapping mechanism)
     public DerivationDouble(double v)
     {
         this.value = v;
@@ -173,7 +174,6 @@ public class DerivationDouble extends Number implements Comparable<DerivationDou
         {
             return new DerivationDouble(Double.NaN);
         }
-        assert (a.value >= 0.0);
         double value = Math.pow(a.value, b.value);
         double dValue = Math.pow(a.value,b.value) * (((b.value*a.dValue)/a.value) + Math.log(a.value) * b.dValue);
         return new DerivationDouble(value,dValue);

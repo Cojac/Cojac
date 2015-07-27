@@ -11,7 +11,7 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
 
     protected double value;
     protected double[] stochasticValue;
-    protected boolean isNan = false;
+    protected boolean isNan = false;  // TODO: remove that  field 
     protected boolean isUnStable = false;
 
     /* Constructor */
@@ -235,7 +235,7 @@ public class StochasticDouble extends Number implements Comparable<StochasticDou
         return new Double(a.value);
     }
 
-
+    //TODO remove "round to zero"
     private static double rndRoundDouble(double value)
     {
         switch (r.nextInt(4))

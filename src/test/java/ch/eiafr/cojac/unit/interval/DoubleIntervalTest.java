@@ -8,7 +8,6 @@ import static ch.eiafr.cojac.unit.interval.DoubleUtils.getBiggerRndDouble;
 import static ch.eiafr.cojac.unit.interval.DoubleUtils.rndDouble;
 import static java.lang.Double.*;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -19,12 +18,13 @@ import static org.junit.Assert.assertTrue;
  */
 public class DoubleIntervalTest
 {
-    private int nbrLoopExecution = 1000;
+    private int nbrLoopExecution = 500;
     private final double MAX_SUP = 20.0;
+    private final Random rnd = new Random();
+    private final double step = 0.1; // increment between two tested values for trigonometric operations
 
     @Test
-    public void testIsIn() throws Exception
-    {
+    public void testIsIn() throws Exception {
         double v1 = rndDouble();
         double v2 = getBiggerRndDouble(v1);
         DoubleInterval a = new DoubleInterval(v1,v2);
@@ -61,8 +61,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testCompareTo() throws Exception
-    {
+    public void testCompareTo() throws Exception {
         // Simple compare with non inclusive interval
         double v1 = rndDouble();
         double v2 = getBiggerRndDouble(v1);
@@ -109,8 +108,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testStrictCompareTo() throws Exception
-    {
+    public void testStrictCompareTo() throws Exception {
         DoubleInterval a = new DoubleInterval(0.0);
         DoubleInterval b = new DoubleInterval(0.0,0.0);
         assertTrue(String.format("Test a == b : %s == %s",a,b),a.strictCompareTo(b));
@@ -130,8 +128,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testCompareToDouble() throws Exception
-    {
+    public void testCompareToDouble() throws Exception {
         // Simple compare with a double...
         double v1 = rndDouble();
         double v2 = getBiggerRndDouble(v1);
@@ -159,8 +156,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testAdd() throws Exception
-    {
+    public void testAdd() throws Exception {
         // Test some simple interval addition (positive, negative, both...)
         DoubleInterval a = new DoubleInterval(0.0,4.0);
         DoubleInterval b = new DoubleInterval(5.5,8.0);
@@ -201,8 +197,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testSub() throws Exception
-    {
+    public void testSub() throws Exception {
         DoubleInterval a = new DoubleInterval(3.0,5.9);
         DoubleInterval b = new DoubleInterval(0.0,12.0);
         DoubleInterval c = new DoubleInterval(-23.5,-7.8);
@@ -240,8 +235,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testMul() throws Exception
-    {
+    public void testMul() throws Exception {
         DoubleInterval a = new DoubleInterval(6.0,15.0);
         DoubleInterval b = new DoubleInterval(-13.5,12.0);
         DoubleInterval c = new DoubleInterval(-20.0,-8.0);
@@ -273,8 +267,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testDiv() throws Exception
-    {
+    public void testDiv() throws Exception {
         DoubleInterval a = new DoubleInterval(10.0); testIntervalBounds(a);
         DoubleInterval b = new DoubleInterval(3.0); testIntervalBounds(b);
 
@@ -299,8 +292,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testPow2() throws Exception
-    {
+    public void testPow2() throws Exception {
         DoubleInterval a = new DoubleInterval(2.0,3.0);
         DoubleInterval b = new DoubleInterval(-2.0,5.0);
         DoubleInterval c = new DoubleInterval(-10.0,-6.0);
@@ -330,8 +322,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testPow() throws Exception
-    {
+    public void testPow() throws Exception {
         // Simple pow usage
         DoubleInterval a = new DoubleInterval(4.0,5.0);
         DoubleInterval b = new DoubleInterval(0.0,9.0);
@@ -353,8 +344,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testPowWithInterval() throws Exception
-    {
+    public void testPowWithInterval() throws Exception {
         // Simple pow usage
         DoubleInterval a = new DoubleInterval(0.0,5.0);
         DoubleInterval b = new DoubleInterval(3.0,7.0);
@@ -365,14 +355,12 @@ public class DoubleIntervalTest
         DoubleInterval abRes = new DoubleInterval(0.0,78125.0);
         DoubleInterval baRes = new DoubleInterval(1.0,16807.0);
 
-
         assertTrue(String.format("Test a^b : %s^%s isIn %s", a,b, abRes), DoubleInterval.isIn(ab, abRes));
         assertTrue(String.format("Test b^a : %s^%s isIn %s", b,a, baRes), DoubleInterval.isIn(ba, baRes));
     }
 
     @Test
-    public void testExp() throws Exception
-    {
+    public void testExp() throws Exception {
         DoubleInterval a = new DoubleInterval(0.0,4.5);
         DoubleInterval b = new DoubleInterval(-4.5,9.0);
 
@@ -387,8 +375,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testLog() throws Exception
-    {
+    public void testLog() throws Exception {
         DoubleInterval a = new DoubleInterval(4.0,9.0);
         DoubleInterval b = new DoubleInterval(0.00004,0.00005);
 
@@ -403,8 +390,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testLog10() throws Exception
-    {
+    public void testLog10() throws Exception {
         DoubleInterval a = new DoubleInterval(2.0,10.0);
         DoubleInterval b = new DoubleInterval(0.00004,0.00005);
 
@@ -419,36 +405,27 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testSin() throws Exception
-    {
+    public void testSin() throws Exception {
         double v1,v2,min = 10.0,max = -10.0;
-        double itr,itrSin,step = 0.001;
+        double itr,itrSin;
         DoubleInterval a,aRes;
-        Random r = new Random();
 
-        for(int i=0; i<nbrLoopExecution; i++)
-        {
-            v1 = r.nextDouble() * MAX_SUP; v1 = r.nextBoolean() ? v1:-v1;
-            v2 = r.nextDouble() * MAX_SUP; v2 = r.nextBoolean() ? v2:-v2;
-            if(v1 < v2)
-            {
+        for(int i=0; i<nbrLoopExecution; i++) {
+            v1 = rnd.nextDouble() * MAX_SUP; v1 = rnd.nextBoolean() ? v1:-v1;
+            v2 = rnd.nextDouble() * MAX_SUP; v2 = rnd.nextBoolean() ? v2:-v2;
+            if(v1 < v2) {
                 a = new DoubleInterval(v1,v2);
-            }
-            else
-            {
+            } else {
                 a = new DoubleInterval(v2,v1);
             }
             aRes = DoubleInterval.sin(a);
             itr = a.inf + step; // if we start at itr = a.inf, it's failing...
-            while(itr < a.sup)
-            {
+            while(itr < a.sup) {
                 itrSin = Math.sin(itr);
-                if(itrSin < min)
-                {
+                if(itrSin < min) {
                     min = itrSin;
                 }
-                if(itrSin > max)
-                {
+                if(itrSin > max)  {
                     max = itrSin;
                 }
                 assertTrue(String.format("sin(%s) is in %s", itr, aRes),itrSin <= aRes.sup && itrSin >= aRes.inf);
@@ -460,36 +437,27 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testCos() throws Exception
-    {
+    public void testCos() throws Exception {
         double v1,v2,min = 20.0,max = -20.0;
-        double itr,itrCos,step = 0.001;
+        double itr,itrCos;
         DoubleInterval a,aRes;
-        Random r = new Random();
 
-        for(int i=0; i<nbrLoopExecution; i++)
-        {
-            v1 = r.nextDouble() * MAX_SUP; v1 = r.nextBoolean() ? v1:-v1;
-            v2 = r.nextDouble() * MAX_SUP; v2 = r.nextBoolean() ? v2:-v2;
-            if(v1 < v2)
-            {
+        for(int i=0; i<nbrLoopExecution; i++) {
+            v1 = rnd.nextDouble() * MAX_SUP; v1 = rnd.nextBoolean() ? v1:-v1;
+            v2 = rnd.nextDouble() * MAX_SUP; v2 = rnd.nextBoolean() ? v2:-v2;
+            if(v1 < v2) {
                 a = new DoubleInterval(v1,v2);
-            }
-            else
-            {
+            } else {
                 a = new DoubleInterval(v2,v1);
             }
             aRes = DoubleInterval.cos(a);
             itr = a.inf + step; // if we start at itr = a.inf, it's failing...
-            while(itr < a.sup)
-            {
+            while(itr < a.sup) {
                 itrCos = Math.cos(itr);
-                if(itrCos < min)
-                {
+                if(itrCos < min) {
                     min = itrCos;
                 }
-                if(itrCos > max)
-                {
+                if(itrCos > max) {
                     max = itrCos;
                 }
                 assertTrue(String.format("cos(%s) is in %s", itr, aRes),itrCos <= aRes.sup && itrCos >= aRes.inf);
@@ -501,36 +469,27 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testTan() throws Exception
-    {
+    public void testTan() throws Exception {
         double v1,v2,min = 20.0,max = -20.0;
-        double itr,itrTan,step = 0.001;
+        double itr,itrTan;
         DoubleInterval a,aRes;
-        Random r = new Random();
 
-        for(int i=0; i<nbrLoopExecution; i++)
-        {
-            v1 = r.nextDouble() * MAX_SUP; v1 = r.nextBoolean() ? v1:-v1;
-            v2 = r.nextDouble() * MAX_SUP; v2 = r.nextBoolean() ? v2:-v2;
-            if(v1 < v2)
-            {
+        for(int i=0; i<nbrLoopExecution; i++) {
+            v1 = rnd.nextDouble() * MAX_SUP; v1 = rnd.nextBoolean() ? v1:-v1;
+            v2 = rnd.nextDouble() * MAX_SUP; v2 = rnd.nextBoolean() ? v2:-v2;
+            if(v1 < v2) {
                 a = new DoubleInterval(v1,v2);
-            }
-            else
-            {
+            } else {
                 a = new DoubleInterval(v2,v1);
             }
             aRes = DoubleInterval.tan(a);
             itr = a.inf + step; // if we start at itr = a.inf, it's failing...
-            while(itr < a.sup)
-            {
+            while(itr < a.sup) {
                 itrTan = Math.tan(itr);
-                if(itrTan < min)
-                {
+                if(itrTan < min) {
                     min = itrTan;
                 }
-                if(itrTan > max)
-                {
+                if(itrTan > max) {
                     max = itrTan;
                 }
                 assertTrue(String.format("tan(%s) is in %s : tan(%s) = %s", itr, aRes,itr,itrTan),itrTan <= aRes.sup && itrTan >= aRes.inf);
@@ -542,40 +501,33 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testWidth() throws Exception
-    {
-        Random r = new Random();
+    public void testWidth() throws Exception {
         DoubleInterval a;
         double v1,v2;
-        for (int i = 0; i < nbrLoopExecution; i++)
-        {
-            v1 = r.nextDouble() * MAX_SUP; v1 = r.nextBoolean() ? v1:-v1;
-            v2 = r.nextDouble() * MAX_SUP; v2 = r.nextBoolean() ? v2:-v2;
+        for (int i = 0; i < nbrLoopExecution; i++) {
+            v1 = rnd.nextDouble() * MAX_SUP; v1 = rnd.nextBoolean() ? v1:-v1;
+            v2 = rnd.nextDouble() * MAX_SUP; v2 = rnd.nextBoolean() ? v2:-v2;
             a = v1 < v2 ? new DoubleInterval(v1,v2) : new DoubleInterval(v2,v1);
             assertTrue(DoubleInterval.width(a) == a.sup - a.inf);
         }
     }
 
     @Test
-    public void testSqrt() throws Exception
-    {
-        Random r = new Random();
+    public void testSqrt() throws Exception {
         double v1,v2;
         DoubleInterval a,aRes;
-        double itr,itrSqrt,step = 0.1;
-
-        for (int i = 0; i < nbrLoopExecution; i++)
-        {
-            v1 = r.nextDouble() * MAX_SUP;
-            v2 = r.nextDouble() * MAX_SUP;
+        double itr,itrSqrt; 
+        
+        for (int i = 0; i < nbrLoopExecution; i++) {
+            v1 = rnd.nextDouble() * MAX_SUP;
+            v2 = rnd.nextDouble() * MAX_SUP;
             a = v1 < v2 ? new DoubleInterval(v1, v2) : new DoubleInterval(v2, v1);
             testIntervalBounds(a);
 
             itr = a.inf + step;
 
             aRes = DoubleInterval.sqrt(a);
-            while (itr < a.sup)
-            {
+            while (itr < a.sup) {
                 itrSqrt = Math.sqrt(itr);
                 assertTrue(String.format("sqrt(%s) is in %s : sqrt(%s) = %s\nInterval used is : %s\n", itr, aRes, itr, itrSqrt, a),
                         itrSqrt <= aRes.sup && itrSqrt >= aRes.inf);
@@ -585,8 +537,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testAbs() throws Exception
-    {
+    public void testAbs() throws Exception  {
         DoubleInterval a = new DoubleInterval(3.0,4.0);
         DoubleInterval b = new DoubleInterval(-2.0,5.0);
         DoubleInterval c = new DoubleInterval(-7.0,-5.0);
@@ -601,8 +552,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testNeg() throws Exception
-    {
+    public void testNeg() throws Exception {
         DoubleInterval a = new DoubleInterval(3.0,4.0);
         DoubleInterval b = new DoubleInterval(-2.0,5.0);
         DoubleInterval c = new DoubleInterval(-7.0,-5.0);
@@ -617,18 +567,15 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testArcFunction() throws Exception
-    {
-        Random r = new Random();
+    public void testArcFunction() throws Exception {
         double v1,v2;
         DoubleInterval a,aArcSin,aArcCos,aArcTan;
-        double itr,itrFuncValue,step = 0.01;
+        double itr,itrFuncValue;
 
         // Test cosh and sinh, restricted domain
-        for (int i = 0; i < nbrLoopExecution; i++)
-        {
-            v1 = r.nextDouble(); v1 = r.nextBoolean()?v1:-v1;
-            v2 = r.nextDouble(); v2 = r.nextBoolean()?v2:-v2;
+        for (int i = 0; i < nbrLoopExecution; i++) {
+            v1 = rnd.nextDouble(); v1 = rnd.nextBoolean()?v1:-v1;
+            v2 = rnd.nextDouble(); v2 = rnd.nextBoolean()?v2:-v2;
             a = v1 < v2 ? new DoubleInterval(v1,v2) : new DoubleInterval(v2,v1);
             testIntervalBounds(a);
 
@@ -636,8 +583,7 @@ public class DoubleIntervalTest
 
             aArcCos = DoubleInterval.acos(a);
             aArcSin = DoubleInterval.asin(a);
-            while(itr < a.sup)
-            {
+            while(itr < a.sup) {
                 itrFuncValue = Math.acos(itr);
                 assertTrue(String.format("acos(%s) is in %s : acos(%s) = %s\nInterval used is : %s\n", itr, aArcCos,itr,itrFuncValue,a),
                         itrFuncValue <= aArcCos.sup && itrFuncValue >= aArcCos.inf);
@@ -649,18 +595,16 @@ public class DoubleIntervalTest
         }
 
         // Test tanh
-        for (int i = 0; i < nbrLoopExecution; i++)
-        {
-            v1 = r.nextDouble() * MAX_SUP; v1 = r.nextBoolean()?v1:-v1;
-            v2 = r.nextDouble() * MAX_SUP; v2 = r.nextBoolean()?v2:-v2;
+        for (int i = 0; i < nbrLoopExecution; i++) {
+            v1 = rnd.nextDouble() * MAX_SUP; v1 = rnd.nextBoolean()?v1:-v1;
+            v2 = rnd.nextDouble() * MAX_SUP; v2 = rnd.nextBoolean()?v2:-v2;
             a = v1 < v2 ? new DoubleInterval(v1,v2) : new DoubleInterval(v2,v1);
             testIntervalBounds(a);
 
             itr = a.inf + step;
 
             aArcTan = DoubleInterval.atan(a);
-            while(itr < a.sup)
-            {
+            while(itr < a.sup) {
                 itrFuncValue = Math.atan(itr);
                 assertTrue(String.format("atan(%s) is in %s : atan(%s) = %s\nInterval used is : %s\n", itr, aArcTan,itr,itrFuncValue,a),
                         itrFuncValue <= aArcTan.sup && itrFuncValue >= aArcTan.inf);
@@ -670,18 +614,15 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testHyperbolic() throws Exception
-    {
-        Random r = new Random();
+    public void testHyperbolic() throws Exception {
         double v1,v2;
         DoubleInterval a,aSinh,aCosh,aTanh;
-        double itr,itrFuncValue,step = 0.01;
+        double itr,itrFuncValue;
 
         // Test cosh and sinh, restricted domain
-        for (int i = 0; i < nbrLoopExecution; i++)
-        {
-            v1 = r.nextDouble(); v1 = r.nextBoolean()?v1:-v1;
-            v2 = r.nextDouble(); v2 = r.nextBoolean()?v2:-v2;
+        for (int i = 0; i < nbrLoopExecution; i++) {
+            v1 = rnd.nextDouble(); v1 = rnd.nextBoolean()?v1:-v1;
+            v2 = rnd.nextDouble(); v2 = rnd.nextBoolean()?v2:-v2;
             a = v1 < v2 ? new DoubleInterval(v1,v2) : new DoubleInterval(v2,v1);
             testIntervalBounds(a);
 
@@ -691,8 +632,7 @@ public class DoubleIntervalTest
             aSinh = DoubleInterval.sinh(a);
             aTanh = DoubleInterval.tanh(a);
 
-            while(itr < a.sup)
-            {
+            while(itr < a.sup) {
                 itrFuncValue = Math.cosh(itr);
                 assertTrue(String.format("cosh(%s) is in %s : cosh(%s) = %s\nInterval used is : %s\n", itr, aCosh,itr,itrFuncValue,a),
                         itrFuncValue <= aCosh.sup && itrFuncValue >= aCosh.inf);
@@ -708,8 +648,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testModulo() throws Exception
-    {
+    public void testModulo() throws Exception {
         DoubleInterval a = new DoubleInterval(4.0,5.0);
         DoubleInterval b = new DoubleInterval(-3.0,5.0);
         DoubleInterval c = new DoubleInterval(-6.0,-2.0);
@@ -725,7 +664,6 @@ public class DoubleIntervalTest
         DoubleInterval acRes = new DoubleInterval(0.0,5.0);
         DoubleInterval caRes = new DoubleInterval(-5.0,0.0);
 
-
         assertTrue(String.format("Test a %% b : NaN",a,b),ab.isNan());
         assertTrue(String.format("Test a %% d : NaN",a,d),ad.isNan());
         assertTrue(String.format("Test b %% a : %s %% %s = %s ; res : %s",b,a,baRes,ba),DoubleInterval.isIn(ba,baRes));
@@ -734,16 +672,22 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testgenral() throws Exception
-    {
+    public void testSpecialCasesToBeDiscussed() throws Exception {
         DoubleInterval a = new DoubleInterval(-Double.MAX_VALUE,Double.MAX_VALUE);
         DoubleInterval b = new DoubleInterval(0.0);
-        System.out.println(DoubleInterval.add(a,b));
-        System.out.println(DoubleInterval.sub(b,b));
+        DoubleInterval aPlusZero=DoubleInterval.add(a,b);
+        assertTrue(aPlusZero.inf==Double.NEGATIVE_INFINITY || 
+                   aPlusZero.inf==-Double.MAX_VALUE);
+        assertTrue(aPlusZero.sup==Double.POSITIVE_INFINITY || 
+                   aPlusZero.sup==Double.MAX_VALUE);
+        DoubleInterval zeroMinusZero=DoubleInterval.sub(b,b);
+        assertTrue(zeroMinusZero.inf==-Double.MIN_VALUE || 
+                   zeroMinusZero.inf==0);
+        assertTrue(zeroMinusZero.sup==+Double.MIN_VALUE || 
+                   zeroMinusZero.sup==0);
     }
 
-    private void testIntervalBounds(DoubleInterval a) throws Exception
-    {
+    private void testIntervalBounds(DoubleInterval a) throws Exception {
         assertTrue(String.format("DoubleInterval %s is degenerated",a),a.testBounds());
     }
 }

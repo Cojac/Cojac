@@ -8,9 +8,9 @@ public class IntervalDouble extends Number implements Comparable<IntervalDouble>
     private static boolean checkComp = false;
     protected double value;
     protected DoubleInterval interval;
-    protected boolean isNan = false;
-    protected boolean isInfinite = false;
-    protected boolean isPositiveInfinite = false;
+    protected boolean isNan = false;    // TODO: remove that  field 
+    protected boolean isInfinite = false;// TODO: remove that  field 
+    protected boolean isPositiveInfinite = false; // TODO: remove that  field 
     protected boolean isUnStable;
 
     /* TODO
