@@ -19,10 +19,10 @@ import static java.lang.Math.PI;
  */
 public class DoubleInterval implements Comparable<DoubleInterval>
 {
-    public double inf;
-    public double sup;
+    public final double inf;
+    public final double sup;
 
-    private boolean isNan;  // TODO: remove that  field 
+    private final boolean isNan;  // TODO: remove that  field 
 
     private static final double HALF_PI = PI / 2.0;
     private static final double ONE_AND_HALF_PI = PI * 1.5;
@@ -58,7 +58,7 @@ public class DoubleInterval implements Comparable<DoubleInterval>
     public DoubleInterval(double value)
     {
         //this(value, value);
-        if (Double.isNaN(inf) || Double.isNaN(sup) || Double.isNaN(value))
+        if (Double.isNaN(value))
         {
             this.inf = Double.NaN;
             this.sup = Double.NaN;
