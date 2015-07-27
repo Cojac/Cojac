@@ -1,0 +1,18 @@
+COJAC is a tool performing On-the-fly code instrumentation to help uncover numerical problems with integer (overflows) and floating point (smearing, cancellation, infinity, NaN) arithmetic.
+
+COJAC detects overflows and floating points numbers anomalies in Java code. You can apply it on your own code to detect vicious bugs that aren't detected by the Java Virtual Machine. This tool defines a new JVM option, so that COJAC features apply seamlessly on any existing Java software. No source code modification, no recompilation, all is done on-the-fly at runtime.
+
+See the User Guide for a more detailed description or an example.
+
+COJAC is offered (without warranty of course) in the hope it can be useful for educational purposes, as well as in the software industry. Any comment/feedback is welcome!
+
+An Eclipse plugin is available but no longer maintained, because it should be really easy to integrate COJAC in your testing activities under any IDE: it just amounts to add the appropriate JVM option in the run configuration.
+
+For those who are interested in a similar tool not limited to the Java word, you can take a look at the cojac-grind project.
+
+Our article in Dr Dobb's can be considered as the "white paper" of this project.
+News!!
+
+2014.12.02: Cojac 1.3 is available. This version is compatible with Java 8, and proposes a brand new exploratory feature: use option -BDP 117 and all your primitive float/double data are now processed as a BigDecimal with 117 digits. There are still limitations, but... yes we did it!
+
+Please use the DOWNLOADS link in the left pane, not the deprecated Downloads upper tab. 
