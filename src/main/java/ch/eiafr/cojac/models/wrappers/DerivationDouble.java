@@ -2,7 +2,6 @@ package ch.eiafr.cojac.models.wrappers;
 
 public class DerivationDouble extends Number implements
         Comparable<DerivationDouble> {
-    protected boolean isNaNn; // TODO: remove that isNaN field
 
     protected final double value;
     protected final double deriv;

@@ -77,18 +77,9 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat>
 
     public IntervalFloat(IntervalDouble a)
     {
-        if (a.isNan)
-        {
-            this.value = (float) Double.NaN;
-            this.interval = new DoubleInterval(Double.NaN);
-            this.isNan = true;
-        }
-        else
-        {
             this.value = (float) a.value;
             this.interval = new DoubleInterval(a.interval);
             this.isNan = false;
-        }
     }
 
     public IntervalFloat(IntervalFloat a)
