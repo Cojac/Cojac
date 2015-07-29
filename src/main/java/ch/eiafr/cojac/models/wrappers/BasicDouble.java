@@ -121,8 +121,11 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
     }
 	
     // TODO: implement all math.* operations
+    // TODO: design a mechanism to ensure any wrapper implements the whole required set of methods
 	
 	/*
+    public static MyWrapper math_min(MyWrapper a, MyWrapper b) {
+    public static MyWrapper math_max(MyWrapper a, MyWrapper b) {
     public static MyWrapper math_abs(MyWrapper a) {
     public static MyWrapper math_sqrt(MyWrapper a) {
     public static MyWrapper math_sin(MyWrapper a) {
