@@ -78,7 +78,7 @@ public class IntervalDouble extends Number implements
         return res;
     }
 
-    // Todo : is this correct ?
+    // TODO : is this correct ?
     public static int dcmpl(IntervalDouble a, IntervalDouble b) {
         return a.compareTo(b);
     }
@@ -127,6 +127,8 @@ public class IntervalDouble extends Number implements
         return new Double(a.value);
     }
 
+    /* Magic Methods */
+
     public static String COJAC_MAGIC_DOUBLE_toStr(IntervalDouble n) {
         return n.toString();
     }
@@ -150,6 +152,8 @@ public class IntervalDouble extends Number implements
     public static IntervalDouble COJAC_MAGIC_DOUBLE_relativeError(IntervalDouble n) {
         return new IntervalDouble(n.relativeError());
     }
+
+    /* Mathematical function */
 
     public static IntervalDouble math_sqrt(IntervalDouble a) {
         IntervalDouble res = new IntervalDouble(
@@ -215,8 +219,6 @@ public class IntervalDouble extends Number implements
         return res;
     }
 
-    /* Magic Method */
-
     public static IntervalDouble math_acos(IntervalDouble a) {
         IntervalDouble res = new IntervalDouble(
                 Math.acos(a.value), 
@@ -232,8 +234,6 @@ public class IntervalDouble extends Number implements
                 a.isUnStable);
         return res;
     }
-
-    /* Mathematical function */
 
     public static IntervalDouble math_asin(IntervalDouble a) {
         IntervalDouble res = new IntervalDouble(
@@ -282,13 +282,23 @@ public class IntervalDouble extends Number implements
                 a.isUnStable);
         return res;
     }
+    
+    public static IntervalDouble math_min(IntervalDouble a, IntervalDouble b) {
+        if (a.compareTo(b)<0) return a;
+        return b;
+    }
 
-    @SuppressWarnings("unused")
+    public static IntervalDouble math_max(IntervalDouble a, IntervalDouble b) {
+        if (a.compareTo(b)>0) return a;
+        return b;
+    }
+
+    @SuppressWarnings("unused")  // used by reflection (from cmd line option)
     public static void setThreshold(double value) {
         threshold = value;
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings("unused") // used by reflection (from cmd line option)
     public static void setCheckComp(boolean value) {
         checkComparisons = value;
     }
@@ -339,7 +349,10 @@ public class IntervalDouble extends Number implements
     private boolean checkedStability(boolean wasUnstable) {
         if (wasUnstable) return wasUnstable;
         if (threshold < relativeError()) {
-            CojacStabilityException e = new CojacStabilityException();
+            RuntimeException e = new RuntimeException("COJAC: the computation becomes unstable (the interval grows too much)"
+                    +"(relative error: "+relativeError()+")");
+            // TODO: reconsider this reporting mechanism (merge with the original Cojac
+            // mechanisms (console, logfile, exception, callback)
             System.err.println("Cojac has destected a unstable operation :");
             e.printStackTrace(System.err);
             System.err.println("interval value :" + this.toString());
@@ -350,8 +363,11 @@ public class IntervalDouble extends Number implements
     }
 
     private void checkComp(int compResult) {
+        // TODO: reconsider this reporting mechanism (merge with the original Cojac
+        // mechanisms (console, logfile, exception, callback)
+
         if (compResult == 0) {
-            CojacStabilityComparaisonException e = new CojacStabilityComparaisonException();
+            RuntimeException e = new RuntimeException("COJAC: comparing overlapping intervals");
             System.err.println("Cojac has detected an unstable comparison :");
             e.printStackTrace(System.err);
         }

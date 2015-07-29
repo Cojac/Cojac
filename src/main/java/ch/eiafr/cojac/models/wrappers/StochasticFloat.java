@@ -367,7 +367,7 @@ public class StochasticFloat extends Number implements Comparable<StochasticFloa
         }
         if (Math.abs(threshold) < relativeError())
         {
-            CojacStabilityException e = new CojacStabilityException();
+            RuntimeException e = new RuntimeException();
             System.err.println("Cojac has destected a unstable operation");
             System.err.println("Relative error is : " + relativeError());
             System.err.println(this.toString());
