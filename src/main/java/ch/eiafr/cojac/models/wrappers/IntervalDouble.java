@@ -332,7 +332,9 @@ public class IntervalDouble extends Number implements
     public int compareTo(IntervalDouble o) {
         int compResult = this.interval.compareTo(o.interval);
         if (checkComparisons) {
-            checkComp(compResult);
+            if (this.interval.strictCompareTo(o.interval)) return 0;
+            if (this.interval.overlaps(o.interval))
+                reportBadComparison();
         }
         if (compResult != 0) {
             return compResult;
@@ -362,15 +364,13 @@ public class IntervalDouble extends Number implements
         return false;
     }
 
-    private void checkComp(int compResult) {
+    private void reportBadComparison() {
         // TODO: reconsider this reporting mechanism (merge with the original Cojac
         // mechanisms (console, logfile, exception, callback)
 
-        if (compResult == 0) {
-            RuntimeException e = new RuntimeException("COJAC: comparing overlapping intervals");
-            System.err.println("Cojac has detected an unstable comparison :");
-            e.printStackTrace(System.err);
-        }
+        RuntimeException e = new RuntimeException("COJAC: comparing overlapping intervals");
+        System.err.println("Cojac has detected an unstable comparison :");
+        e.printStackTrace(System.err);
     }
 
     private double relativeError() {

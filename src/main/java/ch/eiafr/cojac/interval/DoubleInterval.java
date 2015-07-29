@@ -152,6 +152,10 @@ public class DoubleInterval implements Comparable<DoubleInterval> {
         return !(o.isNan || this.isNan) &&
                 (this.inf == o.inf && this.sup == o.sup);
     }
+    
+    public boolean overlaps(DoubleInterval a) {
+        return Math.max(this.inf, a.inf) <= Math.min(this.sup, a.sup);
+    }
 
     @Override
     public String toString() {

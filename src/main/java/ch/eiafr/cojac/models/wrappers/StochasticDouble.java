@@ -6,21 +6,19 @@ public class StochasticDouble extends Number implements
         Comparable<StochasticDouble> {
     private static int nbrParallelNumber = 3;
     private static double threshold = 0.1;
+    private static boolean checkComparisons = false; //TODO: activate that feature
+
     private static Random r = new Random();
     
     private final static double Tb = 4.303; // see chenaux 1988
 
     protected double value;
     protected double[] stochasticValue;
-    protected boolean isNan = false; // TODO: remove that field
     protected boolean isUnStable = false;
 
     /* Constructor */
 
     public StochasticDouble(double v) {
-        if (Double.isNaN(v)) {
-            this.isNan = true;
-        }
         this.value = v;
         this.stochasticValue = new double[nbrParallelNumber];
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -30,9 +28,6 @@ public class StochasticDouble extends Number implements
 
     public StochasticDouble(String v) {
         double value = Double.parseDouble(v);
-        if (Double.isNaN(value)) {
-            this.isNan = true;
-        }
         this.value = value;
         this.stochasticValue = new double[nbrParallelNumber];
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -42,9 +37,6 @@ public class StochasticDouble extends Number implements
 
     public StochasticDouble(StochasticDouble v) {
         double value = v.value;
-        if (Double.isNaN(value)) {
-            this.isNan = true;
-        }
         this.value = value;
         this.isUnStable = v.isUnStable;
         this.stochasticValue = new double[nbrParallelNumber];
@@ -53,9 +45,6 @@ public class StochasticDouble extends Number implements
 
     public StochasticDouble(StochasticFloat v) {
         double value = (double) v.value;
-        if (Double.isNaN(value)) {
-            this.isNan = true;
-        }
         this.value = value;
         this.isUnStable = v.isUnStable;
         this.stochasticValue = new double[nbrParallelNumber];
@@ -73,9 +62,6 @@ public class StochasticDouble extends Number implements
     }
 
     public static StochasticDouble dadd(StochasticDouble a, StochasticDouble b) {
-        if (a.isNan || b.isNan) {
-            return new StochasticDouble(Double.NaN);
-        }
         StochasticDouble res = new StochasticDouble(a);
         res.value = a.value + b.value;
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -88,9 +74,6 @@ public class StochasticDouble extends Number implements
     }
 
     public static StochasticDouble ddiv(StochasticDouble a, StochasticDouble b) {
-        if (a.isNan || b.isNan) {
-            return new StochasticDouble(Double.NaN);
-        }
         StochasticDouble res = new StochasticDouble(a);
         res.value = a.value / b.value;
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -103,9 +86,6 @@ public class StochasticDouble extends Number implements
     }
 
     public static StochasticDouble drem(StochasticDouble a, StochasticDouble b) {
-        if (a.isNan || b.isNan) {
-            return new StochasticDouble(Double.NaN);
-        }
         StochasticDouble res = new StochasticDouble(a);
         res.value = a.value % b.value;
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -118,9 +98,6 @@ public class StochasticDouble extends Number implements
     }
 
     public static StochasticDouble dsub(StochasticDouble a, StochasticDouble b) {
-        if (a.isNan || b.isNan) {
-            return new StochasticDouble(Double.NaN);
-        }
         StochasticDouble res = new StochasticDouble(a);
         res.value = a.value - b.value;
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -133,9 +110,6 @@ public class StochasticDouble extends Number implements
     }
 
     public static StochasticDouble dmul(StochasticDouble a, StochasticDouble b) {
-        if (a.isNan || b.isNan) {
-            return new StochasticDouble(Double.NaN);
-        }
         StochasticDouble res = new StochasticDouble(a);
         res.value = a.value * b.value;
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -156,9 +130,6 @@ public class StochasticDouble extends Number implements
     }
 
     public static StochasticDouble dneg(StochasticDouble a) {
-        if (a.isNan) {
-            return new StochasticDouble(Double.NaN);
-        }
         StochasticDouble res = new StochasticDouble(a);
         res.value = -res.value;
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -226,9 +197,6 @@ public class StochasticDouble extends Number implements
 
     /* Mathematical function */
     public static StochasticDouble math_sqrt(StochasticDouble a) {
-        if (a.isNan) {
-            return new StochasticDouble(Double.NaN);
-        }
         StochasticDouble res = new StochasticDouble(a);
         res.value = Math.sqrt(res.value);
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -240,9 +208,6 @@ public class StochasticDouble extends Number implements
     }
 
     public static StochasticDouble math_pow(StochasticDouble a, StochasticDouble b) {
-        if (a.isNan || b.isNan) {
-            return new StochasticDouble(Double.NaN);
-        }
         StochasticDouble res = new StochasticDouble(a);
         res.value = Math.pow(a.value, b.value);
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -254,9 +219,6 @@ public class StochasticDouble extends Number implements
     }
 
     public static StochasticDouble math_sin(StochasticDouble a) {
-        if (a.isNan) {
-            return new StochasticDouble(Double.NaN);
-        }
         StochasticDouble res = new StochasticDouble(a);
         res.value = Math.sin(res.value);
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -268,9 +230,6 @@ public class StochasticDouble extends Number implements
     }
 
     public static StochasticDouble math_cos(StochasticDouble a) {
-        if (a.isNan) {
-            return new StochasticDouble(Double.NaN);
-        }
         StochasticDouble res = new StochasticDouble(a);
         res.value = Math.cos(res.value);
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -282,9 +241,6 @@ public class StochasticDouble extends Number implements
     }
 
     public static StochasticDouble math_tan(StochasticDouble a) {
-        if (a.isNan) {
-            return new StochasticDouble(Double.NaN);
-        }
         StochasticDouble res = new StochasticDouble(a);
         res.value = Math.tan(res.value);
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -296,9 +252,6 @@ public class StochasticDouble extends Number implements
     }
 
     public static StochasticDouble math_sinh(StochasticDouble a) {
-        if (a.isNan) {
-            return new StochasticDouble(Double.NaN);
-        }
         StochasticDouble res = new StochasticDouble(a);
         res.value = Math.sinh(res.value);
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -310,9 +263,6 @@ public class StochasticDouble extends Number implements
     }
 
     public static StochasticDouble math_cosh(StochasticDouble a) {
-        if (a.isNan) {
-            return new StochasticDouble(Double.NaN);
-        }
         StochasticDouble res = new StochasticDouble(a);
         res.value = Math.cosh(res.value);
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -324,9 +274,6 @@ public class StochasticDouble extends Number implements
     }
 
     public static StochasticDouble math_tanh(StochasticDouble a) {
-        if (a.isNan) {
-            return new StochasticDouble(Double.NaN);
-        }
         StochasticDouble res = new StochasticDouble(a);
         res.value = Math.tanh(res.value);
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -338,9 +285,6 @@ public class StochasticDouble extends Number implements
     }
 
     public static StochasticDouble math_acos(StochasticDouble a) {
-        if (a.isNan) {
-            return new StochasticDouble(Double.NaN);
-        }
         StochasticDouble res = new StochasticDouble(a);
         res.value = Math.acos(res.value);
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -352,9 +296,6 @@ public class StochasticDouble extends Number implements
     }
 
     public static StochasticDouble math_atan(StochasticDouble a) {
-        if (a.isNan) {
-            return new StochasticDouble(Double.NaN);
-        }
         StochasticDouble res = new StochasticDouble(a);
         res.value = Math.atan(res.value);
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -366,9 +307,6 @@ public class StochasticDouble extends Number implements
     }
 
     public static StochasticDouble math_asin(StochasticDouble a) {
-        if (a.isNan) {
-            return new StochasticDouble(Double.NaN);
-        }
         StochasticDouble res = new StochasticDouble(a);
         res.value = Math.asin(res.value);
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -380,9 +318,6 @@ public class StochasticDouble extends Number implements
     }
 
     public static StochasticDouble math_exp(StochasticDouble a) {
-        if (a.isNan) {
-            return new StochasticDouble(Double.NaN);
-        }
         StochasticDouble res = new StochasticDouble(a);
         res.value = Math.exp(res.value);
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -394,9 +329,6 @@ public class StochasticDouble extends Number implements
     }
 
     public static StochasticDouble math_log(StochasticDouble a) {
-        if (a.isNan) {
-            return new StochasticDouble(Double.NaN);
-        }
         StochasticDouble res = new StochasticDouble(a);
         res.value = Math.log(res.value);
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -408,9 +340,6 @@ public class StochasticDouble extends Number implements
     }
 
     public static StochasticDouble math_log10(StochasticDouble a) {
-        if (a.isNan) {
-            return new StochasticDouble(Double.NaN);
-        }
         StochasticDouble res = new StochasticDouble(a);
         res.value = Math.log10(res.value);
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -422,9 +351,6 @@ public class StochasticDouble extends Number implements
     }
 
     public static StochasticDouble math_abs(StochasticDouble a) {
-        if (a.isNan) {
-            return new StochasticDouble(Double.NaN);
-        }
         StochasticDouble res = new StochasticDouble(a);
         res.value = Math.abs(res.value);
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -461,8 +387,6 @@ public class StochasticDouble extends Number implements
     @Override
     public String toString() {
         // reference : BigDecimalDouble.java
-        if (isNan)
-            return "Nan";
         String res = "" + value + " : [%s]";
         String tmp = "";
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -476,15 +400,6 @@ public class StochasticDouble extends Number implements
 
     @Override
     public int compareTo(StochasticDouble o) {
-        if (this.isNan && o.isNan) {
-            return 0;
-        }
-        if (o.isNan) {
-            return 1;
-        }
-        if (this.isNan) {
-            return -1;
-        }
         if (this.value > o.value) {
             return 1;
         }
