@@ -5,26 +5,26 @@ public class DerivationDouble extends Number implements
     protected boolean isNaNn; // TODO: remove that isNaN field
 
     protected final double value;
-    protected final double dValue;
+    protected final double deriv;
 
     DerivationDouble(double v) {
         this.value = v;
-        this.dValue = 0.0;
+        this.deriv = 0.0;
     }
 
     private DerivationDouble(double value, double dValue) {
         this.value = value;
-        this.dValue = dValue;
+        this.deriv = dValue;
     }
 
     DerivationDouble(String v) {
         this.value = Double.parseDouble(v);
-        this.dValue = 0.0;
+        this.deriv = 0.0;
     }
 
     DerivationDouble(DerivationDouble v) {
         this.value = v.value;
-        this.dValue = v.dValue;
+        this.deriv = v.deriv;
     }
 
     public static DerivationDouble fromDouble(double v) {
@@ -36,33 +36,33 @@ public class DerivationDouble extends Number implements
     }
 
     public static DerivationDouble dadd(DerivationDouble a, DerivationDouble b) {
-        return new DerivationDouble(a.value + b.value, a.dValue + b.dValue);
+        return new DerivationDouble(a.value + b.value, a.deriv + b.deriv);
     }
 
     public static DerivationDouble ddiv(DerivationDouble a, DerivationDouble b) {
         double value = a.value / b.value;
-        double dValue = (a.dValue * b.value - b.dValue * a.value) /
+        double dValue = (a.deriv * b.value - b.deriv * a.value) /
                 (b.value * b.value);
         return new DerivationDouble(value, dValue);
     }
 
     public static DerivationDouble drem(DerivationDouble a, DerivationDouble b) {
         double value = a.value % b.value;
-        if (b.dValue != 0.0) {
+        if (b.deriv != 0.0) {
             double dValue = Double.NaN;
             return new DerivationDouble(value, dValue);
         } 
-        double dValue = a.dValue;
+        double dValue = a.deriv;
         return new DerivationDouble(value, dValue);
     }
 
     public static DerivationDouble dsub(DerivationDouble a, DerivationDouble b) {
-        return new DerivationDouble(a.value - b.value, a.dValue - b.dValue);
+        return new DerivationDouble(a.value - b.value, a.deriv - b.deriv);
     }
 
     public static DerivationDouble dmul(DerivationDouble a, DerivationDouble b) {
         double value = a.value * b.value;
-        double dValue = a.dValue * b.value + a.value * b.dValue;
+        double dValue = a.deriv * b.value + a.value * b.deriv;
         return new DerivationDouble(value, dValue);
     }
 
@@ -75,7 +75,7 @@ public class DerivationDouble extends Number implements
     }
 
     public static DerivationDouble dneg(DerivationDouble a) {
-        return new DerivationDouble(-a.value, -a.dValue);
+        return new DerivationDouble(-a.value, -a.deriv);
     }
 
     public static int d2i(DerivationDouble a) {
@@ -111,7 +111,7 @@ public class DerivationDouble extends Number implements
     }
 
     public static DerivationDouble COJAC_MAGIC_DOUBLE_getDerivation(DerivationDouble a) {
-        return new DerivationDouble(a.dValue);
+        return new DerivationDouble(a.deriv);
     }
 
     public static DerivationDouble COJAC_MAGIC_DOUBLE_specifieToDerivate(DerivationDouble a) {
@@ -132,93 +132,93 @@ public class DerivationDouble extends Number implements
 
     public static DerivationDouble math_sqrt(DerivationDouble a) {
         double value = Math.sqrt(a.value);
-        double dValue = a.dValue / (2.0 * Math.sqrt(a.value));
+        double dValue = a.deriv / (2.0 * Math.sqrt(a.value));
         return new DerivationDouble(value, dValue);
     }
 
     public static DerivationDouble math_pow(DerivationDouble a, DerivationDouble b) {
         double value = Math.pow(a.value, b.value);
         double dValue = Math.pow(a.value, b.value) *
-                (((b.value * a.dValue) / a.value) + Math.log(a.value) *
-                        b.dValue);
+                (((b.value * a.deriv) / a.value) + Math.log(a.value) *
+                        b.deriv);
         return new DerivationDouble(value, dValue);
     }
 
     public static DerivationDouble math_sin(DerivationDouble a) {
         double value = Math.sin(a.value);
-        double dValue = Math.cos(a.value) * a.dValue;
+        double dValue = Math.cos(a.value) * a.deriv;
         return new DerivationDouble(value, dValue);
     }
 
     public static DerivationDouble math_cos(DerivationDouble a) {
         double value = Math.cos(a.value);
-        double dValue = -Math.sin(a.value) * a.dValue;
+        double dValue = -Math.sin(a.value) * a.deriv;
         return new DerivationDouble(value, dValue);
     }
 
     public static DerivationDouble math_tan(DerivationDouble a) {
         double value = Math.tan(a.value);
-        double dValue = a.dValue / (Math.cos(a.value) * Math.cos(a.value));
+        double dValue = a.deriv / (Math.cos(a.value) * Math.cos(a.value));
         return new DerivationDouble(value, dValue);
     }
 
     public static DerivationDouble math_sinh(DerivationDouble a) {
         double value = Math.sinh(a.value);
-        double dValue = a.dValue * Math.cosh(a.value);
+        double dValue = a.deriv * Math.cosh(a.value);
         return new DerivationDouble(value, dValue);
     }
 
     public static DerivationDouble math_cosh(DerivationDouble a) {
         double value = Math.cosh(a.value);
-        double dValue = a.dValue * Math.sinh(a.value);
+        double dValue = a.deriv * Math.sinh(a.value);
         return new DerivationDouble(value, dValue);
     }
 
     public static DerivationDouble math_tanh(DerivationDouble a) {
         double value = Math.tanh(a.value);
-        double dValue = a.dValue / (Math.cosh(a.value) * Math.cosh(a.value));
+        double dValue = a.deriv / (Math.cosh(a.value) * Math.cosh(a.value));
         return new DerivationDouble(value, dValue);
     }
 
     public static DerivationDouble math_acos(DerivationDouble a) {
         double value = Math.acos(a.value);
-        double dValue = -a.dValue / (Math.sqrt(1.0 - a.value * a.value));
+        double dValue = -a.deriv / (Math.sqrt(1.0 - a.value * a.value));
         return new DerivationDouble(value, dValue);
     }
 
     public static DerivationDouble math_atan(DerivationDouble a) {
         double value = Math.atan(a.value);
-        double dValue = a.dValue / (1.0 + a.value * a.value);
+        double dValue = a.deriv / (1.0 + a.value * a.value);
         return new DerivationDouble(value, dValue);
     }
 
     public static DerivationDouble math_asin(DerivationDouble a) {
         double value = Math.asin(a.value);
-        double dValue = a.dValue / (Math.sqrt(1.0 - a.value * a.value));
+        double dValue = a.deriv / (Math.sqrt(1.0 - a.value * a.value));
         return new DerivationDouble(value, dValue);
     }
 
     public static DerivationDouble math_exp(DerivationDouble a) {
         double value = Math.exp(a.value);
-        double dValue = a.dValue * Math.exp(a.value);
+        double dValue = a.deriv * Math.exp(a.value);
         return new DerivationDouble(value, dValue);
     }
 
     public static DerivationDouble math_log(DerivationDouble a) {
         double value = Math.log(a.value);
-        double dValue = a.dValue / a.value;
+        double dValue = a.deriv / a.value;
         return new DerivationDouble(value, dValue);
     }
 
     public static DerivationDouble math_log10(DerivationDouble a) {
         double value = Math.log10(a.value);
-        double dValue = a.dValue / (a.value * Math.log(10.0));
+        double dValue = a.deriv / (a.value * Math.log(10.0));
         return new DerivationDouble(value, dValue);
     }
 
     public static DerivationDouble math_abs(DerivationDouble a) {
         double value = Math.abs(a.value);
-        double dValue = a.dValue < 0.0 ? -a.dValue : a.dValue;
+        double dValue = a.value < 0.0 ? -a.deriv : a.deriv; //BAP: corrected, was dValue
 
         // RuntimeException exception = new
         // RuntimeException("abs'(x) : not derivable !");

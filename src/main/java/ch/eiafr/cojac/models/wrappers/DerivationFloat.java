@@ -102,7 +102,7 @@ public class DerivationFloat extends Number implements
     }
 
     public static DerivationDouble COJAC_MAGIC_FLOAT_getDerivation(DerivationFloat a) {
-        return new DerivationDouble(a.delegateDoubleWrapper.dValue);
+        return new DerivationDouble(a.delegateDoubleWrapper.deriv);
     }
 
     public static DerivationDouble COJAC_MAGIC_FLOAT_specifieToDerivate(DerivationFloat a) {
