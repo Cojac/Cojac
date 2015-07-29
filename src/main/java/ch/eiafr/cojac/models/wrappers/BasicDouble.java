@@ -18,8 +18,8 @@
 
 package ch.eiafr.cojac.models.wrappers;
 
-import java.util.function.DoubleBinaryOperator;
-import java.util.function.DoubleUnaryOperator;
+//import java.util.function.DoubleBinaryOperator;
+//import java.util.function.DoubleUnaryOperator;
 
 
 public class BasicDouble extends Number implements Comparable<BasicDouble>{
@@ -106,19 +106,21 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
         return new BasicDouble((double)BasicFloat.toFloat(a));
     }
 
-	public static BasicDouble math_sqrt(BasicDouble a){
+    // TODO: consider using lambdas (eg return a.afterUnaryOp(Math::sqrt))
+//    private BasicDouble afterUnaryOp(DoubleUnaryOperator op) {
+//        return new BasicDouble(op.applyAsDouble(this.val));
+//    }
+//    
+//    private BasicDouble afterBinaryOp(DoubleBinaryOperator op, BasicDouble arg) {
+//        return new BasicDouble(op.applyAsDouble(this.val, arg.val));
+//    }
+
+    public static BasicDouble math_sqrt(BasicDouble a){
 //	    return a.afterUnaryOp(Math::sqrt);
         return new BasicDouble(Math.sqrt(a.val));
     }
 	
-	private BasicDouble afterUnaryOp(DoubleUnaryOperator op) {
-	    return new BasicDouble(op.applyAsDouble(this.val));
-	}
-	
-	private BasicDouble afterBinaryOp(DoubleBinaryOperator op, BasicDouble arg) {
-	    return new BasicDouble(op.applyAsDouble(this.val, arg.val));
-	}
-
+    // TODO: implement all math.* operations
 	
 	/*
     public static MyWrapper math_abs(MyWrapper a) {
@@ -156,9 +158,10 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
 
 	@Override
 	public int hashCode() {
-		int hash = 3;
-		hash = 43 * hash + (int) (Double.doubleToLongBits(this.val) ^ (Double.doubleToLongBits(this.val) >>> 32));
-		return hash;
+	    return Double.hashCode(this.val);
+//		int hash = 3;
+//		hash = 43 * hash + (int) (Double.doubleToLongBits(this.val) ^ (Double.doubleToLongBits(this.val) >>> 32));
+//		return hash;
 	}
 
 	@Override

@@ -133,9 +133,10 @@ public class BasicFloat extends Number implements Comparable<BasicFloat> {
 
 	@Override
 	public int hashCode() {
-		int hash = 7;
-		hash = 43 * hash + Float.floatToIntBits(this.val);
-		return hash;
+	    return Float.hashCode(this.val);
+//		int hash = 7;
+//		hash = 43 * hash + Float.floatToIntBits(this.val);
+//		return hash;
 	}
 
 	@Override

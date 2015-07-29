@@ -201,12 +201,12 @@ public class BigDecimalFloat extends Number implements Comparable<BigDecimalFloa
     
     public static BigDecimalDouble f2d(BigDecimalFloat a) {
         if(a.isNaN)
-			return new BigDecimalDouble(Double.NaN);
+			return BigDecimalDouble.fromDouble(Double.NaN);
 		if(a.isInfinite){
 			if(a.isPositiveInfinite)
-				return new BigDecimalDouble(Double.POSITIVE_INFINITY);
+				return BigDecimalDouble.fromDouble(Double.POSITIVE_INFINITY);
 			else
-				return new BigDecimalDouble(Double.NEGATIVE_INFINITY);
+				return BigDecimalDouble.fromDouble(Double.NEGATIVE_INFINITY);
 		}
         return new BigDecimalDouble(a.val);
     }
