@@ -8,7 +8,7 @@ public class StochasticDouble extends Number implements
     private static double threshold = 0.1;
     private static boolean checkComparisons = false; //TODO: activate that feature
 
-    private static Random r = new Random();
+    private final static Random r = new Random();
     
     private final static double Tb = 4.303; // see chenaux 1988
 
@@ -18,24 +18,41 @@ public class StochasticDouble extends Number implements
 
     /* Constructor */
 
-    public StochasticDouble(double v) {
+    StochasticDouble(double v) {
         this.value = v;
         this.stochasticValue = new double[nbrParallelNumber];
         for (int i = 0; i < nbrParallelNumber; i++) {
             stochasticValue[i] = v;
         }
     }
-
-    public StochasticDouble(String v) {
-        double value = Double.parseDouble(v);
-        this.value = value;
-        this.stochasticValue = new double[nbrParallelNumber];
-        for (int i = 0; i < nbrParallelNumber; i++) {
-            stochasticValue[i] = value;
-        }
+    
+    private StochasticDouble(double v, double[] tab, boolean unstable) {
+        this.value = v;
+        this.stochasticValue=tab;
+        this.isUnStable=checkedStability(unstable);
     }
 
-    public StochasticDouble(StochasticDouble v) {
+    private boolean checkedStability(boolean wasUnstable) {
+        if (wasUnstable) return wasUnstable;
+        if (threshold < relativeError()) {
+            RuntimeException e = new RuntimeException("COJAC: the computation becomes unstable (the interval grows too much)"
+                    +"(relative error: "+relativeError()+")");
+            // TODO: reconsider this reporting mechanism (merge with the original Cojac
+            // mechanisms (console, logfile, exception, callback)
+            System.err.println("Cojac has destected a unstable operation :");
+            e.printStackTrace(System.err);
+            System.err.println("interval value :" + this.toString());
+            System.err.println("relative error :" + relativeError());
+            return true;
+        }
+        return false;
+    }
+
+    private StochasticDouble(String v) {
+        this(Double.parseDouble(v));
+    }
+
+    StochasticDouble(StochasticDouble v) {
         double value = v.value;
         this.value = value;
         this.isUnStable = v.isUnStable;
@@ -43,13 +60,13 @@ public class StochasticDouble extends Number implements
         stochasticValue = v.stochasticValue.clone();
     }
 
-    public StochasticDouble(StochasticFloat v) {
-        double value = (double) v.value;
+    StochasticDouble(StochasticFloat v) {
+        double value = v.value;
         this.value = value;
         this.isUnStable = v.isUnStable;
         this.stochasticValue = new double[nbrParallelNumber];
         for (int i = 0; i < nbrParallelNumber; i++) {
-            stochasticValue[i] = (double) v.stochasticValue[i];
+            stochasticValue[i] = v.stochasticValue[i];
         }
     }
 
@@ -62,62 +79,42 @@ public class StochasticDouble extends Number implements
     }
 
     public static StochasticDouble dadd(StochasticDouble a, StochasticDouble b) {
-        StochasticDouble res = new StochasticDouble(a);
-        res.value = a.value + b.value;
-        for (int i = 0; i < nbrParallelNumber; i++) {
-            res.stochasticValue[i] = rndRoundDouble(a.stochasticValue[i] +
-                    b.stochasticValue[i]);
-        }
-        res.isUnStable = a.isUnStable || b.isUnStable;
-        res.checkStability();
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(a.stochasticValue[i] + b.stochasticValue[i]);
+        StochasticDouble res = new StochasticDouble(a.value + b.value, t, a.isUnStable || b.isUnStable);
         return res;
     }
 
     public static StochasticDouble ddiv(StochasticDouble a, StochasticDouble b) {
-        StochasticDouble res = new StochasticDouble(a);
-        res.value = a.value / b.value;
-        for (int i = 0; i < nbrParallelNumber; i++) {
-            res.stochasticValue[i] = rndRoundDouble(a.stochasticValue[i] /
-                    b.stochasticValue[i]);
-        }
-        res.isUnStable = a.isUnStable || b.isUnStable;
-        res.checkStability();
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(a.stochasticValue[i] / b.stochasticValue[i]);
+        StochasticDouble res = new StochasticDouble(a.value / b.value, t, a.isUnStable || b.isUnStable);
         return res;
     }
 
     public static StochasticDouble drem(StochasticDouble a, StochasticDouble b) {
-        StochasticDouble res = new StochasticDouble(a);
-        res.value = a.value % b.value;
-        for (int i = 0; i < nbrParallelNumber; i++) {
-            res.stochasticValue[i] = rndRoundDouble(a.stochasticValue[i] %
-                    b.stochasticValue[i]);
-        }
-        res.isUnStable = a.isUnStable || b.isUnStable;
-        res.checkStability();
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(a.stochasticValue[i] % b.stochasticValue[i]);
+        StochasticDouble res = new StochasticDouble(a.value % b.value, t, a.isUnStable || b.isUnStable);
         return res;
-    }
+  }
 
     public static StochasticDouble dsub(StochasticDouble a, StochasticDouble b) {
-        StochasticDouble res = new StochasticDouble(a);
-        res.value = a.value - b.value;
-        for (int i = 0; i < nbrParallelNumber; i++) {
-            res.stochasticValue[i] = rndRoundDouble(a.stochasticValue[i] -
-                    b.stochasticValue[i]);
-        }
-        res.isUnStable = a.isUnStable || b.isUnStable;
-        res.checkStability();
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(a.stochasticValue[i] - b.stochasticValue[i]);
+        StochasticDouble res = new StochasticDouble(a.value - b.value, t, a.isUnStable || b.isUnStable);
         return res;
     }
 
     public static StochasticDouble dmul(StochasticDouble a, StochasticDouble b) {
-        StochasticDouble res = new StochasticDouble(a);
-        res.value = a.value * b.value;
-        for (int i = 0; i < nbrParallelNumber; i++) {
-            res.stochasticValue[i] = rndRoundDouble(a.stochasticValue[i] *
-                    b.stochasticValue[i]);
-        }
-        res.isUnStable = a.isUnStable || b.isUnStable;
-        res.checkStability();
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(a.stochasticValue[i] * b.stochasticValue[i]);
+        StochasticDouble res = new StochasticDouble(a.value * b.value, t, a.isUnStable || b.isUnStable);
         return res;
     }
 
@@ -130,12 +127,10 @@ public class StochasticDouble extends Number implements
     }
 
     public static StochasticDouble dneg(StochasticDouble a) {
-        StochasticDouble res = new StochasticDouble(a);
-        res.value = -res.value;
-        for (int i = 0; i < nbrParallelNumber; i++) {
-            res.stochasticValue[i] = -res.stochasticValue[i];
-        }
-        res.isUnStable = a.isUnStable;
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(-a.stochasticValue[i]);
+        StochasticDouble res = new StochasticDouble(-a.value, t, a.isUnStable);
         return res;
     }
 
@@ -172,194 +167,160 @@ public class StochasticDouble extends Number implements
     }
 
     // TODO remove "round to zero"
-    private static double rndRoundDouble(double value) {
-        switch (r.nextInt(4)) {
+    private static double rndRound(double value) {
+        switch (r.nextInt(3)) {
         case 0:
-            // default rounding mode in Java
-            return value;
-        case 1:
-            // round to 0
-            if (value < 0.0) {
-                return value + Math.ulp(value);
-            } else {
-                return value - Math.ulp(value);
-            }
-        case 2:
             // round to negative infinity
             return value - Math.ulp(value);
-        case 3:
+        case 1:
             // round to positive infinity
             return value + Math.ulp(value);
         default:
+            // default rounding mode in Java
             return value;
         }
     }
 
     /* Mathematical function */
     public static StochasticDouble math_sqrt(StochasticDouble a) {
-        StochasticDouble res = new StochasticDouble(a);
-        res.value = Math.sqrt(res.value);
-        for (int i = 0; i < nbrParallelNumber; i++) {
-            res.stochasticValue[i] = rndRoundDouble(Math.sqrt(a.stochasticValue[i]));
-        }
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(Math.sqrt(a.stochasticValue[i]));
+        StochasticDouble res = new StochasticDouble(Math.sqrt(a.value), t, a.isUnStable);
         return res;
     }
 
     public static StochasticDouble math_pow(StochasticDouble a, StochasticDouble b) {
-        StochasticDouble res = new StochasticDouble(a);
-        res.value = Math.pow(a.value, b.value);
-        for (int i = 0; i < nbrParallelNumber; i++) {
-            res.stochasticValue[i] = rndRoundDouble(Math.pow(a.stochasticValue[i], b.stochasticValue[i]));
-        }
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(Math.pow(a.stochasticValue[i], b.stochasticValue[i]));
+        StochasticDouble res = new StochasticDouble(
+                Math.pow(a.value, b.value), t, a.isUnStable||b.isUnStable);
         return res;
     }
 
     public static StochasticDouble math_sin(StochasticDouble a) {
-        StochasticDouble res = new StochasticDouble(a);
-        res.value = Math.sin(res.value);
-        for (int i = 0; i < nbrParallelNumber; i++) {
-            res.stochasticValue[i] = rndRoundDouble(Math.sin(a.stochasticValue[i]));
-        }
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(Math.sin(a.stochasticValue[i]));
+        StochasticDouble res = new StochasticDouble(Math.sin(a.value), t, a.isUnStable);
         return res;
     }
 
     public static StochasticDouble math_cos(StochasticDouble a) {
-        StochasticDouble res = new StochasticDouble(a);
-        res.value = Math.cos(res.value);
-        for (int i = 0; i < nbrParallelNumber; i++) {
-            res.stochasticValue[i] = rndRoundDouble(Math.cos(a.stochasticValue[i]));
-        }
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(Math.cos(a.stochasticValue[i]));
+        StochasticDouble res = new StochasticDouble(Math.cos(a.value), t, a.isUnStable);
         return res;
     }
 
     public static StochasticDouble math_tan(StochasticDouble a) {
-        StochasticDouble res = new StochasticDouble(a);
-        res.value = Math.tan(res.value);
-        for (int i = 0; i < nbrParallelNumber; i++) {
-            res.stochasticValue[i] = rndRoundDouble(Math.tan(a.stochasticValue[i]));
-        }
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(Math.tan(a.stochasticValue[i]));
+        StochasticDouble res = new StochasticDouble(Math.tan(a.value), t, a.isUnStable);
         return res;
     }
 
     public static StochasticDouble math_sinh(StochasticDouble a) {
-        StochasticDouble res = new StochasticDouble(a);
-        res.value = Math.sinh(res.value);
-        for (int i = 0; i < nbrParallelNumber; i++) {
-            res.stochasticValue[i] = rndRoundDouble(Math.sinh(a.stochasticValue[i]));
-        }
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(Math.sinh(a.stochasticValue[i]));
+        StochasticDouble res = new StochasticDouble(Math.sinh(a.value), t, a.isUnStable);
         return res;
     }
 
     public static StochasticDouble math_cosh(StochasticDouble a) {
-        StochasticDouble res = new StochasticDouble(a);
-        res.value = Math.cosh(res.value);
-        for (int i = 0; i < nbrParallelNumber; i++) {
-            res.stochasticValue[i] = rndRoundDouble(Math.cosh(a.stochasticValue[i]));
-        }
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(Math.cosh(a.stochasticValue[i]));
+        StochasticDouble res = new StochasticDouble(Math.cosh(a.value), t, a.isUnStable);
         return res;
     }
 
     public static StochasticDouble math_tanh(StochasticDouble a) {
-        StochasticDouble res = new StochasticDouble(a);
-        res.value = Math.tanh(res.value);
-        for (int i = 0; i < nbrParallelNumber; i++) {
-            res.stochasticValue[i] = rndRoundDouble(Math.tanh(a.stochasticValue[i]));
-        }
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(Math.tanh(a.stochasticValue[i]));
+        StochasticDouble res = new StochasticDouble(Math.tanh(a.value), t, a.isUnStable);
         return res;
     }
 
     public static StochasticDouble math_acos(StochasticDouble a) {
-        StochasticDouble res = new StochasticDouble(a);
-        res.value = Math.acos(res.value);
-        for (int i = 0; i < nbrParallelNumber; i++) {
-            res.stochasticValue[i] = rndRoundDouble(Math.acos(a.stochasticValue[i]));
-        }
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(Math.acos(a.stochasticValue[i]));
+        StochasticDouble res = new StochasticDouble(Math.acos(a.value), t, a.isUnStable);
         return res;
     }
 
     public static StochasticDouble math_atan(StochasticDouble a) {
-        StochasticDouble res = new StochasticDouble(a);
-        res.value = Math.atan(res.value);
-        for (int i = 0; i < nbrParallelNumber; i++) {
-            res.stochasticValue[i] = rndRoundDouble(Math.atan(a.stochasticValue[i]));
-        }
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(Math.atan(a.stochasticValue[i]));
+        StochasticDouble res = new StochasticDouble(Math.atan(a.value), t, a.isUnStable);
         return res;
-    }
+   }
 
     public static StochasticDouble math_asin(StochasticDouble a) {
-        StochasticDouble res = new StochasticDouble(a);
-        res.value = Math.asin(res.value);
-        for (int i = 0; i < nbrParallelNumber; i++) {
-            res.stochasticValue[i] = rndRoundDouble(Math.asin(a.stochasticValue[i]));
-        }
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(Math.asin(a.stochasticValue[i]));
+        StochasticDouble res = new StochasticDouble(Math.asin(a.value), t, a.isUnStable);
         return res;
     }
 
     public static StochasticDouble math_exp(StochasticDouble a) {
-        StochasticDouble res = new StochasticDouble(a);
-        res.value = Math.exp(res.value);
-        for (int i = 0; i < nbrParallelNumber; i++) {
-            res.stochasticValue[i] = rndRoundDouble(Math.exp(a.stochasticValue[i]));
-        }
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(Math.exp(a.stochasticValue[i]));
+        StochasticDouble res = new StochasticDouble(Math.exp(a.value), t, a.isUnStable);
         return res;
     }
 
     public static StochasticDouble math_log(StochasticDouble a) {
-        StochasticDouble res = new StochasticDouble(a);
-        res.value = Math.log(res.value);
-        for (int i = 0; i < nbrParallelNumber; i++) {
-            res.stochasticValue[i] = rndRoundDouble(Math.log(a.stochasticValue[i]));
-        }
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(Math.log(a.stochasticValue[i]));
+        StochasticDouble res = new StochasticDouble(Math.log(a.value), t, a.isUnStable);
         return res;
     }
 
     public static StochasticDouble math_log10(StochasticDouble a) {
-        StochasticDouble res = new StochasticDouble(a);
-        res.value = Math.log10(res.value);
-        for (int i = 0; i < nbrParallelNumber; i++) {
-            res.stochasticValue[i] = rndRoundDouble(Math.log10(a.stochasticValue[i]));
-        }
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(Math.log10(a.stochasticValue[i]));
+        StochasticDouble res = new StochasticDouble(Math.log10(a.value), t, a.isUnStable);
         return res;
     }
 
     public static StochasticDouble math_abs(StochasticDouble a) {
-        StochasticDouble res = new StochasticDouble(a);
-        res.value = Math.abs(res.value);
-        for (int i = 0; i < nbrParallelNumber; i++) {
-            res.stochasticValue[i] = Math.abs(a.stochasticValue[i]);
-        }
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(Math.abs(a.stochasticValue[i]));
+        StochasticDouble res = new StochasticDouble(Math.abs(a.value), t, a.isUnStable);
         return res;
     }
+    
+    public static StochasticDouble math_min(StochasticDouble a, StochasticDouble b) {
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(Math.min(a.stochasticValue[i], b.stochasticValue[i]));
+        StochasticDouble res = new StochasticDouble(
+                Math.min(a.value, b.value), t, a.isUnStable||b.isUnStable);
+        return res;
+    }
+
+    public static StochasticDouble math_max(StochasticDouble a, StochasticDouble b) {
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(Math.max(a.stochasticValue[i], b.stochasticValue[i]));
+        StochasticDouble res = new StochasticDouble(
+                Math.max(a.value, b.value), t, a.isUnStable||b.isUnStable);
+        return res;
+    }
+
 
     @SuppressWarnings("unused") // used by reflection (from cmd line option)
     public static void setThreshold(double value) {
@@ -472,4 +433,18 @@ public class StochasticDouble extends Number implements
                 (Math.sqrt(sigmaSquare) * Tb);
         return Math.pow(10.0, -Cr);
     }
+    
+    private boolean overlaps(StochasticFloat o) {
+        double min=value, max=value, omin=o.value, omax=o.value;
+        for(double f:stochasticValue) {
+            if(f<min) min=f;
+            if(f>max) max=f;
+        }
+        for(double f:o.stochasticValue) {
+            if(f<omin) omin=f;
+            if(f>omax) omax=f;
+        }
+        return Math.max(min, omin) <= Math.min(max, omax);
+    }
+
 }

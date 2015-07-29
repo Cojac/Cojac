@@ -10,14 +10,14 @@ public class StochasticFloat extends Number implements
     private static boolean checkComparisons = false; //TODO: activate that feature
 
     
-    private double Tb = 4.303; // see chenaux 1988
-    private static Random r = new Random();
+    private final static double Tb = 4.303; // see chenaux 1988
+    private final static Random r = new Random();
     
     protected final float value;
     protected final float[] stochasticValue;
     protected final boolean isUnStable;
 
-    public StochasticFloat(float v) {
+    private StochasticFloat(float v) {
         this.value = v;
         this.stochasticValue = new float[nbrParallelNumber];
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -26,17 +26,17 @@ public class StochasticFloat extends Number implements
         isUnStable=false;
     }
 
-    public StochasticFloat(float v, float[] tab, boolean unstable) {
+    private StochasticFloat(float v, float[] tab, boolean unstable) {
         this.value = v;
         this.stochasticValue=tab;
         this.isUnStable=checkedStability(unstable);
     }
 
-    public StochasticFloat(String v) {
+    private StochasticFloat(String v) {
         this(Float.parseFloat(v));
     }
 
-    public StochasticFloat(StochasticDouble v) {
+    StochasticFloat(StochasticDouble v) {
         this.value = (float) v.value;
         this.stochasticValue = new float[nbrParallelNumber];
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -45,15 +45,15 @@ public class StochasticFloat extends Number implements
         isUnStable=false;
     }
 
-    public StochasticFloat(StochasticFloat v) {
-        this.value = v.value;
-        this.stochasticValue = new float[nbrParallelNumber];
-        for (int i = 0; i < nbrParallelNumber; i++) {
-            this.stochasticValue[i] = v.stochasticValue[i];
-        }
-        isUnStable=false;
-    }
-
+//    private StochasticFloat(StochasticFloat v) {
+//        this.value = v.value;
+//        this.stochasticValue = new float[nbrParallelNumber];
+//        for (int i = 0; i < nbrParallelNumber; i++) {
+//            this.stochasticValue[i] = v.stochasticValue[i];
+//        }
+//        isUnStable=false;
+//    }
+//
     private boolean checkedStability(boolean wasUnstable) {
         if (wasUnstable) return wasUnstable;
         if (threshold < relativeError()) {
@@ -138,6 +138,8 @@ public class StochasticFloat extends Number implements
         StochasticFloat res = new StochasticFloat(-a.value, t, a.isUnStable);
         return res;
     }
+    
+    //TODO add min/max/abs, reconsider if fneg is part of the wrapping mechanism
 
     public static int f2i(StochasticFloat a) {
         return a.intValue();
