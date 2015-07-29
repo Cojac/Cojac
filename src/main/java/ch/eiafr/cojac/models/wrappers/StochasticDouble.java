@@ -12,9 +12,9 @@ public class StochasticDouble extends Number implements
     
     private final static double Tb = 4.303; // see chenaux 1988
 
-    protected double value;
-    protected double[] stochasticValue;
-    protected boolean isUnStable = false;
+    protected final double value;
+    protected final double[] stochasticValue;
+    protected final boolean isUnStable;
 
     /* Constructor */
 
@@ -24,6 +24,7 @@ public class StochasticDouble extends Number implements
         for (int i = 0; i < nbrParallelNumber; i++) {
             stochasticValue[i] = v;
         }
+        this.isUnStable=false;
     }
     
     private StochasticDouble(double v, double[] tab, boolean unstable) {
@@ -56,8 +57,7 @@ public class StochasticDouble extends Number implements
         double value = v.value;
         this.value = value;
         this.isUnStable = v.isUnStable;
-        this.stochasticValue = new double[nbrParallelNumber];
-        stochasticValue = v.stochasticValue.clone();
+        this.stochasticValue = v.stochasticValue.clone();
     }
 
     StochasticDouble(StochasticFloat v) {
@@ -390,19 +390,7 @@ public class StochasticDouble extends Number implements
         return this.value;
     }
 
-    private void checkStability() {
-        if (isUnStable)
-            return;
-        if (threshold < relativeError()) {
-            RuntimeException e = new RuntimeException();
-            System.err.println("Cojac has destected a unstable operation");
-            System.err.println("Relative error is : " + relativeError());
-            System.out.println("Value : " + this.toString());
-            e.printStackTrace(System.err);
-            this.isUnStable = true;
-        }
-    }
-
+    // TODO: check whether it is a "relativeError", or the "numberOfStableDigits"
     // compute the relative error as the value divide by the mean of all the
     // distance from value to the stochasticValue's values
     /*
