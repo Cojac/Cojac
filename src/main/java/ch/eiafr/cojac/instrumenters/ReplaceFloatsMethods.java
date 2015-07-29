@@ -112,6 +112,8 @@ public class ReplaceFloatsMethods {
         
         allMethodsConversions.add(DL_NAME); // use proxy to call every other methods from Double
 
+        // TODO: redesign so that it is easier to maintain (and ensure every method gets implemented)
+        //       maybe define only two methods math_unary/math_binary, and add a parameter 
         // Math Library
         invocations.put(new MethodSignature(MATH_NAME, "sqrt", "(D)D"),
                 new InvokableMethod(CDW_N, "math_sqrt", "(" + CDW + ")" + CDW, INVOKESTATIC));
@@ -193,12 +195,10 @@ public class ReplaceFloatsMethods {
             return true;
         }
 		
-		
 		if(references.hasToBeInstrumented(owner) == false){
 			fpm.proxyCall(mv, opcode, owner, name, desc);
 			return true;
 		}
-		
 		
         return false;
     }
