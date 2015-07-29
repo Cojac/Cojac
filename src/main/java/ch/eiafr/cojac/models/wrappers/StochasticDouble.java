@@ -453,21 +453,22 @@ public class StochasticDouble extends Number implements
      */
 
     private double relativeError() {
-        double mean = 0.0;
+        double mean = 0.0F;
         for (int i = 0; i < nbrParallelNumber; i++) {
             mean += this.stochasticValue[i];
         }
-        mean = mean / (double) nbrParallelNumber;
+        mean = mean / nbrParallelNumber;
 
         double squareSum = 0.0;
         for (int i = 0; i < nbrParallelNumber; i++) {
-            squareSum += Math.pow(this.stochasticValue[i] - this.value, 2.0);
+            double delta = this.stochasticValue[i] - mean;
+            squareSum += delta*delta;
         }
 
-        double sigmaSquare = (1.0 / (double) (nbrParallelNumber - 1)) *
+        double sigmaSquare = (1.0 / (nbrParallelNumber - 1)) *
                 squareSum;
 
-        double Cr = (Math.sqrt((double) nbrParallelNumber) * Math.abs(mean)) /
+        double Cr = (Math.sqrt(nbrParallelNumber) * Math.abs(mean)) /
                 (Math.sqrt(sigmaSquare) * Tb);
         return Math.pow(10.0, -Cr);
     }

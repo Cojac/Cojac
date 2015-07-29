@@ -1,17 +1,21 @@
 package ch.eiafr.cojac.models.wrappers;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class StochasticFloat extends Number implements
         Comparable<StochasticFloat> {
     private static int nbrParallelNumber = 3;
     private static float threshold = 0.1F;
+    private static boolean checkComparisons = false; //TODO: activate that feature
+
+    
     private double Tb = 4.303; // see chenaux 1988
     private static Random r = new Random();
     
     protected final float value;
     protected final float[] stochasticValue;
-    protected boolean isUnStable = false;
+    protected final boolean isUnStable;
 
     public StochasticFloat(float v) {
         this.value = v;
@@ -38,6 +42,7 @@ public class StochasticFloat extends Number implements
         for (int i = 0; i < nbrParallelNumber; i++) {
             this.stochasticValue[i] = (float) v.stochasticValue[i];
         }
+        isUnStable=false;
     }
 
     public StochasticFloat(StochasticFloat v) {
@@ -46,6 +51,7 @@ public class StochasticFloat extends Number implements
         for (int i = 0; i < nbrParallelNumber; i++) {
             this.stochasticValue[i] = v.stochasticValue[i];
         }
+        isUnStable=false;
     }
 
     private boolean checkedStability(boolean wasUnstable) {
@@ -204,6 +210,12 @@ public class StochasticFloat extends Number implements
 
     @Override
     public int compareTo(StochasticFloat o) {
+        if (checkComparisons) {
+            if (value==o.value && Arrays.equals(stochasticValue, o.stochasticValue)) return 0;
+            if (this.overlaps(o))
+                reportBadComparison();
+        }
+
         if (this.value > o.value) {
             return 1;
         }
@@ -211,6 +223,19 @@ public class StochasticFloat extends Number implements
             return -1;
         }
         return 0;
+    }
+
+    private boolean overlaps(StochasticFloat o) {
+        float min=value, max=value, omin=o.value, omax=o.value;
+        for(float f:stochasticValue) {
+            if(f<min) min=f;
+            if(f>max) max=f;
+        }
+        for(float f:o.stochasticValue) {
+            if(f<omin) omin=f;
+            if(f>omax) omax=f;
+        }
+        return Math.max(min, omin) <= Math.min(max, omax);
     }
 
     @Override
@@ -247,19 +272,6 @@ public class StochasticFloat extends Number implements
         return String.format(res, tmp);
     }
 
-    private void checkStability() {
-        if (isUnStable) {
-            return;
-        }
-        if (Math.abs(threshold) < relativeError()) {
-            RuntimeException e = new RuntimeException();
-            System.err.println("Cojac has destected a unstable operation");
-            System.err.println("Relative error is : " + relativeError());
-            System.err.println(this.toString());
-            e.printStackTrace(System.err);
-            this.isUnStable = true;
-        }
-    }
 
     // compute the relative error as the value divide by the mean of all the
     // distance from value to the stochasticValue's values
@@ -276,7 +288,7 @@ public class StochasticFloat extends Number implements
         for (int i = 0; i < nbrParallelNumber; i++) {
             mean += this.stochasticValue[i];
         }
-        mean = mean / (float) nbrParallelNumber;
+        mean = mean / nbrParallelNumber;
 
         double squareSum = 0.0;
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -284,11 +296,21 @@ public class StochasticFloat extends Number implements
             squareSum += delta*delta;
         }
 
-        double sigmaSquare = (1.0 / (double) (nbrParallelNumber - 1)) *
+        double sigmaSquare = (1.0 / (nbrParallelNumber - 1)) *
                 squareSum;
 
-        double Cr = (Math.sqrt((double) nbrParallelNumber) * Math.abs(mean)) /
+        double Cr = (Math.sqrt(nbrParallelNumber) * Math.abs(mean)) /
                 (Math.sqrt(sigmaSquare) * Tb);
         return (float) Math.pow(10.0, -Cr);
     }
+    
+    private void reportBadComparison() {
+        // TODO: reconsider this reporting mechanism (merge with the original Cojac
+        // mechanisms (console, logfile, exception, callback)
+
+        RuntimeException e = new RuntimeException("COJAC: comparing stochastic floats");
+        System.err.println("Cojac has detected an unstable comparison :");
+        e.printStackTrace(System.err);
+    }
+
 }
