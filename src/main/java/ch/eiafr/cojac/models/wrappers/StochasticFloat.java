@@ -11,7 +11,7 @@ public class StochasticFloat extends Number implements
 
     
     private final static double Tb = 4.303; // see chenaux 1988
-    private final static Random r = new Random();
+    private final static Random random = new Random();
     
     protected final float value;
     protected final float[] stochasticValue;
@@ -185,7 +185,7 @@ public class StochasticFloat extends Number implements
     }
 
     private static float rndRound(float value) {
-        switch (r.nextInt(3)) {
+        switch (random.nextInt(3)) {
         case 0:
             // round to negative infinity
             return value - Math.ulp(value);

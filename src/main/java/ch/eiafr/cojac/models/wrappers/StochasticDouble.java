@@ -1,5 +1,6 @@
 package ch.eiafr.cojac.models.wrappers;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class StochasticDouble extends Number implements
@@ -8,7 +9,7 @@ public class StochasticDouble extends Number implements
     private static double threshold = 0.1;
     private static boolean checkComparisons = false; //TODO: activate that feature
 
-    private final static Random r = new Random();
+    private final static Random random = new Random();
     
     private final static double Tb = 4.303; // see chenaux 1988
 
@@ -168,7 +169,7 @@ public class StochasticDouble extends Number implements
 
     // TODO remove "round to zero"
     private static double rndRound(double value) {
-        switch (r.nextInt(3)) {
+        switch (random.nextInt(3)) {
         case 0:
             // round to negative infinity
             return value - Math.ulp(value);
@@ -361,6 +362,12 @@ public class StochasticDouble extends Number implements
 
     @Override
     public int compareTo(StochasticDouble o) {
+        if (checkComparisons) {
+            if (value==o.value && Arrays.equals(stochasticValue, o.stochasticValue)) return 0;
+            if (this.overlaps(o))
+                reportBadComparison();
+        }
+
         if (this.value > o.value) {
             return 1;
         }
@@ -422,7 +429,7 @@ public class StochasticDouble extends Number implements
         return Math.pow(10.0, -Cr);
     }
     
-    private boolean overlaps(StochasticFloat o) {
+    private boolean overlaps(StochasticDouble o) {
         double min=value, max=value, omin=o.value, omax=o.value;
         for(double f:stochasticValue) {
             if(f<min) min=f;
@@ -433,6 +440,15 @@ public class StochasticDouble extends Number implements
             if(f>omax) omax=f;
         }
         return Math.max(min, omin) <= Math.min(max, omax);
+    }
+    
+    private void reportBadComparison() {
+        // TODO: reconsider this reporting mechanism (merge with the original Cojac
+        // mechanisms (console, logfile, exception, callback)
+
+        RuntimeException e = new RuntimeException("COJAC: comparing stochastic doubles");
+        System.err.println("Cojac has detected an unstable comparison :");
+        e.printStackTrace(System.err);
     }
 
 }
