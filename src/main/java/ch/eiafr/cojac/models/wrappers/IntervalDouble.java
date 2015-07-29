@@ -11,20 +11,22 @@ public class IntervalDouble extends Number implements
     protected final double value;
     protected final DoubleInterval interval;
     
-    protected boolean isUnStable;
+    protected final boolean isUnStable;
 
     private IntervalDouble(double value) {
-        this(value, new DoubleInterval(value));
+        this(value, new DoubleInterval(value), false);
     }
 
-    private IntervalDouble(double value, DoubleInterval interval) {
+    private IntervalDouble(double value, DoubleInterval interval, boolean unstable) {
         this.value = value;
         this.interval = interval;
+        this.isUnStable=checkedStability(unstable);
     }
 
     IntervalDouble(IntervalFloat a) {
         this.value = a.value;
         this.interval = new DoubleInterval(a.interval);
+        this.isUnStable=a.isUnStable;
     }
 
     public static IntervalDouble fromDouble(double a) {
@@ -37,37 +39,42 @@ public class IntervalDouble extends Number implements
     }
 
     public static IntervalDouble dadd(IntervalDouble a, IntervalDouble b) {
-        IntervalDouble res = new IntervalDouble(a.value + b.value, DoubleInterval.add(a.interval, b.interval));
-        res.isUnStable = a.isUnStable || b.isUnStable;
-        res.checkStability();
+        IntervalDouble res = new IntervalDouble(
+                a.value + b.value, 
+                DoubleInterval.add(a.interval, b.interval), 
+                a.isUnStable || b.isUnStable);
         return res;
     }
 
     public static IntervalDouble dsub(IntervalDouble a, IntervalDouble b) {
-        IntervalDouble res = new IntervalDouble(a.value - b.value, DoubleInterval.sub(a.interval, b.interval));
-        res.isUnStable = a.isUnStable || b.isUnStable;
-        res.checkStability();
+        IntervalDouble res = new IntervalDouble(
+                a.value - b.value, 
+                DoubleInterval.sub(a.interval, b.interval),
+                a.isUnStable || b.isUnStable);
         return res;
     }
 
     public static IntervalDouble dmul(IntervalDouble a, IntervalDouble b) {
-        IntervalDouble res = new IntervalDouble(a.value * b.value, DoubleInterval.mul(a.interval, b.interval));
-        res.isUnStable = a.isUnStable || b.isUnStable;
-        res.checkStability();
+        IntervalDouble res = new IntervalDouble(
+                a.value * b.value, 
+                DoubleInterval.mul(a.interval, b.interval),
+                a.isUnStable || b.isUnStable);
         return res;
     }
 
     public static IntervalDouble ddiv(IntervalDouble a, IntervalDouble b) {
-        IntervalDouble res = new IntervalDouble(a.value / b.value, DoubleInterval.div(a.interval, b.interval));
-        res.isUnStable = a.isUnStable || b.isUnStable;
-        res.checkStability();
+        IntervalDouble res = new IntervalDouble(
+                a.value / b.value, 
+                DoubleInterval.div(a.interval, b.interval),
+                a.isUnStable || b.isUnStable);
         return res;
     }
 
     public static IntervalDouble drem(IntervalDouble a, IntervalDouble b) {
-        IntervalDouble res = new IntervalDouble(a.value % b.value, DoubleInterval.modulo(a.interval, b.interval));
-        res.isUnStable = a.isUnStable || b.isUnStable;
-        res.checkStability();
+        IntervalDouble res = new IntervalDouble(
+                a.value % b.value, 
+                DoubleInterval.modulo(a.interval, b.interval),
+                a.isUnStable || b.isUnStable);
         return res;
     }
 
@@ -82,7 +89,10 @@ public class IntervalDouble extends Number implements
 
     // it's just a neg operation, dont need to check the stability...
     public static IntervalDouble dneg(IntervalDouble a) {
-        return new IntervalDouble(-a.value, DoubleInterval.neg(a.interval));
+        return new IntervalDouble(
+                -a.value, 
+                DoubleInterval.neg(a.interval),
+                a.isUnStable);
     }
 
     public static long d2l(IntervalDouble a) {
@@ -142,118 +152,134 @@ public class IntervalDouble extends Number implements
     }
 
     public static IntervalDouble math_sqrt(IntervalDouble a) {
-        IntervalDouble res = new IntervalDouble(Math.sqrt(a.value), DoubleInterval.sqrt(a.interval));
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        IntervalDouble res = new IntervalDouble(
+                Math.sqrt(a.value), 
+                DoubleInterval.sqrt(a.interval),
+                a.isUnStable);
         return res;
     }
 
     public static IntervalDouble math_pow(IntervalDouble a, IntervalDouble b) {
-        IntervalDouble res = new IntervalDouble(Math.pow(a.value, b.value), DoubleInterval.pow(a.interval, b.interval));
-        res.isUnStable = a.isUnStable || b.isUnStable;
-        res.checkStability();
+        IntervalDouble res = new IntervalDouble(
+                Math.pow(a.value, b.value), 
+                DoubleInterval.pow(a.interval, b.interval),
+                a.isUnStable || b.isUnStable);
         return res;
     }
 
     public static IntervalDouble math_sin(IntervalDouble a) {
-        IntervalDouble res = new IntervalDouble(Math.sin(a.value), DoubleInterval.sin(a.interval));
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        IntervalDouble res = new IntervalDouble(
+                Math.sin(a.value), 
+                DoubleInterval.sin(a.interval),
+                a.isUnStable);
         return res;
     }
 
     public static IntervalDouble math_cos(IntervalDouble a) {
-        IntervalDouble res = new IntervalDouble(Math.cos(a.value), DoubleInterval.cos(a.interval));
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        IntervalDouble res = new IntervalDouble(
+                Math.cos(a.value), 
+                DoubleInterval.cos(a.interval),
+                a.isUnStable);
         return res;
     }
 
     public static IntervalDouble math_tan(IntervalDouble a) {
-        IntervalDouble res = new IntervalDouble(Math.tan(a.value), DoubleInterval.tan(a.interval));
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        IntervalDouble res = new IntervalDouble(
+                Math.tan(a.value), 
+                DoubleInterval.tan(a.interval),
+                a.isUnStable);
         return res;
     }
 
     public static IntervalDouble math_sinh(IntervalDouble a) {
-        IntervalDouble res = new IntervalDouble(Math.sinh(a.value), DoubleInterval.sinh(a.interval));
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        IntervalDouble res = new IntervalDouble(
+                Math.sinh(a.value), 
+                DoubleInterval.sinh(a.interval),
+                a.isUnStable);
         return res;
     }
 
     public static IntervalDouble math_cosh(IntervalDouble a) {
-        IntervalDouble res = new IntervalDouble(Math.cosh(a.value), DoubleInterval.cosh(a.interval));
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        IntervalDouble res = new IntervalDouble(
+                Math.cosh(a.value), 
+                DoubleInterval.cosh(a.interval),
+                a.isUnStable);
         return res;
     }
 
     public static IntervalDouble math_tanh(IntervalDouble a) {
-        IntervalDouble res = new IntervalDouble(Math.tanh(a.value), DoubleInterval.tanh(a.interval));
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        IntervalDouble res = new IntervalDouble(
+                Math.tanh(a.value), 
+                DoubleInterval.tanh(a.interval),
+                a.isUnStable);
         return res;
     }
 
     /* Magic Method */
 
     public static IntervalDouble math_acos(IntervalDouble a) {
-        IntervalDouble res = new IntervalDouble(Math.acos(a.value), DoubleInterval.acos(a.interval));
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        IntervalDouble res = new IntervalDouble(
+                Math.acos(a.value), 
+                DoubleInterval.acos(a.interval),
+                a.isUnStable);
         return res;
     }
 
     public static IntervalDouble math_atan(IntervalDouble a) {
-        IntervalDouble res = new IntervalDouble(Math.atan(a.value), DoubleInterval.atan(a.interval));
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        IntervalDouble res = new IntervalDouble(
+                Math.atan(a.value), 
+                DoubleInterval.atan(a.interval),
+                a.isUnStable);
         return res;
     }
 
     /* Mathematical function */
 
     public static IntervalDouble math_asin(IntervalDouble a) {
-        IntervalDouble res = new IntervalDouble(Math.asin(a.value), DoubleInterval.asin(a.interval));
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        IntervalDouble res = new IntervalDouble(
+                Math.asin(a.value), 
+                DoubleInterval.asin(a.interval),
+                a.isUnStable);
         return res;
     }
 
     public static IntervalDouble math_exp(IntervalDouble a) {
-        IntervalDouble res = new IntervalDouble(Math.exp(a.value), DoubleInterval.exp(a.interval));
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        IntervalDouble res = new IntervalDouble(
+                Math.exp(a.value), 
+                DoubleInterval.exp(a.interval),
+                a.isUnStable);
         return res;
     }
 
     public static IntervalDouble math_log(IntervalDouble a) {
-        IntervalDouble res = new IntervalDouble(Math.log(a.value), DoubleInterval.log(a.interval));
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        IntervalDouble res = new IntervalDouble(
+                Math.log(a.value), 
+                DoubleInterval.log(a.interval),
+                a.isUnStable);
         return res;
     }
 
     public static IntervalDouble math_log10(IntervalDouble a) {
-        IntervalDouble res = new IntervalDouble(Math.log10(a.value), DoubleInterval.log10(a.interval));
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        IntervalDouble res = new IntervalDouble(
+                Math.log10(a.value), 
+                DoubleInterval.log10(a.interval),
+                a.isUnStable);
         return res;
     }
 
     public static IntervalDouble math_abs(IntervalDouble a) {
-        IntervalDouble res = new IntervalDouble(Math.abs(a.value), DoubleInterval.abs(a.interval));
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        IntervalDouble res = new IntervalDouble(
+                Math.abs(a.value), 
+                DoubleInterval.abs(a.interval),
+                a.isUnStable);
         return res;
     }
 
     public static IntervalDouble math_neg(IntervalDouble a) {
-        IntervalDouble res = new IntervalDouble(-a.value, DoubleInterval.neg(a.interval));
-        res.isUnStable = a.isUnStable;
-        res.checkStability();
+        IntervalDouble res = new IntervalDouble(
+                -a.value, 
+                DoubleInterval.neg(a.interval),
+                a.isUnStable);
         return res;
     }
 
@@ -310,32 +336,23 @@ public class IntervalDouble extends Number implements
         return 0;
     }
 
-    private void checkStability() {
-        // Todo
-        /*
-         * if(this.interval.inf > this.value || this.interval.sup < this.value)
-         * { CojacStabilityException e = new
-         * CojacStabilityException("The value is out of the interval !");
-         * System.err.println("Cojac has destected a unstable operation :");
-         * e.printStackTrace(System.err); }
-         */
-        if (this.isUnStable) {
-            return;
-        }
+    private boolean checkedStability(boolean wasUnstable) {
+        if (wasUnstable) return wasUnstable;
         if (threshold < relativeError()) {
             CojacStabilityException e = new CojacStabilityException();
             System.err.println("Cojac has destected a unstable operation :");
             e.printStackTrace(System.err);
             System.err.println("interval value :" + this.toString());
             System.err.println("relative error :" + relativeError());
-            this.isUnStable = true;
+            return true;
         }
+        return false;
     }
 
     private void checkComp(int compResult) {
         if (compResult == 0) {
             CojacStabilityComparaisonException e = new CojacStabilityComparaisonException();
-            System.err.println("Cojac has destected a unstable comparaison :");
+            System.err.println("Cojac has detected an unstable comparison :");
             e.printStackTrace(System.err);
         }
     }
