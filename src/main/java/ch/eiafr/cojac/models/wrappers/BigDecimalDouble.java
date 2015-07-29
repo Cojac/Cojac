@@ -242,14 +242,14 @@ public class BigDecimalDouble extends Number implements
     }
 
     /* Mathematical function */
-    // TODO : make better function for all math function !
+    // TODO : make better functions for all math function !
 
     public static BigDecimalDouble math_sqrt(BigDecimalDouble a) {
         return new BigDecimalDouble(sqrtHeron(a.val));
     }
 
     public static BigDecimalDouble math_pow(BigDecimalDouble base, BigDecimalDouble exponent) {
-        // TODO: use the pow method from BigDecimal, reconsider other math.* operations
+        // TODO: use the pow method from BigDecimal
         return new BigDecimalDouble(Math.pow(base.doubleValue(), exponent.doubleValue()));
     }
 
