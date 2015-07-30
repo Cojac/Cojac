@@ -87,15 +87,14 @@ final class CojacClassVisitor extends ClassVisitor {
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
         String oldDesc = desc;
         if (args.isSpecified(Arg.REPLACE_FLOATS)) {
-            if (!FloatReplacerMethodVisitor.DONT_INSTRUMENT)
-                desc=replaceFloatMethodDescription(desc);   
+            desc=replaceFloatMethodDescription(desc);   
         }
 		
         boolean isNative = (access & Opcodes.ACC_NATIVE) > 0;
 		boolean isAbstrac = (access & Opcodes.ACC_ABSTRACT) > 0;
 		boolean isInterface = (access & Opcodes.ACC_INTERFACE) > 0;
        
-        if(isNative && !FloatReplacerMethodVisitor.DONT_INSTRUMENT && desc.equals(oldDesc) == false){
+        if(isNative && desc.equals(oldDesc) == false){
 			/* 
 			If the native method has not the same descriptor, create a method to
 			transform types and call the good native method.
@@ -153,8 +152,6 @@ final class CojacClassVisitor extends ClassVisitor {
     public FieldVisitor visitField(int accessFlags, String fieldName, String fieldType, String genericSignature, Object initValStatic) {
         if (args.isSpecified(Arg.REPLACE_FLOATS)) {
 			
-            if (FloatReplacerMethodVisitor.DONT_INSTRUMENT)
-                return super.visitField(accessFlags, fieldName, fieldType, genericSignature, initValStatic);
             if (fieldType.equals("F")) {
                 return super.visitField(accessFlags, fieldName, COJAC_FLOAT_WRAPPER_TYPE_DESCR, genericSignature, null);
             }

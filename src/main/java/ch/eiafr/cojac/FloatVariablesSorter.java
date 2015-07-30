@@ -19,7 +19,6 @@
 package ch.eiafr.cojac;
 
 import static ch.eiafr.cojac.models.FloatReplacerClasses.*;
-import static ch.eiafr.cojac.FloatReplacerMethodVisitor.DONT_INSTRUMENT;
 import java.util.ArrayList;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -115,10 +114,6 @@ public class FloatVariablesSorter extends LocalVariablesSorter{
 
     @Override
     public void visitFrame(int type, int nLocal, final Object[] local, int nStack, final Object[] stack) {
-        if(DONT_INSTRUMENT){
-            mv.visitFrame(type, nLocal, local, nStack, stack);
-            return;
-        }
         ArrayList<Object> newLocal = new ArrayList<>();
         for (Object object : local) {
             if(object == Opcodes.DOUBLE){

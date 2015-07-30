@@ -55,7 +55,7 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
     private final Methods methods;
     private final IReaction reaction;
     private final String classPath;
-    public static final boolean DONT_INSTRUMENT = false;
+    public static final boolean DONT_INSTRUMENTn = false;
    
     private final LocalVariablesSorter lvs;
     private final AnalyzerAdapter aa;
@@ -64,7 +64,15 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
 	public static final String FN_NAME = Type.getType(FloatNumbers.class).getInternalName();
 	public static final String DN_NAME = Type.getType(DoubleNumbers.class).getInternalName();
 	
-    FloatReplacerMethodVisitor(int access, String desc, AnalyzerAdapter aa, LocalVariablesSorter lvs, ReplaceFloatsMethods rfm, InstrumentationStats stats, Args args, Methods methods, IReaction reaction, String classPath, IOpcodeInstrumenterFactory factory, CojacReferences references) {
+    FloatReplacerMethodVisitor(int access, String desc, AnalyzerAdapter aa, 
+            LocalVariablesSorter lvs, 
+            ReplaceFloatsMethods rfm, 
+            InstrumentationStats stats, 
+            Args args, Methods methods, 
+            IReaction reaction, 
+            String classPath, 
+            IOpcodeInstrumenterFactory factory, 
+            CojacReferences references) {
         super(Opcodes.ASM4, lvs);
         
         this.aa = aa;
@@ -84,10 +92,6 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
 	
     @Override
     public void visitInsn(int opCode) {
-        if (DONT_INSTRUMENT) {
-            mv.visitInsn(opCode); return; 
-        }
-        
         // TODO - make a junit test to check the DUP_X2 instruction...
         // Replace instructions on doubles by instruction on objects when necessary
         if(opCode == DUP2 || opCode == DUP2_X1 || opCode == DUP2_X2 || opCode == POP2){
@@ -121,10 +125,6 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
 
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-        if (DONT_INSTRUMENT) {
-            mv.visitMethodInsn(opcode, owner, name, desc, itf); return; 
-        }
-
         if(rfm.instrument(mv, opcode, owner, name, desc, stackTop())){
             return;
         }
@@ -138,10 +138,6 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
 
     @Override
     public void visitVarInsn(int opcode, int var) {
-        if (DONT_INSTRUMENT) {
-            mv.visitVarInsn(opcode, var); return; 
-        }
-        
         int replacedOpcode = opcode;
         switch(opcode){
             case FLOAD:
@@ -154,22 +150,12 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
 
 	@Override
     public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index) {
-        if (DONT_INSTRUMENT) {
-            mv.visitLocalVariable(name, desc, signature, start, end, index);
-            return;
-        }
-        
         desc=afterFloatReplacement(desc);
         mv.visitLocalVariable(name, desc, signature, start, end, index);
     }
 
     @Override
     public void visitFieldInsn(int opcode, String owner, String name, String desc) {
-        if (DONT_INSTRUMENT) {
-            mv.visitFieldInsn(opcode, owner, name, desc);
-            return;
-        }
-        
 		if(references.hasToBeInstrumented(owner) == false){ // proxy for fields
 			Type type = Type.getType(desc);
 			Type cojacType = afterFloatReplacement(type);
@@ -210,9 +196,6 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
     @Override
     public void visitLdcInsn(Object cst) {
         mv.visitLdcInsn(cst);
-        if (DONT_INSTRUMENT) {
-            return;
-        }
         if (cst instanceof Float) {
             stats.incrementCounterValue(Opcodes.LDC);
 			mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", "(F)"+COJAC_FLOAT_WRAPPER_TYPE_DESCR, false);
@@ -224,12 +207,7 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
     }
     
     @Override
-    public void visitIntInsn(int opcode, int operand){
-        if (DONT_INSTRUMENT) {
-            mv.visitIntInsn(opcode, operand);
-            return;
-        }
-		
+    public void visitIntInsn(int opcode, int operand){		
 		if(opcode == NEWARRAY){
 			if(operand == Opcodes.T_FLOAT){
 				mv.visitMethodInsn(INVOKESTATIC, FN_NAME, "newarray", "(I)["+Type.getType(Object.class).getDescriptor(), false);
@@ -248,10 +226,6 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
     
     @Override
     public void visitMultiANewArrayInsn(String desc, int dims){
-        if (DONT_INSTRUMENT) {
-            mv.visitMultiANewArrayInsn(desc, dims);
-            return;
-        }
         if(desc.endsWith("F") || desc.endsWith("D")){
             String objDescr = Type.getType(Object.class).getDescriptor();
             String wrapper = FN_NAME;
@@ -271,10 +245,6 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
     
     @Override
     public void visitTypeInsn(int opcode, String type){
-        if (DONT_INSTRUMENT) {
-            mv.visitTypeInsn(opcode, type);
-            return;
-        }
         Type myType = Type.getObjectType(type); // get type from internal name
 		
 		Type cojacType = afterFloatReplacement(myType);
