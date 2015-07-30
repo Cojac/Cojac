@@ -34,7 +34,7 @@ public class ReplaceFloatsMethods {
     
 	private final CojacReferences references;
     
-    private final Map<MethodSignature, Object> suppressions = new HashMap<>(50);
+    private final Map<MethodSignature, String> suppressions = new HashMap<>(50);
     private final Map<MethodSignature, InvokableMethod> invocations = new HashMap<>(50);
     private final ArrayList<String> allMethodsConversions = new ArrayList<>(50);
 
@@ -78,6 +78,13 @@ public class ReplaceFloatsMethods {
         suppressions.put(new MethodSignature(FL_NAME, "floatValue", "()F"), null); // delete in every case (keep FloatWrapper)
         
         invocations.put(new MethodSignature(FL_NAME, "valueOf", "(F)"+FL_DESCR), new InvokableMethod(CFW_N, "fromFloat", "(F)"+CFW, INVOKESTATIC));
+
+        // TODO: (BAP) double-check those new Float/Double instrumentations: 
+        // - I just suppressed these public constructors in wrappers, and the test still passes...
+        // - strange we do not instrument the NEW opcode in case of NEW Double/Float...
+        // - the first can be move to 'suppressions', no?
+        // - the next two can instead rely on CFW.fromString and CDW.d2f
+        // - idem for Double (below)
         
         invocations.put(new MethodSignature(FL_NAME, "<init>", "(F)V"), new InvokableMethod(CFW_N, "<init>", "("+CFW+")V", INVOKESPECIAL));
         invocations.put(new MethodSignature(FL_NAME, "<init>", "(Ljava/lang/String;)V"), new InvokableMethod(CFW_N, "<init>", "(Ljava/lang/String;)V", INVOKESPECIAL));
@@ -163,7 +170,7 @@ public class ReplaceFloatsMethods {
         allMethodsConversions.add(MATH_NAME);
     }
     
-    
+    /** method call instrumentation; returns true if it was instrumented */
     public boolean instrument(MethodVisitor mv, int opcode, String owner, String name, String desc, Object stackTop){
         MethodSignature ms = new MethodSignature(owner, name, desc);
         
@@ -176,8 +183,6 @@ public class ReplaceFloatsMethods {
 			return true;
 		}
 		
-        InvokableMethod replacementMethod = invocations.get(ms);
-        
         if(suppressions.containsKey(ms)){
             Object supressionMethod = suppressions.get(ms);
             if(supressionMethod == null)
@@ -186,11 +191,12 @@ public class ReplaceFloatsMethods {
                 return true;
         }
         
-        if(replacementMethod != null){
+        InvokableMethod replacementMethod = invocations.get(ms);
+                if(replacementMethod != null){
             replacementMethod.invoke(mv);
             return true;
         }
-        else if(allMethodsConversions.contains(owner)){
+        if(allMethodsConversions.contains(owner)){
             fpm.proxyCall(mv, opcode, owner, name, desc);
             return true;
         }
