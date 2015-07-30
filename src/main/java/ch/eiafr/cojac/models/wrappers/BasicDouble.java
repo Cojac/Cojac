@@ -23,20 +23,38 @@ package ch.eiafr.cojac.models.wrappers;
 
 
 public class BasicDouble extends Number implements Comparable<BasicDouble>{
+    //-------------------------------------------------------------------------
+    //----------------- Fields and auxiliary constructors ---------------------
+    //------------ (not required for the Wrapper mechanism) -------------------
+    //-------------------------------------------------------------------------
+
     private final double val;
-    
+
     private BasicDouble(double v) {
         val=v;
     }
     
-    public static BasicDouble fromDouble(double a) {
-        return new BasicDouble(a);
+    //-------------------------------------------------------------------------
+    //----------------- Necessary constructors  -------------------------------
+    //-------------------------------------------------------------------------
+
+    public BasicDouble(String v) {
+        val=Double.valueOf(v);
     }
     
-    public static BasicDouble fromString(String a){
-        return new BasicDouble(Double.valueOf(a));
+    public BasicDouble(BasicFloat v) {
+        val=BasicFloat.toFloat(v);
+    }
+    
+    public BasicDouble(BasicDouble v) {
+        val=v.val;
     }
 
+
+    //-------------------------------------------------------------------------
+    //----------------- Methods with 1st parameter of 'this' type -------------
+    //-------------------------------------------------------------------------
+    
     public static BasicDouble dadd(BasicDouble a, BasicDouble b) {
         return new BasicDouble(a.val+b.val);
     }
@@ -90,21 +108,6 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
         return (long) a.val;
     }
     
-    public static BasicFloat d2f(BasicDouble a) {
-        return BasicFloat.fromFloat((float)a.val);
-    }
-    
-    public static BasicDouble i2d(int a) {
-        return new BasicDouble((double)a);
-    }
-    
-    public static BasicDouble l2d(long a) {
-        return new BasicDouble((double)a);
-    }
-
-    public static BasicDouble f2d(BasicFloat a) {
-        return new BasicDouble((double)BasicFloat.toFloat(a));
-    }
 
     // TODO: consider using lambdas (eg return a.afterUnaryOp(Math::sqrt))
 //    private BasicDouble afterUnaryOp(DoubleUnaryOperator op) {
@@ -120,14 +123,62 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
         return new BasicDouble(Math.sqrt(a.val));
     }
 	
+    public static BasicDouble math_abs(BasicDouble a){
+        return new BasicDouble(Math.abs(a.val));
+    }
+    public static BasicDouble math_sin(BasicDouble a){
+        return new BasicDouble(Math.sin(a.val));
+    }
+    public static BasicDouble math_cos(BasicDouble a){
+        return new BasicDouble(Math.cos(a.val));
+    }
+    public static BasicDouble math_tan(BasicDouble a){
+        return new BasicDouble(Math.tan(a.val));
+    }
+    public static BasicDouble math_asin(BasicDouble a){
+        return new BasicDouble(Math.asin(a.val));
+    }
+    public static BasicDouble math_acos(BasicDouble a){
+        return new BasicDouble(Math.acos(a.val));
+    }
+    public static BasicDouble math_atan(BasicDouble a){
+        return new BasicDouble(Math.atan(a.val));
+    }
+    public static BasicDouble math_sinh(BasicDouble a){
+        return new BasicDouble(Math.sinh(a.val));
+    }
+    public static BasicDouble math_cosh(BasicDouble a){
+        return new BasicDouble(Math.cosh(a.val));
+    }
+    public static BasicDouble math_tanh(BasicDouble a){
+        return new BasicDouble(Math.tanh(a.val));
+    }
+    public static BasicDouble math_exp(BasicDouble a){
+        return new BasicDouble(Math.exp(a.val));
+    }
+    public static BasicDouble math_log(BasicDouble a){
+        return new BasicDouble(Math.log(a.val));
+    }
+    public static BasicDouble math_log10(BasicDouble a){
+        return new BasicDouble(Math.log10(a.val));
+    }
+    public static BasicDouble math_toRadians(BasicDouble a){
+        return new BasicDouble(Math.toRadians(a.val));
+    }
+    public static BasicDouble math_toDegrees(BasicDouble a){
+        return new BasicDouble(Math.toDegrees(a.val));
+    }
+
     // TODO: implement all math.* operations
     // TODO: design a mechanism to ensure any wrapper implements the whole required set of methods
 	
 	/*
     public static MyWrapper math_min(MyWrapper a, MyWrapper b) {
     public static MyWrapper math_max(MyWrapper a, MyWrapper b) {
-    public static MyWrapper math_abs(MyWrapper a) {
+    public static MyWrapper math_pow(MyWrapper a, MyWrapper b) {
+    
     public static MyWrapper math_sqrt(MyWrapper a) {
+    public static MyWrapper math_abs(MyWrapper a) {
     public static MyWrapper math_sin(MyWrapper a) {
     public static MyWrapper math_cos(MyWrapper a) {
     public static MyWrapper math_tan(MyWrapper a) {
@@ -140,9 +191,55 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
     public static MyWrapper math_exp(MyWrapper a) {
     public static MyWrapper math_log(MyWrapper a) {
     public static MyWrapper math_log10(MyWrapper a) {
-    public static MyWrapper math_pow(MyWrapper a, MyWrapper b) {
+    public static MyWrapper math_toRadians(MyWrapper a) {
+    public static MyWrapper math_toDegrees(MyWrapper a) {
 	 */
+    
+    public static BasicDouble math_min(BasicDouble a, BasicDouble b) {
+        return fromDouble(Math.min(a.val, b.val));
+    }
+
+    public static BasicDouble math_max(BasicDouble a, BasicDouble b) {
+        return fromDouble(Math.max(a.val, b.val));
+    }
+
+    public static BasicDouble math_pow(BasicDouble a, BasicDouble b) {
+        return fromDouble(Math.pow(a.val, b.val));
+    }
+    
 	
+    public static BasicFloat d2f(BasicDouble a) {
+        return BasicFloat.fromFloat((float)a.val);
+    }
+
+    //-------------------------------------------------------------------------
+    //----------------- Necessarily static methods ----------------------------
+    //-------------------------------------------------------------------------
+
+    public static BasicDouble fromDouble(double a) {
+        return new BasicDouble(a);
+    }
+    
+    public static BasicDouble fromString(String a){
+        return new BasicDouble(Double.valueOf(a));
+    }
+    
+    public static BasicDouble i2d(int a) {
+        return new BasicDouble((double)a);
+    }
+    
+    public static BasicDouble l2d(long a) {
+        return new BasicDouble((double)a);
+    }
+
+    public static BasicDouble f2d(BasicFloat a) {
+        return new BasicDouble((double)BasicFloat.toFloat(a));
+    }
+
+    //-------------------------------------------------------------------------
+    //----------------- Overridden methods ----------------------
+    //-------------------------------------------------------------------------
+    
 	@Override
 	public int compareTo(BasicDouble o) {
         return Double.compare(this.val, o.val);
@@ -186,6 +283,11 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
 	public double doubleValue() {
 		return val;
 	}
+
+    //-------------------------------------------------------------------------
+    //--------------------- Auxiliary constructors ----------------------------
+	//------------ (not required for the Wrapper mechanism) -------------------
+    //-------------------------------------------------------------------------
 
 
 }
