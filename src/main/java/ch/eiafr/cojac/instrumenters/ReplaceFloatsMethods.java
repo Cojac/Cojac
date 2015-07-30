@@ -82,10 +82,14 @@ public class ReplaceFloatsMethods {
         // TODO: (BAP) double-check those new Float/Double instrumentations: 
         // - I just suppressed these public constructors in wrappers, and the test still passes...
         // - strange we do not instrument the NEW opcode in case of NEW Double/Float...
-        // - the first can be move to 'suppressions', no?
-        // - the next two can instead rely on CFW.fromString and CDW.d2f
+        // - the first can be move to 'suppressions' (not sure)
+        // - the next two can instead rely on CFW.fromString and CDW.d2f (not sure)
         // - idem for Double (below)
         
+        //suppressions.put(new MethodSignature(FL_NAME, "<init>", "(F)V"), CFW_N); // delete if the value is already a FloatWrapper
+        //invocations.put(new MethodSignature(FL_NAME, "<init>", "(Ljava/lang/String;)V"), new InvokableMethod(CFW_N, "fromString", "(Ljava/lang/String;)V", INVOKESTATIC));
+        //invocations.put(new MethodSignature(FL_NAME, "<init>", "(D)V"), new InvokableMethod(CDW_N, "d2f", "("+CDW+")"+CFW, INVOKESTATIC));
+
         invocations.put(new MethodSignature(FL_NAME, "<init>", "(F)V"), new InvokableMethod(CFW_N, "<init>", "("+CFW+")V", INVOKESPECIAL));
         invocations.put(new MethodSignature(FL_NAME, "<init>", "(Ljava/lang/String;)V"), new InvokableMethod(CFW_N, "<init>", "(Ljava/lang/String;)V", INVOKESPECIAL));
         invocations.put(new MethodSignature(FL_NAME, "<init>", "(D)V"), new InvokableMethod(CFW_N, "<init>", "("+CDW+")V", INVOKESPECIAL));
