@@ -190,7 +190,6 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
 				mv.visitTypeInsn(CHECKCAST, COJAC_FLOAT_WRAPPER_INTERNAL_NAME);
 			}
 		}
-		
     }
 
     @Override
@@ -245,6 +244,7 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
     
     @Override
     public void visitTypeInsn(int opcode, String type){
+        // BAPST: that's where we instrument NEW Double/Float...
         Type myType = Type.getObjectType(type); // get type from internal name
 		
 		Type cojacType = afterFloatReplacement(myType);
@@ -259,8 +259,7 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
 				}
 			}
 		}
-			
-        
+
         mv.visitTypeInsn(opcode, cojacType.getInternalName());
     }
     

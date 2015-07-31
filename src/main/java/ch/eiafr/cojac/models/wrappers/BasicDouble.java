@@ -169,14 +169,9 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
         return new BasicDouble(Math.toDegrees(a.val));
     }
 
-    // TODO: implement all math.* operations
     // TODO: design a mechanism to ensure any wrapper implements the whole required set of methods
 	
 	/*
-    public static MyWrapper math_min(MyWrapper a, MyWrapper b) {
-    public static MyWrapper math_max(MyWrapper a, MyWrapper b) {
-    public static MyWrapper math_pow(MyWrapper a, MyWrapper b) {
-    
     public static MyWrapper math_sqrt(MyWrapper a) {
     public static MyWrapper math_abs(MyWrapper a) {
     public static MyWrapper math_sin(MyWrapper a) {
@@ -193,7 +188,11 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
     public static MyWrapper math_log10(MyWrapper a) {
     public static MyWrapper math_toRadians(MyWrapper a) {
     public static MyWrapper math_toDegrees(MyWrapper a) {
-	 */
+
+	public static MyWrapper math_min(MyWrapper a, MyWrapper b) {
+    public static MyWrapper math_max(MyWrapper a, MyWrapper b) {
+    public static MyWrapper math_pow(MyWrapper a, MyWrapper b) {
+	*/
     
     public static BasicDouble math_min(BasicDouble a, BasicDouble b) {
         return fromDouble(Math.min(a.val, b.val));
@@ -237,52 +236,48 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
     }
 
     //-------------------------------------------------------------------------
-    //----------------- Overridden methods ----------------------
+    //----------------- Overridden methods ------------------------------------
     //-------------------------------------------------------------------------
     
-	@Override
-	public int compareTo(BasicDouble o) {
+	@Override public int compareTo(BasicDouble o) {
         return Double.compare(this.val, o.val);
-//		if(val > o.val)
-//			return 1;
-//		if(val < o.val)
-//			return -1;
-//		return 0;
 	}
 	
-	@Override
-	public boolean equals(Object obj) {
+	@Override public boolean equals(Object obj) {
 	    return new Double(this.val).equals(obj);
-//        return (obj instanceof BasicDouble) && (((BasicDouble)obj).val == val);
     }
 
-	@Override
-	public int hashCode() {
+	@Override public int hashCode() {
 	    return Double.hashCode(this.val);
-//		int hash = 3;
-//		hash = 43 * hash + (int) (Double.doubleToLongBits(this.val) ^ (Double.doubleToLongBits(this.val) >>> 32));
-//		return hash;
 	}
 
-	@Override
-	public int intValue() {
+	@Override public int intValue() {
 		return (int) val;
 	}
 
-	@Override
-	public long longValue() {
+	@Override public long longValue() {
 		return (long) val;
 	}
 
-	@Override
-	public float floatValue() {
+	@Override public float floatValue() {
 		return (float) val;
 	}
 
-	@Override
-	public double doubleValue() {
+	@Override public double doubleValue() {
 		return val;
 	}
+	
+    //-------------------------------------------------------------------------
+    //----------------- "Magic" methods ---------------------------------------
+    //-------------------------------------------------------------------------
+
+    public static String COJAC_MAGIC_DOUBLE_wrapper() {
+        return "Basic";
+    }
+
+    public static String COJAC_MAGIC_DOUBLE_toStr(BasicDouble n) {
+        return n.toString();
+    }
 
     //-------------------------------------------------------------------------
     //--------------------- Auxiliary constructors ----------------------------

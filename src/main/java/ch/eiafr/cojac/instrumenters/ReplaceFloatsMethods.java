@@ -79,21 +79,12 @@ public class ReplaceFloatsMethods {
         
         invocations.put(new MethodSignature(FL_NAME, "valueOf", "(F)"+FL_DESCR), new InvokableMethod(CFW_N, "fromFloat", "(F)"+CFW, INVOKESTATIC));
 
-        // TODO: (BAP) double-check those new Float/Double instrumentations: 
-        // - I just suppressed these public constructors in wrappers, and the test still passes...
-        // - strange we do not instrument the NEW opcode in case of NEW Double/Float...
-        // - the first can be move to 'suppressions' (not sure)
-        // - the next two can instead rely on CFW.fromString and CDW.d2f (not sure)
-        // - idem for Double (below)
-        
-        //suppressions.put(new MethodSignature(FL_NAME, "<init>", "(F)V"), CFW_N); // delete if the value is already a FloatWrapper
-        //invocations.put(new MethodSignature(FL_NAME, "<init>", "(Ljava/lang/String;)V"), new InvokableMethod(CFW_N, "fromString", "(Ljava/lang/String;)V", INVOKESTATIC));
-        //invocations.put(new MethodSignature(FL_NAME, "<init>", "(D)V"), new InvokableMethod(CDW_N, "d2f", "("+CDW+")"+CFW, INVOKESTATIC));
+        // TODO: strengthen tests for "new Float/Double(...)"
+        // (I just suppressed these public constructors in wrappers, and the test still passes...)
 
         invocations.put(new MethodSignature(FL_NAME, "<init>", "(F)V"), new InvokableMethod(CFW_N, "<init>", "("+CFW+")V", INVOKESPECIAL));
         invocations.put(new MethodSignature(FL_NAME, "<init>", "(Ljava/lang/String;)V"), new InvokableMethod(CFW_N, "<init>", "(Ljava/lang/String;)V", INVOKESPECIAL));
         invocations.put(new MethodSignature(FL_NAME, "<init>", "(D)V"), new InvokableMethod(CFW_N, "<init>", "("+CDW+")V", INVOKESPECIAL));
-
         
         invocations.put(new MethodSignature(FL_NAME, "doubleValue", "()D"), new InvokableMethod(CFW_N, "f2d", "("+CFW+")"+CDW, INVOKESTATIC));
         invocations.put(new MethodSignature(FL_NAME, "intValue", "()I"), new InvokableMethod(CFW_N, "f2i", "("+CFW+")I", INVOKESTATIC));
@@ -102,8 +93,7 @@ public class ReplaceFloatsMethods {
         invocations.put(new MethodSignature(FL_NAME, "parseFloat", "(Ljava/lang/String;)F"), new InvokableMethod(CFW_N, "fromString", "(Ljava/lang/String;)"+CFW, INVOKESTATIC));
         
         allMethodsConversions.add(FL_NAME); // use proxy to call every other methods from Float
-        
-        
+               
         // Doubles replacements
         suppressions.put(new MethodSignature(DL_NAME, "valueOf", "(D)"+DL_DESCR), CDW_N); // delete if the value is already a DoubleWrapper
         suppressions.put(new MethodSignature(DL_NAME, "doubleValue", "()D"), null); // delete in every case (keep DoubleWrapper)
@@ -113,7 +103,6 @@ public class ReplaceFloatsMethods {
         invocations.put(new MethodSignature(DL_NAME, "<init>", "(D)V"), new InvokableMethod(CDW_N, "<init>", "("+CDW+")V", INVOKESPECIAL));
         invocations.put(new MethodSignature(DL_NAME, "<init>", "(Ljava/lang/String;)V"), new InvokableMethod(CDW_N, "<init>", "(Ljava/lang/String;)V", INVOKESPECIAL));
         invocations.put(new MethodSignature(DL_NAME, "<init>", "(F)V"), new InvokableMethod(CDW_N, "<init>", "("+CFW+")V", INVOKESPECIAL));
-
         
         invocations.put(new MethodSignature(DL_NAME, "floatValue", "()F"), new InvokableMethod(CDW_N, "d2f", "("+CDW+")"+CFW, INVOKESTATIC));
         invocations.put(new MethodSignature(DL_NAME, "intValue", "()I"), new InvokableMethod(CDW_N, "d2i", "("+CDW+")I", INVOKESTATIC));
@@ -128,8 +117,6 @@ public class ReplaceFloatsMethods {
         // Math Library
         invocations.put(new MethodSignature(MATH_NAME, "sqrt", "(D)D"),
                 new InvokableMethod(CDW_N, "math_sqrt", "(" + CDW + ")" + CDW, INVOKESTATIC));
-        invocations.put(new MethodSignature(MATH_NAME, "pow", "(DD)D"),
-                new InvokableMethod(CDW_N, "math_pow", "(" + CDW + CDW + ")" + CDW, INVOKESTATIC));
         invocations.put(new MethodSignature(MATH_NAME, "sin", "(D)D"),
                 new InvokableMethod(CDW_N, "math_sin", "(" + CDW + ")" + CDW, INVOKESTATIC));
         invocations.put(new MethodSignature(MATH_NAME, "sinh", "(D)D"),
@@ -156,16 +143,22 @@ public class ReplaceFloatsMethods {
                 new InvokableMethod(CDW_N, "math_exp", "(" + CDW + ")" + CDW, INVOKESTATIC));
         invocations.put(new MethodSignature(MATH_NAME, "log", "(D)D"),
                 new InvokableMethod(CDW_N, "math_log", "(" + CDW + ")" + CDW, INVOKESTATIC));
+        invocations.put(new MethodSignature(MATH_NAME, "log10", "(D)D"),
+                new InvokableMethod(CDW_N, "math_log10", "(" + CDW + ")" + CDW, INVOKESTATIC));
         invocations.put(new MethodSignature(MATH_NAME, "abs", "(D)D"),
                 new InvokableMethod(CDW_N, "math_abs", "(" + CDW + ")" + CDW, INVOKESTATIC));
+
         invocations.put(new MethodSignature(MATH_NAME, "max", "(DD)D"),
                 new InvokableMethod(CDW_N, "math_max", "(" + CDW + CDW + ")" + CDW, INVOKESTATIC));
         invocations.put(new MethodSignature(MATH_NAME, "min", "(DD)D"),
                 new InvokableMethod(CDW_N, "math_min", "(" + CDW + CDW + ")" + CDW, INVOKESTATIC));
+        invocations.put(new MethodSignature(MATH_NAME, "pow", "(DD)D"),
+                new InvokableMethod(CDW_N, "math_pow", "(" + CDW + CDW + ")" + CDW, INVOKESTATIC));
 
-        // for the BigDecimalFloat math function
+        // math functions put in FloatWrapper
         invocations.put(new MethodSignature(MATH_NAME,"abs","(F)F"),
                 new InvokableMethod(CFW_N, "math_abs","(" + CFW +")" + CFW, INVOKESTATIC));
+
         invocations.put(new MethodSignature(MATH_NAME,"min","(FF)F"),
                 new InvokableMethod(CFW_N, "math_min","(" + CFW + CFW +")" + CFW, INVOKESTATIC));
         invocations.put(new MethodSignature(MATH_NAME,"max","(FF)F"),

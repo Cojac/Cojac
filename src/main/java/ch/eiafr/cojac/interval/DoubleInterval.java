@@ -616,6 +616,7 @@ public class DoubleInterval implements Comparable<DoubleInterval> {
      * @return a new DoubleInterval that's the result of the cosinus operation
      */
     public static DoubleInterval tan(DoubleInterval a) {
+        //TODO: double-check this implementation (see [Julmy15], p. 26)
         if (a.isNan) {
             return new DoubleInterval(Double.NaN);
         }
