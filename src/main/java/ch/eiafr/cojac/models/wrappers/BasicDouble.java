@@ -21,6 +21,7 @@ package ch.eiafr.cojac.models.wrappers;
 //import java.util.function.DoubleBinaryOperator;
 //import java.util.function.DoubleUnaryOperator;
 
+//TODO: apply this "Basic" 'template' to the 4 other wrappers
 
 public class BasicDouble extends Number implements Comparable<BasicDouble>{
     //-------------------------------------------------------------------------
@@ -29,14 +30,14 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
     //-------------------------------------------------------------------------
 
     private final double val;
-
-    private BasicDouble(double v) {
-        val=v;
-    }
     
     //-------------------------------------------------------------------------
     //----------------- Necessary constructors  -------------------------------
     //-------------------------------------------------------------------------
+
+    public BasicDouble(double v) {
+        val=v;
+    }
 
     public BasicDouble(String v) {
         val=Double.valueOf(v);
@@ -49,7 +50,6 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
     public BasicDouble(BasicDouble v) {
         val=v.val;
     }
-
 
     //-------------------------------------------------------------------------
     //----------------- Methods with 1st parameter of 'this' type -------------
@@ -250,6 +250,10 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
 	@Override public int hashCode() {
 	    return Double.hashCode(this.val);
 	}
+	
+    @Override public String toString(){
+        return Double.toString(val);
+    }
 
 	@Override public int intValue() {
 		return (int) val;
@@ -278,9 +282,9 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
     public static String COJAC_MAGIC_DOUBLE_toStr(BasicDouble n) {
         return n.toString();
     }
-
+    
     //-------------------------------------------------------------------------
-    //--------------------- Auxiliary constructors ----------------------------
+    //--------------------- Auxiliary methods ---------------------------------
 	//------------ (not required for the Wrapper mechanism) -------------------
     //-------------------------------------------------------------------------
 

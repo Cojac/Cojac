@@ -417,6 +417,14 @@ public class BigDecimalDouble extends Number implements
         return Double.NEGATIVE_INFINITY;
     }
 
+    //-------------------------------------------------------------------------
+    //----------------- "Magic" methods ---------------------------------------
+    //-------------------------------------------------------------------------
+
+    public static String COJAC_MAGIC_DOUBLE_wrapper() {
+        return "BigDecimal";
+    }
+
     public static String COJAC_MAGIC_DOUBLE_toStr(BigDecimalFloat n) {
         return n.toString();
     }

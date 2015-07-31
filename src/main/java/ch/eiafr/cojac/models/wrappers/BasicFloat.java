@@ -19,23 +19,36 @@
 package ch.eiafr.cojac.models.wrappers;
 
 public class BasicFloat extends Number implements Comparable<BasicFloat> {
+    //-------------------------------------------------------------------------
+    //----------------- Fields and auxiliary constructors ---------------------
+    //------------ (not required for the Wrapper mechanism) -------------------
+    //-------------------------------------------------------------------------
+
     private final float val;
     
+    //-------------------------------------------------------------------------
+    //----------------- Necessary constructors  -------------------------------
+    //-------------------------------------------------------------------------
+
     private BasicFloat(float v) {
         val=v;
     }
     
-    public static BasicFloat fromFloat(float a) {
-        return new BasicFloat(a);
+    public BasicFloat(String v) {
+        val=Float.valueOf(v);
     }
     
-    public static BasicFloat fromString(String a){
-        return new BasicFloat(Float.valueOf(a));
+    public BasicFloat(BasicFloat v) {
+        val=BasicFloat.toFloat(v);
     }
     
-    public static BasicFloat fromDouble(BasicDouble a){
-        return new BasicFloat((float)BasicDouble.toDouble(a));
+    public BasicFloat(BasicDouble v) {
+        val=v.floatValue();
     }
+
+    //-------------------------------------------------------------------------
+    //----------------- Methods with 1st parameter of 'this' type -------------
+    //-------------------------------------------------------------------------
 
     public static BasicFloat fadd(BasicFloat a, BasicFloat b) {
         return new BasicFloat(a.val+b.val);
@@ -82,6 +95,18 @@ public class BasicFloat extends Number implements Comparable<BasicFloat> {
         return 0;
     }
     
+    public static BasicFloat math_abs(BasicFloat a) {
+        return fromFloat(Math.abs(a.val));
+    }
+
+    public static BasicFloat math_min(BasicFloat a, BasicFloat b) {
+        return fromFloat(Math.min(a.val, b.val));
+    }
+
+    public static BasicFloat math_max(BasicFloat a, BasicFloat b) {
+        return fromFloat(Math.max(a.val, b.val));
+    }
+
     public static int f2i(BasicFloat a) {
         return (int) a.val;
     }
@@ -93,6 +118,27 @@ public class BasicFloat extends Number implements Comparable<BasicFloat> {
     public static BasicDouble f2d(BasicFloat a) {
         return BasicDouble.fromDouble(a.val);
     }
+
+    //-------------------------------------------------------------------------
+    //----------------- Necessarily static methods ----------------------------
+    //-------------------------------------------------------------------------
+
+    public static BasicFloat fromString(String a){
+        return new BasicFloat(Float.valueOf(a));
+    }
+    
+    public static BasicFloat fromFloat(float a) {
+        return new BasicFloat(a);
+    }
+    
+    public static BasicFloat fromDouble(BasicDouble a){
+        return new BasicFloat((float)BasicDouble.toDouble(a));
+    }
+
+    // TODO: can we merge fromDouble and d2f?
+    public static BasicFloat d2f(BasicDouble a) {
+        return new BasicFloat((float)BasicDouble.toDouble(a));
+    }
     
     public static BasicFloat i2f(int a) {
         return new BasicFloat((float)a);
@@ -102,62 +148,61 @@ public class BasicFloat extends Number implements Comparable<BasicFloat> {
         return new BasicFloat((float)a);
     }
 
-    public static BasicFloat d2f(BasicDouble a) {
-        return new BasicFloat((float)BasicDouble.toDouble(a));
-    }
+//    public static boolean isInfiniteProxy(BasicFloat a){
+//        return Float.isInfinite(a.val);
+//    }
 
-    @Override
-    public String toString(){
-        return Float.toString(val);
-    }
-    
-    public static boolean isInfiniteProxy(BasicFloat a){
-        return Float.isInfinite(a.val);
-    }
+    //-------------------------------------------------------------------------
+    //----------------- Overridden methods ------------------------------------
+    //-------------------------------------------------------------------------
 
-	@Override
-	public int compareTo(BasicFloat o) {
+    @Override public int compareTo(BasicFloat o) {
 	    return Float.compare(this.val, o.val);
-//		if(val > o.val)
-//			return 1;
-//		if(val < o.val)
-//			return -1;
-//		return 0;
 	}
 	
-	@Override
-	public boolean equals(Object obj) {
+	@Override public boolean equals(Object obj) {
 	    return new Float(this.val).equals(obj);
 //        return (obj instanceof BasicFloat) && (((BasicFloat)obj).val == val);
     }
 
-	@Override
-	public int hashCode() {
+	@Override public int hashCode() {
 	    return Float.hashCode(this.val);
 //		int hash = 7;
 //		hash = 43 * hash + Float.floatToIntBits(this.val);
 //		return hash;
 	}
 
-	@Override
-	public int intValue() {
+    @Override public String toString(){
+        return Float.toString(val);
+    }
+    
+	@Override public int intValue() {
 		return (int) val;
 	}
 
-	@Override
-	public long longValue() {
+	@Override public long longValue() {
 		return (long) val;
 	}
 
-	@Override
-	public float floatValue() {
+	@Override public float floatValue() {
 		return val;
 	}
 
-	@Override
-	public double doubleValue() {
+	@Override public double doubleValue() {
 		return val;
 	}
 
+    //-------------------------------------------------------------------------
+    //----------------- "Magic" methods ---------------------------------------
+    //-------------------------------------------------------------------------
+
+    public static String COJAC_MAGIC_FLOAT_toStr(BasicFloat n) {
+        return n.toString();
+    }
+
+    //-------------------------------------------------------------------------
+    //--------------------- Auxiliary methods ---------------------------------
+    //------------ (not required for the Wrapper mechanism) -------------------
+    //-------------------------------------------------------------------------
 
 }

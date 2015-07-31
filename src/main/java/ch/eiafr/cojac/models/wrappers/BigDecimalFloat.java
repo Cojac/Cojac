@@ -19,6 +19,7 @@
 package ch.eiafr.cojac.models.wrappers;
 
 import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_BIGDECIMAL_PRECISION;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Objects;
@@ -327,6 +328,13 @@ public class BigDecimalFloat extends Number implements
         if (isPositiveInfinite)
             return Float.POSITIVE_INFINITY;
         return Float.NEGATIVE_INFINITY;
+    }
+    //-------------------------------------------------------------------------
+    //----------------- "Magic" methods ---------------------------------------
+    //-------------------------------------------------------------------------
+
+    public static String COJAC_MAGIC_FLOAT_toStr(BigDecimalFloat n) {
+        return n.toString();
     }
 
 }
