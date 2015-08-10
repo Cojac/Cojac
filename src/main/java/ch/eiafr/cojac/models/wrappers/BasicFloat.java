@@ -130,12 +130,11 @@ public class BasicFloat extends Number implements Comparable<BasicFloat> {
     public static BasicFloat fromFloat(float a) {
         return new BasicFloat(a);
     }
-    
-    public static BasicFloat fromDouble(BasicDouble a){
-        return new BasicFloat((float)BasicDouble.toDouble(a));
+
+    public static BasicFloat fromRealFloatWrapper(Float a) {
+        return new BasicFloat(a.floatValue());
     }
 
-    // TODO: can we merge fromDouble and d2f?
     public static BasicFloat d2f(BasicDouble a) {
         return new BasicFloat((float)BasicDouble.toDouble(a));
     }
@@ -147,10 +146,6 @@ public class BasicFloat extends Number implements Comparable<BasicFloat> {
     public static BasicFloat l2f(long a) {
         return new BasicFloat((float)a);
     }
-
-//    public static boolean isInfiniteProxy(BasicFloat a){
-//        return Float.isInfinite(a.val);
-//    }
 
     //-------------------------------------------------------------------------
     //----------------- Overridden methods ------------------------------------

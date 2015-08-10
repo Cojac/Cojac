@@ -218,6 +218,10 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
         return new BasicDouble(a);
     }
     
+    public static BasicDouble fromRealDoubleWrapper(Double a) {
+        return new BasicDouble(a.doubleValue());
+    }
+
     public static BasicDouble fromString(String a){
         return new BasicDouble(Double.valueOf(a));
     }
