@@ -29,6 +29,7 @@ public class FloatNumbers {
         for (int i = 0; i < a.length; i++) {
             a[i] = COJAC_FLOAT_WRAPPER_CLASS.getConstructor(float.class).newInstance(0);
         }
+        // WRAPPER SPEC: FW(float)
         return a;
     }
 
@@ -42,19 +43,21 @@ public class FloatNumbers {
         return array;
     }
     
-	private static Object[] convertArray(float[] array) throws Exception{
+	private static Object[] wrapperArrayFromPrimitive(float[] array) throws Exception{
         Object[] a = (Object[]) Array.newInstance(COJAC_FLOAT_WRAPPER_CLASS, array.length);
         for (int i = 0; i < a.length; i++)
             a[i] = COJAC_FLOAT_WRAPPER_CLASS.getConstructor(float.class).newInstance(array[i]);
+        // WRAPPER SPEC: FW(float)
         return a;
     }
 	
-	private static float[] convertArray(Object[] array) throws Exception{
+	private static float[] primitiveArrayFromWrapper(Object[] array) throws Exception{
         float[] a = new float[array.length];
         for (int i = 0; i < a.length; i++){
 			Method m = COJAC_FLOAT_WRAPPER_CLASS.getMethod("toFloat", new Class[] {COJAC_FLOAT_WRAPPER_CLASS});
 			a[i] = (float)m.invoke(COJAC_FLOAT_WRAPPER_CLASS, array[i]);
 		}
+        // WRAPPER SPEC: FW.toFloat(FW) -> float
         return a;
     }
 	
@@ -72,7 +75,7 @@ public class FloatNumbers {
         Object a;
 		Object[] input = (Object[])array;
         if(dimensions == 1){
-            a = convertArray(input);
+            a = primitiveArrayFromWrapper(input);
         }
         else{
             Class<?> compType = arrayClass(float.class, dimensions - 1);
@@ -88,7 +91,7 @@ public class FloatNumbers {
 	public static Object convertArrayToCojac(Object array, int dimensions) throws Exception {
         Object a;
         if(dimensions == 1){
-            a = convertArray((float[])array);
+            a = wrapperArrayFromPrimitive((float[])array);
         }
         else{
 			Object[] input = (Object[])array;
@@ -115,12 +118,14 @@ public class FloatNumbers {
 	public static Object initialize(Object a) throws Exception{
 		if(a == null)
 			return COJAC_FLOAT_WRAPPER_CLASS.getConstructor(float.class).newInstance(0);
+        // WRAPPER SPEC: FW(float)
 		return a;
 	}
 
 	public static Object castFromObject(Object obj) throws Exception{
 		if(obj instanceof Double)
 			return COJAC_FLOAT_WRAPPER_CLASS.getConstructor(float.class).newInstance((Double)obj);
+        // WRAPPER SPEC: FW(float)
 		return obj;
 	}
 	

@@ -167,7 +167,7 @@ public class StochasticDouble extends Number implements
         return new Double(a.value);
     }
 
-    // TODO remove "round to zero"
+    // BAPST: removed "round to zero" mode
     private static double rndRound(double value) {
         switch (random.nextInt(3)) {
         case 0:

@@ -205,11 +205,10 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
     public static BasicDouble math_pow(BasicDouble a, BasicDouble b) {
         return fromDouble(Math.pow(a.val, b.val));
     }
-    
-	
-    public static BasicFloat d2f(BasicDouble a) {
-        return BasicFloat.fromFloat((float)a.val);
-    }
+    	
+//    public static BasicFloat d2f(BasicDouble a) {  // now in Float wrapper
+//        return BasicFloat.fromFloat((float)a.val);
+//    }
 
     //-------------------------------------------------------------------------
     //----------------- Necessarily static methods ----------------------------
@@ -231,9 +230,9 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
         return new BasicDouble((double)a);
     }
 
-    public static BasicDouble f2d(BasicFloat a) {
-        return new BasicDouble((double)BasicFloat.toFloat(a));
-    }
+//    public static BasicDouble f2d(BasicFloat a) { // now in Float wrapper
+//        return new BasicDouble((double)BasicFloat.toFloat(a));
+//    }
 
     //-------------------------------------------------------------------------
     //----------------- Overridden methods ------------------------------------
