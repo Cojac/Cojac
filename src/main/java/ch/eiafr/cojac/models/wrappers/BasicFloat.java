@@ -157,7 +157,12 @@ public class BasicFloat extends Number implements Comparable<BasicFloat> {
 	}
 	
 	@Override public boolean equals(Object obj) {
-	    return new Float(this.val).equals(obj);
+        Float d=null;
+        if (obj instanceof Double) d=(Float) obj;
+        if (obj instanceof BasicFloat) 
+            d=new Float(((BasicFloat) obj).val);
+        return new Float(this.val).equals(d);
+//	    return new Float(this.val).equals(obj);
 //        return (obj instanceof BasicFloat) && (((BasicFloat)obj).val == val);
     }
 

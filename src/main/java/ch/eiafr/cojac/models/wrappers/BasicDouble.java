@@ -21,8 +21,6 @@ package ch.eiafr.cojac.models.wrappers;
 //import java.util.function.DoubleBinaryOperator;
 //import java.util.function.DoubleUnaryOperator;
 
-//TODO: apply this "Basic" 'template' to the 4 other wrappers
-
 public class BasicDouble extends Number implements Comparable<BasicDouble>{
     //-------------------------------------------------------------------------
     //----------------- Fields and auxiliary constructors ---------------------
@@ -239,8 +237,12 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
         return Double.compare(this.val, o.val);
 	}
 	
-	@Override public boolean equals(Object obj) {
-	    return new Double(this.val).equals(obj);
+    @Override public boolean equals(Object obj) {
+        Double d=null;
+        if (obj instanceof Double) d=(Double) obj;
+        if (obj instanceof BasicDouble) 
+            d=new Double(((BasicDouble) obj).val);
+        return new Double(this.val).equals(d);
     }
 
 	@Override public int hashCode() {

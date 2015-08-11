@@ -1,41 +1,64 @@
 package ch.eiafr.cojac.models.wrappers;
 
+//TODO: (not related to this class...) Maybe expand COJAC as: 
+//      "Climbing Over Java Arithmetic Computation"
+
 public class DerivationDouble extends Number implements
         Comparable<DerivationDouble> {
 
-    protected final double value;
-    protected final double deriv;
+    //-------------------------------------------------------------------------
+    //----------------- Fields and auxiliary constructors ---------------------
+    //------------ (not required for the Wrapper mechanism) -------------------
+    //-------------------------------------------------------------------------
 
-    DerivationDouble(double v) {
-        this.value = v;
-        this.deriv = 0.0;
-    }
+    private final double value;
+    private final double deriv;
 
     private DerivationDouble(double value, double dValue) {
         this.value = value;
         this.deriv = dValue;
     }
 
-    DerivationDouble(String v) {
+    //-------------------------------------------------------------------------
+    //----------------- Necessary constructors  -------------------------------
+    //-------------------------------------------------------------------------
+
+    public DerivationDouble(double v) {
+        this.value = v;
+        this.deriv = 0.0;
+    }
+
+    public DerivationDouble(String v) {
         this.value = Double.parseDouble(v);
         this.deriv = 0.0;
     }
 
-    DerivationDouble(DerivationDouble v) {
+    public DerivationDouble(DerivationFloat v) {
+        this.value = v.delegate.value;
+        this.deriv = v.delegate.deriv;
+    }
+
+    public DerivationDouble(DerivationDouble v) {
         this.value = v.value;
         this.deriv = v.deriv;
     }
 
-    public static DerivationDouble fromDouble(double v) {
-        return new DerivationDouble(v);
-    }
-
-    public static DerivationDouble fromString(String v) {
-        return new DerivationDouble(v);
-    }
+    //-------------------------------------------------------------------------
+    //----------------- Methods with 1st parameter of 'this' type -------------
+    //-------------------------------------------------------------------------
 
     public static DerivationDouble dadd(DerivationDouble a, DerivationDouble b) {
         return new DerivationDouble(a.value + b.value, a.deriv + b.deriv);
+    }
+
+    public static DerivationDouble dsub(DerivationDouble a, DerivationDouble b) {
+        return new DerivationDouble(a.value - b.value, a.deriv - b.deriv);
+    }
+
+    public static DerivationDouble dmul(DerivationDouble a, DerivationDouble b) {
+        double value = a.value * b.value;
+        double dValue = a.deriv * b.value + a.value * b.deriv;
+        return new DerivationDouble(value, dValue);
     }
 
     public static DerivationDouble ddiv(DerivationDouble a, DerivationDouble b) {
@@ -55,26 +78,30 @@ public class DerivationDouble extends Number implements
         return new DerivationDouble(value, dValue);
     }
 
-    public static DerivationDouble dsub(DerivationDouble a, DerivationDouble b) {
-        return new DerivationDouble(a.value - b.value, a.deriv - b.deriv);
+    public static DerivationDouble dneg(DerivationDouble a) {
+        return new DerivationDouble(-a.value, -a.deriv);
     }
 
-    public static DerivationDouble dmul(DerivationDouble a, DerivationDouble b) {
-        double value = a.value * b.value;
-        double dValue = a.deriv * b.value + a.value * b.deriv;
-        return new DerivationDouble(value, dValue);
+    public static double toDouble(DerivationDouble a) {
+        return a.value;
+    }
+
+    public static Double toRealDoubleWrapper(DerivationDouble a) {
+        return new Double(a.value);
     }
 
     public static int dcmpl(DerivationDouble a, DerivationDouble b) {
-        return a.compareTo(b);
+        if (Double.isNaN(a.value)|| Double.isNaN(b.value)) return -1;
+        if (a.value < b.value) return -1;
+        if (a.value > b.value) return +1;
+        return 0;
     }
 
     public static int dcmpg(DerivationDouble a, DerivationDouble b) {
-        return a.compareTo(b);
-    }
-
-    public static DerivationDouble dneg(DerivationDouble a) {
-        return new DerivationDouble(-a.value, -a.deriv);
+        if (Double.isNaN(a.value)|| Double.isNaN(b.value)) return +1;
+        if (a.value < b.value) return -1;
+        if (a.value > b.value) return +1;
+        return 0;
     }
 
     public static int d2i(DerivationDouble a) {
@@ -85,53 +112,15 @@ public class DerivationDouble extends Number implements
         return (long) a.value;
     }
 
-    public static DerivationFloat d2f(DerivationDouble a) {
-        return new DerivationFloat(a);
-    }
-
-    public static DerivationDouble i2d(int a) {
-        return new DerivationDouble((double) a);
-    }
-
-    public static DerivationDouble l2d(long a) {
-        return new DerivationDouble((double) a);
-    }
-
-    public static DerivationDouble f2d(DerivationFloat a) {
-        return new DerivationDouble(a.delegate);
-    }
-
-    public static double toDouble(DerivationDouble a) {
-        return a.value;
-    }
-
-    public static Double toRealDouble(DerivationDouble a) {
-        return new Double(a.value);
-    }
-
-    public static DerivationDouble math_min(DerivationDouble a, DerivationDouble b) {
-        if (a.value < b.value)
-            return a;
-        return b;
-    }
-
-    public static DerivationDouble math_max(DerivationDouble a, DerivationDouble b) {
-        if (a.value > b.value)
-            return a;
-        return b;
-    }
-
     public static DerivationDouble math_sqrt(DerivationDouble a) {
         double value = Math.sqrt(a.value);
         double dValue = a.deriv / (2.0 * Math.sqrt(a.value));
         return new DerivationDouble(value, dValue);
     }
 
-    public static DerivationDouble math_pow(DerivationDouble a, DerivationDouble b) {
-        double value = Math.pow(a.value, b.value);
-        double dValue = Math.pow(a.value, b.value) *
-                (((b.value * a.deriv) / a.value) + Math.log(a.value) *
-                        b.deriv);
+    public static DerivationDouble math_abs(DerivationDouble a) {
+        double value = Math.abs(a.value);
+        double dValue = a.value < 0.0 ? -a.deriv : a.deriv; //BAP: corrected, was dValue
         return new DerivationDouble(value, dValue);
     }
 
@@ -153,21 +142,9 @@ public class DerivationDouble extends Number implements
         return new DerivationDouble(value, dValue);
     }
 
-    public static DerivationDouble math_sinh(DerivationDouble a) {
-        double value = Math.sinh(a.value);
-        double dValue = a.deriv * Math.cosh(a.value);
-        return new DerivationDouble(value, dValue);
-    }
-
-    public static DerivationDouble math_cosh(DerivationDouble a) {
-        double value = Math.cosh(a.value);
-        double dValue = a.deriv * Math.sinh(a.value);
-        return new DerivationDouble(value, dValue);
-    }
-
-    public static DerivationDouble math_tanh(DerivationDouble a) {
-        double value = Math.tanh(a.value);
-        double dValue = a.deriv / (Math.cosh(a.value) * Math.cosh(a.value));
+    public static DerivationDouble math_asin(DerivationDouble a) {
+        double value = Math.asin(a.value);
+        double dValue = a.deriv / (Math.sqrt(1.0 - a.value * a.value));
         return new DerivationDouble(value, dValue);
     }
 
@@ -183,9 +160,21 @@ public class DerivationDouble extends Number implements
         return new DerivationDouble(value, dValue);
     }
 
-    public static DerivationDouble math_asin(DerivationDouble a) {
-        double value = Math.asin(a.value);
-        double dValue = a.deriv / (Math.sqrt(1.0 - a.value * a.value));
+    public static DerivationDouble math_sinh(DerivationDouble a) {
+        double value = Math.sinh(a.value);
+        double dValue = a.deriv * Math.cosh(a.value);
+        return new DerivationDouble(value, dValue);
+    }
+
+    public static DerivationDouble math_cosh(DerivationDouble a) {
+        double value = Math.cosh(a.value);
+        double dValue = a.deriv * Math.sinh(a.value);
+        return new DerivationDouble(value, dValue);
+    }
+
+    public static DerivationDouble math_tanh(DerivationDouble a) {
+        double value = Math.tanh(a.value);
+        double dValue = a.deriv / (Math.cosh(a.value) * Math.cosh(a.value));
         return new DerivationDouble(value, dValue);
     }
 
@@ -206,45 +195,88 @@ public class DerivationDouble extends Number implements
         double dValue = a.deriv / (a.value * Math.log(10.0));
         return new DerivationDouble(value, dValue);
     }
+    
+    public static DerivationDouble math_toRadians(DerivationDouble a) { 
+        return new DerivationDouble(Math.toRadians(a.value), a.deriv);
+    }
 
-    public static DerivationDouble math_abs(DerivationDouble a) {
-        double value = Math.abs(a.value);
-        double dValue = a.value < 0.0 ? -a.deriv : a.deriv; //BAP: corrected, was dValue
+    public static DerivationDouble math_toDegrees(DerivationDouble a) { 
+        return new DerivationDouble(Math.toDegrees(a.value), a.deriv);
+    }
 
-        // RuntimeException exception = new
-        // RuntimeException("abs'(x) : not derivable !");
-        // exception.printStackTrace(System.err);
+    public static DerivationDouble math_min(DerivationDouble a, DerivationDouble b) {
+        return (a.value < b.value) ? a : b;
+    }
+
+    public static DerivationDouble math_max(DerivationDouble a, DerivationDouble b) {
+        return (a.value > b.value) ? a : b;
+    }
+
+    public static DerivationDouble math_pow(DerivationDouble a, DerivationDouble b) {
+        double value = Math.pow(a.value, b.value);
+        double dValue = Math.pow(a.value, b.value) *
+                (((b.value * a.deriv) / a.value) + Math.log(a.value) *
+                        b.deriv);
         return new DerivationDouble(value, dValue);
     }
 
-    @Override
-    public int compareTo(DerivationDouble o) {
-        if (o.value < this.value) {
-            return 1;
-        }
-        if (o.value > this.value) {
-            return -1;
-        }
-        return 0;
+    //-------------------------------------------------------------------------
+    //----------------- Necessarily static methods ----------------------------
+    //-------------------------------------------------------------------------
+
+    public static DerivationDouble fromDouble(double v) {
+        return new DerivationDouble(v);
     }
 
-    @Override
-    public int intValue() {
+    public static DerivationDouble fromRealDoubleWrapper(Double v) {
+        return fromDouble(v);
+    }
+
+    public static DerivationDouble fromString(String v) {
+        return new DerivationDouble(v);
+    }
+
+    public static DerivationDouble i2d(int a) {
+        return new DerivationDouble((double) a);
+    }
+
+    public static DerivationDouble l2d(long a) {
+        return new DerivationDouble((double) a);
+    }
+
+    //-------------------------------------------------------------------------
+    //----------------- Overridden methods ------------------------------------
+    //-------------------------------------------------------------------------
+
+    @Override public int compareTo(DerivationDouble o) {
+        return Double.compare(this.value, o.value);
+    }
+
+    @Override public int hashCode() {
+        return Double.hashCode(this.value);
+    }
+
+    @Override public boolean equals(Object obj) {
+        Double d=null;
+        if (obj instanceof Double) d=(Double) obj;
+        if (obj instanceof DerivationDouble) 
+            d=new Double(((DerivationDouble) obj).value);
+        return new Double(this.value).equals(d);
+    }
+
+    @Override public int intValue() {
         return (int) value;
     }
 
-    @Override
-    public long longValue() {
+    @Override public long longValue() {
         return (long) value;
     }
 
-    @Override
-    public float floatValue() {
+    @Override public float floatValue() {
         return (float) value;
     }
 
-    @Override
-    public double doubleValue() {
+    @Override public double doubleValue() {
         return value;
     }
     
@@ -268,5 +300,9 @@ public class DerivationDouble extends Number implements
         return new DerivationDouble(a.value, 1.0);
     }
 
+    //-------------------------------------------------------------------------
+    //--------------------- Auxiliary methods ---------------------------------
+    //------------ (not required for the Wrapper mechanism) -------------------
+    //-------------------------------------------------------------------------
 
 }

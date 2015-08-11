@@ -183,5 +183,4 @@ public class DerivationFloat extends Number implements
         return new DerivationFloat(DerivationDouble.COJAC_MAGIC_DOUBLE_asDerivationTarget(a.delegate));
     }
 
-
 }
