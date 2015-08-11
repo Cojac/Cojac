@@ -26,6 +26,10 @@ import java.util.Objects;
 
 public class BigDecimalFloat extends Number implements
         Comparable<BigDecimalFloat> {
+    //-------------------------------------------------------------------------
+    //----------------- Fields and auxiliary constructors ---------------------
+    //------------ (not required for the Wrapper mechanism) -------------------
+    //-------------------------------------------------------------------------
     
     private final BigDecimal val;
 
@@ -33,20 +37,18 @@ public class BigDecimalFloat extends Number implements
     private final boolean isInfinite;
     private final boolean isPositiveInfinite;
 
-    private static MathContext mathContext;
+    private static MathContext mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);;
 
-    public BigDecimalFloat(BigDecimal v) {
-        mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
+    BigDecimalFloat(BigDecimal v) {
         val = v;
         isNaN = isInfinite = isPositiveInfinite = false;
     }
 
-    public BigDecimal toBigDecimal() {
-        return val;
-    }
+    //-------------------------------------------------------------------------
+    //----------------- Necessary constructors  -------------------------------
+    //-------------------------------------------------------------------------
 
     public BigDecimalFloat(float v) {
-        mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
         if (Float.isNaN(v)) {
             isNaN = true;
             isInfinite = isPositiveInfinite = false;
@@ -62,31 +64,23 @@ public class BigDecimalFloat extends Number implements
         }
     }
 
-    public BigDecimalFloat(BigDecimalFloat v) {
-        this(v.val);
-    }
-
     public BigDecimalFloat(String v) {
         mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
         val = new BigDecimal(v, mathContext);
         isNaN = isInfinite = isPositiveInfinite = false;
     }
 
+    public BigDecimalFloat(BigDecimalFloat v) {
+        this(v.val);
+    }
+
     public BigDecimalFloat(BigDecimalDouble v) {
         this(v.toBigDecimal());
     }
 
-    public static BigDecimalFloat fromFloat(float a) {
-        return new BigDecimalFloat(a);
-    }
-
-    public static BigDecimalFloat fromString(String a) {
-        return new BigDecimalFloat(a);
-    }
-
-    public static BigDecimalFloat fromDouble(BigDecimalDouble a) {
-        return new BigDecimalFloat(a.toBigDecimal());
-    }
+    //-------------------------------------------------------------------------
+    //----------------- Methods with 1st parameter of 'this' type -------------
+    //-------------------------------------------------------------------------
 
     public static BigDecimalFloat fadd(BigDecimalFloat a, BigDecimalFloat b) {
         if (a.isNaN || b.isNaN)
@@ -142,10 +136,8 @@ public class BigDecimalFloat extends Number implements
             float bVal = b.getFloatInfiniteValue();
             return new BigDecimalFloat(aVal % bVal);
         }
-        return new BigDecimalFloat(a.val.remainder(b.val, mathContext)); // is
-                                                                         // this
-                                                                         // correct
-                                                                         // ?
+        // TODO: write a correct frem operation on BigInteger
+        return new BigDecimalFloat(a.val.remainder(b.val, mathContext)); 
     }
 
     public static BigDecimalFloat fneg(BigDecimalFloat a) {
@@ -161,11 +153,8 @@ public class BigDecimalFloat extends Number implements
     public static float toFloat(BigDecimalFloat a) {
         if (a.isNaN)
             return Float.NaN;
-        if (a.isInfinite) {
-            if (a.isPositiveInfinite)
-                return Float.POSITIVE_INFINITY;
-            /* else */return Float.NEGATIVE_INFINITY;
-        }
+        if (a.isInfinite)
+            return (a.isPositiveInfinite) ? Float.POSITIVE_INFINITY : Float.NEGATIVE_INFINITY;
         return a.val.floatValue();
     }
 
@@ -173,49 +162,71 @@ public class BigDecimalFloat extends Number implements
         return toFloat(a);
     }
 
-    // TODO: correctly implement fcmpl and fcmpg
     public static int fcmpl(BigDecimalFloat a, BigDecimalFloat b) {
-        return a.compareTo(b); // is this correct?
+        if (a.isNaN || b.isNaN) return -1; 
+        return a.compareTo(b); 
     }
 
     public static int fcmpg(BigDecimalFloat a, BigDecimalFloat b) {
-        return a.compareTo(b); // is this correct?
+        if (a.isNaN || b.isNaN) return +1; 
+        return a.compareTo(b);
+    }
+
+    /* Mathematical function */
+    public static BigDecimalFloat math_abs(BigDecimalFloat value) {
+        return new BigDecimalFloat(value.val.abs());
+    }
+
+    public static BigDecimalFloat math_max(BigDecimalFloat valueA, BigDecimalFloat valueB) {
+        return (valueA.compareTo(valueB) > 0) ? valueA : valueB;
+    }
+
+    public static BigDecimalFloat math_min(BigDecimalFloat valueA, BigDecimalFloat valueB) {
+        return (valueA.compareTo(valueB) < 0) ? valueA : valueB;
     }
 
     public static int f2i(BigDecimalFloat a) {
-        if (a.isNaN)
-            return (int) Float.NaN;
-        if (a.isInfinite) {
-            if (a.isPositiveInfinite)
-                return (int) Float.POSITIVE_INFINITY;
-            else
-                return (int) Float.NEGATIVE_INFINITY;
-        }
-        return a.val.intValue();
+        return (int) toFloat(a);
     }
 
     public static long f2l(BigDecimalFloat a) {
-        if (a.isNaN)
-            return (long) Float.NaN;
-        if (a.isInfinite) {
-            if (a.isPositiveInfinite)
-                return (long) Float.POSITIVE_INFINITY;
-            else
-                return (long) Float.NEGATIVE_INFINITY;
-        }
-        return a.val.longValue();
+        return (long) toFloat(a);
     }
 
     public static BigDecimalDouble f2d(BigDecimalFloat a) {
         if (a.isNaN)
             return BigDecimalDouble.fromDouble(Double.NaN);
         if (a.isInfinite) {
-            if (a.isPositiveInfinite)
-                return BigDecimalDouble.fromDouble(Double.POSITIVE_INFINITY);
-            else
-                return BigDecimalDouble.fromDouble(Double.NEGATIVE_INFINITY);
+            double v=a.isPositiveInfinite ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
+            return BigDecimalDouble.fromDouble(v);
         }
         return new BigDecimalDouble(a.val);
+    }
+
+    //-------------------------------------------------------------------------
+    //----------------- Necessarily static methods ----------------------------
+    //-------------------------------------------------------------------------
+
+    public static BigDecimalFloat fromString(String a) {
+        return new BigDecimalFloat(a);
+    }
+
+    public static BigDecimalFloat fromFloat(float a) {
+        return new BigDecimalFloat(a);
+    }
+
+    public static BigDecimalFloat fromRealFloatWrapper(Float a) {
+        return fromFloat(a);
+    }
+
+    public static BigDecimalFloat d2f(BigDecimalDouble a) {
+        if (a.isNaN)
+            return BigDecimalFloat.fromFloat(Float.NaN);
+        if (a.isInfinite) {
+            float v=a.isPositiveInfinite ? Float.POSITIVE_INFINITY : Float.NEGATIVE_INFINITY;
+            return BigDecimalFloat.fromFloat(v);
+        }
+        return new BigDecimalFloat(a.val);
     }
 
     public static BigDecimalFloat i2f(int a) {
@@ -226,31 +237,11 @@ public class BigDecimalFloat extends Number implements
         return new BigDecimalFloat(a);
     }
 
-    public static BigDecimalFloat d2f(BigDecimalDouble a) {
-        return new BigDecimalFloat(a.toBigDecimal());
-    }
+    //-------------------------------------------------------------------------
+    //----------------- Overridden methods ------------------------------------
+    //-------------------------------------------------------------------------
 
-    /* Mathematical function */
-    public static BigDecimalFloat math_abs(BigDecimalFloat value) {
-        return new BigDecimalFloat(value.val.abs());
-    }
-
-    public static BigDecimalFloat math_max(BigDecimalFloat valueA, BigDecimalFloat valueB) {
-        if (valueA.compareTo(valueB) > 0) {
-            return valueA;
-        }
-        return valueB;
-    }
-
-    public static BigDecimalFloat math_min(BigDecimalFloat valueA, BigDecimalFloat valueB) {
-        if (valueA.compareTo(valueB) < 0) {
-            return valueA;
-        }
-        return valueB;
-    }
-
-    @Override
-    public String toString() {
+    @Override public String toString() {
         if (isNaN)
             return "NaN";
         if (isInfinite)
@@ -258,8 +249,7 @@ public class BigDecimalFloat extends Number implements
         return val.toString();
     }
 
-    @Override
-    public int compareTo(BigDecimalFloat o) {
+    @Override public int compareTo(BigDecimalFloat o) {
         if (isNaN && o.isNaN)
             return 0;
         if (isNaN)
@@ -276,8 +266,7 @@ public class BigDecimalFloat extends Number implements
         return val.compareTo(o.val);
     }
 
-    @Override
-    public boolean equals(Object obj) {
+    @Override public boolean equals(Object obj) {
         if (obj instanceof BigDecimalFloat == false)
             return false;
         BigDecimalFloat bdd = (BigDecimalFloat) obj;
@@ -295,32 +284,40 @@ public class BigDecimalFloat extends Number implements
         return val.equals(bdd.val);
     }
 
-    @Override
-    public int hashCode() {
+    @Override public int hashCode() {
         int hash = 5;
         hash = 83 * hash + Objects.hashCode(this.val);
         return hash;
     }
 
-    @Override
-    public int intValue() {
+    @Override public int intValue() {
         return val.intValue();
     }
 
-    @Override
-    public long longValue() {
+    @Override public long longValue() {
         return val.longValue();
     }
 
-    @Override
-    public float floatValue() {
+    @Override public float floatValue() {
         return toFloat(this);
     }
 
-    @Override
-    public double doubleValue() {
+    @Override public double doubleValue() {
         return toFloat(this);
     }
+
+    //-------------------------------------------------------------------------
+    //----------------- "Magic" methods ---------------------------------------
+    //-------------------------------------------------------------------------
+
+    public static String COJAC_MAGIC_FLOAT_toStr(BigDecimalFloat n) {
+        return n.toString();
+    }
+
+    //-------------------------------------------------------------------------
+    //--------------------- Auxiliary methods ---------------------------------
+    //------------ (not required for the Wrapper mechanism) -------------------
+    //-------------------------------------------------------------------------
 
     private float getFloatInfiniteValue() {
         if (!isInfinite)
@@ -329,12 +326,13 @@ public class BigDecimalFloat extends Number implements
             return Float.POSITIVE_INFINITY;
         return Float.NEGATIVE_INFINITY;
     }
-    //-------------------------------------------------------------------------
-    //----------------- "Magic" methods ---------------------------------------
-    //-------------------------------------------------------------------------
 
-    public static String COJAC_MAGIC_FLOAT_toStr(BigDecimalFloat n) {
-        return n.toString();
+    BigDecimal toBigDecimal() {
+        return val;
+    }
+
+    public static void setPrecision(int precision) {
+        mathContext = new MathContext(precision);
     }
 
 }

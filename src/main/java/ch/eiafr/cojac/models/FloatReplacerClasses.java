@@ -67,6 +67,7 @@ public class FloatReplacerClasses {
 	public static void setBigDecimalPrecision(int precision){
 		COJAC_BIGDECIMAL_PRECISION = precision;
 		BigDecimalDouble.setPrecision(precision);
+        BigDecimalFloat.setPrecision(precision);
 	}
 	
 }

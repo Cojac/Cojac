@@ -31,10 +31,10 @@ public class BigDecimalDouble extends Number implements
     //------------ (not required for the Wrapper mechanism) -------------------
     //-------------------------------------------------------------------------
 
-    private final BigDecimal val;
-    private final boolean isNaN;
-    private final boolean isInfinite;
-    private final boolean isPositiveInfinite;
+    final BigDecimal val;
+    final boolean isNaN;
+    final boolean isInfinite;
+    final boolean isPositiveInfinite;
 
     private static MathContext mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
 
@@ -297,7 +297,7 @@ public class BigDecimalDouble extends Number implements
     }
 
     public static BigDecimalDouble fromRealDoubleWrapper(Double a) {
-        return new BigDecimalDouble(a.doubleValue());
+        return fromDouble(a);
     }
 
     public static BigDecimalDouble fromString(String a) {
