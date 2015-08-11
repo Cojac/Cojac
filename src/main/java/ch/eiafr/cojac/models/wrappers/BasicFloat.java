@@ -168,7 +168,7 @@ public class BasicFloat extends Number implements Comparable<BasicFloat> {
 //		return hash;
 	}
 
-    @Override public String toString(){
+    @Override public String toString() {
         return Float.toString(val);
     }
     

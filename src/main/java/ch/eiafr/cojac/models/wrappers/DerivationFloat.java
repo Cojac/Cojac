@@ -1,33 +1,106 @@
 package ch.eiafr.cojac.models.wrappers;
 
+// This float wrapper is done by delegation to DerivationDouble
 public class DerivationFloat extends Number implements
         Comparable<DerivationFloat> {
-    
-    protected final DerivationDouble delegateDoubleWrapper;
+
+    //-------------------------------------------------------------------------
+    //----------------- Fields and auxiliary constructors ---------------------
+    //------------ (not required for the Wrapper mechanism) -------------------
+    //-------------------------------------------------------------------------
+
+    protected final DerivationDouble delegate;
+
+    //-------------------------------------------------------------------------
+    //----------------- Necessary constructors  -------------------------------
+    //-------------------------------------------------------------------------
 
     public DerivationFloat(float v) {
-        delegateDoubleWrapper = new DerivationDouble((double) v);
+        delegate = new DerivationDouble(v);
     }
 
     public DerivationFloat(String v) {
-        delegateDoubleWrapper = new DerivationDouble(v);
+        delegate = new DerivationDouble(v);
     }
 
     public DerivationFloat(DerivationFloat v) {
-        delegateDoubleWrapper = new DerivationDouble(v.delegateDoubleWrapper);
+        delegate = new DerivationDouble(v.delegate);
     }
 
     public DerivationFloat(DerivationDouble v) {
-        delegateDoubleWrapper = new DerivationDouble(v);
+        delegate = new DerivationDouble(v);
     }
 
-    public DerivationFloat(double v) {
-        this.delegateDoubleWrapper = new DerivationDouble(v);
+    //-------------------------------------------------------------------------
+    //----------------- Methods with 1st parameter of 'this' type -------------
+    //-------------------------------------------------------------------------
+
+    public static DerivationFloat fadd(DerivationFloat a, DerivationFloat b) {
+        return new DerivationFloat(DerivationDouble.dadd(a.delegate, b.delegate));
     }
 
-    public static DerivationFloat fromDouble(double v) {
-        return new DerivationFloat(new DerivationDouble(v));
+    public static DerivationFloat fsub(DerivationFloat a, DerivationFloat b) {
+        return new DerivationFloat(DerivationDouble.dsub(a.delegate, b.delegate));
     }
+
+    public static DerivationFloat fmul(DerivationFloat a, DerivationFloat b) {
+        return new DerivationFloat(DerivationDouble.dmul(a.delegate, b.delegate));
+    }
+
+    public static DerivationFloat fdiv(DerivationFloat a, DerivationFloat b) {
+        return new DerivationFloat(DerivationDouble.ddiv(a.delegate, b.delegate));
+    }
+
+    public static DerivationFloat frem(DerivationFloat a, DerivationFloat b) {
+        return new DerivationFloat(DerivationDouble.drem(a.delegate, b.delegate));
+    }
+
+    public static DerivationFloat fneg(DerivationFloat a) {
+        return new DerivationFloat(DerivationDouble.dneg(a.delegate));
+    }
+
+    public static float toFloat(DerivationFloat a) {
+        return (float) DerivationDouble.toDouble(a.delegate);
+    }
+
+    public static Float toRealFloatWrapper(DerivationFloat a) {
+        return toFloat(a);
+    }
+
+    public static int fcmpl(DerivationFloat a, DerivationFloat b) {
+        return DerivationDouble.dcmpl(a.delegate, b.delegate);
+    }
+
+    public static int fcmpg(DerivationFloat a, DerivationFloat b) {
+        return DerivationDouble.dcmpg(a.delegate, b.delegate);
+    }
+
+    public static DerivationFloat math_abs(DerivationFloat a) {
+        return new DerivationFloat((DerivationDouble.math_abs(a.delegate)));
+    }
+
+    public static DerivationFloat math_min(DerivationFloat a, DerivationFloat b) {
+        return new DerivationFloat((DerivationDouble.math_min(a.delegate, b.delegate)));
+    }
+    public static DerivationFloat math_max(DerivationFloat a, DerivationFloat b) {
+        return new DerivationFloat((DerivationDouble.math_max(a.delegate, b.delegate)));
+    }
+
+    public static int f2i(DerivationFloat a) {
+        return DerivationDouble.d2i(a.delegate);
+    }
+
+    public static long f2l(DerivationFloat a) {
+        return DerivationDouble.d2l(a.delegate);
+    }
+
+    public static DerivationDouble f2d(DerivationFloat a) {
+        return new DerivationDouble(a.delegate);
+    }
+
+    //-------------------------------------------------------------------------
+    //----------------- Necessarily static methods ----------------------------
+    //-------------------------------------------------------------------------
 
     public static DerivationFloat fromString(String v) {
         return new DerivationFloat(v);
@@ -37,168 +110,78 @@ public class DerivationFloat extends Number implements
         return new DerivationFloat(v);
     }
 
-    public static DerivationFloat fadd(DerivationFloat a, DerivationFloat b) {
-        return new DerivationFloat(DerivationDouble.dadd(a.delegateDoubleWrapper, b.delegateDoubleWrapper));
+    public static DerivationFloat fromRealFloatWrapper(Float v) {
+        return fromFloat(v);
     }
-
-    public static DerivationFloat fdiv(DerivationFloat a, DerivationFloat b) {
-        return new DerivationFloat(DerivationDouble.ddiv(a.delegateDoubleWrapper, b.delegateDoubleWrapper));
-    }
-
-    public static DerivationFloat frem(DerivationFloat a, DerivationFloat b) {
-        return new DerivationFloat(DerivationDouble.drem(a.delegateDoubleWrapper, b.delegateDoubleWrapper));
-    }
-
-    public static DerivationFloat fsub(DerivationFloat a, DerivationFloat b) {
-        return new DerivationFloat(DerivationDouble.dsub(a.delegateDoubleWrapper, b.delegateDoubleWrapper));
-    }
-
-    public static DerivationFloat fmul(DerivationFloat a, DerivationFloat b) {
-        return new DerivationFloat(DerivationDouble.dmul(a.delegateDoubleWrapper, b.delegateDoubleWrapper));
-    }
-
-    public static int fcmpl(DerivationFloat a, DerivationFloat b) {
-        return a.compareTo(b);
-    }
-
-    public static int fcmpg(DerivationFloat a, DerivationFloat b) {
-        return a.compareTo(b);
-    }
-
-    public static DerivationFloat fneg(DerivationFloat a) {
-        return new DerivationFloat(DerivationDouble.dneg(a.delegateDoubleWrapper));
-    }
-
-    public static int f2i(DerivationFloat a) {
-        return (int) a.delegateDoubleWrapper.value;
-    }
-
-    public static long f2l(DerivationFloat a) {
-        return (long) a.delegateDoubleWrapper.value;
-    }
-
-    public static DerivationDouble f2d(DerivationFloat a) {
-        return new DerivationDouble((float) a.delegateDoubleWrapper.value);
+    
+    public static DerivationFloat d2f(DerivationDouble a) {
+        return new DerivationFloat(a);
     }
 
     public static DerivationFloat i2f(int a) {
-        return new DerivationFloat((float) a);
+        return new DerivationFloat(DerivationDouble.i2d(a));
     }
 
     public static DerivationFloat l2f(long a) {
-        return new DerivationFloat((float) a);
+        return new DerivationFloat(DerivationDouble.l2d(a));
     }
 
-    public static DerivationFloat d2f(DerivationDouble a) {
-        return new DerivationFloat(a.floatValue());
+    //-------------------------------------------------------------------------
+    //----------------- Overridden methods ------------------------------------
+    //-------------------------------------------------------------------------
+
+    @Override public int compareTo(DerivationFloat o) {
+        return delegate.compareTo(o.delegate);
     }
 
-    public static float toFloat(DerivationFloat a) {
-        return (float) a.delegateDoubleWrapper.value;
+    @Override public boolean equals(Object obj) {
+        if (obj==null || !(obj instanceof DerivationFloat)) return false;
+        return delegate.equals(((DerivationFloat)obj).delegate);
+    }
+    
+    @Override public int hashCode() {
+        return delegate.hashCode();
+    }
+    
+    @Override public String toString() {
+        return delegate.toString();
+    }
+    
+    @Override public int intValue() {
+        return delegate.intValue();
     }
 
-    public static Float toRealFloat(DerivationFloat a) {
-        return new Float(a.delegateDoubleWrapper.value);
+    @Override public long longValue() {
+        return delegate.longValue();
     }
 
-    public static DerivationDouble COJAC_MAGIC_FLOAT_getDerivation(DerivationFloat a) {
-        return new DerivationDouble(a.delegateDoubleWrapper.deriv);
+    @Override public float floatValue() {
+        return delegate.floatValue();
     }
 
-    public static DerivationDouble COJAC_MAGIC_FLOAT_specifieToDerivate(DerivationFloat a) {
-        return DerivationDouble.COJAC_MAGIC_DOUBLE_specifieToDerivate(a.delegateDoubleWrapper);
+    @Override public double doubleValue() {
+        return delegate.doubleValue();
+    }
+    
+    //-------------------------------------------------------------------------
+    //----------------- "Magic" methods ---------------------------------------
+    //-------------------------------------------------------------------------
+
+    public static String COJAC_MAGIC_FLOAT_wrapper() {
+        return "AutoDiff";
     }
 
-    public static DerivationFloat math_abs(DerivationFloat a) {
-        return new DerivationFloat((DerivationDouble.math_abs(a.delegateDoubleWrapper)));
+    public static String COJAC_MAGIC_FLOAT_toStr(DerivationFloat n) {
+        return DerivationDouble.COJAC_MAGIC_DOUBLE_toStr(n.delegate);
     }
 
-    public static DerivationFloat math_min(DerivationFloat a, DerivationFloat b) {
-        return new DerivationFloat((DerivationDouble.math_min(a.delegateDoubleWrapper, b.delegateDoubleWrapper)));
-    }
-    public static DerivationFloat math_max(DerivationFloat a, DerivationFloat b) {
-        return new DerivationFloat((DerivationDouble.math_max(a.delegateDoubleWrapper, b.delegateDoubleWrapper)));
+    public static DerivationFloat COJAC_MAGIC_FLOAT_getDerivation(DerivationFloat a) {
+        return new DerivationFloat(DerivationDouble.COJAC_MAGIC_DOUBLE_getDerivation(a.delegate));
     }
 
-    //TODO: remove those sqrt/pow/sin... functions on floats (to be checked)
-    public static DerivationFloat math_sqrt(DerivationFloat a) {
-        return new DerivationFloat(DerivationDouble.math_sqrt(a.delegateDoubleWrapper));
+    public static DerivationFloat COJAC_MAGIC_FLOAT_asDerivationTarget(DerivationFloat a) {
+        return new DerivationFloat(DerivationDouble.COJAC_MAGIC_DOUBLE_asDerivationTarget(a.delegate));
     }
 
-    public static DerivationFloat math_pow(DerivationFloat a, DerivationFloat b) {
-        return new DerivationFloat(DerivationDouble.math_pow(a.delegateDoubleWrapper, b.delegateDoubleWrapper));
-    }
 
-    public static DerivationFloat math_sin(DerivationFloat a) {
-        return new DerivationFloat(DerivationDouble.math_sin(a.delegateDoubleWrapper));
-    }
-
-    public static DerivationFloat math_cos(DerivationFloat a) {
-        return new DerivationFloat(DerivationDouble.math_cos(a.delegateDoubleWrapper));
-    }
-
-    public static DerivationFloat math_tan(DerivationFloat a) {
-        return new DerivationFloat(DerivationDouble.math_tan(a.delegateDoubleWrapper));
-    }
-
-    public static DerivationFloat math_sinh(DerivationFloat a) {
-        return new DerivationFloat(DerivationDouble.math_sinh(a.delegateDoubleWrapper));
-    }
-
-    public static DerivationFloat math_cosh(DerivationFloat a) {
-        return new DerivationFloat(DerivationDouble.math_cosh(a.delegateDoubleWrapper));
-    }
-
-    public static DerivationFloat math_tanh(DerivationFloat a) {
-        return new DerivationFloat(DerivationDouble.math_tanh(a.delegateDoubleWrapper));
-    }
-
-    public static DerivationFloat math_acos(DerivationFloat a) {
-        return new DerivationFloat(DerivationDouble.math_acos(a.delegateDoubleWrapper));
-    }
-
-    public static DerivationFloat math_atan(DerivationFloat a) {
-        return new DerivationFloat(DerivationDouble.math_atan(a.delegateDoubleWrapper));
-    }
-
-    public static DerivationFloat math_asin(DerivationFloat a) {
-        return new DerivationFloat(DerivationDouble.math_asin(a.delegateDoubleWrapper));
-    }
-
-    public static DerivationFloat math_exp(DerivationFloat a) {
-        return new DerivationFloat(DerivationDouble.math_exp(a.delegateDoubleWrapper));
-    }
-
-    public static DerivationFloat math_log(DerivationFloat a) {
-        return new DerivationFloat(DerivationDouble.math_log(a.delegateDoubleWrapper));
-    }
-
-    public static DerivationFloat math_log10(DerivationFloat a) {
-        return new DerivationFloat(DerivationDouble.math_log10(a.delegateDoubleWrapper));
-    }
-
-    @Override
-    public int compareTo(DerivationFloat o) {
-        return delegateDoubleWrapper.compareTo(o.delegateDoubleWrapper);
-    }
-
-    @Override
-    public int intValue() {
-        return (int) delegateDoubleWrapper.value;
-    }
-
-    @Override
-    public long longValue() {
-        return (long) delegateDoubleWrapper.value;
-    }
-
-    @Override
-    public float floatValue() {
-        return (float) delegateDoubleWrapper.value;
-    }
-
-    @Override
-    public double doubleValue() {
-        return delegateDoubleWrapper.value;
-    }
 }

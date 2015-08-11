@@ -3,7 +3,10 @@
     java -javaagent:cojac.jar="-STO=threshold" -jar myJar.jar # or
     java -javaagent:cojac.jar="-I=0.1" -jar myJar.jar
  */
-public class StochasticOrIntervalTest
+
+package ch.eiafr.cojac.demo;
+
+public class StochasticOrIntervalDemo
 {
     public static void main(String[] args)
     {

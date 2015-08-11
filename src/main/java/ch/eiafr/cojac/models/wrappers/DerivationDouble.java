@@ -98,7 +98,7 @@ public class DerivationDouble extends Number implements
     }
 
     public static DerivationDouble f2d(DerivationFloat a) {
-        return new DerivationDouble(a.delegateDoubleWrapper);
+        return new DerivationDouble(a.delegate);
     }
 
     public static double toDouble(DerivationDouble a) {
@@ -107,14 +107,6 @@ public class DerivationDouble extends Number implements
 
     public static Double toRealDouble(DerivationDouble a) {
         return new Double(a.value);
-    }
-
-    public static DerivationDouble COJAC_MAGIC_DOUBLE_getDerivation(DerivationDouble a) {
-        return new DerivationDouble(a.deriv);
-    }
-
-    public static DerivationDouble COJAC_MAGIC_DOUBLE_specifieToDerivate(DerivationDouble a) {
-        return new DerivationDouble(a.value, 1.0);
     }
 
     public static DerivationDouble math_min(DerivationDouble a, DerivationDouble b) {
@@ -255,4 +247,26 @@ public class DerivationDouble extends Number implements
     public double doubleValue() {
         return value;
     }
+    
+    //-------------------------------------------------------------------------
+    //----------------- "Magic" methods ---------------------------------------
+    //-------------------------------------------------------------------------
+
+    public static String COJAC_MAGIC_DOUBLE_wrapper() {
+        return "AutoDiff";
+    }
+
+    public static String COJAC_MAGIC_DOUBLE_toStr(DerivationDouble n) {
+        return n.value+" (deriv="+n.deriv+")";
+    }
+
+    public static DerivationDouble COJAC_MAGIC_DOUBLE_getDerivation(DerivationDouble a) {
+        return new DerivationDouble(a.deriv);
+    }
+
+    public static DerivationDouble COJAC_MAGIC_DOUBLE_asDerivationTarget(DerivationDouble a) {
+        return new DerivationDouble(a.value, 1.0);
+    }
+
+
 }
