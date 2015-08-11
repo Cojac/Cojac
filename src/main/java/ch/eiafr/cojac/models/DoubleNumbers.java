@@ -30,6 +30,7 @@ public class DoubleNumbers {
         for (int i = 0; i < a.length; i++) {
             a[i] = COJAC_DOUBLE_WRAPPER_CLASS.getConstructor(double.class).newInstance(0);
         }
+        // WRAPPER SPEC: DW(double)
         return a;
     }
 
@@ -48,6 +49,7 @@ public class DoubleNumbers {
         Object[] a = (Object[]) Array.newInstance(COJAC_DOUBLE_WRAPPER_CLASS, array.length);
         for (int i = 0; i < a.length; i++)
             a[i] = COJAC_DOUBLE_WRAPPER_CLASS.getConstructor(double.class).newInstance(array[i]);
+        // WRAPPER SPEC: DW(double)
         return a;
     }
     
@@ -56,6 +58,7 @@ public class DoubleNumbers {
         for (int i = 0; i < a.length; i++){
 			Method m = COJAC_DOUBLE_WRAPPER_CLASS.getMethod("toDouble", new Class[] {COJAC_DOUBLE_WRAPPER_CLASS});
 			a[i] = (double)m.invoke(COJAC_DOUBLE_WRAPPER_CLASS, array[i]);
+	        // WRAPPER SPEC: DW.toDouble(DW) -> double
 		}
         return a;
     }
@@ -75,8 +78,7 @@ public class DoubleNumbers {
 		Object[] input = (Object[])array;
         if(dimensions == 1){
             a = convertArray(input);
-        }
-        else{
+        } else {
             Class<?> compType = arrayClass(double.class, dimensions - 1);
             a = Array.newInstance(compType, input.length);
             Object[] b = (Object[]) a; // All arrays or multi-arrays can be cast to Object[]
@@ -91,8 +93,7 @@ public class DoubleNumbers {
         Object a;
         if(dimensions == 1){
             a = convertArray((double[])array);
-        }
-        else{
+        } else {
 			Object[] input = (Object[])array;
             Class<?> compType = arrayClass(COJAC_DOUBLE_WRAPPER_CLASS, dimensions - 1);
             a = Array.newInstance(compType, input.length);
@@ -107,12 +108,14 @@ public class DoubleNumbers {
 	public static Object initialize(Object a) throws Exception{
 		if(a == null)
 			return COJAC_DOUBLE_WRAPPER_CLASS.getConstructor(double.class).newInstance(0);
+        // WRAPPER SPEC: DW(double)
 		return a;
 	}
 	
 	public static Object castFromObject(Object obj) throws Exception{
 		if(obj instanceof Double)
 			return COJAC_DOUBLE_WRAPPER_CLASS.getConstructor(double.class).newInstance((Double)obj);
+        // WRAPPER SPEC: DW(double)
 		return obj;
 	}
 	
@@ -140,10 +143,12 @@ public class DoubleNumbers {
 			if(COJAC_FLOAT_WRAPPER_CLASS.isInstance(obj)){
 				Method m = COJAC_FLOAT_WRAPPER_CLASS.getMethod("toRealFloatWrapper", new Class[] {COJAC_FLOAT_WRAPPER_CLASS});
 				return m.invoke(COJAC_FLOAT_WRAPPER_CLASS, obj);
+                // WRAPPER SPEC: FW.toRealDoubleWrapper(FW) -> Float
 			}
 			if(COJAC_DOUBLE_WRAPPER_CLASS.isInstance(obj)){
 				Method m = COJAC_DOUBLE_WRAPPER_CLASS.getMethod("toRealDoubleWrapper", new Class[] {COJAC_DOUBLE_WRAPPER_CLASS});
 				return m.invoke(COJAC_DOUBLE_WRAPPER_CLASS, obj);
+	            // WRAPPER SPEC: DW.toRealDoubleWrapper(DW) -> Double
 			}
 			return obj;
 		}
@@ -172,8 +177,10 @@ public class DoubleNumbers {
 		else{
 			if(obj instanceof Float)
 				return COJAC_FLOAT_WRAPPER_CLASS.getConstructor(float.class).newInstance((Float)obj);
+	        // WRAPPER SPEC: FW(float)
 			if(obj instanceof Double)
 				return COJAC_DOUBLE_WRAPPER_CLASS.getConstructor(double.class).newInstance((Double)obj);
+	        // WRAPPER SPEC: DW(double)
 			return obj;
 		}
 	}
@@ -236,9 +243,11 @@ public class DoubleNumbers {
 	private static void mergeFloatArray(float[] original, Object[] cojac) throws Exception{
 		for (int i = 0; i < cojac.length; i++) {
 			Method m = COJAC_FLOAT_WRAPPER_CLASS.getMethod("toFloat", new Class[] {COJAC_FLOAT_WRAPPER_CLASS});
+            // WRAPPER SPEC: FW.toFloat(FW) -> float
 			float val = (float) m.invoke(COJAC_FLOAT_WRAPPER_CLASS, cojac[i]);
 			if(original[i] != val){
 				cojac[i] = COJAC_FLOAT_WRAPPER_CLASS.getConstructor(float.class).newInstance(original[i]);
+		        // WRAPPER SPEC: FW(float)
 			}
 		}
 	}
@@ -260,8 +269,10 @@ public class DoubleNumbers {
 		for (int i = 0; i < cojac.length; i++) {
 			Method m = COJAC_DOUBLE_WRAPPER_CLASS.getMethod("toDouble", new Class[] {COJAC_DOUBLE_WRAPPER_CLASS});
 			double val = (double) m.invoke(COJAC_DOUBLE_WRAPPER_CLASS, cojac[i]);
+            // WRAPPER SPEC: DW.toDouble(DW) -> double
 			if(original[i] != val){
 				cojac[i] = COJAC_DOUBLE_WRAPPER_CLASS.getConstructor(double.class).newInstance(original[i]);
+		        // WRAPPER SPEC: DW(double)
 			}
 		}
 	}

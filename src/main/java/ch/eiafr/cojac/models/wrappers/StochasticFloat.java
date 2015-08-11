@@ -139,7 +139,7 @@ public class StochasticFloat extends Number implements
         return res;
     }
     
-    //TODO add min/max/abs, reconsider if fneg is part of the wrapping mechanism
+    //TODO add min/max/abs
 
     public static int f2i(StochasticFloat a) {
         return a.intValue();

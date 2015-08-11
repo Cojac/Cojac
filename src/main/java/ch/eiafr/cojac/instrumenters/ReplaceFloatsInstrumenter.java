@@ -51,7 +51,7 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
                 // FLOATS
                 FRETURN, 
                 FCONST_0, FCONST_1, FCONST_2, 
-                FLOAD, FSTORE, // nothing to do here?
+                // FLOAD, FSTORE, // TODO: nothing to do here?
                 I2F, L2F, D2F, F2D, F2I, F2L,
                 FMUL, FADD, FDIV, FSUB, FREM, FNEG, 
                 FCMPG, FCMPL, 
@@ -59,7 +59,7 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
                 // DOUBLES
                 DRETURN,
                 DCONST_0, DCONST_1,
-                I2D, L2D, D2I, D2L, // TODO - define where to put D2F and F2D or make only one wrapper
+                I2D, L2D, D2I, D2L, 
                 DMUL, DADD, DDIV, DSUB, DREM, DNEG,
                 DCMPG, DCMPL,
         };
@@ -79,6 +79,13 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
     }
 
     private void fillMethods() {
+        // Floats
+        // WRAPPER SPEC: FW.fadd/fsub/fmul/frem/fdiv(FW,FW) -> FW
+        // WRAPPER SPEC: FW.fneg(FW) -> FW
+        // WRAPPER SPEC: FW.cmpl(FW,FW) -> boolean
+        // WRAPPER SPEC: FW.l2f/i2f/d2f/f2i/f2l/f2d
+        // WRAPPER SPEC: FW.fromFloat(float) -> FW
+
         invocations.put(FADD, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fadd", REPLACED_FLOAT_BINARY));
         invocations.put(FSUB, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fsub", REPLACED_FLOAT_BINARY));
         invocations.put(FMUL, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fmul", REPLACED_FLOAT_BINARY));
@@ -102,6 +109,12 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
         conversions.put(FCONST_2, new InvokableMethod(COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", REPLACED_FROM_FLOAT));
         
         // Doubles
+        // WRAPPER SPEC: DW.dadd/dsub/dmul/drem/ddiv(DW,DW) -> DW
+        // WRAPPER SPEC: DW.dneg(DW) -> DW
+        // WRAPPER SPEC: DW.cmpl(DW,DW) -> boolean
+        // WRAPPER SPEC: DW.l2d/i2d/d2i/d2l
+        // WRAPPER SPEC: DW.fromDouble(double) -> DW
+
         invocations.put(DADD, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "dadd", REPLACED_DOUBLE_BINARY));
         invocations.put(DSUB, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "dsub", REPLACED_DOUBLE_BINARY));
         invocations.put(DMUL, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "dmul", REPLACED_DOUBLE_BINARY));
@@ -118,10 +131,8 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
         invocations.put(D2I, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "d2i", REPLACED_D2I));
         invocations.put(D2L, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "d2l", REPLACED_D2L));
         
-        
         conversions.put(DCONST_0, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "fromDouble", REPLACED_FROM_DOUBLE));
         conversions.put(DCONST_1, new InvokableMethod(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "fromDouble", REPLACED_FROM_DOUBLE));
-        
     }
 
     @Override

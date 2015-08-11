@@ -82,14 +82,15 @@ public class BasicFloat extends Number implements Comparable<BasicFloat> {
         return new Float(a.val);
     }
     
-    // TODO: correctly implement fcmpl and fcmpg
     public static int fcmpl(BasicFloat a, BasicFloat b) {
+        if (Float.isNaN(a.val)|| Float.isNaN(b.val)) return -1;
         if (a.val < b.val) return -1;
         if (a.val > b.val) return +1;
         return 0;
     }
     
     public static int fcmpg(BasicFloat a, BasicFloat b) {
+        if (Float.isNaN(a.val)|| Float.isNaN(b.val)) return +1;
         if (a.val < b.val) return -1;
         if (a.val > b.val) return +1;
         return 0;
@@ -130,12 +131,11 @@ public class BasicFloat extends Number implements Comparable<BasicFloat> {
     public static BasicFloat fromFloat(float a) {
         return new BasicFloat(a);
     }
-    
-    public static BasicFloat fromDouble(BasicDouble a){
-        return new BasicFloat((float)BasicDouble.toDouble(a));
+
+    public static BasicFloat fromRealFloatWrapper(Float a) {
+        return new BasicFloat(a.floatValue());
     }
 
-    // TODO: can we merge fromDouble and d2f?
     public static BasicFloat d2f(BasicDouble a) {
         return new BasicFloat((float)BasicDouble.toDouble(a));
     }
@@ -147,10 +147,6 @@ public class BasicFloat extends Number implements Comparable<BasicFloat> {
     public static BasicFloat l2f(long a) {
         return new BasicFloat((float)a);
     }
-
-//    public static boolean isInfiniteProxy(BasicFloat a){
-//        return Float.isInfinite(a.val);
-//    }
 
     //-------------------------------------------------------------------------
     //----------------- Overridden methods ------------------------------------
@@ -195,6 +191,10 @@ public class BasicFloat extends Number implements Comparable<BasicFloat> {
     //-------------------------------------------------------------------------
     //----------------- "Magic" methods ---------------------------------------
     //-------------------------------------------------------------------------
+
+    public static String COJAC_MAGIC_FLOAT_wrapper() {
+        return "Basic";
+    }
 
     public static String COJAC_MAGIC_FLOAT_toStr(BasicFloat n) {
         return n.toString();

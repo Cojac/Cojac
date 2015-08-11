@@ -76,16 +76,19 @@ public class ReplaceFloatsMethods {
         // Floats replacements
         suppressions.put(new MethodSignature(FL_NAME, "valueOf", "(F)"+FL_DESCR), CFW_N); // delete if the value is already a FloatWrapper
         suppressions.put(new MethodSignature(FL_NAME, "floatValue", "()F"), null); // delete in every case (keep FloatWrapper)
-        
+
+        // WRAPPER SPEC: FW.fromFloat(float) -> FW
         invocations.put(new MethodSignature(FL_NAME, "valueOf", "(F)"+FL_DESCR), new InvokableMethod(CFW_N, "fromFloat", "(F)"+CFW, INVOKESTATIC));
 
         // TODO: strengthen tests for "new Float/Double(...)"
         // (I just suppressed these public constructors in wrappers, and the test still passes...)
 
+        // WRAPPER SPEC: FW(FW), FW(String), FW(DW)
         invocations.put(new MethodSignature(FL_NAME, "<init>", "(F)V"), new InvokableMethod(CFW_N, "<init>", "("+CFW+")V", INVOKESPECIAL));
         invocations.put(new MethodSignature(FL_NAME, "<init>", "(Ljava/lang/String;)V"), new InvokableMethod(CFW_N, "<init>", "(Ljava/lang/String;)V", INVOKESPECIAL));
         invocations.put(new MethodSignature(FL_NAME, "<init>", "(D)V"), new InvokableMethod(CFW_N, "<init>", "("+CDW+")V", INVOKESPECIAL));
         
+        // WRAPPER SPEC: FW.f2d(FW)->DW, FW.f2i(FW)->int, FW.f2l(FW)->long, FW.fromString(String)->FW
         invocations.put(new MethodSignature(FL_NAME, "doubleValue", "()D"), new InvokableMethod(CFW_N, "f2d", "("+CFW+")"+CDW, INVOKESTATIC));
         invocations.put(new MethodSignature(FL_NAME, "intValue", "()I"), new InvokableMethod(CFW_N, "f2i", "("+CFW+")I", INVOKESTATIC));
         invocations.put(new MethodSignature(FL_NAME, "longValue", "()J"), new InvokableMethod(CFW_N, "f2l", "("+CFW+")J", INVOKESTATIC));
@@ -98,13 +101,16 @@ public class ReplaceFloatsMethods {
         suppressions.put(new MethodSignature(DL_NAME, "valueOf", "(D)"+DL_DESCR), CDW_N); // delete if the value is already a DoubleWrapper
         suppressions.put(new MethodSignature(DL_NAME, "doubleValue", "()D"), null); // delete in every case (keep DoubleWrapper)
         
+        // WRAPPER SPEC: DW.fromDouble(double) -> DW
         invocations.put(new MethodSignature(DL_NAME, "valueOf", "(D)"+DL_DESCR), new InvokableMethod(CDW_N, "fromDouble", "(D)"+CDW, INVOKESTATIC));
 
+        // WRAPPER SPEC: DW(DW), DW(String), DW(FW)
         invocations.put(new MethodSignature(DL_NAME, "<init>", "(D)V"), new InvokableMethod(CDW_N, "<init>", "("+CDW+")V", INVOKESPECIAL));
         invocations.put(new MethodSignature(DL_NAME, "<init>", "(Ljava/lang/String;)V"), new InvokableMethod(CDW_N, "<init>", "(Ljava/lang/String;)V", INVOKESPECIAL));
         invocations.put(new MethodSignature(DL_NAME, "<init>", "(F)V"), new InvokableMethod(CDW_N, "<init>", "("+CFW+")V", INVOKESPECIAL));
         
-        invocations.put(new MethodSignature(DL_NAME, "floatValue", "()F"), new InvokableMethod(CDW_N, "d2f", "("+CDW+")"+CFW, INVOKESTATIC));
+        // WRAPPER SPEC: FW.d2f(DW)->FW, DW.d2i(DW)->int, DW.d2l(DW)->long, DW.fromString(String)->DW
+        invocations.put(new MethodSignature(DL_NAME, "floatValue", "()F"), new InvokableMethod(CFW_N, "d2f", "("+CDW+")"+CFW, INVOKESTATIC)); //Bapst: was CDW_N
         invocations.put(new MethodSignature(DL_NAME, "intValue", "()I"), new InvokableMethod(CDW_N, "d2i", "("+CDW+")I", INVOKESTATIC));
         invocations.put(new MethodSignature(DL_NAME, "longValue", "()J"), new InvokableMethod(CDW_N, "d2l", "("+CDW+")J", INVOKESTATIC));
 
@@ -115,47 +121,57 @@ public class ReplaceFloatsMethods {
         // TODO: redesign so that it is easier to maintain (and ensure every method gets implemented)
         //       maybe define only two methods math_unary/math_binary, and add a parameter 
         // Math Library
+        // WRAPPER SPEC: DW.min/max/pow(DW,DW) -> DW
+        // WRAPPER SPEC: DW.sqrt/sin/sinh/asin/cos/cosh/acos/tan/atan/tanh(DW) -> DW
+        // WRAPPER SPEC: DW.toRadians/toDegrees/exp/log/log10abs(DW) -> DW
+
+        final String dwUnOp  = "(" + CDW + ")" + CDW;
+        final String dwBinOp = "(" + CDW  + CDW + ")" + CDW;
+
         invocations.put(new MethodSignature(MATH_NAME, "sqrt", "(D)D"),
-                new InvokableMethod(CDW_N, "math_sqrt", "(" + CDW + ")" + CDW, INVOKESTATIC));
+                new InvokableMethod(CDW_N, "math_sqrt", dwUnOp, INVOKESTATIC));
         invocations.put(new MethodSignature(MATH_NAME, "sin", "(D)D"),
-                new InvokableMethod(CDW_N, "math_sin", "(" + CDW + ")" + CDW, INVOKESTATIC));
+                new InvokableMethod(CDW_N, "math_sin", dwUnOp, INVOKESTATIC));
         invocations.put(new MethodSignature(MATH_NAME, "sinh", "(D)D"),
-                new InvokableMethod(CDW_N, "math_sinh", "(" + CDW + ")" + CDW, INVOKESTATIC));
+                new InvokableMethod(CDW_N, "math_sinh", dwUnOp, INVOKESTATIC));
         invocations.put(new MethodSignature(MATH_NAME, "asin", "(D)D"),
-                new InvokableMethod(CDW_N, "math_asin", "(" + CDW + ")" + CDW, INVOKESTATIC));
+                new InvokableMethod(CDW_N, "math_asin", dwUnOp, INVOKESTATIC));
         invocations.put(new MethodSignature(MATH_NAME, "cos", "(D)D"),
-                new InvokableMethod(CDW_N, "math_cos", "(" + CDW + ")" + CDW, INVOKESTATIC));
+                new InvokableMethod(CDW_N, "math_cos", dwUnOp, INVOKESTATIC));
         invocations.put(new MethodSignature(MATH_NAME, "cosh", "(D)D"),
-                new InvokableMethod(CDW_N, "math_cosh", "(" + CDW + ")" + CDW, INVOKESTATIC));
+                new InvokableMethod(CDW_N, "math_cosh", dwUnOp, INVOKESTATIC));
         invocations.put(new MethodSignature(MATH_NAME, "acos", "(D)D"),
-                new InvokableMethod(CDW_N, "math_acos", "(" + CDW + ")" + CDW, INVOKESTATIC));
+                new InvokableMethod(CDW_N, "math_acos", dwUnOp, INVOKESTATIC));
         invocations.put(new MethodSignature(MATH_NAME, "tan", "(D)D"),
-                new InvokableMethod(CDW_N, "math_tan", "(" + CDW + ")" + CDW, INVOKESTATIC));
+                new InvokableMethod(CDW_N, "math_tan", dwUnOp, INVOKESTATIC));
         invocations.put(new MethodSignature(MATH_NAME, "atan", "(D)D"),
-                new InvokableMethod(CDW_N, "math_atan", "(" + CDW + ")" + CDW, INVOKESTATIC));
+                new InvokableMethod(CDW_N, "math_atan", dwUnOp, INVOKESTATIC));
         invocations.put(new MethodSignature(MATH_NAME, "tanh", "(D)D"),
-                new InvokableMethod(CDW_N, "math_tanh", "(" + CDW + ")" + CDW, INVOKESTATIC));
+                new InvokableMethod(CDW_N, "math_tanh", dwUnOp, INVOKESTATIC));
         invocations.put(new MethodSignature(MATH_NAME, "toRadians", "(D)D"),
-                new InvokableMethod(CDW_N, "math_toRadians", "(" + CDW + ")" + CDW, INVOKESTATIC));
+                new InvokableMethod(CDW_N, "math_toRadians", dwUnOp, INVOKESTATIC));
         invocations.put(new MethodSignature(MATH_NAME, "toDegrees", "(D)D"),
-                new InvokableMethod(CDW_N, "math_toDegrees", "(" + CDW + ")" + CDW, INVOKESTATIC));
+                new InvokableMethod(CDW_N, "math_toDegrees", dwUnOp, INVOKESTATIC));
         invocations.put(new MethodSignature(MATH_NAME, "exp", "(D)D"),
-                new InvokableMethod(CDW_N, "math_exp", "(" + CDW + ")" + CDW, INVOKESTATIC));
+                new InvokableMethod(CDW_N, "math_exp", dwUnOp, INVOKESTATIC));
         invocations.put(new MethodSignature(MATH_NAME, "log", "(D)D"),
-                new InvokableMethod(CDW_N, "math_log", "(" + CDW + ")" + CDW, INVOKESTATIC));
+                new InvokableMethod(CDW_N, "math_log", dwUnOp, INVOKESTATIC));
         invocations.put(new MethodSignature(MATH_NAME, "log10", "(D)D"),
-                new InvokableMethod(CDW_N, "math_log10", "(" + CDW + ")" + CDW, INVOKESTATIC));
+                new InvokableMethod(CDW_N, "math_log10", dwUnOp, INVOKESTATIC));
         invocations.put(new MethodSignature(MATH_NAME, "abs", "(D)D"),
-                new InvokableMethod(CDW_N, "math_abs", "(" + CDW + ")" + CDW, INVOKESTATIC));
+                new InvokableMethod(CDW_N, "math_abs", dwUnOp, INVOKESTATIC));
 
         invocations.put(new MethodSignature(MATH_NAME, "max", "(DD)D"),
-                new InvokableMethod(CDW_N, "math_max", "(" + CDW + CDW + ")" + CDW, INVOKESTATIC));
+                new InvokableMethod(CDW_N, "math_max", dwBinOp, INVOKESTATIC));
         invocations.put(new MethodSignature(MATH_NAME, "min", "(DD)D"),
-                new InvokableMethod(CDW_N, "math_min", "(" + CDW + CDW + ")" + CDW, INVOKESTATIC));
+                new InvokableMethod(CDW_N, "math_min", dwBinOp, INVOKESTATIC));
         invocations.put(new MethodSignature(MATH_NAME, "pow", "(DD)D"),
-                new InvokableMethod(CDW_N, "math_pow", "(" + CDW + CDW + ")" + CDW, INVOKESTATIC));
+                new InvokableMethod(CDW_N, "math_pow", dwBinOp, INVOKESTATIC));
 
         // math functions put in FloatWrapper
+        // WRAPPER SPEC: FW.min/max(FW,FW) -> FW
+        // WRAPPER SPEC: FW.abs(FW) -> FW
+
         invocations.put(new MethodSignature(MATH_NAME,"abs","(F)F"),
                 new InvokableMethod(CFW_N, "math_abs","(" + CFW +")" + CFW, INVOKESTATIC));
 
