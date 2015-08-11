@@ -285,9 +285,10 @@ public class BigDecimalFloat extends Number implements
     }
 
     @Override public int hashCode() {
-        int hash = 5;
-        hash = 83 * hash + Objects.hashCode(this.val);
-        return hash;
+        int hash = 9;
+        if (isNaN) return hash;
+        if (isInfinite) return hash + (isPositiveInfinite ? 3 : 5);
+        return hash + Objects.hashCode(this.val);
     }
 
     @Override public int intValue() {
@@ -309,6 +310,10 @@ public class BigDecimalFloat extends Number implements
     //-------------------------------------------------------------------------
     //----------------- "Magic" methods ---------------------------------------
     //-------------------------------------------------------------------------
+
+    public static String COJAC_MAGIC_FLOAT_wrapper() {
+        return "BigDecimal";
+    }
 
     public static String COJAC_MAGIC_FLOAT_toStr(BigDecimalFloat n) {
         return n.toString();

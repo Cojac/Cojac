@@ -135,8 +135,8 @@ public class BigDecimalDouble extends Number implements
             double bVal = b.getDoubleInfiniteValue();
             return new BigDecimalDouble(aVal % bVal);
         }
+        // TODO: write a correct drem operation on BigInteger
         return new BigDecimalDouble(a.val.remainder(b.val, mathContext));
-        // is this correct?
     }
 
     public static BigDecimalDouble dneg(BigDecimalDouble a) {
