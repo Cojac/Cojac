@@ -20,7 +20,11 @@ package ch.eiafr.cojac.models;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.objectweb.asm.Type;
+
+import ch.eiafr.cojac.models.wrappers.BigDecimalDouble;
+import ch.eiafr.cojac.models.wrappers.BigDecimalFloat;
 
 public class FloatReplacerClasses {
 	
@@ -62,6 +66,7 @@ public class FloatReplacerClasses {
 	
 	public static void setBigDecimalPrecision(int precision){
 		COJAC_BIGDECIMAL_PRECISION = precision;
+		BigDecimalDouble.setPrecision(precision);
 	}
 	
 }
