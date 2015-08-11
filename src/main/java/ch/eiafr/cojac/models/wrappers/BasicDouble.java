@@ -87,14 +87,15 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
         return new Double(a.val);
     }
     
-    // TODO: correctly implement dcmpl and dcmpg
     public static int dcmpl(BasicDouble a, BasicDouble b) {
+        if (Double.isNaN(a.val)|| Double.isNaN(b.val)) return -1;
         if (a.val < b.val) return -1;
         if (a.val > b.val) return +1;
         return 0;
     }
     
     public static int dcmpg(BasicDouble a, BasicDouble b) {
+        if (Double.isNaN(a.val)|| Double.isNaN(b.val)) return +1;
         if (a.val < b.val) return -1;
         if (a.val > b.val) return +1;
         return 0;
@@ -206,10 +207,6 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
         return fromDouble(Math.pow(a.val, b.val));
     }
     	
-//    public static BasicFloat d2f(BasicDouble a) {  // now in Float wrapper
-//        return BasicFloat.fromFloat((float)a.val);
-//    }
-
     //-------------------------------------------------------------------------
     //----------------- Necessarily static methods ----------------------------
     //-------------------------------------------------------------------------
@@ -233,10 +230,6 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
     public static BasicDouble l2d(long a) {
         return new BasicDouble((double)a);
     }
-
-//    public static BasicDouble f2d(BasicFloat a) { // now in Float wrapper
-//        return new BasicDouble((double)BasicFloat.toFloat(a));
-//    }
 
     //-------------------------------------------------------------------------
     //----------------- Overridden methods ------------------------------------

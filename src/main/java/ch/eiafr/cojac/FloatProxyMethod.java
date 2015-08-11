@@ -289,7 +289,7 @@ public class FloatProxyMethod {
 
 	public static void convertRealToCojacType(Type realType, MethodVisitor mv){
         // WRAPPER SPEC: FW.fromFloat(float) -> FW,  FW.fromRealFloatWrapper(Float) -> FW
-        // WRAPPER SPEC: DW.fromDouble(double) -> DW, FW.fromRealDoubleWrapper(Double) -> DW
+        // WRAPPER SPEC: DW.fromDouble(double) -> DW, DW.fromRealDoubleWrapper(Double) -> DW
         if(realType.equals(Type.FLOAT_TYPE)){
             mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", "(F)"+COJAC_FLOAT_WRAPPER_TYPE_DESCR, false);
         } else if(realType.equals(Type.getType(Float.class))){

@@ -82,14 +82,15 @@ public class BasicFloat extends Number implements Comparable<BasicFloat> {
         return new Float(a.val);
     }
     
-    // TODO: correctly implement fcmpl and fcmpg
     public static int fcmpl(BasicFloat a, BasicFloat b) {
+        if (Float.isNaN(a.val)|| Float.isNaN(b.val)) return -1;
         if (a.val < b.val) return -1;
         if (a.val > b.val) return +1;
         return 0;
     }
     
     public static int fcmpg(BasicFloat a, BasicFloat b) {
+        if (Float.isNaN(a.val)|| Float.isNaN(b.val)) return +1;
         if (a.val < b.val) return -1;
         if (a.val > b.val) return +1;
         return 0;
@@ -190,6 +191,10 @@ public class BasicFloat extends Number implements Comparable<BasicFloat> {
     //-------------------------------------------------------------------------
     //----------------- "Magic" methods ---------------------------------------
     //-------------------------------------------------------------------------
+
+    public static String COJAC_MAGIC_FLOAT_wrapper() {
+        return "Basic";
+    }
 
     public static String COJAC_MAGIC_FLOAT_toStr(BasicFloat n) {
         return n.toString();
