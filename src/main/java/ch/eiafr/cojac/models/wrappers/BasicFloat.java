@@ -133,7 +133,7 @@ public class BasicFloat extends Number implements Comparable<BasicFloat> {
     }
 
     public static BasicFloat fromRealFloatWrapper(Float a) {
-        return new BasicFloat(a.floatValue());
+        return fromFloat(a);
     }
 
     public static BasicFloat d2f(BasicDouble a) {
