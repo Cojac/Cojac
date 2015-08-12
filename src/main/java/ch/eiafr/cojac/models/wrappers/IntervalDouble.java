@@ -36,9 +36,9 @@ public class IntervalDouble extends Number implements
     }
 
     public IntervalDouble(IntervalFloat a) {
-        this.value = a.value;
-        this.interval = new DoubleInterval(a.interval);
-        this.isUnStable=a.isUnStable;
+        this.value = a.delegate.value;
+        this.interval = new DoubleInterval(a.delegate.interval);
+        this.isUnStable=a.delegate.isUnStable;
     }
 
     public IntervalDouble(IntervalDouble a) {

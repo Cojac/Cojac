@@ -206,10 +206,6 @@ public class StochasticFloat extends Number implements
         return new StochasticFloat(n.relativeError());
     }
 
-    public static float toFloat(IntervalFloat a) {
-        return (float) a.value;
-    }
-
     @Override
     public int compareTo(StochasticFloat o) {
         if (checkComparisons) {
