@@ -4,6 +4,10 @@ import ch.eiafr.cojac.interval.DoubleInterval;
 
 public class IntervalDouble extends Number implements
         Comparable<IntervalDouble> {
+    //-------------------------------------------------------------------------
+    //----------------- Fields and auxiliary constructors ---------------------
+    //------------ (not required for the Wrapper mechanism) -------------------
+    //-------------------------------------------------------------------------
     
     private static double threshold = 1.0;
     private static boolean checkComparisons = false;
@@ -13,31 +17,38 @@ public class IntervalDouble extends Number implements
     
     protected final boolean isUnStable;
 
-    private IntervalDouble(double value) {
-        this(value, new DoubleInterval(value), false);
-    }
-
     private IntervalDouble(double value, DoubleInterval interval, boolean unstable) {
         this.value = value;
         this.interval = interval;
         this.isUnStable=checkedStability(unstable);
     }
 
-    IntervalDouble(IntervalFloat a) {
+    //-------------------------------------------------------------------------
+    //----------------- Necessary constructors  -------------------------------
+    //-------------------------------------------------------------------------
+
+    public IntervalDouble(double value) {
+        this(value, new DoubleInterval(value), false);
+    }
+
+    public IntervalDouble(String s) {
+        this(Double.valueOf(s), new DoubleInterval(Double.valueOf(s)), false);
+    }
+
+    public IntervalDouble(IntervalFloat a) {
         this.value = a.value;
         this.interval = new DoubleInterval(a.interval);
         this.isUnStable=a.isUnStable;
     }
 
-    public static IntervalDouble fromDouble(double a) {
-        return new IntervalDouble(a);
+    public IntervalDouble(IntervalDouble a) {
+        this(a.value, a.interval, a.isUnStable);
     }
 
-    public static IntervalDouble fromString(String a) {
-        double d = Double.parseDouble(a);
-        return fromDouble(d);
-    }
-
+    //-------------------------------------------------------------------------
+    //----------------- Methods with 1st parameter of 'this' type -------------
+    //-------------------------------------------------------------------------
+    
     public static IntervalDouble dadd(IntervalDouble a, IntervalDouble b) {
         IntervalDouble res = new IntervalDouble(
                 a.value + b.value, 
@@ -78,15 +89,6 @@ public class IntervalDouble extends Number implements
         return res;
     }
 
-    // TODO : is this correct ?
-    public static int dcmpl(IntervalDouble a, IntervalDouble b) {
-        return a.compareTo(b);
-    }
-
-    public static int dcmpg(IntervalDouble a, IntervalDouble b) {
-        return a.compareTo(b);
-    }
-
     // it's just a neg operation, dont need to check the stability...
     public static IntervalDouble dneg(IntervalDouble a) {
         return new IntervalDouble(
@@ -95,62 +97,30 @@ public class IntervalDouble extends Number implements
                 a.isUnStable);
     }
 
-    public static long d2l(IntervalDouble a) {
-        return a.longValue();
+    public static double toDouble(IntervalDouble a) {
+        return a.value;
+    }
+
+    public static Double toRealDoubleWrapper(IntervalDouble a) {
+        return new Double(a.value);
+    }
+
+    public static int dcmpl(IntervalDouble a, IntervalDouble b) {
+        if (Double.isNaN(a.value) || Double.isNaN(b.value)) return -1;
+        return a.compareTo(b);
+    }
+
+    public static int dcmpg(IntervalDouble a, IntervalDouble b) {
+        if (Double.isNaN(a.value) || Double.isNaN(b.value)) return +1;
+        return a.compareTo(b);
     }
 
     public static int d2i(IntervalDouble a) {
         return a.intValue();
     }
 
-    public static IntervalFloat d2f(IntervalDouble a) {
-        return new IntervalFloat(a);
-    }
-
-    public static IntervalDouble i2d(int a) {
-        return fromDouble(a);
-    }
-
-    public static IntervalDouble f2d(IntervalFloat a) {
-        return new IntervalDouble(a);
-    }
-
-    public static IntervalDouble l2d(long a) {
-        return fromDouble(a);
-    }
-
-    public static double toDouble(IntervalDouble a) {
-        return a.value;
-    }
-
-    public static Double toRealDouble(IntervalDouble a) {
-        return new Double(a.value);
-    }
-
-    /* Magic Methods */
-
-    public static String COJAC_MAGIC_DOUBLE_toStr(IntervalDouble n) {
-        return n.toString();
-    }
-
-    public static String COJAC_MAGIC_DOUBLE_toStr(IntervalFloat n) {
-        return n.toString();
-    }
-
-    public static boolean COJAC_MAGIC_DOUBLE_isIn(IntervalDouble n) {
-        return n.interval.contains(n.value);
-    }
-
-    public static int COJAC_MAGIC_DOUBLE_IntervalcompareTo(IntervalDouble a, IntervalDouble b) {
-        return a.compareTo(b);
-    }
-
-    public static IntervalDouble COJAC_MAGIC_DOUBLE_width(IntervalDouble a) {
-        return new IntervalDouble(DoubleInterval.width(a.interval));
-    }
-
-    public static IntervalDouble COJAC_MAGIC_DOUBLE_relativeError(IntervalDouble n) {
-        return new IntervalDouble(n.relativeError());
+    public static long d2l(IntervalDouble a) {
+        return a.longValue();
     }
 
     /* Mathematical function */
@@ -163,11 +133,11 @@ public class IntervalDouble extends Number implements
         return res;
     }
 
-    public static IntervalDouble math_pow(IntervalDouble a, IntervalDouble b) {
+    public static IntervalDouble math_abs(IntervalDouble a) {
         IntervalDouble res = new IntervalDouble(
-                Math.pow(a.value, b.value), 
-                DoubleInterval.pow(a.interval, b.interval),
-                a.isUnStable || b.isUnStable);
+                Math.abs(a.value), 
+                DoubleInterval.abs(a.interval),
+                a.isUnStable);
         return res;
     }
 
@@ -191,6 +161,30 @@ public class IntervalDouble extends Number implements
         IntervalDouble res = new IntervalDouble(
                 Math.tan(a.value), 
                 DoubleInterval.tan(a.interval),
+                a.isUnStable);
+        return res;
+    }
+
+    public static IntervalDouble math_asin(IntervalDouble a) {
+        IntervalDouble res = new IntervalDouble(
+                Math.asin(a.value), 
+                DoubleInterval.asin(a.interval),
+                a.isUnStable);
+        return res;
+    }
+
+    public static IntervalDouble math_acos(IntervalDouble a) {
+        IntervalDouble res = new IntervalDouble(
+                Math.acos(a.value), 
+                DoubleInterval.acos(a.interval),
+                a.isUnStable);
+        return res;
+    }
+
+    public static IntervalDouble math_atan(IntervalDouble a) {
+        IntervalDouble res = new IntervalDouble(
+                Math.atan(a.value), 
+                DoubleInterval.atan(a.interval),
                 a.isUnStable);
         return res;
     }
@@ -219,30 +213,6 @@ public class IntervalDouble extends Number implements
         return res;
     }
 
-    public static IntervalDouble math_acos(IntervalDouble a) {
-        IntervalDouble res = new IntervalDouble(
-                Math.acos(a.value), 
-                DoubleInterval.acos(a.interval),
-                a.isUnStable);
-        return res;
-    }
-
-    public static IntervalDouble math_atan(IntervalDouble a) {
-        IntervalDouble res = new IntervalDouble(
-                Math.atan(a.value), 
-                DoubleInterval.atan(a.interval),
-                a.isUnStable);
-        return res;
-    }
-
-    public static IntervalDouble math_asin(IntervalDouble a) {
-        IntervalDouble res = new IntervalDouble(
-                Math.asin(a.value), 
-                DoubleInterval.asin(a.interval),
-                a.isUnStable);
-        return res;
-    }
-
     public static IntervalDouble math_exp(IntervalDouble a) {
         IntervalDouble res = new IntervalDouble(
                 Math.exp(a.value), 
@@ -267,22 +237,22 @@ public class IntervalDouble extends Number implements
         return res;
     }
 
-    public static IntervalDouble math_abs(IntervalDouble a) {
+    public static IntervalDouble math_toRadians(IntervalDouble a) {
         IntervalDouble res = new IntervalDouble(
-                Math.abs(a.value), 
-                DoubleInterval.abs(a.interval),
-                a.isUnStable);
-        return res;
-    }
-
-    public static IntervalDouble math_neg(IntervalDouble a) {
-        IntervalDouble res = new IntervalDouble(
-                -a.value, 
-                DoubleInterval.neg(a.interval),
+                Math.toRadians(a.value), 
+                DoubleInterval.toRadians(a.interval),
                 a.isUnStable);
         return res;
     }
     
+    public static IntervalDouble math_toDegrees(IntervalDouble a) {
+        IntervalDouble res = new IntervalDouble(
+                Math.toDegrees(a.value), 
+                DoubleInterval.toDegrees(a.interval),
+                a.isUnStable);
+        return res;
+    }
+
     public static IntervalDouble math_min(IntervalDouble a, IntervalDouble b) {
         if (a.compareTo(b)<0) return a;
         return b;
@@ -293,43 +263,44 @@ public class IntervalDouble extends Number implements
         return b;
     }
 
-    @SuppressWarnings("unused")  // used by reflection (from cmd line option)
-    public static void setThreshold(double value) {
-        threshold = value;
+    public static IntervalDouble math_pow(IntervalDouble a, IntervalDouble b) {
+        IntervalDouble res = new IntervalDouble(
+                Math.pow(a.value, b.value), 
+                DoubleInterval.pow(a.interval, b.interval),
+                a.isUnStable || b.isUnStable);
+        return res;
     }
 
-    @SuppressWarnings("unused") // used by reflection (from cmd line option)
-    public static void setCheckComp(boolean value) {
-        checkComparisons = value;
+    //-------------------------------------------------------------------------
+    //----------------- Necessarily static methods ----------------------------
+    //-------------------------------------------------------------------------
+
+    public static IntervalDouble fromDouble(double a) {
+        return new IntervalDouble(a);
     }
 
-    @Override
-    public int intValue() {
-        return (int) value;
+    public static IntervalDouble fromRealDoubleWrapper(Double a) {
+        return fromDouble(a);
     }
 
-    @Override
-    public long longValue() {
-        return (long) value;
+    public static IntervalDouble fromString(String a) {
+        double d = Double.parseDouble(a);
+        return fromDouble(d);
     }
 
-    @Override
-    public float floatValue() {
-        return (float) value;
+    public static IntervalDouble i2d(int a) {
+        return fromDouble(a);
     }
 
-    @Override
-    public double doubleValue() {
-        return value;
+    public static IntervalDouble l2d(long a) {
+        return fromDouble(a);
     }
 
-    @Override
-    public String toString() {
-        return String.format("%s:%s", value, interval);
-    }
+    //-------------------------------------------------------------------------
+    //----------------- Overridden methods ------------------------------------
+    //-------------------------------------------------------------------------
 
-    @Override
-    public int compareTo(IntervalDouble o) {
+    @Override public int compareTo(IntervalDouble o) {
         int compResult = this.interval.compareTo(o.interval);
         if (checkComparisons) {
             if (this.interval.strictCompareTo(o.interval)) return 0;
@@ -348,14 +319,91 @@ public class IntervalDouble extends Number implements
         return 0;
     }
 
+    @Override public boolean equals(Object obj) {
+        Double d=null;
+        if (obj instanceof Double) d=(Double) obj;
+        if (obj instanceof IntervalDouble) 
+            d=new Double(((IntervalDouble) obj).value);
+        return new Double(this.value).equals(d);
+    }
+    
+    @Override public int hashCode() {
+        return Double.hashCode(this.value);
+    }
+    
+    @Override public String toString() {
+        return String.format("%s:%s", value, interval);
+    }
+
+    @Override public int intValue() {
+        return (int) value;
+    }
+
+    @Override public long longValue() {
+        return (long) value;
+    }
+
+    @Override public float floatValue() {
+        return (float) value;
+    }
+
+    @Override public double doubleValue() {
+        return value;
+    }
+
+    //-------------------------------------------------------------------------
+    //----------------- "Magic" methods ---------------------------------------
+    //-------------------------------------------------------------------------
+
+    public static String COJAC_MAGIC_DOUBLE_wrapper() {
+        return "Interval";
+    }
+
+    public static String COJAC_MAGIC_DOUBLE_toStr(IntervalDouble n) {
+        return n.toString();
+    }
+
+    public static boolean COJAC_MAGIC_DOUBLE_isIn(IntervalDouble n) {
+        return n.interval.contains(n.value);
+    }
+
+    public static int COJAC_MAGIC_DOUBLE_IntervalcompareTo(IntervalDouble a, IntervalDouble b) {
+        return a.compareTo(b);
+    }
+
+    public static IntervalDouble COJAC_MAGIC_DOUBLE_width(IntervalDouble a) {
+        return new IntervalDouble(DoubleInterval.width(a.interval));
+    }
+
+    public static IntervalDouble COJAC_MAGIC_DOUBLE_relativeError(IntervalDouble n) {
+        return new IntervalDouble(n.relativeError());
+    }
+    
+    //-------------------------------------------------------------------------
+    //--------------------- Auxiliary methods ---------------------------------
+    //------------ (not required for the Wrapper mechanism) -------------------
+    //-------------------------------------------------------------------------
+
+    //TODO consider the number of significant digits instead of the relative error
+    
+    // used by reflection (from cmd line option)
+    public static void setThreshold(double value) {
+        threshold = value;
+    }
+
+    // used by reflection (from cmd line option)
+    public static void setCheckComp(boolean value) {
+        checkComparisons = value;
+    }
+
     private boolean checkedStability(boolean wasUnstable) {
         if (wasUnstable) return wasUnstable;
         if (threshold < relativeError()) {
             RuntimeException e = new RuntimeException("COJAC: the computation becomes unstable (the interval grows too much)"
                     +"(relative error: "+relativeError()+")");
             // TODO: reconsider this reporting mechanism (merge with the original Cojac
-            // mechanisms (console, logfile, exception, callback)
-            System.err.println("Cojac has destected a unstable operation :");
+            // mechanisms (console, logfile, exception, callback))
+            System.err.println("Cojac has detected a unstable operation :");
             e.printStackTrace(System.err);
             System.err.println("interval value :" + this.toString());
             System.err.println("relative error :" + relativeError());
@@ -366,7 +414,7 @@ public class IntervalDouble extends Number implements
 
     private void reportBadComparison() {
         // TODO: reconsider this reporting mechanism (merge with the original Cojac
-        // mechanisms (console, logfile, exception, callback)
+        // mechanisms (console, logfile, exception, callback))
 
         RuntimeException e = new RuntimeException("COJAC: comparing overlapping intervals");
         System.err.println("Cojac has detected an unstable comparison :");

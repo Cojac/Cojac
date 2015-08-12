@@ -4,8 +4,8 @@ import static java.lang.Math.PI;
 
 /**
  * <p>
- * Note : the mathematical operation does not treat operation with overflow In
- * the future, maybe implments some features to frame those special event
+ * Note : the mathematical operation does not treat operation with overflow. In
+ * the future, maybe implement some features to frame those special event
  * Example : [-MAX_VALUE;MAX_VALUE] + [0.0;0.0] is giving [-infinity;infinity] :
  *
  * DoubleInterval b = new DoubleInterval(-Double.MAX_VALUE,Double.MAX_VALUE);
@@ -829,6 +829,16 @@ public class DoubleInterval implements Comparable<DoubleInterval> {
             return new DoubleInterval(Double.NaN);
         }
         return new DoubleInterval(inf - Math.ulp(inf), sup + Math.ulp(sup));
+    }
+
+    public static DoubleInterval toRadians(DoubleInterval interval) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public static DoubleInterval toDegrees(DoubleInterval interval) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

@@ -86,14 +86,14 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
     }
     
     public static int dcmpl(BasicDouble a, BasicDouble b) {
-        if (Double.isNaN(a.val)|| Double.isNaN(b.val)) return -1;
+        if (Double.isNaN(a.val) || Double.isNaN(b.val)) return -1;
         if (a.val < b.val) return -1;
         if (a.val > b.val) return +1;
         return 0;
     }
     
     public static int dcmpg(BasicDouble a, BasicDouble b) {
-        if (Double.isNaN(a.val)|| Double.isNaN(b.val)) return +1;
+        if (Double.isNaN(a.val) || Double.isNaN(b.val)) return +1;
         if (a.val < b.val) return -1;
         if (a.val > b.val) return +1;
         return 0;
