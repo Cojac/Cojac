@@ -363,6 +363,7 @@ public class IntervalDouble extends Number implements
         return n.toString();
     }
 
+    // TODO: reconsider those magic methods.
     public static boolean COJAC_MAGIC_DOUBLE_isIn(IntervalDouble n) {
         return n.interval.contains(n.value);
     }

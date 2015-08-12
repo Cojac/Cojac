@@ -5,6 +5,11 @@ import java.util.Random;
 
 public class StochasticDouble extends Number implements
         Comparable<StochasticDouble> {
+    //-------------------------------------------------------------------------
+    //----------------- Fields and auxiliary constructors ---------------------
+    //------------ (not required for the Wrapper mechanism) -------------------
+    //-------------------------------------------------------------------------
+
     private static int nbrParallelNumber = 3;
     private static double threshold = 0.1;
     private static boolean checkComparisons = false; //TODO: activate that feature
@@ -17,9 +22,17 @@ public class StochasticDouble extends Number implements
     protected final double[] stochasticValue;
     protected final boolean isUnStable;
 
-    /* Constructor */
+    private StochasticDouble(double v, double[] tab, boolean unstable) {
+        this.value = v;
+        this.stochasticValue=tab;
+        this.isUnStable=checkedStability(unstable);
+    }
 
-    StochasticDouble(double v) {
+    //-------------------------------------------------------------------------
+    //----------------- Necessary constructors  -------------------------------
+    //-------------------------------------------------------------------------
+
+    public StochasticDouble(double v) {
         this.value = v;
         this.stochasticValue = new double[nbrParallelNumber];
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -28,40 +41,18 @@ public class StochasticDouble extends Number implements
         this.isUnStable=false;
     }
     
-    private StochasticDouble(double v, double[] tab, boolean unstable) {
-        this.value = v;
-        this.stochasticValue=tab;
-        this.isUnStable=checkedStability(unstable);
-    }
-
-    private boolean checkedStability(boolean wasUnstable) {
-        if (wasUnstable) return wasUnstable;
-        if (threshold < relativeError()) {
-            RuntimeException e = new RuntimeException("COJAC: the computation becomes unstable (the interval grows too much)"
-                    +"(relative error: "+relativeError()+")");
-            // TODO: reconsider this reporting mechanism (merge with the original Cojac
-            // mechanisms (console, logfile, exception, callback)
-            System.err.println("Cojac has destected a unstable operation :");
-            e.printStackTrace(System.err);
-            System.err.println("interval value :" + this.toString());
-            System.err.println("relative error :" + relativeError());
-            return true;
-        }
-        return false;
-    }
-
-    private StochasticDouble(String v) {
+    public StochasticDouble(String v) {
         this(Double.parseDouble(v));
     }
 
-    StochasticDouble(StochasticDouble v) {
+    public StochasticDouble(StochasticDouble v) {
         double value = v.value;
         this.value = value;
         this.isUnStable = v.isUnStable;
         this.stochasticValue = v.stochasticValue.clone();
     }
 
-    StochasticDouble(StochasticFloat v) {
+    public StochasticDouble(StochasticFloat v) {
         double value = v.value;
         this.value = value;
         this.isUnStable = v.isUnStable;
@@ -71,14 +62,10 @@ public class StochasticDouble extends Number implements
         }
     }
 
-    public static StochasticDouble fromDouble(double v) {
-        return new StochasticDouble(v);
-    }
-
-    public static StochasticDouble fromString(String v) {
-        return new StochasticDouble(v);
-    }
-
+    //-------------------------------------------------------------------------
+    //----------------- Methods with 1st parameter of 'this' type -------------
+    //-------------------------------------------------------------------------
+    
     public static StochasticDouble dadd(StochasticDouble a, StochasticDouble b) {
         double[] t=new double[nbrParallelNumber];
         for (int i = 0; i < nbrParallelNumber; i++)
@@ -86,22 +73,6 @@ public class StochasticDouble extends Number implements
         StochasticDouble res = new StochasticDouble(a.value + b.value, t, a.isUnStable || b.isUnStable);
         return res;
     }
-
-    public static StochasticDouble ddiv(StochasticDouble a, StochasticDouble b) {
-        double[] t=new double[nbrParallelNumber];
-        for (int i = 0; i < nbrParallelNumber; i++)
-            t[i] = rndRound(a.stochasticValue[i] / b.stochasticValue[i]);
-        StochasticDouble res = new StochasticDouble(a.value / b.value, t, a.isUnStable || b.isUnStable);
-        return res;
-    }
-
-    public static StochasticDouble drem(StochasticDouble a, StochasticDouble b) {
-        double[] t=new double[nbrParallelNumber];
-        for (int i = 0; i < nbrParallelNumber; i++)
-            t[i] = rndRound(a.stochasticValue[i] % b.stochasticValue[i]);
-        StochasticDouble res = new StochasticDouble(a.value % b.value, t, a.isUnStable || b.isUnStable);
-        return res;
-  }
 
     public static StochasticDouble dsub(StochasticDouble a, StochasticDouble b) {
         double[] t=new double[nbrParallelNumber];
@@ -119,12 +90,20 @@ public class StochasticDouble extends Number implements
         return res;
     }
 
-    public static int dcmpl(StochasticDouble a, StochasticDouble b) {
-        return a.compareTo(b);
+    public static StochasticDouble ddiv(StochasticDouble a, StochasticDouble b) {
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(a.stochasticValue[i] / b.stochasticValue[i]);
+        StochasticDouble res = new StochasticDouble(a.value / b.value, t, a.isUnStable || b.isUnStable);
+        return res;
     }
 
-    public static int dcmpg(StochasticDouble a, StochasticDouble b) {
-        return a.compareTo(b);
+    public static StochasticDouble drem(StochasticDouble a, StochasticDouble b) {
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(a.stochasticValue[i] % b.stochasticValue[i]);
+        StochasticDouble res = new StochasticDouble(a.value % b.value, t, a.isUnStable || b.isUnStable);
+        return res;
     }
 
     public static StochasticDouble dneg(StochasticDouble a) {
@@ -135,6 +114,24 @@ public class StochasticDouble extends Number implements
         return res;
     }
 
+    public static double toDouble(StochasticDouble a) {
+        return a.value;
+    }
+
+    public static Double toRealDoubleWrapper(StochasticDouble a) {
+        return new Double(a.value);
+    }
+
+    public static int dcmpl(StochasticDouble a, StochasticDouble b) {
+        if (Double.isNaN(a.value) || Double.isNaN(b.value)) return -1;
+        return a.compareTo(b);
+    }
+
+    public static int dcmpg(StochasticDouble a, StochasticDouble b) {
+        if (Double.isNaN(a.value) || Double.isNaN(b.value)) return +1;
+        return a.compareTo(b);
+    }
+
     public static int d2i(StochasticDouble a) {
         return a.intValue();
     }
@@ -143,46 +140,6 @@ public class StochasticDouble extends Number implements
         return a.longValue();
     }
 
-    public static StochasticFloat d2f(StochasticDouble a) {
-        return new StochasticFloat(a);
-    }
-
-    public static StochasticDouble i2d(int a) {
-        return new StochasticDouble(a);
-    }
-
-    public static StochasticDouble l2d(long a) {
-        return new StochasticDouble(a);
-    }
-
-    public static StochasticDouble f2d(StochasticFloat a) {
-        return new StochasticDouble(a);
-    }
-
-    public static double toDouble(StochasticDouble a) {
-        return a.value;
-    }
-
-    public static Double toRealDouble(StochasticDouble a) {
-        return new Double(a.value);
-    }
-
-    // BAPST: removed "round to zero" mode
-    private static double rndRound(double value) {
-        switch (random.nextInt(3)) {
-        case 0:
-            // round to negative infinity
-            return value - Math.ulp(value);
-        case 1:
-            // round to positive infinity
-            return value + Math.ulp(value);
-        default:
-            // default rounding mode in Java
-            return value;
-        }
-    }
-
-    /* Mathematical function */
     public static StochasticDouble math_sqrt(StochasticDouble a) {
         double[] t=new double[nbrParallelNumber];
         for (int i = 0; i < nbrParallelNumber; i++)
@@ -191,15 +148,14 @@ public class StochasticDouble extends Number implements
         return res;
     }
 
-    public static StochasticDouble math_pow(StochasticDouble a, StochasticDouble b) {
+    public static StochasticDouble math_abs(StochasticDouble a) {
         double[] t=new double[nbrParallelNumber];
         for (int i = 0; i < nbrParallelNumber; i++)
-            t[i] = rndRound(Math.pow(a.stochasticValue[i], b.stochasticValue[i]));
-        StochasticDouble res = new StochasticDouble(
-                Math.pow(a.value, b.value), t, a.isUnStable||b.isUnStable);
+            t[i] = rndRound(Math.abs(a.stochasticValue[i]));
+        StochasticDouble res = new StochasticDouble(Math.abs(a.value), t, a.isUnStable);
         return res;
     }
-
+    
     public static StochasticDouble math_sin(StochasticDouble a) {
         double[] t=new double[nbrParallelNumber];
         for (int i = 0; i < nbrParallelNumber; i++)
@@ -224,6 +180,30 @@ public class StochasticDouble extends Number implements
         return res;
     }
 
+    public static StochasticDouble math_asin(StochasticDouble a) {
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(Math.asin(a.stochasticValue[i]));
+        StochasticDouble res = new StochasticDouble(Math.asin(a.value), t, a.isUnStable);
+        return res;
+    }
+
+    public static StochasticDouble math_acos(StochasticDouble a) {
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(Math.acos(a.stochasticValue[i]));
+        StochasticDouble res = new StochasticDouble(Math.acos(a.value), t, a.isUnStable);
+        return res;
+    }
+
+    public static StochasticDouble math_atan(StochasticDouble a) {
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(Math.atan(a.stochasticValue[i]));
+        StochasticDouble res = new StochasticDouble(Math.atan(a.value), t, a.isUnStable);
+        return res;
+   }
+
     public static StochasticDouble math_sinh(StochasticDouble a) {
         double[] t=new double[nbrParallelNumber];
         for (int i = 0; i < nbrParallelNumber; i++)
@@ -245,30 +225,6 @@ public class StochasticDouble extends Number implements
         for (int i = 0; i < nbrParallelNumber; i++)
             t[i] = rndRound(Math.tanh(a.stochasticValue[i]));
         StochasticDouble res = new StochasticDouble(Math.tanh(a.value), t, a.isUnStable);
-        return res;
-    }
-
-    public static StochasticDouble math_acos(StochasticDouble a) {
-        double[] t=new double[nbrParallelNumber];
-        for (int i = 0; i < nbrParallelNumber; i++)
-            t[i] = rndRound(Math.acos(a.stochasticValue[i]));
-        StochasticDouble res = new StochasticDouble(Math.acos(a.value), t, a.isUnStable);
-        return res;
-    }
-
-    public static StochasticDouble math_atan(StochasticDouble a) {
-        double[] t=new double[nbrParallelNumber];
-        for (int i = 0; i < nbrParallelNumber; i++)
-            t[i] = rndRound(Math.atan(a.stochasticValue[i]));
-        StochasticDouble res = new StochasticDouble(Math.atan(a.value), t, a.isUnStable);
-        return res;
-   }
-
-    public static StochasticDouble math_asin(StochasticDouble a) {
-        double[] t=new double[nbrParallelNumber];
-        for (int i = 0; i < nbrParallelNumber; i++)
-            t[i] = rndRound(Math.asin(a.stochasticValue[i]));
-        StochasticDouble res = new StochasticDouble(Math.asin(a.value), t, a.isUnStable);
         return res;
     }
 
@@ -296,14 +252,22 @@ public class StochasticDouble extends Number implements
         return res;
     }
 
-    public static StochasticDouble math_abs(StochasticDouble a) {
+    public static StochasticDouble math_toRadians(StochasticDouble a) {
         double[] t=new double[nbrParallelNumber];
         for (int i = 0; i < nbrParallelNumber; i++)
-            t[i] = rndRound(Math.abs(a.stochasticValue[i]));
-        StochasticDouble res = new StochasticDouble(Math.abs(a.value), t, a.isUnStable);
+            t[i] = rndRound(Math.toRadians(a.stochasticValue[i]));
+        StochasticDouble res = new StochasticDouble(Math.toRadians(a.value), t, a.isUnStable);
         return res;
     }
-    
+
+    public static StochasticDouble math_toDegrees(StochasticDouble a) {
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(Math.toDegrees(a.stochasticValue[i]));
+        StochasticDouble res = new StochasticDouble(Math.toDegrees(a.value), t, a.isUnStable);
+        return res;
+    }
+
     public static StochasticDouble math_min(StochasticDouble a, StochasticDouble b) {
         double[] t=new double[nbrParallelNumber];
         for (int i = 0; i < nbrParallelNumber; i++)
@@ -322,33 +286,44 @@ public class StochasticDouble extends Number implements
         return res;
     }
 
-
-    @SuppressWarnings("unused") // used by reflection (from cmd line option)
-    public static void setThreshold(double value) {
-        threshold = value;
+    public static StochasticDouble math_pow(StochasticDouble a, StochasticDouble b) {
+        double[] t=new double[nbrParallelNumber];
+        for (int i = 0; i < nbrParallelNumber; i++)
+            t[i] = rndRound(Math.pow(a.stochasticValue[i], b.stochasticValue[i]));
+        StochasticDouble res = new StochasticDouble(
+                Math.pow(a.value, b.value), t, a.isUnStable||b.isUnStable);
+        return res;
     }
 
-    @SuppressWarnings("unused") // used by reflection (from cmd line option)
-    public static void setNbrParallelNumber(int value) {
-        nbrParallelNumber = value;
+    //-------------------------------------------------------------------------
+    //----------------- Necessarily static methods ----------------------------
+    //-------------------------------------------------------------------------
+
+    public static StochasticDouble fromDouble(double v) {
+        return new StochasticDouble(v);
     }
 
-    /* Magic method */
-    public static String COJAC_MAGIC_DOUBLE_toStr(StochasticDouble n) {
-        return n.toString();
+    public static StochasticDouble fromRealDoubleWrapper(Double v) {
+        return fromDouble(v);
     }
 
-    public static String COJAC_MAGIC_DOUBLE_toStr(StochasticFloat n) {
-        return n.toString();
+    public static StochasticDouble fromString(String v) {
+        return new StochasticDouble(v);
     }
 
-    public static StochasticDouble COJAC_MAGIC_DOUBLE_relativeError(StochasticDouble n) {
-        return new StochasticDouble(n.relativeError());
+    public static StochasticDouble i2d(int a) {
+        return new StochasticDouble(a);
     }
 
-    @Override
-    public String toString() {
-        // reference : BigDecimalDouble.java
+    public static StochasticDouble l2d(long a) {
+        return new StochasticDouble(a);
+    }
+
+    //-------------------------------------------------------------------------
+    //----------------- Overridden methods ------------------------------------
+    //-------------------------------------------------------------------------
+    
+    @Override public String toString() {
         String res = "" + value + " : [%s]";
         String tmp = "";
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -360,54 +335,105 @@ public class StochasticDouble extends Number implements
         return String.format(res, tmp);
     }
 
-    @Override
-    public int compareTo(StochasticDouble o) {
+    @Override public int compareTo(StochasticDouble o) {
         if (checkComparisons) {
             if (value==o.value && Arrays.equals(stochasticValue, o.stochasticValue)) return 0;
             if (this.overlaps(o))
                 reportBadComparison();
         }
-
-        if (this.value > o.value) {
-            return 1;
-        }
-        if (this.value < o.value) {
-            return -1;
-        }
+        if (this.value > o.value)  return +1;
+        if (this.value < o.value)  return -1;
         return 0;
     }
 
-    @Override
-    public int intValue() {
+    @Override public boolean equals(Object obj) {
+        Double d=null;
+        if (obj instanceof Double) d=(Double) obj;
+        if (obj instanceof StochasticDouble) 
+            d=new Double(((StochasticDouble) obj).value);
+        return new Double(this.value).equals(d);
+    }
+
+    @Override public int intValue() {
         return (int) this.value;
     }
 
-    @Override
-    public long longValue() {
+    @Override public long longValue() {
         return (long) this.value;
     }
 
-    @Override
-    public float floatValue() {
+    @Override public float floatValue() {
         return (float) this.value;
     }
 
-    @Override
-    public double doubleValue() {
+    @Override public double doubleValue() {
         return this.value;
     }
 
-    // TODO: check whether it is a "relativeError", or the "numberOfStableDigits"
-    // compute the relative error as the value divide by the mean of all the
-    // distance from value to the stochasticValue's values
-    /*
-     * private double relativeError() { if (this.isNan) { return Double.NaN; }
-     * 
-     * double numerator = 0.0; for (int i = 0; i < nbrParallelNumber; i++) {
-     * numerator += (Math.abs(value - this.stochasticValue[i])); } numerator =
-     * numerator / (double) nbrParallelNumber; return numerator / value; }
-     */
+    //-------------------------------------------------------------------------
+    //----------------- "Magic" methods ---------------------------------------
+    //-------------------------------------------------------------------------
 
+    public static String COJAC_MAGIC_DOUBLE_wrapper() {
+        return "Stochastic";
+    }
+
+    public static String COJAC_MAGIC_DOUBLE_toStr(StochasticDouble n) {
+        return n.toString();
+    }
+    
+    public static StochasticDouble COJAC_MAGIC_DOUBLE_relativeError(StochasticDouble n) {
+        return new StochasticDouble(n.relativeError());
+    }
+
+    //-------------------------------------------------------------------------
+    //--------------------- Auxiliary methods ---------------------------------
+    //------------ (not required for the Wrapper mechanism) -------------------
+    //-------------------------------------------------------------------------
+
+    // BAPST: removed "round to zero" mode
+    private static double rndRound(double value) {
+        switch (random.nextInt(3)) {
+        case 0:
+            // round to negative infinity
+            return value - Math.ulp(value);
+        case 1:
+            // round to positive infinity
+            return value + Math.ulp(value);
+        default:
+            // default rounding mode in Java
+            return value;
+        }
+    }
+
+    // used by reflection (from cmd line option)
+    public static void setThreshold(double value) {
+        threshold = value;
+    }
+
+    // used by reflection (from cmd line option)
+    public static void setNbrParallelNumber(int value) {
+        nbrParallelNumber = value;
+    }
+
+    private boolean checkedStability(boolean wasUnstable) {
+        if (wasUnstable) return wasUnstable;
+        if (threshold < relativeError()) {
+            RuntimeException e = new RuntimeException("COJAC: the computation becomes unstable (the interval grows too much)"
+                    +"(relative error: "+relativeError()+")");
+            // TODO: reconsider this reporting mechanism (merge with the original Cojac
+            // mechanisms (console, logfile, exception, callback)
+            System.err.println("Cojac has detected an unstable operation :");
+            e.printStackTrace(System.err);
+            System.err.println("interval value :" + this.toString());
+            System.err.println("relative error :" + relativeError());
+            return true;
+        }
+        return false;
+    }
+
+
+    // TODO: check whether it is a "relativeError", or the "numberOfStableDigits"
     private double relativeError() {
         double mean = 0.0F;
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -421,8 +447,7 @@ public class StochasticDouble extends Number implements
             squareSum += delta*delta;
         }
 
-        double sigmaSquare = (1.0 / (nbrParallelNumber - 1)) *
-                squareSum;
+        double sigmaSquare = (1.0 / (nbrParallelNumber - 1)) * squareSum;
 
         double Cr = (Math.sqrt(nbrParallelNumber) * Math.abs(mean)) /
                 (Math.sqrt(sigmaSquare) * Tb);

@@ -9,7 +9,6 @@ public class StochasticFloat extends Number implements
     private static float threshold = 0.1F;
     private static boolean checkComparisons = false; //TODO: activate that feature
 
-    
     private final static double Tb = 4.303; // see chenaux 1988
     private final static Random random = new Random();
     

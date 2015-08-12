@@ -315,7 +315,7 @@ public final class CojacReferences {
                         Class doubleWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.IntervalDouble");
                         Class floatWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.IntervalFloat");
                         doubleWrapperClass.getMethod("setThreshold", double.class).invoke(doubleWrapperClass, threshold);
-                        floatWrapperClass.getMethod("setThreshold", float.class).invoke(floatWrapperClass, (float) threshold);
+                        //floatWrapperClass.getMethod("setThreshold", float.class).invoke(floatWrapperClass, (float) threshold);
                     } catch (Exception e) {
                         Logger.getLogger(CojacReferences.class.getName()).log(Level.SEVERE, null, e);
                     }

@@ -42,6 +42,7 @@ public class Wrapping {
     f=f*2; f=f/2; ok(f==a);
     f=f-1; f=f+1; ok(f==a);
     f=f%(f+1); ok(f==a);
+    System.out.println(" A "+COJAC_MAGIC_FLOAT_toStr(f));
     f=-(-f); ok(f==a);
     f=Math.abs(f); ok(f==a);
     f=Math.min(f, +10f); ok(f==a);
