@@ -831,14 +831,18 @@ public class DoubleInterval implements Comparable<DoubleInterval> {
         return new DoubleInterval(inf - Math.ulp(inf), sup + Math.ulp(sup));
     }
 
-    public static DoubleInterval toRadians(DoubleInterval interval) {
-        // TODO Auto-generated method stub
-        return null;
+    public static DoubleInterval toRadians(DoubleInterval a) {
+        if (a.isNan) return new DoubleInterval(Double.NaN);
+        double v1 = Math.toRadians(a.inf);
+        double v2 = Math.toRadians(a.sup);
+        return roundedInterval(v1, v2);
     }
 
-    public static DoubleInterval toDegrees(DoubleInterval interval) {
-        // TODO Auto-generated method stub
-        return null;
+    public static DoubleInterval toDegrees(DoubleInterval a) {
+        if (a.isNan) return new DoubleInterval(Double.NaN);
+        double v1 = Math.toDegrees(a.inf);
+        double v2 = Math.toDegrees(a.sup);
+        return roundedInterval(v1, v2);
     }
 
 }
