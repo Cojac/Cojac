@@ -28,12 +28,12 @@ import ch.eiafr.cojac.models.wrappers.BigDecimalFloat;
 
 public class FloatReplacerClasses {
 	
-	public static Class  COJAC_DOUBLE_WRAPPER_CLASS;
+	public static Class<?>  COJAC_DOUBLE_WRAPPER_CLASS;
 	public static String COJAC_DOUBLE_WRAPPER_INTERNAL_NAME;
     public static Type   COJAC_DOUBLE_WRAPPER_TYPE;
     public static String COJAC_DOUBLE_WRAPPER_TYPE_DESCR;
     
-	public static Class  COJAC_FLOAT_WRAPPER_CLASS;
+	public static Class<?>  COJAC_FLOAT_WRAPPER_CLASS;
     public static String COJAC_FLOAT_WRAPPER_INTERNAL_NAME;
     public static Type   COJAC_FLOAT_WRAPPER_TYPE;
     public static String COJAC_FLOAT_WRAPPER_TYPE_DESCR;

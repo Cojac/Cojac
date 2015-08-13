@@ -34,20 +34,12 @@ public abstract class ACojacWrapper implements Comparable<ACojacWrapper>{
     public abstract ACojacWrapper ddiv(ACojacWrapper b);
     public abstract ACojacWrapper drem(ACojacWrapper b);
     public abstract ACojacWrapper dneg();
-//    public ACojacWrapper fadd(ACojacWrapper b) {return dadd(b);}
-//    public ACojacWrapper fsub(ACojacWrapper b) {return dsub(b);}
-//    public ACojacWrapper fmul(ACojacWrapper b) {return dmul(b);}
-//    public ACojacWrapper fdiv(ACojacWrapper b) {return ddiv(b);}
-//    public ACojacWrapper frem(ACojacWrapper b) {return drem(b);}
-//    public ACojacWrapper fneg()                {return dneg();}
-//    public int fcmpl(ACojacWrapper b) { return dcmpl(b); }
-//    public int fcmpg(ACojacWrapper b) { return dcmpg(b); }
     public abstract double toDouble();
     
     public abstract int dcmpl(ACojacWrapper b);
     public abstract int dcmpg(ACojacWrapper b);
-    public int  d2i(ACojacWrapper a) { return (int)  toDouble();}
-    public long d2l(ACojacWrapper a) { return (long) toDouble();}
+    public int  d2i() { return (int)  toDouble();}
+    public long d2l() { return (long) toDouble();}
     public abstract ACojacWrapper math_sqrt();
     public abstract ACojacWrapper math_abs();
     public abstract ACojacWrapper math_sin();
@@ -72,7 +64,8 @@ public abstract class ACojacWrapper implements Comparable<ACojacWrapper>{
     //-------------------------------------------------------------------------
 
     public abstract ACojacWrapper fromDouble(double a);
-    // Can be overridden, eg to "tag" the number as a "float"...
+    
+    // fromFloat can be overridden, eg to "tag" the number as a "float"...
     public ACojacWrapper fromFloat(double a) { return fromDouble(a); }
 
     
