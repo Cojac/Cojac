@@ -104,7 +104,8 @@ public abstract class ACojacWrapper implements Comparable<ACojacWrapper>{
     //----------------- "Magic" methods ---------------------------------------
     //-------------------------------------------------------------------------
 
+    // Only 2 magic methods are common; the others will be specific...
     public abstract String COJAC_MAGIC_wrapper();
-    public abstract String COJAC_MAGIC_toStr(ACojacWrapper n);
+    public abstract String COJAC_MAGIC_toStr();
 
 }

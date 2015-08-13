@@ -20,15 +20,18 @@ package ch.eiafr.cojac.models.wrappers;
 
 import java.lang.reflect.Constructor;
 
+import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_DOUBLE_WRAPPER_CLASS;
+//Probably to be renamed COJAC_WRAPPER_CLASS...
+
 public class CommonDouble extends Number implements Comparable<CommonDouble>{
     //-------------------------------------------------------------------------
     //----------------- Fields and auxiliary constructors ---------------------
     //------------ (not required for the Wrapper mechanism) -------------------
     //-------------------------------------------------------------------------
 
-    public static Class<?>  COJAC_DOUBLE_WRAPPER_CLASS; // Probably in FloatReplacerClasses...
+    //public static Class<?>  COJAC_DOUBLE_WRAPPER_CLASS; // Probably in FloatReplacerClasses...
 
-    private final ACojacWrapper val;
+    protected final ACojacWrapper val;
     
     protected CommonDouble(ACojacWrapper w) {
         this.val=w;
@@ -41,21 +44,12 @@ public class CommonDouble extends Number implements Comparable<CommonDouble>{
         val = newInstance(null).fromDouble(v);
     }
     
-    protected ACojacWrapper newInstance(ACojacWrapper w) {
-        try {
-            Constructor<?> c=COJAC_DOUBLE_WRAPPER_CLASS.getConstructor(ACojacWrapper.class);
-            return (ACojacWrapper)c.newInstance(w);
-        } catch(Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public CommonDouble(String v) {
         this(Double.valueOf(v));
     }
     
-    public CommonDouble(BasicFloat v) {
-        val=newInstance(null);//TODO... v.val
+    public CommonDouble(CommonFloat v) {
+        val=newInstance(v.val);
     }
     
     public CommonDouble(CommonDouble v) {
@@ -231,6 +225,14 @@ public class CommonDouble extends Number implements Comparable<CommonDouble>{
         return (long)this.val.toDouble();
 	}
 
+    @Override public byte byteValue() {
+        return (byte)this.val.toDouble();
+    }
+    
+    @Override public short shortValue() {
+        return (short)this.val.toDouble();
+    }
+    
 	@Override public float floatValue() {
         return (float)this.val.toDouble();
 	}
@@ -243,18 +245,31 @@ public class CommonDouble extends Number implements Comparable<CommonDouble>{
     //----------------- "Magic" methods ---------------------------------------
     //-------------------------------------------------------------------------
 
-    public static String COJAC_MAGIC_DOUBLE_wrapper() {
-        return "Basic";
+    public static String COJAC_MAGIC_wrapper() {
+        return newInstance(null).COJAC_MAGIC_wrapper();
     }
 
-    public static String COJAC_MAGIC_DOUBLE_toStr(CommonDouble n) {
-        return n.toString();
+    public static String COJAC_MAGIC_toStr(CommonDouble n) {
+        return n.val.COJAC_MAGIC_toStr();
+    }
+    
+    public static String COJAC_MAGIC_toStr(CommonFloat n) {
+        return n.val.COJAC_MAGIC_toStr();
     }
     
     //-------------------------------------------------------------------------
     //--------------------- Auxiliary methods ---------------------------------
 	//------------ (not required for the Wrapper mechanism) -------------------
     //-------------------------------------------------------------------------
+
+    protected static ACojacWrapper newInstance(ACojacWrapper w) {
+        try {
+            Constructor<?> c=COJAC_DOUBLE_WRAPPER_CLASS.getConstructor(ACojacWrapper.class);
+            return (ACojacWrapper)c.newInstance(w);
+        } catch(Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
 }
