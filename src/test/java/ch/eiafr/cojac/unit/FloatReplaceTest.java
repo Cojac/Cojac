@@ -30,7 +30,7 @@ public class FloatReplaceTest {
         args.specify(Arg.EXCEPTION);
         args.specify(Arg.REPLACE_FLOATS);
         args.specify(Arg.VERBOSE);
-        args.specify(Arg.INSTRUMENTATION_STATS);
+        //args.specify(Arg.INSTRUMENTATION_STATS);
 
         CojacReferencesBuilder builder = new CojacReferencesBuilder(args);
         builder.setSplitter(new CojacReferences.AgentSplitter());

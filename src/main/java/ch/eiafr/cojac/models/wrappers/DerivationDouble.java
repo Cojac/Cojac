@@ -1,7 +1,8 @@
 package ch.eiafr.cojac.models.wrappers;
 
 //TODO: (not related to this class...) Maybe expand COJAC as: 
-//      "Climbing Over Java Arithmetic Computation"
+//      "Climbing Over Java Arithmetic Computation" or
+//      "Creating Other Judicious Arithmetic Capabilities"
 
 public class DerivationDouble extends Number implements
         Comparable<DerivationDouble> {

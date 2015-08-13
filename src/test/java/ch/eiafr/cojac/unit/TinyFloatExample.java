@@ -30,11 +30,8 @@ class TFEAux {
     }
 }
 
-
-
 public class TinyFloatExample {
 
-    
     static float myStaticFloat=73.0f;
     static Float myStaticFloatWrapper= Float.valueOf(73f);
     static float[] myStaticFloatArray = {5f, 6f, 41.21f};
@@ -260,8 +257,8 @@ public class TinyFloatExample {
         testMathLib();
 		testList();
         
-        System.out.println("inside TinyFloatExample.go() "+res);
-        System.out.println("inside TinyFloatExample.go() "+(int)(TFEAux.myStaticFloat));
+        //System.out.println("inside TinyFloatExample.go() "+res);
+        //System.out.println("inside TinyFloatExample.go() "+(int)(TFEAux.myStaticFloat));
     }
     
     public static void main(String[] args) {
@@ -270,6 +267,6 @@ public class TinyFloatExample {
     
 }
     // D:\Git-MyRepository\cojac\target\test-classes>
-    // java -javaagent:..\ch.eiafr.cojac-1.3-jar-with-dependencies.jar="-v -R" 
+    // java -javaagent:..\cojac.jar="-v -R" 
     // -Djava.system.class.loader=ch.eiafr.cojac.VerboseClassLoader 
     // ch.eiafr.cojac.unit.TinyFloatExample > e:\auxaux.txt}

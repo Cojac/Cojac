@@ -790,24 +790,23 @@ public class DoubleInterval implements Comparable<DoubleInterval> {
     }
 
     /**
-     * <p>
-     * Notes : the retourned Interval is pessimist
-     * </p>
-     * 
-     * @param a
-     *            1st operand of the modulo
-     * @param b
-     *            2st operand of the modulo
-     *
+     * Notes : the returned Interval is pessimistic
      * @return a new DoubleInterval that's the result of the a%b operation
      */
     public static DoubleInterval modulo(DoubleInterval a, DoubleInterval b) {
-        if (a.isNan || b.isNan) {
-            return new DoubleInterval(Double.NaN);
+        if (a.isNan || b.isNan) return new DoubleInterval(Double.NaN);
+        if (b.contains(0.0))    return new DoubleInterval(Double.NaN);
+
+        int q1=(int)(a.inf/b.inf), q2=(int)(a.sup/b.inf);
+        int q3=(int)(a.inf/b.sup), q4=(int)(a.sup/b.sup);
+        double r1=a.inf%b.inf, r2=a.sup%b.inf;
+        double r3=a.inf%b.sup, r4=a.sup%b.sup;
+        if(q1==q2 && q1==q3 && q1==q4) { // same quotient
+            double rmin=Math.min(r1, Math.min(r2, Math.min(r3,r4)));
+            double rmax=Math.max(r1, Math.max(r2, Math.max(r3,r4)));
+            return new DoubleInterval(rmin, rmax);
         }
-        if (b.contains(0.0)) {
-            return new DoubleInterval(Double.NaN);
-        }
+        
         double max = Math.max(Math.abs(b.inf), Math.abs(b.sup));
         if (a.contains(0.0)) {
             return new DoubleInterval(-max, max);

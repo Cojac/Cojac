@@ -1,5 +1,7 @@
 package ch.eiafr.cojac.models.wrappers;
 
+import ch.eiafr.cojac.interval.DoubleInterval;
+
 //This float wrapper is done by delegation to IntervalDouble
 public class IntervalFloat extends Number implements Comparable<IntervalFloat> {
     //-------------------------------------------------------------------------
@@ -173,5 +175,12 @@ public class IntervalFloat extends Number implements Comparable<IntervalFloat> {
         return IntervalDouble.COJAC_MAGIC_DOUBLE_toStr(n.delegate);
     }
     
-    //TODO: add magic methods from delegate
+    public static IntervalDouble COJAC_MAGIC_FLOAT_width(IntervalFloat n) {
+        return IntervalDouble.COJAC_MAGIC_DOUBLE_width(n.delegate);
+    }
+
+    public static IntervalDouble COJAC_MAGIC_FLOAT_relativeError(IntervalFloat n) {
+        return IntervalDouble.COJAC_MAGIC_DOUBLE_relativeError(n.delegate);
+    }
+    
 }

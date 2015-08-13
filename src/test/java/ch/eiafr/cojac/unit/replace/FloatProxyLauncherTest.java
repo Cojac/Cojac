@@ -45,8 +45,8 @@ public class FloatProxyLauncherTest {
 		args.specify(Arg.VERBOSE);
         args.specify(Arg.EXCEPTION);
         args.specify(Arg.REPLACE_FLOATS);
-        args.specify(Arg.INSTRUMENTATION_STATS);
-
+        //args.specify(Arg.INSTRUMENTATION_STATS);
+        
         CojacReferences.CojacReferencesBuilder builder = new CojacReferences.CojacReferencesBuilder(args);
         builder.setSplitter(new CojacReferences.AgentSplitter());
 
@@ -65,8 +65,6 @@ public class FloatProxyLauncherTest {
 	    }
 	}
     
-    
-	
 	@Test
     public void staticFieldDoubleAccess() throws Exception {
         invokeMethod("staticFieldDoubleAccess");
