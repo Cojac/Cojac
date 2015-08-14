@@ -3,6 +3,8 @@ package ch.eiafr.cojac.models.wrappers;
 import java.util.Arrays;
 import java.util.Random;
 
+import ch.eiafr.cojac.models.Reactions;
+
 public class StochasticFloat extends Number implements
         Comparable<StochasticFloat> {
     //-------------------------------------------------------------------------
@@ -286,17 +288,22 @@ public class StochasticFloat extends Number implements
         }
     }
 
+    public String asInternalString() {
+        String res = "" + value + " : [%s]";
+        String tmp = "";
+        for (int i = 0; i < nbrParallelNumber; i++) {
+            tmp += ("" + stochasticValue[i]);
+            if (i == nbrParallelNumber - 1)
+                break;
+            tmp += ";";
+        }
+        return String.format(res, tmp);
+    }
+    
     private boolean checkedStability(boolean wasUnstable) {
         if (wasUnstable) return wasUnstable;
         if (threshold < relativeError()) {
-            RuntimeException e = new RuntimeException("COJAC: the computation becomes unstable (the interval grows too much)"
-                    +"(relative error: "+relativeError()+")");
-            // TODO: reconsider this reporting mechanism (merge with the original Cojac
-            // mechanisms (console, logfile, exception, callback)
-            System.err.println("Cojac has destected a unstable operation :");
-            e.printStackTrace(System.err);
-            System.err.println("interval value :" + this.toString());
-            System.err.println("relative error :" + relativeError());
+            Reactions.react("Stochastic wrapper detects unstability... "+asInternalString()+" ");
             return true;
         }
         return false;
@@ -348,12 +355,7 @@ public class StochasticFloat extends Number implements
     }
     
     private void reportBadComparison() {
-        // TODO: reconsider this reporting mechanism (merge with the original Cojac
-        // mechanisms (console, logfile, exception, callback)
-
-        RuntimeException e = new RuntimeException("COJAC: comparing stochastic floats");
-        System.err.println("Cojac has detected an unstable comparison :");
-        e.printStackTrace(System.err);
+        Reactions.react("Stochastic wrapper detects dangerous comparison (overlap)... ");
     }
 
 }

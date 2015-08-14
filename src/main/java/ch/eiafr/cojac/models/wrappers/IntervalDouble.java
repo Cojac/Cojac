@@ -1,6 +1,7 @@
 package ch.eiafr.cojac.models.wrappers;
 
 import ch.eiafr.cojac.interval.DoubleInterval;
+import ch.eiafr.cojac.models.Reactions;
 
 public class IntervalDouble extends Number implements
         Comparable<IntervalDouble> {
@@ -360,7 +361,7 @@ public class IntervalDouble extends Number implements
     }
 
     public static String COJAC_MAGIC_DOUBLE_toStr(IntervalDouble n) {
-        return n.toString();
+        return n.asInternalString();
     }
 
     public static IntervalDouble COJAC_MAGIC_DOUBLE_width(IntervalDouble a) {
@@ -388,29 +389,21 @@ public class IntervalDouble extends Number implements
         checkComparisons = value;
     }
 
+    public String asInternalString() {
+        return String.format("%s:%s", value, interval);
+    }
+
     private boolean checkedStability(boolean wasUnstable) {
         if (wasUnstable) return wasUnstable;
         if (threshold < relativeError()) {
-            RuntimeException e = new RuntimeException("COJAC: the computation becomes unstable (the interval grows too much)"
-                    +"(relative error: "+relativeError()+")");
-            // TODO: reconsider this reporting mechanism (merge with the original Cojac
-            // mechanisms (console, logfile, exception, callback))
-            System.err.println("Cojac has detected a unstable operation :");
-            e.printStackTrace(System.err);
-            System.err.println("interval value :" + this.toString());
-            System.err.println("relative error :" + relativeError());
+            Reactions.react("BigDecimal wrapper detects unstability... "+asInternalString()+" ");
             return true;
         }
         return false;
     }
 
     private void reportBadComparison() {
-        // TODO: reconsider this reporting mechanism (merge with the original Cojac
-        // mechanisms (console, logfile, exception, callback))
-
-        RuntimeException e = new RuntimeException("COJAC: comparing overlapping intervals");
-        System.err.println("Cojac has detected an unstable comparison :");
-        e.printStackTrace(System.err);
+        Reactions.react("BigDecimal wrapper detects dangerous comparison (overlap)... ");
     }
 
     private double relativeError() {

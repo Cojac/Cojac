@@ -29,15 +29,16 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class Reactions {
-    //Do not inline, used by reflection, do not make final
+    //-------------------------------------------------------
+    // These fields are used by reflection - Do not inline, do not make final
     private static boolean filtering;
 
-    // Do not inline, used by reflection, do not make final
     public static InstrumentationStats stats;
 
-    // Do not inline, used by reflection, do not make final
-    public static ReactionType theReactionType=ReactionType.PRINT; //not used yet...
-
+    public static ReactionType theReactionType=ReactionType.PRINT;
+    public static String theLogFilename="cojac_log.txt";
+    //-------------------------------------------------------
+    
     public static final AtomicBoolean react = new AtomicBoolean(true);
 
     private Reactions() {
@@ -47,30 +48,31 @@ public final class Reactions {
     //Public to enable to display stats at the end of the application
     public static final ConcurrentMap<String, Long> EVENTS = new ConcurrentHashMap<String, Long>(25);
 
-    public static void react(int reaction, String instructionName, String logFileName) {
+    //TODO: check whether we can get rid of first/last parameter of react()
+    public static void react(int reaction, String message, String logFileName) {
         switch (ReactionType.get(reaction)) {
             case PRINT:
-                printOverflow(instructionName);
+                printOverflow(message);
                 break;
             case PRINT_SMALLER:
-                printOverflowSmaller(instructionName);
+                printOverflowSmaller(message);
                 break;
             case LOG:
-                logOverflow(instructionName, logFileName);
+                logOverflow(message, logFileName);
                 break;
             case LOG_SMALLER:
-                logOverflowSmaller(instructionName, logFileName);
+                logOverflowSmaller(message, logFileName);
                 break;
             case EXCEPTION:
-                throwOverflow(instructionName);
+                throwOverflow(message);
                 break;
             case CALLBACK:
-                callbackOverflow(instructionName, logFileName);
+                callbackOverflow(message, logFileName);
                 break;
         }
     }
 
-    public static boolean filter(String location) {  //BAPST TODO: review use of 'filtering'
+    private static boolean passesFilter(String location) {  //BAPST TODO: review use of 'filtering'
         Long old = EVENTS.putIfAbsent(location, 1L);
 
         if (old != null) {
@@ -95,24 +97,41 @@ public final class Reactions {
         //return true;
     }
 
+    private static int reasonableIndex(StackTraceElement[] t) {
+        int i = 0;
+        while(true) {
+            if (i==t.length-1) break; 
+            String s=t[i].toString();
+            if (!s.startsWith("ch.eiafr.cojac.models") &&
+                !t[1].getMethodName().startsWith("cojacCheck")) break;
+            i++;
+        }
+//        if (t.length > 1 && t[1].getMethodName().startsWith("cojacCheck")) {
+//            i = 2;
+//        } else if (t.length > 1 && t[1].toString().startsWith("ch.eiafr.cojac.models.")) {
+//            i = 3;
+//        }
+        return i;
+    }
+    
     // identifier must match Methods.PRINT definition
     public static void printOverflow(String instructionName) {
         if (!react.get())
             return;
         StackTraceElement[] t = new Throwable().getStackTrace();
 
-        int i = 1;
-        if (t.length > 1 && t[1].getMethodName().startsWith("cojacCheck")) {
-            i = 2;
-        } else if (t.length > 1 && t[1].toString().startsWith("ch.eiafr.cojac.models.")) {
-            i = 3;
-        }
-
+        int i = reasonableIndex(t); // 1;
+//        if (t.length > 1 && t[1].getMethodName().startsWith("cojacCheck")) {
+//            i = 2;
+//        } else if (t.length > 1 && t[1].toString().startsWith("ch.eiafr.cojac.models.")) {
+//            i = 3;
+//        }
+//
         String location = "COJAC: " + instructionName + ' ' + t[i++].toString();
 
-        if (filter(location)) {
+        if (passesFilter(location)) {
             System.err.println(location);
-
+            i=0;
             do {
                 System.err.print('\t');
                 System.err.println(t[i++].toString());
@@ -126,16 +145,11 @@ public final class Reactions {
             return;
         StackTraceElement[] t = new Throwable().getStackTrace();
 
-        int i = 1;
-        if (t.length > 1 && t[1].getMethodName().startsWith("cojacCheck")) {
-            i = 2;
-        } else if (t.length > 1 && t[1].toString().startsWith("ch.eiafr.cojac.models.")) {
-            i = 3;
-        }
+        int i = reasonableIndex(t);
 
         String location = "COJAC: " + instructionName + ' ' + t[i].toString();
 
-        if (filter(location)) {
+        if (passesFilter(location)) {
             System.err.println(location);
         }
     }
@@ -146,23 +160,18 @@ public final class Reactions {
             return;
         StackTraceElement[] t = new Throwable().getStackTrace();
 
-        int i = 1;
-        if (t.length > 1 && t[1].getMethodName().startsWith("cojacCheck")) {
-            i = 2;
-        } else if (t.length > 1 && t[1].toString().startsWith("ch.eiafr.cojac.models.")) {
-            i = 3;
-        }
+        int i = reasonableIndex(t);
 
         String location = "COJAC: " + instructionName + ' ' + t[i++].toString();
 
-        if (filter(location)) {
+        if (passesFilter(location)) {
             BufferedWriter out = null;
             try {
                 out = new BufferedWriter(new FileWriter(logFileName, true));
 
                 out.write(location);
                 out.newLine();
-
+                i=0;
                 do {
                     out.write('\t');
                     out.write(t[i++].toString());
@@ -192,16 +201,11 @@ public final class Reactions {
             return;
         StackTraceElement[] t = new Throwable().getStackTrace();
 
-        int i = 1;
-        if (t.length > 1 && t[1].getMethodName().startsWith("cojacCheck")) {
-            i = 2;
-        } else if (t.length > 1 && t[1].toString().startsWith("ch.eiafr.cojac.models.")) {
-            i = 3;
-        }
+        int i = reasonableIndex(t);
 
         String location = "COJAC: " + instructionName + ' ' + t[i].toString();
 
-        if (filter(location)) {
+        if (passesFilter(location)) {
             try {
                 BufferedWriter out = new BufferedWriter(new FileWriter(logFileName, true));
 
@@ -221,16 +225,11 @@ public final class Reactions {
             return;
         StackTraceElement[] t = new Throwable().getStackTrace();
 
-        int i = 1;
-        if (t.length > 1 && t[1].getMethodName().startsWith("cojacCheck")) {
-            i = 2;
-        } else if (t.length > 1 && t[1].toString().startsWith("ch.eiafr.cojac.models.")) {
-            i = 3;
-        }
+        int i = reasonableIndex(t);
 
         String location = "COJAC: " + instructionName + ' ' + t[i].toString();
 
-        if (filter(location)) {
+        if (passesFilter(location)) {
             throw new ArithmeticException("COJAC: " + instructionName);
         }
     }
@@ -240,6 +239,10 @@ public final class Reactions {
     // and the precise path leading to the invocation of the callback... F. Bapst
     public static void callbackOverflow(String instructionName, String callbackName) {
         ReflectionUtils.invokeCallback(callbackName, instructionName);
+    }
+    
+    public static void react(String message) {
+        react(theReactionType.ordinal(), message, theLogFilename);
     }
 
 }

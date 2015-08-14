@@ -1,7 +1,5 @@
 package ch.eiafr.cojac.models.wrappers;
 
-import ch.eiafr.cojac.interval.DoubleInterval;
-
 //This float wrapper is done by delegation to IntervalDouble
 public class IntervalFloat extends Number implements Comparable<IntervalFloat> {
     //-------------------------------------------------------------------------
