@@ -35,6 +35,9 @@ public final class Reactions {
     // Do not inline, used by reflection, do not make final
     public static InstrumentationStats stats;
 
+    // Do not inline, used by reflection, do not make final
+    public static ReactionType theReactionType=ReactionType.PRINT; //not used yet...
+
     public static final AtomicBoolean react = new AtomicBoolean(true);
 
     private Reactions() {

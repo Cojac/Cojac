@@ -363,6 +363,7 @@ public final class CojacReferences {
             if (args.isSpecified(Arg.FILTER)) {
                 ReflectionUtils.setStaticFieldValue(loader, "ch.eiafr.cojac.models.Reactions", "filtering", true);
             }
+            ReflectionUtils.setStaticFieldValue(loader, "ch.eiafr.cojac.models.Reactions", "theReactionType", args.getReactionType());
 
             if (args.isOperationEnabled(Arg.JMX_ENABLE)) {
                 mbServer = ManagementFactory.getPlatformMBeanServer();

@@ -26,7 +26,7 @@ import org.objectweb.asm.ClassWriter;
 public final class ClassLoaderInstrumenter implements IClassInstrumenter {
     private final Args args;
     private final InstrumentationStats stats;
-    private final IReaction reaction;
+    private final IReaction reaction;  //TODO try to remove those unused fields
     private final IOpcodeInstrumenterFactory factory;
 	private final String[] bypassList;
 
