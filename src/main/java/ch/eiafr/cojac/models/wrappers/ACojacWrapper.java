@@ -92,13 +92,15 @@ public abstract class ACojacWrapper implements Comparable<ACojacWrapper>{
 //	@Override public long longValue()     { return (long) toDouble(); }
 //	@Override public float floatValue()   { return (float) toDouble(); }
 //	@Override public double doubleValue() { return toDouble(); }
-	
+
+    public abstract String asInternalString();
+    
     //-------------------------------------------------------------------------
     //----------------- "Magic" methods ---------------------------------------
     //-------------------------------------------------------------------------
 
     // Only 2 magic methods are common; the others will be specific...
     public abstract String COJAC_MAGIC_wrapper();
-    public abstract String COJAC_MAGIC_toStr();
+    public String COJAC_MAGIC_toStr() { return asInternalString(); }
 
 }
