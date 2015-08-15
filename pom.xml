@@ -90,7 +90,11 @@
 						<exclude>ch/eiafr/cojac/poly/PolyTest.java</exclude>
 					</excludes>
 					<argLine>-javaagent:${basedir}/src/test/resources/cojac-agent-test.jar</argLine>
-				</configuration>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                    <reuseForks>false</reuseForks>
+                    <forkCount>1</forkCount> <!-- TODO: upgrade surefire (forkMode deprecated)  -->
+                    <forkMode>always</forkMode>
+  				</configuration>
 			</plugin>
 
 			<plugin>

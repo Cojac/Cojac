@@ -85,7 +85,7 @@ public final class Reactions {
             return false;
         }
 
-        stats.notifyChange(location);
+        if (stats!=null) stats.notifyChange(location);
 
         return true;
         //if (!filtering) { return true; }

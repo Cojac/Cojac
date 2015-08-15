@@ -79,6 +79,9 @@ public abstract class WrappingLauncher {
         m.invoke(null);
 	}
 	//========================================
+	// WARNING: it is necessary that each Junit Test runs in a new JVM
+	//          because the class Wrapping cannot be re-instrumented once loaded...
+	//========================================
 	public static class IntervalWrappingTest extends WrappingLauncher {
         @Override protected void specifyArgs(Args args) {
             args.setValue(Arg.INTERVAL, "0.001");
