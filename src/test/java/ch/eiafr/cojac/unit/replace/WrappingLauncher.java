@@ -30,13 +30,13 @@ import java.lang.reflect.Method;
 
 import org.junit.Test;
 
-public abstract class WrappingLauncherTest {
+public abstract class WrappingLauncher {
 	
 	protected AgentTest dummyAgentTest=new AgentTest(); // just to ensure AgentTest is loaded
 
     Class<?> wrappingClass;
     
-	public WrappingLauncherTest() {
+	public WrappingLauncher() {
         try {
             loadOperationsWithAgent(getClassFileTransformer());
         } catch (ClassNotFoundException e) {
@@ -68,7 +68,7 @@ public abstract class WrappingLauncherTest {
 	    }
 	}
     
-	@Test public void invokeMain() throws Exception {
+	@Test public void invokeGo() throws Exception {
         invokeMethod("go");
     }
 	
@@ -79,27 +79,28 @@ public abstract class WrappingLauncherTest {
         m.invoke(null);
 	}
 	//========================================
-	public static class IntervalWrappingTest extends WrappingLauncherTest {
+	public static class IntervalWrappingTest extends WrappingLauncher {
         @Override protected void specifyArgs(Args args) {
             args.setValue(Arg.INTERVAL, "0.001");
         }
 	}
     //========================================
-    public static class StochasticWrappingTest extends WrappingLauncherTest {
+    public static class StochasticWrappingTest extends WrappingLauncher {
         @Override protected void specifyArgs(Args args) {
             args.setValue(Arg.STOCHASTIC, "0.001");
         }
     }
     //========================================
-    public static class DerivativeWrappingTest extends WrappingLauncherTest {
+    public static class DerivativeWrappingTest extends WrappingLauncher {
         @Override protected void specifyArgs(Args args) {
             args.specify(Arg.AUTOMATIC_DERIVATION);
         }
     }
     //========================================
-    public static class BigDecimalWrappingTest extends WrappingLauncherTest {
+    public static class BigDecimalWrappingTest extends WrappingLauncher {
         @Override protected void specifyArgs(Args args) {
             args.setValue(Arg.BIG_DECIMAL_PRECISION, "100");
         }
     }
+    
 }

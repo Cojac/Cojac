@@ -1,4 +1,4 @@
-package ch.eiafr.cojac.demo;
+package demo;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.DoubleUnaryOperator;
@@ -114,7 +114,11 @@ public class Wrapping {
     d=new Double(d.shortValue()); ok(d==a);
     d=new Double(d.byteValue()); ok(d==a);
     ok(d.compareTo(a)==0);
-    ok(d.equals(a));
+    d=2*d/2;
+    Double aa=Double.valueOf(a);
+    System.out.println("ZZZ "+COJAC_MAGIC_DOUBLE_toStr(d));
+    System.out.println("ZZZ "+COJAC_MAGIC_DOUBLE_toStr(aa));
+    ok(d.equals(aa));
     ok(!d.isNaN());
     ok(!d.isInfinite());
   }

@@ -4,7 +4,7 @@
     java -javaagent:cojac.jar="-I=0.1" -jar myJar.jar
  */
 
-package ch.eiafr.cojac.demo;
+package demo;
 
 public class StochasticOrIntervalDemo
 {

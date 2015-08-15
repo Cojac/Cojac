@@ -119,7 +119,7 @@ public class Wrapping {
     d=new Double(d.shortValue()); ok(d==a);
     d=new Double(d.byteValue()); ok(d==a);
     ok(d.compareTo(a)==0);
-    //ok(d.equals(a));
+    ok(d.equals(a));  //TODO: this does not work under surefire (yet it does work under JUnit..)
     ok(!d.isNaN());
     ok(!d.isInfinite());
   }

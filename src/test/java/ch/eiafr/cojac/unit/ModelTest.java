@@ -21,6 +21,7 @@ package ch.eiafr.cojac.unit;
 public class ModelTest extends AbstractFullTests {
     private static final Tests tests = new Tests(new CheckedOperations());
 
+    
     @Override
     public Tests getTests() {
         return tests;

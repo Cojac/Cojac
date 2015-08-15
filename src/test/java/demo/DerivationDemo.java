@@ -3,7 +3,7 @@
  java -javaagent:cojac.jar="-AD" -jar $CojacUsePath
  */
 
-package ch.eiafr.cojac.demo;
+package demo;
 
 public class DerivationDemo {
     private static int nbrTestPassed = 0;
