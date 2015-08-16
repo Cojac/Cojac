@@ -312,10 +312,6 @@ public class BigDecimalDouble extends Number implements
         return new BigDecimalDouble(new BigDecimal(a));
     }
 
-//    public static BigDecimalDouble f2d(BigDecimalFloat a) {
-//        return new BigDecimalDouble(a);
-//    }
-
     //-------------------------------------------------------------------------
     //----------------- Overridden methods ------------------------------------
     //-------------------------------------------------------------------------
@@ -431,8 +427,8 @@ public class BigDecimalDouble extends Number implements
         return root;
     }
     
-    public static void setPrecision(int precision) {
-        mathContext = new MathContext(precision);
-    }
+//    public static void setPrecision(int precision) { //was it really necessary ?
+//        mathContext = new MathContext(precision);
+//    }
     
 }

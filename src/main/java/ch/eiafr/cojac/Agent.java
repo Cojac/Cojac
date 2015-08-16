@@ -100,7 +100,7 @@ public final class Agent implements ClassFileTransformer {
 	 * @param loader
 	 * @return 
 	 */
-	public byte[] setGlobalFields(byte[] byteCode, ClassLoader loader) {
+	private byte[] setGlobalFields(byte[] byteCode, ClassLoader loader) {
         ClassReader cr = new ClassReader(byteCode);
         ClassWriter cw = new ClassWriter(cr, ClassWriter.COMPUTE_FRAMES);
         ClassVisitor cv = new ClassVisitor(Opcodes.ASM5, cw) {

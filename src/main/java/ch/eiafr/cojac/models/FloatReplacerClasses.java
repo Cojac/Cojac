@@ -38,7 +38,10 @@ public class FloatReplacerClasses {
     public static Type   COJAC_FLOAT_WRAPPER_TYPE;
     public static String COJAC_FLOAT_WRAPPER_TYPE_DESCR;
 	
-	public static int COJAC_BIGDECIMAL_PRECISION = 100; // default precision
+    // parameters from command line options, and their default values
+	public static int     COJAC_BIGDECIMAL_PRECISION = 100; 
+	public static double  COJAC_STABILITY_THRESHOLD = 1.0;
+	public static boolean COJAC_CHECK_UNSTABLE_COMPARISONS = false;
 	
 	public static void setDoubleWrapper(String className){
 		try {
@@ -66,8 +69,15 @@ public class FloatReplacerClasses {
 	
 	public static void setBigDecimalPrecision(int precision){
 		COJAC_BIGDECIMAL_PRECISION = precision;
-		BigDecimalDouble.setPrecision(precision);
-        BigDecimalFloat.setPrecision(precision);
+//		BigDecimalDouble.setPrecision(precision); //was it necessary?...
+//        BigDecimalFloat.setPrecision(precision);
 	}
 	
+	public static void setStabilityThreshold(double threshold) {
+	    COJAC_STABILITY_THRESHOLD=threshold;
+	}
+
+    public static void setCheckUnstableComparisons(boolean checkUnstableComparisons) {
+        COJAC_CHECK_UNSTABLE_COMPARISONS=checkUnstableComparisons;
+    }
 }

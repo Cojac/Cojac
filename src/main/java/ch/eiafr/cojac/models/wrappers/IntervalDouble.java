@@ -2,6 +2,8 @@ package ch.eiafr.cojac.models.wrappers;
 
 import ch.eiafr.cojac.interval.DoubleInterval;
 import ch.eiafr.cojac.models.Reactions;
+import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_STABILITY_THRESHOLD;
+import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_CHECK_UNSTABLE_COMPARISONS;
 
 public class IntervalDouble extends Number implements
         Comparable<IntervalDouble> {
@@ -10,8 +12,8 @@ public class IntervalDouble extends Number implements
     //------------ (not required for the Wrapper mechanism) -------------------
     //-------------------------------------------------------------------------
     
-    private static double threshold = 1.0;
-    private static boolean checkComparisons = false;
+//    private static double COJAC_STABILITY_THRESHOLD = 1.0;
+//    private static boolean COJAC_CHECK_UNSTABLE_COMPARISONS = false;
 
     protected final double value;
     protected final DoubleInterval interval;
@@ -303,7 +305,7 @@ public class IntervalDouble extends Number implements
 
     @Override public int compareTo(IntervalDouble o) {
         int compResult = this.interval.compareTo(o.interval);
-        if (checkComparisons) {
+        if (COJAC_CHECK_UNSTABLE_COMPARISONS) {
             if (this.interval.strictCompareTo(o.interval)) return 0;
             if (this.interval.overlaps(o.interval))
                 reportBadComparison();
@@ -381,12 +383,12 @@ public class IntervalDouble extends Number implements
     
     // used by reflection (from cmd line option)
     public static void setThreshold(double value) {
-        threshold = value;
+        COJAC_STABILITY_THRESHOLD = value;
     }
 
     // used by reflection (from cmd line option)
     public static void setCheckComp(boolean value) {
-        checkComparisons = value;
+        COJAC_CHECK_UNSTABLE_COMPARISONS = value;
     }
 
     public String asInternalString() {
@@ -395,7 +397,7 @@ public class IntervalDouble extends Number implements
 
     private boolean checkedStability(boolean wasUnstable) {
         if (wasUnstable) return wasUnstable;
-        if (threshold < relativeError()) {
+        if (COJAC_STABILITY_THRESHOLD < relativeError()) {
             Reactions.react("BigDecimal wrapper detects unstability... "+asInternalString()+" ");
             return true;
         }

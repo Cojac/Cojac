@@ -26,14 +26,17 @@ import ch.eiafr.cojac.models.wrappers.BigDecimalFloat;
 import ch.eiafr.cojac.reactions.ClassLoaderReaction;
 import ch.eiafr.cojac.reactions.IReaction;
 import ch.eiafr.cojac.utils.ReflectionUtils;
+
 import org.objectweb.asm.ClassWriter;
 
 import javax.management.*;
 import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
+
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.lang.reflect.InvocationTargetException;
 import java.rmi.registry.LocateRegistry;
 import java.util.Map;
 import java.util.logging.Level;
@@ -171,6 +174,7 @@ public final class CojacReferences {
         // return ClassWriter.COMPUTE_FRAMES;//return ClassWriter.COMPUTE_MAXS;
     }
 
+    // ========================================================================
     public static final class CojacReferencesBuilder {
         private final Args args;
         private ClassLoader loader;
@@ -220,140 +224,35 @@ public final class CojacReferences {
 
             if (args.isSpecified(Arg.BIG_DECIMAL_PRECISION)) {
                 args.specify(Arg.REPLACE_FLOATS);
+                args.setValue(Arg.FLOAT_WRAPPER, "ch.eiafr.cojac.models.wrappers.BigDecimalFloat");
+                args.setValue(Arg.DOUBLE_WRAPPER, "ch.eiafr.cojac.models.wrappers.BigDecimalDouble");
             }
 
             if (args.isSpecified(Arg.INTERVAL)) {
                 args.specify(Arg.REPLACE_FLOATS);
-                args.specify(Arg.FLOAT_WRAPPER);
-                args.specify(Arg.DOUBLE_WRAPPER);
                 args.setValue(Arg.FLOAT_WRAPPER, "ch.eiafr.cojac.models.wrappers.IntervalFloat");
                 args.setValue(Arg.DOUBLE_WRAPPER, "ch.eiafr.cojac.models.wrappers.IntervalDouble");
             }
 
             if (args.isSpecified(Arg.STOCHASTIC)) {
                 args.specify(Arg.REPLACE_FLOATS);
-                args.specify(Arg.FLOAT_WRAPPER);
-                args.specify(Arg.DOUBLE_WRAPPER);
                 args.setValue(Arg.FLOAT_WRAPPER, "ch.eiafr.cojac.models.wrappers.StochasticFloat");
                 args.setValue(Arg.DOUBLE_WRAPPER, "ch.eiafr.cojac.models.wrappers.StochasticDouble");
             }
 
             if (args.isSpecified(Arg.AUTOMATIC_DERIVATION)) {
                 args.specify(Arg.REPLACE_FLOATS);
-                args.specify(Arg.FLOAT_WRAPPER);
-                args.specify(Arg.DOUBLE_WRAPPER);
                 args.setValue(Arg.FLOAT_WRAPPER, "ch.eiafr.cojac.models.wrappers.DerivationFloat");
                 args.setValue(Arg.DOUBLE_WRAPPER, "ch.eiafr.cojac.models.wrappers.DerivationDouble");
             }
 
-            if (args.isSpecified(Arg.REPLACE_FLOATS)) { // Only for proxy tests
-                sbBypassList.append(BYPASS_SEPARATOR);
+            if (args.isSpecified(Arg.REPLACE_FLOATS)) { 
+                sbBypassList.append(BYPASS_SEPARATOR);  // Only for proxy tests
                 sbBypassList.append("ch.eiafr.cojac.unit.replace.FloatProxyNotInstrumented");
-
-                /*
-                 * Get the class used to store global variables. Warning: This
-                 * is not the only place to set the values, see method
-                 * "setGlobalFields" in class "Agent" !
-                 */
-                Class<?> clazz = null;
                 try {
-                    clazz = loader.loadClass("ch.eiafr.cojac.models.FloatReplacerClasses");
-                } catch (ClassNotFoundException ex) {
+                    prepareReplaceFloats();
+                } catch (Exception ex) {
                     Logger.getLogger(CojacReferences.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-                if (args.isSpecified(Arg.FLOAT_WRAPPER) &&
-                        args.getValue(Arg.FLOAT_WRAPPER).length() > 0) {
-                    // TODO - check if the class exist and warn the user if not.
-                    floatWrapper = args.getValue(Arg.FLOAT_WRAPPER);
-                    if (floatWrapper.startsWith("cojac."))
-                        floatWrapper = floatWrapper.replace("cojac.", "ch.eiafr.cojac.models.wrappers.");
-                    try {
-                        clazz.getMethod("setFloatWrapper", String.class).invoke(clazz, floatWrapper);
-                    } catch (Exception ex) {
-                        Logger.getLogger(CojacReferences.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                } else { // default float wrapper
-                    try {
-                        clazz.getMethod("setFloatWrapper", String.class).invoke(clazz, BigDecimalFloat.class.getCanonicalName());
-                    } catch (Exception ex) {
-                        Logger.getLogger(CojacReferences.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-
-                if (args.isSpecified(Arg.DOUBLE_WRAPPER) &&
-                        args.getValue(Arg.DOUBLE_WRAPPER).length() > 0) {
-                    // TODO - check if the class exist and warn the user if not.
-                    doubleWrapper = args.getValue(Arg.DOUBLE_WRAPPER);
-                    if (doubleWrapper.startsWith("cojac."))
-                        doubleWrapper = doubleWrapper.replace("cojac.", "ch.eiafr.cojac.models.wrappers.");
-                    try {
-                        clazz.getMethod("setDoubleWrapper", String.class).invoke(clazz, doubleWrapper);
-                    } catch (Exception ex) {
-                        Logger.getLogger(CojacReferences.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                } else { // default double wrapper
-                    try {
-                        clazz.getMethod("setDoubleWrapper", String.class).invoke(clazz, BigDecimalDouble.class.getCanonicalName());
-                    } catch (Exception ex) {
-                        Logger.getLogger(CojacReferences.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-
-                if (args.isSpecified(Arg.BIG_DECIMAL_PRECISION)) {
-                    bigDecimalPrecision = Integer.valueOf(args.getValue(Arg.BIG_DECIMAL_PRECISION));
-                    try {
-                        clazz.getMethod("setBigDecimalPrecision", int.class).invoke(clazz, bigDecimalPrecision);
-                    } catch (Exception ex) {
-                        Logger.getLogger(CojacReferences.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-
-                if (args.isSpecified(Arg.INTERVAL)) {
-                    double threshold = Double.valueOf(args.getValue(Arg.INTERVAL));
-                    try {
-                        Class<?> doubleWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.IntervalDouble");
-                        //Class<?> floatWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.IntervalFloat");
-                        doubleWrapperClass.getMethod("setThreshold", double.class).invoke(doubleWrapperClass, threshold);
-                        //floatWrapperClass.getMethod("setThreshold", float.class).invoke(floatWrapperClass, (float) threshold);
-                    } catch (Exception e) {
-                        Logger.getLogger(CojacReferences.class.getName()).log(Level.SEVERE, null, e);
-                    }
-                }
-
-                if (args.isSpecified(Arg.INTERVAL_COMP)) {
-                    try {
-                        Class<?> doubleWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.IntervalDouble");
-                        Class<?> floatWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.IntervalFloat");
-                        doubleWrapperClass.getMethod("setCheckComp", boolean.class).invoke(doubleWrapperClass, true);
-                        floatWrapperClass.getMethod("setCheckComp", boolean.class).invoke(floatWrapperClass, true);
-                    } catch (Exception e) {
-                        Logger.getLogger(CojacReferences.class.getName()).log(Level.SEVERE, null, e);
-                    }
-                }
-
-                if (args.isSpecified(Arg.STOCHASTIC)) {
-                    double threshold = Double.valueOf(args.getValue(Arg.STOCHASTIC));
-                    try {
-                        Class<?> doubleWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.StochasticDouble");
-                        Class<?> floatWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.StochasticFloat");
-                        doubleWrapperClass.getMethod("setThreshold", double.class).invoke(doubleWrapperClass, threshold);
-                        floatWrapperClass.getMethod("setThreshold", double.class).invoke(floatWrapperClass, threshold);
-                    } catch (Exception e) {
-                        Logger.getLogger(CojacReferences.class.getName()).log(Level.SEVERE, null, e);
-                    }
-                }
-
-                if (args.isSpecified(Arg.STOCHASTIC_NBR_PARALLEL_NUMBER)) {
-                    int nbrParallelNumber = Integer.valueOf(args.getValue(Arg.STOCHASTIC_NBR_PARALLEL_NUMBER));
-                    try {
-                        Class<?> doubleWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.StochasticDouble");
-                        Class<?> floatWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.StochasticFloat");
-                        doubleWrapperClass.getMethod("setNbrParallelNumber", int.class).invoke(doubleWrapperClass, nbrParallelNumber);
-                        floatWrapperClass.getMethod("setNbrParallelNumber", int.class).invoke(floatWrapperClass, nbrParallelNumber);
-                    } catch (Exception e) {
-                        Logger.getLogger(CojacReferences.class.getName()).log(Level.SEVERE, null, e);
-                    }
                 }
             }
 
@@ -397,6 +296,78 @@ public final class CojacReferences {
             }
 
             return new CojacReferences(this);
+        }
+
+        private void prepareReplaceFloats() 
+                throws ClassNotFoundException, IllegalAccessException, 
+                IllegalArgumentException, InvocationTargetException, 
+                NoSuchMethodException, SecurityException {
+            if (args.isSpecified(Arg.FLOAT_WRAPPER) &&
+                    args.getValue(Arg.FLOAT_WRAPPER).length() > 0) {
+                // TODO - check if the class exist and warn the user if not.
+                floatWrapper = args.getValue(Arg.FLOAT_WRAPPER);
+                if (floatWrapper.startsWith("cojac."))
+                    floatWrapper = floatWrapper.replace("cojac.", "ch.eiafr.cojac.models.wrappers.");
+            } else { // default float wrapper
+                floatWrapper = BigDecimalFloat.class.getCanonicalName();
+            }
+
+            if (args.isSpecified(Arg.DOUBLE_WRAPPER) &&
+                    args.getValue(Arg.DOUBLE_WRAPPER).length() > 0) {
+                // TODO - check if the class exist and warn the user if not.
+                doubleWrapper = args.getValue(Arg.DOUBLE_WRAPPER);
+                if (doubleWrapper.startsWith("cojac."))
+                    doubleWrapper = doubleWrapper.replace("cojac.", "ch.eiafr.cojac.models.wrappers.");
+            } else { // default double wrapper
+                doubleWrapper = BigDecimalDouble.class.getCanonicalName();
+            }
+
+            /* Get the class used to store global variables. WARNING: This
+             * is not the only place to set the values, see method
+             * "setGlobalFields" in class "Agent" ! */
+            Class<?> clazz =  loader.loadClass("ch.eiafr.cojac.models.FloatReplacerClasses");
+            clazz.getMethod("setFloatWrapper", String.class).invoke(clazz, floatWrapper);
+            clazz.getMethod("setDoubleWrapper", String.class).invoke(clazz, doubleWrapper);
+
+            if (args.isSpecified(Arg.BIG_DECIMAL_PRECISION)) {
+                bigDecimalPrecision = Integer.valueOf(args.getValue(Arg.BIG_DECIMAL_PRECISION));
+                clazz.getMethod("setBigDecimalPrecision", int.class).invoke(clazz, bigDecimalPrecision);
+            }
+            
+            if (args.isSpecified(Arg.INTERVAL)) {
+                double threshold = Double.valueOf(args.getValue(Arg.INTERVAL));
+                clazz.getMethod("setStabilityThreshold", double.class).invoke(clazz, threshold);
+
+//                Class<?> doubleWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.IntervalDouble");
+//                //Class<?> floatWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.IntervalFloat");
+//                doubleWrapperClass.getMethod("setThreshold", double.class).invoke(doubleWrapperClass, threshold);
+//                //floatWrapperClass.getMethod("setThreshold", float.class).invoke(floatWrapperClass, (float) threshold);
+            }
+
+            if (args.isSpecified(Arg.INTERVAL_COMP)) {
+                clazz.getMethod("setCheckUnstableComparisons", boolean.class).invoke(clazz, true);
+//                Class<?> doubleWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.IntervalDouble");
+//                Class<?> floatWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.IntervalFloat");
+//                doubleWrapperClass.getMethod("setCheckComp", boolean.class).invoke(doubleWrapperClass, true);
+//                floatWrapperClass.getMethod("setCheckComp", boolean.class).invoke(floatWrapperClass, true);
+            }
+
+            if (args.isSpecified(Arg.STOCHASTIC)) {
+                double threshold = Double.valueOf(args.getValue(Arg.STOCHASTIC));
+                clazz.getMethod("setStabilityThreshold", double.class).invoke(clazz, threshold);
+//                Class<?> doubleWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.StochasticDouble");
+//                Class<?> floatWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.StochasticFloat");
+//                doubleWrapperClass.getMethod("setThreshold", double.class).invoke(doubleWrapperClass, threshold);
+//                floatWrapperClass.getMethod("setThreshold", double.class).invoke(floatWrapperClass, threshold);
+            }
+
+//            if (args.isSpecified(Arg.STOCHASTIC_NBR_PARALLEL_NUMBER)) {
+//                int nbrParallelNumber = Integer.valueOf(args.getValue(Arg.STOCHASTIC_NBR_PARALLEL_NUMBER));
+//                Class<?> doubleWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.StochasticDouble");
+//                Class<?> floatWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.StochasticFloat");
+//                doubleWrapperClass.getMethod("setNbrParallelNumber", int.class).invoke(doubleWrapperClass, nbrParallelNumber);
+//                floatWrapperClass.getMethod("setNbrParallelNumber", int.class).invoke(floatWrapperClass, nbrParallelNumber);
+//            }
         }
 
         private void registerInstrumentationStats(MBeanServer mbServer, InstrumentationStats stats) {

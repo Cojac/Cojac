@@ -2,6 +2,7 @@ package demo;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.DoubleUnaryOperator;
+import java.util.function.IntUnaryOperator;
 
 /* ------------------------------------------
 To be run without Cojac, or with cojac with those options:
@@ -78,9 +79,18 @@ public class Wrapping {
     String s=COJAC_MAGIC_DOUBLE_toStr(d);
     ok((WRAPPER.length()>0) == (s.length()>0));
     
+    
+
+    DoubleUnaryOperator[] mathDoubleUnaryOps= {Math::sqrt};
+//    for(DoubleUnaryOperator op:mathDoubleUnaryOps) d=op.applyAsDouble(a);
+    
     // TODO: this does not work with our wrapping mechanism... :-(
     // DoubleUnaryOperator[] mathDoubleUnaryOps= {Math::sqrt, Math::sin, Math::cos, Math::tan};
     // for(DoubleUnaryOperator op:mathDoubleUnaryOps) d=op.applyAsDouble(a);
+    // Although this works:
+    //   IntUnaryOperator[] muo= {Math::abs};
+    //   int u=-9;
+    //   for(IntUnaryOperator op:muo) u=op.applyAsInt(u);
   }
 
   public static void playWithJavaFloatWrapper() {

@@ -24,7 +24,7 @@
 
 	<groupId>ch.eiafr</groupId>
 	<artifactId>cojac</artifactId>
-	<version>1.3</version>
+	<version>1.4</version>
 	<name>COJAC</name>
 
 	<build>

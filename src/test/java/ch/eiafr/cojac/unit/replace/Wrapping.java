@@ -82,10 +82,15 @@ public class Wrapping {
     d=((float)l/2); ok(d==a);
     String s=COJAC_MAGIC_DOUBLE_toStr(d);
     ok((WRAPPER.length()>0) == (s.length()>0));
-    
     // TODO: this does not work with our wrapping mechanism... :-(
+    // DoubleUnaryOperator[] mathDoubleUnaryOps= {Wrapping::mySqrt}; // OR
     // DoubleUnaryOperator[] mathDoubleUnaryOps= {Math::sqrt, Math::sin, Math::cos, Math::tan};
+    // (strange... the latter works under surefire, not with -javaagent:cojac.jar...)
     // for(DoubleUnaryOperator op:mathDoubleUnaryOps) d=op.applyAsDouble(a);
+  }
+  
+  private static double mySqrt(double x) {
+      return Math.sqrt(x);
   }
 
   public static void playWithJavaFloatWrapper() {
@@ -119,7 +124,7 @@ public class Wrapping {
     d=new Double(d.shortValue()); ok(d==a);
     d=new Double(d.byteValue()); ok(d==a);
     ok(d.compareTo(a)==0);
-    ok(d.equals(a));  //TODO: this does not work under surefire (yet it does work under JUnit..)
+    ok(d.equals(a));
     ok(!d.isNaN());
     ok(!d.isInfinite());
   }

@@ -2,6 +2,8 @@ package ch.eiafr.cojac.models.wrappers;
 
 import java.util.Arrays;
 import java.util.Random;
+import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_STABILITY_THRESHOLD;
+import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_CHECK_UNSTABLE_COMPARISONS;
 
 import ch.eiafr.cojac.models.Reactions;
 
@@ -12,9 +14,9 @@ public class StochasticFloat extends Number implements
     //------------ (not required for the Wrapper mechanism) -------------------
     //-------------------------------------------------------------------------
 
-    private static int nbrParallelNumber = 3;
-    private static float threshold = 0.1F;
-    private static boolean checkComparisons = false; //TODO: activate that feature
+    private final static int nbrParallelNumber = 3;  // was originally tunable as an option
+    //private static float threshold = 0.1F;
+    //private static boolean checkComparisons = false; 
 
     private final static double Tb = 4.303; // see chenaux 1988
     private final static Random random = new Random();
@@ -191,7 +193,7 @@ public class StochasticFloat extends Number implements
     //-------------------------------------------------------------------------
 
     @Override public int compareTo(StochasticFloat o) {
-        if (checkComparisons) {
+        if (COJAC_CHECK_UNSTABLE_COMPARISONS) {
             if (value==o.value && Arrays.equals(stochasticValue, o.stochasticValue)) return 0;
             if (this.overlaps(o))
                 reportBadComparison();
@@ -265,14 +267,14 @@ public class StochasticFloat extends Number implements
     //------------ (not required for the Wrapper mechanism) -------------------
     //-------------------------------------------------------------------------
 
-    // Todo : maybe use float in parameter ?
-    public static void setThreshold(double value) {
-        threshold = (float) value;
-    }
-
-    public static void setNbrParallelNumber(int value) {
-        nbrParallelNumber = value;
-    }
+//    // Todo : maybe use float in parameter ?
+//    public static void setThreshold(double value) {
+//        threshold = (float) value;
+//    }
+//
+//    public static void setNbrParallelNumber(int value) {
+//        nbrParallelNumber = value;
+//    }
 
     private static float rndRound(float value) {
         switch (random.nextInt(3)) {
@@ -302,7 +304,7 @@ public class StochasticFloat extends Number implements
     
     private boolean checkedStability(boolean wasUnstable) {
         if (wasUnstable) return wasUnstable;
-        if (threshold < relativeError()) {
+        if (COJAC_STABILITY_THRESHOLD < relativeError()) {
             Reactions.react("Stochastic wrapper detects unstability... "+asInternalString()+" ");
             return true;
         }

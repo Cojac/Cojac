@@ -2,6 +2,8 @@ package ch.eiafr.cojac.models.wrappers;
 
 import java.util.Arrays;
 import java.util.Random;
+import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_STABILITY_THRESHOLD;
+import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_CHECK_UNSTABLE_COMPARISONS;
 
 import ch.eiafr.cojac.models.Reactions;
 
@@ -12,9 +14,9 @@ public class StochasticDouble extends Number implements
     //------------ (not required for the Wrapper mechanism) -------------------
     //-------------------------------------------------------------------------
 
-    private static int nbrParallelNumber = 3;
-    private static double threshold = 0.1;
-    private static boolean checkComparisons = false; //TODO: activate that feature
+    private static final int nbrParallelNumber = 3;
+//    private static double threshold = 0.1;
+//    private static boolean checkComparisons = false; 
 
     private final static Random random = new Random();
     
@@ -338,7 +340,7 @@ public class StochasticDouble extends Number implements
     }
 
     @Override public int compareTo(StochasticDouble o) {
-        if (checkComparisons) {
+        if (COJAC_CHECK_UNSTABLE_COMPARISONS) {
             if (value==o.value && Arrays.equals(stochasticValue, o.stochasticValue)) return 0;
             if (this.overlaps(o))
                 reportBadComparison();
@@ -408,15 +410,15 @@ public class StochasticDouble extends Number implements
         }
     }
 
-    // used by reflection (from cmd line option)
-    public static void setThreshold(double value) {
-        threshold = value;
-    }
-
-    // used by reflection (from cmd line option)
-    public static void setNbrParallelNumber(int value) {
-        nbrParallelNumber = value;
-    }
+//    // used by reflection (from cmd line option)
+//    public static void setThreshold(double value) {
+//        threshold = value;
+//    }
+//
+//    // used by reflection (from cmd line option)
+//    public static void setNbrParallelNumber(int value) {
+//        nbrParallelNumber = value;
+//    }
 
     public String asInternalString() {
         String res = "" + value + " : [%s]";
@@ -432,7 +434,7 @@ public class StochasticDouble extends Number implements
     
     private boolean checkedStability(boolean wasUnstable) {
         if (wasUnstable) return wasUnstable;
-        if (threshold < relativeError()) {
+        if (COJAC_STABILITY_THRESHOLD < relativeError()) {
             Reactions.react("Stochastic wrapper detects unstability... "+asInternalString()+" ");
             return true;
         }

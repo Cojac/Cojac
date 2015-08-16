@@ -336,8 +336,8 @@ public class BigDecimalFloat extends Number implements
         return val;
     }
 
-    public static void setPrecision(int precision) {
-        mathContext = new MathContext(precision);
-    }
+//    public static void setPrecision(int precision) {
+//        mathContext = new MathContext(precision);
+//    }
 
 }
