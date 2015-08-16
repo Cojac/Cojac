@@ -27,6 +27,7 @@ import static ch.eiafr.cojac.unit.AgentTest.instrumentation;
 
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 import org.junit.Test;
 
@@ -35,6 +36,7 @@ public abstract class WrappingLauncher {
 	protected AgentTest dummyAgentTest=new AgentTest(); // just to ensure AgentTest is loaded
 
     Class<?> wrappingClass;
+    Class<?> java2demoClass;
     
 	public WrappingLauncher() {
         try {
@@ -52,7 +54,6 @@ public abstract class WrappingLauncher {
         specifyArgs(args);
         
         CojacReferences.CojacReferencesBuilder builder = new CojacReferences.CojacReferencesBuilder(args);
-        builder.setSplitter(new CojacReferences.AgentSplitter());
 
         return new Agent(builder.build());
     }
@@ -63,6 +64,7 @@ public abstract class WrappingLauncher {
 	    try {
 	        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
 	        wrappingClass = classLoader.loadClass("ch.eiafr.cojac.unit.replace.Wrapping");
+	        //java2demoClass = classLoader.loadClass("java2d.Java2Demo");
 	    } finally {
 	        instrumentation.removeTransformer(classFileTransformer);
 	    }
@@ -72,10 +74,17 @@ public abstract class WrappingLauncher {
         invokeMethod("go");
     }
 	
+	//@Test 
+	public void invokeJava2D() throws Exception {
+	    Object args=new String[]{"-runs=1 -delay=0"};
+	    java2demoClass.getMethod("main", String[].class).invoke(null, args);
+	}
+
+	
 	private void invokeMethod(String methodName) throws Exception{
 		if (wrappingClass==null) return;
         Method m = wrappingClass.getMethod(methodName);
-        if (m==null) return;
+        //if (m==null) return;
         m.invoke(null);
 	}
 	//========================================
@@ -105,5 +114,4 @@ public abstract class WrappingLauncher {
             args.setValue(Arg.BIG_DECIMAL_PRECISION, "100");
         }
     }
-    
 }

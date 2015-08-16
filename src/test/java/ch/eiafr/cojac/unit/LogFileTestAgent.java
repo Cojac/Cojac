@@ -45,7 +45,6 @@ public class LogFileTestAgent {
         args.setValue(Arg.LOG_FILE, logFile);
 
 		CojacReferencesBuilder builder = new CojacReferencesBuilder(args);
-		builder.setSplitter(new CojacReferences.AgentSplitter());
 		
         Agent agent = new Agent(builder.build());
         AgentTest.instrumentation.addTransformer(agent);

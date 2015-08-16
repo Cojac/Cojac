@@ -48,7 +48,6 @@ public class FloatProxyLauncherTest {
         //args.specify(Arg.INSTRUMENTATION_STATS);
         
         CojacReferences.CojacReferencesBuilder builder = new CojacReferences.CojacReferencesBuilder(args);
-        builder.setSplitter(new CojacReferences.AgentSplitter());
 
         return new Agent(builder.build());
     }

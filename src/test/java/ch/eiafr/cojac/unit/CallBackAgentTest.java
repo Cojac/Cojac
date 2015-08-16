@@ -42,7 +42,6 @@ public class CallBackAgentTest {
         args.setValue(Arg.CALL_BACK, "ch/eiafr/cojac/unit/CallBacksAgent/log");
 
 		CojacReferencesBuilder builder = new CojacReferencesBuilder(args);
-		builder.setSplitter(new CojacReferences.AgentSplitter());
 		
         Agent agent = new Agent(builder.build());
         AgentTest.instrumentation.addTransformer(agent);

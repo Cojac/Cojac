@@ -238,7 +238,6 @@ public class COJACBenchmark {
 
     private static Agent benchAgent(boolean wasteSize) throws Exception {
         CojacReferencesBuilder builder = new CojacReferencesBuilder(getArgs(wasteSize));
-        builder.setSplitter(new CojacReferences.AgentSplitter());
         Agent agent = new Agent(builder.build());
         AgentTest.instrumentation.addTransformer(agent, true);
         return agent;

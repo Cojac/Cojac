@@ -1,8 +1,13 @@
 package demo;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.IntUnaryOperator;
+
+import javax.swing.JFrame;
 
 /* ------------------------------------------
 To be run without Cojac, or with cojac with those options:
@@ -33,6 +38,7 @@ public class Wrapping {
     playWithJavaDoubleWrapper();
     playWithArrays();
     playWithCollection();
+    playWithGUI();
     System.out.println("The end.");
   }
   
@@ -78,10 +84,16 @@ public class Wrapping {
     d=((float)l/2); ok(d==a);
     String s=COJAC_MAGIC_DOUBLE_toStr(d);
     ok((WRAPPER.length()>0) == (s.length()>0));
-    
+    if (WRAPPER.equals("BigDecimal")) {
+        double x=1.0;
+        x = x/3.0;
+        String s1=""+x;
+        String s2=COJAC_MAGIC_DOUBLE_toStr(x);
+        ok(s2.length()>s1.length());
+    }
     
 
-    DoubleUnaryOperator[] mathDoubleUnaryOps= {Math::sqrt};
+    //DoubleUnaryOperator[] mathDoubleUnaryOps= {Math::sqrt};
 //    for(DoubleUnaryOperator op:mathDoubleUnaryOps) d=op.applyAsDouble(a);
     
     // TODO: this does not work with our wrapping mechanism... :-(
@@ -126,8 +138,6 @@ public class Wrapping {
     ok(d.compareTo(a)==0);
     d=2*d/2;
     Double aa=Double.valueOf(a);
-    System.out.println("ZZZ "+COJAC_MAGIC_DOUBLE_toStr(d));
-    System.out.println("ZZZ "+COJAC_MAGIC_DOUBLE_toStr(aa));
     ok(d.equals(aa));
     ok(!d.isNaN());
     ok(!d.isInfinite());
@@ -158,9 +168,12 @@ public class Wrapping {
     double b= a/3.0;
     double[]t=new double[]{b};
     Arrays.sort(t);
-
-    
-
+  }
+  
+  private static void playWithGUI() {
+      SimpleGUI f=new SimpleGUI();
+      try {Thread.sleep(500);} catch(Exception e) {Thread.currentThread().interrupt();}
+      f.dispose();
   }
   
   private static void ok(boolean b) {
@@ -171,5 +184,19 @@ public class Wrapping {
     public final double dValue;
     public final float fValue;
     MyWrapper(double d) {dValue=d; fValue=(float)d;}
+  }
+  //======================================================================
+  static class SimpleGUI extends JFrame {
+      public SimpleGUI() {
+          super("dummy simpleGUI...");
+          this.setSize(100,100);
+          this.setVisible(true);
+      }
+      public void paint(Graphics g) {
+          Graphics2D g2 = (Graphics2D) g;
+          g2.setColor(Color.GREEN);
+          g2.drawLine(0,0,100,100);
+          Wrapping.playWithJavaDoubleWrapper();
+      }
   }
 }

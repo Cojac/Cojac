@@ -57,6 +57,8 @@ public final class CojacReferences {
     private final String floatWrapper;
     private final String doubleWrapper;
     private final int bigDecimalPrecision;
+    private final double stabilityThreshold;
+    private final boolean checkUnstableComparisons;
 
     private CojacReferences(CojacReferencesBuilder builder) {
         this.args = builder.args;
@@ -71,6 +73,8 @@ public final class CojacReferences {
         this.floatWrapper = builder.floatWrapper;
         this.doubleWrapper = builder.doubleWrapper;
         this.bigDecimalPrecision = builder.bigDecimalPrecision;
+        this.stabilityThreshold = builder.stabilityThreshold;
+        this.checkUnstableComparisons = builder.checkUnstableComparisons;
     }
 
     public String getFloatWrapper() {
@@ -84,7 +88,15 @@ public final class CojacReferences {
     public int getBigDecimalPrecision() {
         return bigDecimalPrecision;
     }
+    
+    public double getStabilityThreshold() {
+        return stabilityThreshold;
+    }
 
+    public boolean getCheckUnstableComparisons() {
+        return checkUnstableComparisons;
+    }
+    
     public String[] getBypassList() {
         return bypassList;
     }
@@ -188,7 +200,9 @@ public final class CojacReferences {
         private String floatWrapper;
         private String doubleWrapper;
         private int bigDecimalPrecision;
-
+        private double stabilityThreshold;
+        private boolean checkUnstableComparisons;
+        
         private final String[] loadedClasses;
 
         private static final String STANDARD_PACKAGES = "com.sun.;java.;javax.;sun.;sunw.;"
@@ -197,9 +211,9 @@ public final class CojacReferences {
                 + "ch.eiafr.cojac.models;"
                 + "ch.eiafr.cojac.interval;" + "jdk.internal;" + "org.slf4j";
 
-        public CojacReferencesBuilder() {
-            this(new Args(), null);
-        }
+//        public CojacReferencesBuilder() {
+//            this(new Args(), null);
+//        }
 
         public CojacReferencesBuilder(final Args args) {
             this(args, null);
@@ -208,14 +222,14 @@ public final class CojacReferences {
         public CojacReferencesBuilder(final Args args, final String[] loadedClasses) {
             this.args = args;
             this.loader = ClassLoader.getSystemClassLoader();
-            this.splitter = new CojacClassLoaderSplitter();
+            this.splitter = new AgentSplitter();
             this.loadedClasses = loadedClasses;
         }
 
-        public CojacReferencesBuilder setSplitter(final Splitter splitter) {
-            this.splitter = splitter;
-            return this;
-        }
+//        public CojacReferencesBuilder setSplitter(final Splitter splitter) {
+//            this.splitter = splitter;
+//            return this;
+//        }
 
         public CojacReferences build() {
             this.stats = new InstrumentationStats();
@@ -335,8 +349,8 @@ public final class CojacReferences {
             }
             
             if (args.isSpecified(Arg.INTERVAL)) {
-                double threshold = Double.valueOf(args.getValue(Arg.INTERVAL));
-                clazz.getMethod("setStabilityThreshold", double.class).invoke(clazz, threshold);
+                stabilityThreshold = Double.valueOf(args.getValue(Arg.INTERVAL));
+                clazz.getMethod("setStabilityThreshold", double.class).invoke(clazz, stabilityThreshold);
 
 //                Class<?> doubleWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.IntervalDouble");
 //                //Class<?> floatWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.IntervalFloat");
@@ -345,6 +359,7 @@ public final class CojacReferences {
             }
 
             if (args.isSpecified(Arg.INTERVAL_COMP)) {
+                checkUnstableComparisons=true;
                 clazz.getMethod("setCheckUnstableComparisons", boolean.class).invoke(clazz, true);
 //                Class<?> doubleWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.IntervalDouble");
 //                Class<?> floatWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.IntervalFloat");
@@ -353,8 +368,8 @@ public final class CojacReferences {
             }
 
             if (args.isSpecified(Arg.STOCHASTIC)) {
-                double threshold = Double.valueOf(args.getValue(Arg.STOCHASTIC));
-                clazz.getMethod("setStabilityThreshold", double.class).invoke(clazz, threshold);
+                stabilityThreshold = Double.valueOf(args.getValue(Arg.STOCHASTIC));
+                clazz.getMethod("setStabilityThreshold", double.class).invoke(clazz, stabilityThreshold);
 //                Class<?> doubleWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.StochasticDouble");
 //                Class<?> floatWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.StochasticFloat");
 //                doubleWrapperClass.getMethod("setThreshold", double.class).invoke(doubleWrapperClass, threshold);

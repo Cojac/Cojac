@@ -114,6 +114,10 @@ public final class Agent implements ClassFileTransformer {
 				mv.visitMethodInsn(Opcodes.INVOKESTATIC, name, "setFloatWrapper", "(Ljava/lang/String;)V", false);
 				mv.visitLdcInsn(references.getBigDecimalPrecision());
 				mv.visitMethodInsn(Opcodes.INVOKESTATIC, name, "setBigDecimalPrecision", "(I)V", false);
+                mv.visitLdcInsn(references.getStabilityThreshold());
+                mv.visitMethodInsn(Opcodes.INVOKESTATIC, name, "setStabilityThreshold", "(D)V", false);
+                mv.visitLdcInsn(references.getCheckUnstableComparisons()?1:0);
+                mv.visitMethodInsn(Opcodes.INVOKESTATIC, name, "setCheckUnstableComparisons", "(Z)V", false);
 				mv.visitInsn(Opcodes.RETURN);
 				mv.visitMaxs(0, 0);
 			}

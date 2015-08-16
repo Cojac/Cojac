@@ -33,7 +33,6 @@ public class FloatReplaceTest {
         //args.specify(Arg.INSTRUMENTATION_STATS);
 
         CojacReferencesBuilder builder = new CojacReferencesBuilder(args);
-        builder.setSplitter(new CojacReferences.AgentSplitter());
 
         return new Agent(builder.build());
     }

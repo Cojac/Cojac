@@ -45,7 +45,6 @@ public final class CojacAgent {
 
         
         CojacReferencesBuilder builder = new CojacReferencesBuilder(args, strLoadedClasses);
-        builder.setSplitter(new CojacReferences.AgentSplitter());
         
         Agent agent = new Agent(builder.build());
        
