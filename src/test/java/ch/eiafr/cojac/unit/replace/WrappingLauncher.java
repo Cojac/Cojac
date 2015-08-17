@@ -31,12 +31,16 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
+// TODO: Reconsider this "agent testing" mechanism: one problem is that we
+//       have to explicitly list the classes to be instrumented; 
+//       Maybe a workaround could be to programmatically load/instrument every 
+//       class from a particular package (e.g. java2d)...
 public abstract class WrappingLauncher {
 	
 	protected AgentTest dummyAgentTest=new AgentTest(); // just to ensure AgentTest is loaded
 
     Class<?> wrappingClass;
-    Class<?> java2demoClass;
+    //Class<?> java2demoClass;
     
 	public WrappingLauncher() {
         try {
@@ -75,14 +79,14 @@ public abstract class WrappingLauncher {
     }
 	
 	//@Test 
-	public void invokeJava2D() throws Exception {
-	    Object args=new String[]{"-runs=1 -delay=0"};
-	    java2demoClass.getMethod("main", String[].class).invoke(null, args);
-	}
+//	public void invokeJava2D() throws Exception {
+//	    Object args=new String[]{"-runs=1 -delay=0"};
+//	    java2demoClass.getMethod("main", String[].class).invoke(null, args);
+//	}
 
 	
 	private void invokeMethod(String methodName) throws Exception{
-		if (wrappingClass==null) return;
+		//if (wrappingClass==null) return;
         Method m = wrappingClass.getMethod(methodName);
         //if (m==null) return;
         m.invoke(null);

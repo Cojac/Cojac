@@ -1,3 +1,37 @@
+
+
+
+----------------------- OLDER NOTES (might not be relevant now) --------------
+Issues for enriched numbers (option -R)
+
+- Verbose mode & interface: interfaces risk to be loaded by the verifier class
+and to don't get instrumented.
+
+- Array reference through proxy: The proxy breaks the references with float &
+  double arrays. A fix has been done but it does not cover all cases. A test 
+  shows the problem in ch.eiafr.cojac.unit.replace. The name of the test:
+  arrayPassedInNotInstrumentedSideModifiedWithAnOtherMethod
+
+- Native methods: The native methods can be called but they cannot call methods 
+  or access to instance or class fields.
+
+- Java reflection: not handled at all...
+
+- Callback: The callback written by the user will be instrumented and will not
+  work in uninstrumented part if it uses the float or double types.
+  Test example: arraySortedWithUserDefinedComparator
+  
+  UPDATE (17.08.15, BAP): Java2Demo works pretty well, but there is at least
+  one instance of this "callback" issue: somehow a 
+  java2d.demos.Fonts.AttributedStr$ScalableImageGraphicAttribute, which extends 
+  the uninstrumented abstract class java.awt.font.GraphicAttribute, is created
+  and given to swing, which finally tries to call 'float getAdvance()'; this
+  will be not found, and we get an AbstractMethodError.
+  That particular problem happens to have a workaround: add a bypass to Cojac: 
+  with: -b java2d.demos.Fonts.AttributedStr$ScalableImageGraphicAttribute  
+  
+  
+----------------------- OLDER NOTES (might not be relevant now) --------------
 As is, Cojac is built with jdk6.21, then works well with jvm6 or jvm7.
 It compiles with jdk7, but some of the tests fail ("missing frame").
 
@@ -15,23 +49,3 @@ http://osdir.com/ml/java.objectweb.asm/2007-07/msg00007.html).
 I suspect the original problem of failing tests under jdk7 built to have its
 root in the various "inserted methods" (log, print...), which asmified bytecode
 have been gathered quite a long time ago (jvm5 code?). This should be updated.
-
-
-Issues for enriched numbers (option -R)
-
-- Verbose mode & interface: interfaces risk to be loaded by the verifier class
-and to don't get instrumented.
-
-- Array reference through proxy: The proxy break the references with float & double
-arrays. A fix has been done but it do not cover all cases. A test show the problem
-in ch.eiafr.cojac.unit.replace. The name of the test:
-arrayPassedInNotInstrumentedSideModifiedWithAnOtherMethod
-
-- Native methods: The native methods can be called but they cannot call methods or
-access to instance or class fields.
-
-- Callback: The callback written by the user will be instrumented and will not work
-in uninstrumented part if it hanfle the float or double types.
-Test example: arraySortedWithUserDefinedComparator
-
-- Java reflection: not handled

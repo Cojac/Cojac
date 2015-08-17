@@ -463,16 +463,22 @@ public class StochasticDouble extends Number implements
         return Math.pow(10.0, -Cr);
     }
     
-    private boolean overlaps(StochasticDouble o) {
-        double min=value, max=value, omin=o.value, omax=o.value;
-        for(double f:stochasticValue) {
+    private double min() {
+        double min=value;
+        for(double f:stochasticValue)
             if(f<min) min=f;
+        return min;
+    }
+    
+    private double max() {
+        double max=value;
+        for(double f:stochasticValue)
             if(f>max) max=f;
-        }
-        for(double f:o.stochasticValue) {
-            if(f<omin) omin=f;
-            if(f>omax) omax=f;
-        }
+        return max;
+    }
+
+    private boolean overlaps(StochasticDouble o) {
+        double min=min(), max=max(), omin=o.min(), omax=o.max();
         return Math.max(min, omin) <= Math.min(max, omax);
     }
     

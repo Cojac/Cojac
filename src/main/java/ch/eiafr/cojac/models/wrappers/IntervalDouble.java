@@ -409,10 +409,12 @@ public class IntervalDouble extends Number implements
     }
 
     private double relativeError() {
-        double numerator = Math.min(Math.abs(this.interval.inf), Math.abs(this.interval.sup));
-        if (numerator == 0.0) {
-            return Double.NaN;
+        double threshold=1E-100; // arbitrarily
+        double denominator = Math.min(Math.abs(this.interval.inf), Math.abs(this.interval.sup));
+        if (denominator < threshold) {
+            denominator = Math.max(Math.abs(this.interval.inf), Math.abs(this.interval.sup));
+            if (denominator < threshold) denominator=1.0;  // arbitrarily too
         }
-        return DoubleInterval.width(this.interval) / numerator;
+        return DoubleInterval.width(this.interval) / denominator;
     }
 }

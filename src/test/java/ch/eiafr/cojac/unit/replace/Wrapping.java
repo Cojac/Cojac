@@ -82,6 +82,8 @@ public class Wrapping {
     d=((float)l/2); ok(d==a);
     String s=COJAC_MAGIC_DOUBLE_toStr(d);
     ok((WRAPPER.length()>0) == (s.length()>0));
+    // WrappingAux.f(3.2); this won't work, because the AgentTest trick won't instrument other classes
+    
     // TODO: this does not work with our wrapping mechanism... :-(
     // DoubleUnaryOperator[] mathDoubleUnaryOps= {Wrapping::mySqrt}; // OR
     // DoubleUnaryOperator[] mathDoubleUnaryOps= {Math::sqrt, Math::sin, Math::cos, Math::tan};
