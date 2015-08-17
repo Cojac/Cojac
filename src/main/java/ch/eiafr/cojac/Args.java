@@ -32,8 +32,6 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-//import org.apache.commons.cli.OptionBuilder;
-
 public final class Args {
     private final Options options = Arg.createOptions();
     private final Map<Arg, ArgValue> values = new EnumMap<>(Arg.class);
@@ -70,11 +68,6 @@ public final class Args {
 
         String[] cojacArgs;
         if (index >= 0) {
-            //if (index==args.length-1) {
-            //System.out.println("Invalid command line.  Reason: " 
-            //    + "No jar/class/filename");
-            //return false;
-            //}
             int takeNext = index == args.length - 1 ? 0 : 1;
             cojacArgs = new String[index + takeNext];
             appArgs = new String[args.length - index - 1 - takeNext];
@@ -110,7 +103,6 @@ public final class Args {
             for (String auxAppArg : auxAppArgs) {
                 appArgs[i++] = auxAppArg;
             }
-            //Collections.addAll(files, commandLine.getArgs());
         } catch (ParseException e) {
             System.out.println("Invalid command line.  Reason: " + e.getMessage());
             return false;
@@ -246,8 +238,9 @@ public final class Args {
             return isSpecified(Arg.DETAILED_LOG) ? ReactionType.LOG : ReactionType.LOG_SMALLER;
         } else if (isSpecified(Arg.EXCEPTION)) {
             return ReactionType.EXCEPTION;
-        } else if (isSpecified(Arg.CALL_BACK))
+        } else if (isSpecified(Arg.CALL_BACK)) {
             return ReactionType.CALLBACK;
+        }
 
         throw new RuntimeException("no reaction is defined!");
     }

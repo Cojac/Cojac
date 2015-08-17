@@ -106,10 +106,11 @@ final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
             if ("(D)D".equals(desc) && UNARY_METHODS.contains(name) || "(DD)D".equals(desc) && BINARY_METHODS.contains(name)) {
                 String msg= owner + '.' + name + desc;
                 String logFileName=""; 
-                if (args.isSpecified(Arg.CALL_BACK))
+                if (args.isSpecified(Arg.CALL_BACK)) {
                     logFileName = args.getValue(Arg.CALL_BACK); // No, I'm not proud of that trick...
-                else
+                } else {
                     logFileName = args.getValue(Arg.LOG_FILE);
+                }
                 int reactionType=args.getReactionType().value();
                 mv.visitMethodInsn(INVOKESTATIC, owner, name, desc, itf);
                 protectMethodInvocation(reactionType, logFileName, msg);

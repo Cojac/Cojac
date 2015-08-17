@@ -18,9 +18,6 @@
 
 package ch.eiafr.cojac;
 
-import static ch.eiafr.cojac.Arg.ALL;
-import static ch.eiafr.cojac.Arg.HELP;
-
 import java.lang.instrument.Instrumentation;
 
 import ch.eiafr.cojac.CojacReferences.CojacReferencesBuilder;
@@ -28,17 +25,17 @@ import org.objectweb.asm.Type;
 
 public final class CojacAgent {
     public static void premain(String agentArgs, Instrumentation inst) {
-        String[] parsedArgs = {ALL.shortOpt()};
+        String[] parsedArgs = {Arg.ALL.shortOpt()};
         if (agentArgs != null) {
             parsedArgs = agentArgs.split(" ");
         }
 
         Args args = new Args();
-        if (!args.parse(parsedArgs) || args.isSpecified(HELP)) {
+        if (!args.parse(parsedArgs) || args.isSpecified(Arg.HELP)) {
             args.printHelpAndExit();
         }
 
-        Class[] loadedClasses = inst.getAllLoadedClasses();
+        Class<?>[] loadedClasses = inst.getAllLoadedClasses();
 		String[] strLoadedClasses = new String[loadedClasses.length];
 		for (int i = 0; i < strLoadedClasses.length; i++)
 			strLoadedClasses[i] = Type.getType(loadedClasses[i]).getInternalName();

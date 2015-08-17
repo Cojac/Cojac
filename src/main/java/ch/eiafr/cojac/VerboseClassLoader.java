@@ -20,6 +20,4 @@ public class VerboseClassLoader extends ClassLoader {
         System.out.flush();
         return super.findClass(name);
     }
-    
-    
 }

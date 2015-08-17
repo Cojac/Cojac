@@ -22,7 +22,6 @@ import static ch.eiafr.cojac.models.FloatReplacerClasses.*;
 import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenterFactory;
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.replaceFloatMethodDescription;
 import ch.eiafr.cojac.instrumenters.ReplaceFloatsMethods;
-import ch.eiafr.cojac.methods.CojacMethodAdder;
 import ch.eiafr.cojac.reactions.IReaction;
 import java.util.ArrayList;
 import org.objectweb.asm.ClassVisitor;
@@ -34,7 +33,6 @@ import org.objectweb.asm.commons.AnalyzerAdapter;
 import org.objectweb.asm.commons.LocalVariablesSorter;
 
 final class CojacClassVisitor extends ClassVisitor {
-    private final CojacMethodAdder methodAdder;
     private final IOpcodeInstrumenterFactory factory;
     private final InstrumentationStats stats;
     private final Args args;
@@ -61,7 +59,6 @@ final class CojacClassVisitor extends ClassVisitor {
         this.reaction = references.getReaction();
         this.factory = references.getOpCodeInstrumenterFactory();
         this.cav = cav;
-        methodAdder = methods != null ? new CojacMethodAdder(args, reaction) : null;
         proxyMethods = new ArrayList<>();
         
     }
@@ -111,18 +108,8 @@ final class CojacClassVisitor extends ClassVisitor {
         if (cav.isClassAnnotated() || cav.isMethodAnnotated(currentMethodID)) {
             return mv;
         }
-
-        /*
-        if (methods != null && first && "<init>".equals(name)) {
-            first = false;
-
-            methodAdder.insertMethods(cv, methods, classPath);
-        }
-        */
                 
         mv.visitEnd();
-        
-        
         
         return instrumentMethod(mv, access, desc, name);
     }

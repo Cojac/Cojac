@@ -211,17 +211,7 @@ public enum Arg {
 //      options.addOption(Arg.NO_CANCELLATION.shortOpt(),
 //          false, "Disable cancellation test in DADD/DSUB/FADD/FSUB");
 
-        //Disabled temporarily, well... definitely!
-
-//      options.addOption("v", false, "Enable COJAC to add variables in instrumented bytecode");
-
         options.addOption(Arg.JMX_ENABLE.shortOpt(), false, "Enable JMX feature.");
-
-//      options.addOption(OptionBuilder.
-//          withLongOpt("frames").
-//          withDescription("Compute Java Frames in bytecode (instrumentation will be slower)").
-//          create());  // no short opt
-
 
         options.addOption(OptionBuilder.
             withLongOpt("path").

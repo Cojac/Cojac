@@ -183,7 +183,6 @@ public final class CojacReferences {
     @SuppressWarnings("unused")
     public static int getFlags(Args args) {
         return ClassWriter.COMPUTE_FRAMES;
-        // return ClassWriter.COMPUTE_FRAMES;//return ClassWriter.COMPUTE_MAXS;
     }
 
     // ========================================================================
@@ -212,10 +211,6 @@ public final class CojacReferences {
                 + "ch.eiafr.cojac.models;"
                 + "ch.eiafr.cojac.interval;" + "jdk.internal;" + "org.slf4j";
 
-//        public CojacReferencesBuilder() {
-//            this(new Args(), null);
-//        }
-
         public CojacReferencesBuilder(final Args args) {
             this(args, null);
         }
@@ -226,11 +221,6 @@ public final class CojacReferences {
             this.splitter = new AgentSplitter();
             this.loadedClasses = loadedClasses;
         }
-
-//        public CojacReferencesBuilder setSplitter(final Splitter splitter) {
-//            this.splitter = splitter;
-//            return this;
-//        }
 
         public CojacReferences build() {
             this.stats = new InstrumentationStats();
