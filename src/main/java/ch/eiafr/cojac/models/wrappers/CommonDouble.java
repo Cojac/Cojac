@@ -29,8 +29,6 @@ public class CommonDouble extends Number implements Comparable<CommonDouble>{
     //------------ (not required for the Wrapper mechanism) -------------------
     //-------------------------------------------------------------------------
 
-    //public static Class<?>  COJAC_DOUBLE_WRAPPER_CLASS; // Probably in FloatReplacerClasses...
-
     protected final ACojacWrapper val;
     
     protected CommonDouble(ACojacWrapper w) {
@@ -41,7 +39,7 @@ public class CommonDouble extends Number implements Comparable<CommonDouble>{
     //-------------------------------------------------------------------------
 
     public CommonDouble(double v) {
-        val = newInstance(null).fromDouble(v);
+        val = newInstance(null).fromDouble(v, false);
     }
     
     public CommonDouble(String v) {

@@ -23,7 +23,6 @@ import ch.eiafr.cojac.Args;
 import ch.eiafr.cojac.perfs.opcodes.*;
 import ch.eiafr.cojac.perfs.scimark.SciMark;
 import ch.eiafr.cojac.Agent;
-import ch.eiafr.cojac.CojacReferences;
 import ch.eiafr.cojac.CojacReferences.CojacReferencesBuilder;
 import ch.eiafr.cojac.unit.AgentTest;
 import com.wicht.benchmark.utils.Benchs;
@@ -37,36 +36,46 @@ import java.util.concurrent.Callable;
 
 public class COJACBenchmark {
     public static final int ACTIONS = 52;
+    private static Args theArgs = new Args();
+    static {
+        theArgs.specify(Arg.ALL);
+        theArgs.specify(Arg.PRINT);
+        theArgs.specify(Arg.FILTER); 
+    }
 
     public static void main(String[] args) throws Exception {
         System.out.println("COJAC Benchmark");
+        bench(1, "Traveling Salesman", new TravelingSalesmanRunnable(), "ch.eiafr.cojac.perfs.TravelingSalesmanRunnable");
+        if (true) return;
+        benchSum();
+        benchSort();
 
-        bench(ACTIONS, "IADD Benchmark", new IADDCallable(), "ch.eiafr.cojac.perfs.opcodes.IADDCallable");
-        bench(ACTIONS, "ISUB Benchmark", new ISUBCallable(), "ch.eiafr.cojac.perfs.opcodes.ISUBCallable");
-        bench(ACTIONS, "IMUL Benchmark", new IMULCallable(), "ch.eiafr.cojac.perfs.opcodes.IMULCallable");
-        bench(ACTIONS, "IDIV Benchmark", new IDIVCallable(), "ch.eiafr.cojac.perfs.opcodes.IDIVCallable");
+//        bench(ACTIONS, "IADD Benchmark", new IADDCallable(), "ch.eiafr.cojac.perfs.opcodes.IADDCallable");
+//        bench(ACTIONS, "ISUB Benchmark", new ISUBCallable(), "ch.eiafr.cojac.perfs.opcodes.ISUBCallable");
+//        bench(ACTIONS, "IMUL Benchmark", new IMULCallable(), "ch.eiafr.cojac.perfs.opcodes.IMULCallable");
+//        bench(ACTIONS, "IDIV Benchmark", new IDIVCallable(), "ch.eiafr.cojac.perfs.opcodes.IDIVCallable");
 
-        bench(ACTIONS, "FADD Benchmark", new FADDCallable(), "ch.eiafr.cojac.perfs.opcodes.FADDCallable");
-        bench(ACTIONS, "FSUB Benchmark", new FSUBCallable(), "ch.eiafr.cojac.perfs.opcodes.FSUBCallable");
-        bench(ACTIONS, "FMUL Benchmark", new FMULCallable(), "ch.eiafr.cojac.perfs.opcodes.FMULCallable");
-        bench(ACTIONS, "FDIV Benchmark", new FDIVCallable(), "ch.eiafr.cojac.perfs.opcodes.FDIVCallable");
-        bench(ACTIONS, "FREM Benchmark", new FREMCallable(), "ch.eiafr.cojac.perfs.opcodes.FREMCallable");
-
-        bench(ACTIONS, "LADD Benchmark", new LADDCallable(), "ch.eiafr.cojac.perfs.opcodes.LADDCallable");
-        bench(ACTIONS, "LSUB Benchmark", new LSUBCallable(), "ch.eiafr.cojac.perfs.opcodes.LSUBCallable");
-        bench(29,      "LMUL Benchmark", new LMULCallable(), "ch.eiafr.cojac.perfs.opcodes.LMULCallable");
-        bench(ACTIONS, "LDIV Benchmark", new LDIVCallable(), "ch.eiafr.cojac.perfs.opcodes.LDIVCallable");
-
-        bench(ACTIONS, "DADD Benchmark", new DADDCallable(), "ch.eiafr.cojac.perfs.opcodes.DADDCallable");
-        bench(ACTIONS, "DSUB Benchmark", new DSUBCallable(), "ch.eiafr.cojac.perfs.opcodes.DSUBCallable");
-        bench(ACTIONS, "DMUL Benchmark", new DMULCallable(), "ch.eiafr.cojac.perfs.opcodes.DMULCallable");
+//        bench(ACTIONS, "FADD Benchmark", new FADDCallable(), "ch.eiafr.cojac.perfs.opcodes.FADDCallable");
+//        bench(ACTIONS, "FSUB Benchmark", new FSUBCallable(), "ch.eiafr.cojac.perfs.opcodes.FSUBCallable");
+//        bench(ACTIONS, "FMUL Benchmark", new FMULCallable(), "ch.eiafr.cojac.perfs.opcodes.FMULCallable");
+//        bench(ACTIONS, "FDIV Benchmark", new FDIVCallable(), "ch.eiafr.cojac.perfs.opcodes.FDIVCallable");
+//        bench(ACTIONS, "FREM Benchmark", new FREMCallable(), "ch.eiafr.cojac.perfs.opcodes.FREMCallable");
+//
+//        bench(ACTIONS, "LADD Benchmark", new LADDCallable(), "ch.eiafr.cojac.perfs.opcodes.LADDCallable");
+//        bench(ACTIONS, "LSUB Benchmark", new LSUBCallable(), "ch.eiafr.cojac.perfs.opcodes.LSUBCallable");
+//        bench(29,      "LMUL Benchmark", new LMULCallable(), "ch.eiafr.cojac.perfs.opcodes.LMULCallable");
+//        bench(ACTIONS, "LDIV Benchmark", new LDIVCallable(), "ch.eiafr.cojac.perfs.opcodes.LDIVCallable");
+//
+//        bench(ACTIONS, "DADD Benchmark", new DADDCallable(), "ch.eiafr.cojac.perfs.opcodes.DADDCallable");
+//        bench(ACTIONS, "DSUB Benchmark", new DSUBCallable(), "ch.eiafr.cojac.perfs.opcodes.DSUBCallable");
+//        bench(ACTIONS, "DMUL Benchmark", new DMULCallable(), "ch.eiafr.cojac.perfs.opcodes.DMULCallable");
         bench(ACTIONS, "DDIV Benchmark", new DDIVCallable(), "ch.eiafr.cojac.perfs.opcodes.DDIVCallable");
-        bench(ACTIONS, "DREM Benchmark", new DREMCallable(), "ch.eiafr.cojac.perfs.opcodes.DREMCallable");
-        bench(ACTIONS, "DCMP Benchmark", new DCMPCallable(), "ch.eiafr.cojac.perfs.opcodes.IADDCallable");
+//        bench(ACTIONS, "DREM Benchmark", new DREMCallable(), "ch.eiafr.cojac.perfs.opcodes.DREMCallable");
+//        bench(ACTIONS, "DCMP Benchmark", new DCMPCallable(), "ch.eiafr.cojac.perfs.opcodes.IADDCallable");
 
+        if(true) return;
         bench(1, "Rabin Karp", new StringSearchingRunnable(), "ch.eiafr.cojac.perfs.StringSearchingRunnable");
         bench(1, "Sweeping Plane", new SweepingSorterRunnable(), "ch.eiafr.cojac.perfs.SweepingSorterRunnable");
-        bench(1, "Traveling Salesman", new TravelingSalesmanRunnable(), "ch.eiafr.cojac.perfs.TravelingSalesmanRunnable");
 
         BufferedImage image1 = ImageIO.read(COJACBenchmark.class.getResource("/images/matthew2.jpg"));
         benchWithImages(1, "FFT", new FFTRunnable(), "ch.eiafr.cojac.perfs.FFTRunnable", image1);
@@ -81,22 +90,20 @@ public class COJACBenchmark {
         bench(1, "SciMark SOR", new SciMarkSORRunnable(), "ch.eiafr.cojac.perfs.SciMarkSORRunnable");
         bench(1, "SciMark Sparse Mat Mult", new SciMarkSparseMatmultRunnable(), "ch.eiafr.cojac.perfs.SciMarkSparseMatmultRunnable");
 
-        benchSum();
-        benchSort();
 
         linpackBenchmark();
         sciMarkBenchmark();
     }
 
     private static void benchSum() throws Exception {
-        int arraySize = 10000000;
+        int arraySize = 10_000_000; //arraySize=1000;
 
         benchWithArrays(1, "Sum (Foreach)", new IntForeachSumCallable(), "ch.eiafr.cojac.perfs.IntForeachSumCallable", arraySize);
         benchWithArrays(1, "Sum (For)", new IntForSumCallable(), "ch.eiafr.cojac.perfs.IntForSumCallable", arraySize);
     }
 
     private static void benchSort() throws Exception {
-        int arraySize = 1000000;
+        int arraySize = 1_000_000; //arraySize=1000;
 
         benchWithArrays(1, "Sort (Java)", new JavaSortRunnable(), "ch.eiafr.cojac.perfs.JavaSortRunnable", arraySize);
         benchWithArrays(1, "Quicksort", new QuickSortRunnable(), "ch.eiafr.cojac.perfs.QuickSortRunnable", arraySize);
@@ -157,7 +164,7 @@ public class COJACBenchmark {
         Benchs benchs = new Benchs(title);
         initBench(actions, benchs);
         benchs.bench("Not instrumented", runnable);
-        benchAgentVariant("Agent",            benchs, cls, false, false, -1, null);
+        benchAgentVariant("Agent",            benchs, cls, false, -1, null);
         benchs.generateCharts(false);
         benchs.printResults();
     }
@@ -166,7 +173,7 @@ public class COJACBenchmark {
         Benchs benchs = new Benchs(title);
         initBench(actions, benchs);
         benchs.bench("Not instrumented", runnable);
-        benchAgentVariant("Agent",            benchs, cls, false, true, -1, null);
+        benchAgentVariant("Agent",            benchs, cls,  true, -1, null);
         benchs.generateCharts(false);
         benchs.printResults();
     }
@@ -175,7 +182,7 @@ public class COJACBenchmark {
         Benchs benchs = new Benchs(title);
         initBench(actions, benchs);
         benchWithArrays1(benchs, "Not instrumented", runnable, size);
-        benchAgentVariant("Agent", benchs, cls, false, true, size, null);
+        benchAgentVariant("Agent", benchs, cls,  true, size, null);
         benchs.generateCharts(false);
         benchs.printResults();
     }
@@ -189,7 +196,7 @@ public class COJACBenchmark {
         Benchs benchs = new Benchs(title);
         initBench(actions, benchs);
         benchWithArrays2(benchs, "Not instrumented", runnable, size);
-        benchAgentVariant("Agent", benchs, cls, false, false, size, null);
+        benchAgentVariant("Agent", benchs, cls, false, size, null);
         benchs.generateCharts(false);
         benchs.printResults();
     }
@@ -203,7 +210,7 @@ public class COJACBenchmark {
         Benchs benchs = new Benchs(title);
         initBench(actions, benchs);
         benchWithImages1(benchs, "Not instrumented", runnable, bufferedImage);
-        benchAgentVariant("Agent", benchs, cls, false, true, -1, bufferedImage);
+        benchAgentVariant("Agent", benchs, cls, true, -1, bufferedImage);
         benchs.generateCharts(false);
         benchs.printResults();
     }
@@ -232,21 +239,21 @@ public class COJACBenchmark {
     @SuppressWarnings("unchecked")
     private static <T> T getFromAgentClassLoader(String cls) throws Exception {
         Class<?> instanceClass = ClassLoader.getSystemClassLoader().loadClass(cls);
+        // TODO: retransforming classes fails with our Wrapping mechanism, which modifies signatures...
         AgentTest.instrumentation.retransformClasses(instanceClass);
         return (T) instanceClass.newInstance();
     }
 
-    private static Agent benchAgent(boolean wasteSize) throws Exception {
-        CojacReferencesBuilder builder = new CojacReferencesBuilder(getArgs(wasteSize));
+    private static Agent benchAgent() throws Exception {
+        CojacReferencesBuilder builder = new CojacReferencesBuilder(getArgs());
         Agent agent = new Agent(builder.build());
         AgentTest.instrumentation.addTransformer(agent, true);
         return agent;
     }
 
     private static void benchAgentVariant(String name, Benchs benchs, String cls,
-             boolean wasteSize, 
              boolean runnable, int size, BufferedImage bufImg) throws Exception {
-        Agent agent = benchAgent(wasteSize);
+        Agent agent = benchAgent();
         Runnable run=null;
         Callable<?> callable = null;
         Object runnableOrCallable=null;
@@ -269,13 +276,23 @@ public class COJACBenchmark {
         COJACBenchmark.<Callable<?>> getFromAgentClassLoader(cls); // gets back to an uninstrumented class definition
     }
 
-    private static Args getArgs(boolean wasteSize) {
-        Args args = new Args();
-        args.specify(Arg.ALL);
-        args.specify(Arg.PRINT);
-        args.specify(Arg.FILTER);
-        //args.specify(Arg.EXCEPTION);
-
-        return args;
+    private static Args getArgs() {
+        return theArgs;
+    }
+    
+    public static void setArgs(Args args) {
+        theArgs=args;
+    }
+    // ===================================================================
+    // TODO: retransforming classes fails with our Wrapping mechanism, which modifies signatures...
+    public static class COJACBenchmarkIntervalWrapper {
+        public static void main(String[] t) throws Exception {
+            Args a=new Args();
+            a.specify(Arg.INTERVAL);
+            a.specify(Arg.PRINT);
+            a.specify(Arg.FILTER); 
+            setArgs(a);
+            COJACBenchmark.main(t);
+        }
     }
 }

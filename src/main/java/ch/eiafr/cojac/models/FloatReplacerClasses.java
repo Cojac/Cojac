@@ -23,8 +23,7 @@ import java.util.logging.Logger;
 
 import org.objectweb.asm.Type;
 
-import ch.eiafr.cojac.models.wrappers.BigDecimalDouble;
-import ch.eiafr.cojac.models.wrappers.BigDecimalFloat;
+import ch.eiafr.cojac.models.wrappers.WrapperBigDecimal;
 
 public class FloatReplacerClasses {
 	
@@ -43,6 +42,10 @@ public class FloatReplacerClasses {
 	public static double  COJAC_STABILITY_THRESHOLD = 1E-5;
 	public static boolean COJAC_CHECK_UNSTABLE_COMPARISONS = true;
 	
+	// NOT READY YET...
+	
+	public static Class<?>  COJAC_WRAPPER_NG_CLASS=WrapperBigDecimal.class;
+
 	public static void setDoubleWrapper(String className){
 		try {
 			// Class can be checked with reflexion (ensure that all needed methods are awailable and that the class implements Comparable and extends Numbers)
@@ -57,7 +60,7 @@ public class FloatReplacerClasses {
 	
 	public static void setFloatWrapper(String className){
 		try {
-			// Class can be checked with reflexion (ensure that all needed methods are awailable and that the class implements Comparable and extends Numbers)
+			// Class can be checked with reflexion (ensure that all needed methods are available and that the class implements Comparable and extends Numbers)
 			COJAC_FLOAT_WRAPPER_CLASS = Class.forName(className);
 			COJAC_FLOAT_WRAPPER_TYPE = Type.getType(COJAC_FLOAT_WRAPPER_CLASS);
 			COJAC_FLOAT_WRAPPER_INTERNAL_NAME = COJAC_FLOAT_WRAPPER_TYPE.getInternalName();
@@ -69,8 +72,6 @@ public class FloatReplacerClasses {
 	
 	public static void setBigDecimalPrecision(int precision){
 		COJAC_BIGDECIMAL_PRECISION = precision;
-//		BigDecimalDouble.setPrecision(precision); //was it necessary?...
-//        BigDecimalFloat.setPrecision(precision);
 	}
 	
 	public static void setStabilityThreshold(double threshold) {

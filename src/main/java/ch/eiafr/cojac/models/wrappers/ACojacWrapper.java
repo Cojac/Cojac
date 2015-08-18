@@ -24,7 +24,7 @@ public abstract class ACojacWrapper implements Comparable<ACojacWrapper>{
     //----------------- Necessary constructor  -------------------------------
     //-------------------------------------------------------------------------
 
-    public ACojacWrapper(ACojacWrapper v) { }
+    // public ACojacWrapper(ACojacWrapper v) { }
 
     //-------------------------------------------------------------------------
     
@@ -36,8 +36,14 @@ public abstract class ACojacWrapper implements Comparable<ACojacWrapper>{
     public abstract ACojacWrapper dneg();
     public abstract double toDouble();
     
-    public abstract int dcmpl(ACojacWrapper b);
-    public abstract int dcmpg(ACojacWrapper b);
+    public int dcmpl(ACojacWrapper b) {
+        if (this.isNaN() || b.isNaN()) return -1;
+        return this.compareTo(b);
+    }
+    public int dcmpg(ACojacWrapper b) {
+        if (this.isNaN() || b.isNaN()) return -1;
+        return this.compareTo(b);
+    }
     public int  d2i() { return (int)  toDouble();}
     public long d2l() { return (long) toDouble();}
     public abstract ACojacWrapper math_sqrt();
@@ -61,13 +67,13 @@ public abstract class ACojacWrapper implements Comparable<ACojacWrapper>{
     public abstract ACojacWrapper math_max(ACojacWrapper b);
     public abstract ACojacWrapper math_pow(ACojacWrapper b);
     
+    public boolean isNaN() {
+        return Double.isNaN(toDouble());
+    }
     //-------------------------------------------------------------------------
-
-    public abstract ACojacWrapper fromDouble(double a);
+    /** wasFromFloat can be used to distinguish two kinds of numbers */
+    public abstract ACojacWrapper fromDouble(double a, boolean wasFromFloat);
     
-    // fromFloat can be overridden, eg to "tag" the number as a "float"...
-    public ACojacWrapper fromFloat(double a) { return fromDouble(a); }
-
     
     //-------------------------------------------------------------------------
     //----------------- Overridden methods ------------------------------------
@@ -86,12 +92,6 @@ public abstract class ACojacWrapper implements Comparable<ACojacWrapper>{
 
 	@Override public int hashCode()       { return Double.hashCode(toDouble()); }
     @Override public String toString()    { return Double.toString(toDouble()); }
-//    @Override public byte byteValue()     { return (byte) toDouble(); }
-//    @Override public short shortValue()   { return (short) toDouble(); }
-//	@Override public int intValue()       { return (int) toDouble(); }
-//	@Override public long longValue()     { return (long) toDouble(); }
-//	@Override public float floatValue()   { return (float) toDouble(); }
-//	@Override public double doubleValue() { return toDouble(); }
 
     public abstract String asInternalString();
     

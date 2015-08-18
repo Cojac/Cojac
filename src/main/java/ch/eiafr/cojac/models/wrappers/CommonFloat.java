@@ -40,7 +40,7 @@ public class CommonFloat extends Number implements Comparable<CommonFloat> {
     //-------------------------------------------------------------------------
 
     private CommonFloat(float v) {
-        val = newInstance(null).fromFloat(v);
+        val = newInstance(null).fromDouble(v, true);
     }
     
     public CommonFloat(String v) {

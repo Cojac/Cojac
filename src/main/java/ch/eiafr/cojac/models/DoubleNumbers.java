@@ -123,7 +123,7 @@ public class DoubleNumbers {
 		if(obj == null)
 			return obj;
 		if(obj.getClass().isArray()){
-			Class type = getArrayType(obj);
+			Class<?> type = getArrayType(obj);
 			if(type.equals(COJAC_FLOAT_WRAPPER_CLASS)){
 				int dim = getArrayDimension(obj);
 				return FloatNumbers.convertArrayToReal(obj, dim);
@@ -137,28 +137,26 @@ public class DoubleNumbers {
 			Object array[] = (Object[]) obj;
 			for (int i = 0; i < array.length; i++) 
 				array[i] = convertFromObjectToReal(array[i]);
-			return (Object) array;
+			return array;
+		} // else...
+		if(COJAC_FLOAT_WRAPPER_CLASS.isInstance(obj)){
+		    Method m = COJAC_FLOAT_WRAPPER_CLASS.getMethod("toRealFloatWrapper", new Class[] {COJAC_FLOAT_WRAPPER_CLASS});
+		    return m.invoke(COJAC_FLOAT_WRAPPER_CLASS, obj);
+		    // WRAPPER SPEC: FW.toRealDoubleWrapper(FW) -> Float
 		}
-		else{
-			if(COJAC_FLOAT_WRAPPER_CLASS.isInstance(obj)){
-				Method m = COJAC_FLOAT_WRAPPER_CLASS.getMethod("toRealFloatWrapper", new Class[] {COJAC_FLOAT_WRAPPER_CLASS});
-				return m.invoke(COJAC_FLOAT_WRAPPER_CLASS, obj);
-                // WRAPPER SPEC: FW.toRealDoubleWrapper(FW) -> Float
-			}
-			if(COJAC_DOUBLE_WRAPPER_CLASS.isInstance(obj)){
-				Method m = COJAC_DOUBLE_WRAPPER_CLASS.getMethod("toRealDoubleWrapper", new Class[] {COJAC_DOUBLE_WRAPPER_CLASS});
-				return m.invoke(COJAC_DOUBLE_WRAPPER_CLASS, obj);
-	            // WRAPPER SPEC: DW.toRealDoubleWrapper(DW) -> Double
-			}
-			return obj;
+		if(COJAC_DOUBLE_WRAPPER_CLASS.isInstance(obj)){
+		    Method m = COJAC_DOUBLE_WRAPPER_CLASS.getMethod("toRealDoubleWrapper", new Class[] {COJAC_DOUBLE_WRAPPER_CLASS});
+		    return m.invoke(COJAC_DOUBLE_WRAPPER_CLASS, obj);
+		    // WRAPPER SPEC: DW.toRealDoubleWrapper(DW) -> Double
 		}
+		return obj;
 	}
 	
 	public static Object convertFromObjectToCojac(Object obj) throws Exception{
 		if(obj == null)
 			return obj;
 		if(obj.getClass().isArray()){
-			Class type = getArrayType(obj);
+			Class<?> type = getArrayType(obj);
 			if(type.equals(float.class) || type.equals(Float.class)){
 				int dim = getArrayDimension(obj);
 				return FloatNumbers.convertArrayToCojac(obj, dim);
@@ -172,28 +170,26 @@ public class DoubleNumbers {
 			Object array[] = (Object[]) obj;
 			for (int i = 0; i < array.length; i++) 
 				array[i] = convertFromObjectToCojac(array[i]);
-			return (Object) array;
-		}
-		else{
-			if(obj instanceof Float)
-				return COJAC_FLOAT_WRAPPER_CLASS.getConstructor(float.class).newInstance((Float)obj);
-	        // WRAPPER SPEC: FW(float)
-			if(obj instanceof Double)
-				return COJAC_DOUBLE_WRAPPER_CLASS.getConstructor(double.class).newInstance((Double)obj);
-	        // WRAPPER SPEC: DW(double)
-			return obj;
-		}
+			return array;
+		}  // else...
+		if(obj instanceof Float)
+		    return COJAC_FLOAT_WRAPPER_CLASS.getConstructor(float.class).newInstance((Float)obj);
+		// WRAPPER SPEC: FW(float)
+		if(obj instanceof Double)
+		    return COJAC_DOUBLE_WRAPPER_CLASS.getConstructor(double.class).newInstance((Double)obj);
+		// WRAPPER SPEC: DW(double)
+		return obj;
 	}
 	
-	private static boolean isPrimitiveType(Class type){
+	private static boolean isPrimitiveType(Class<?> type){
 		return type.equals(boolean.class) || type.equals(byte.class) ||
 				type.equals(char.class) || type.equals(double.class) ||
 				type.equals(float.class) || type.equals(int.class) ||
 				type.equals(long.class) || type.equals(short.class);
 	}
 	
-	private static Class getArrayType(Object array){
-		Class type = array.getClass();
+	private static Class<?> getArrayType(Object array){
+		Class<?> type = array.getClass();
 		while (type.isArray())
 			type = type.getComponentType();
 		return type;
@@ -201,7 +197,7 @@ public class DoubleNumbers {
 	
 	public static int getArrayDimension(Object array) {
 		int count = 0;
-		Class type = array.getClass();
+		Class<?> type = array.getClass();
 		while ( type.isArray() ) {
 			count++;
 			type = type.getComponentType();
@@ -214,7 +210,7 @@ public class DoubleNumbers {
 			return;
 		}
 		if(cojac.getClass().isArray()){
-			Class type = getArrayType(cojac);
+			Class<?> type = getArrayType(cojac);
 			if(type.equals(COJAC_FLOAT_WRAPPER_CLASS)){
 				int dim = getArrayDimension(cojac);
 				mergeFloatArray(original, cojac, dim);
