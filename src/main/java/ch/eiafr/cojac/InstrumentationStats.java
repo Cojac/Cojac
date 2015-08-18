@@ -38,16 +38,11 @@ import static org.objectweb.asm.util.Printer.OPCODES;
 import ch.eiafr.cojac.models.Reactions;
 
 public final class InstrumentationStats extends NotificationBroadcasterSupport implements ICojacMXBean {
-    //private final Map<Arg, Counter> counters = new EnumMap<Arg, Counter>(Arg.class);
     private final Map<Integer, Counter> counters = new HashMap<Integer, Counter>();
     private long startTime;
     private final Object BLACKLIST_LOCK = new Object();
     private List<String> blacklist = new ArrayList<String>();
     private long changes = 0;
-
-//    public Map<Arg, Counter> getCounters() {
-//        return counters;
-//    }
 
     @Override
     public Map<String, Integer> getCountersMBean() {
@@ -184,7 +179,6 @@ public final class InstrumentationStats extends NotificationBroadcasterSupport i
         BufferedWriter out = null;
         try {
             out = new BufferedWriter(new FileWriter(logFileName, true));
-
             out.write(builder.toString());
         } catch (Exception e) {
             System.err.print("COJAC: Error while logging: ");

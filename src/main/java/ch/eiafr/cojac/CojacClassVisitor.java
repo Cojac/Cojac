@@ -59,8 +59,7 @@ final class CojacClassVisitor extends ClassVisitor {
         this.reaction = references.getReaction();
         this.factory = references.getOpCodeInstrumenterFactory();
         this.cav = cav;
-        proxyMethods = new ArrayList<>();
-        
+        proxyMethods = new ArrayList<>();    
     }
 
     @Override
@@ -88,8 +87,8 @@ final class CojacClassVisitor extends ClassVisitor {
         }
 		
         boolean isNative = (access & Opcodes.ACC_NATIVE) > 0;
-		boolean isAbstrac = (access & Opcodes.ACC_ABSTRACT) > 0;
-		boolean isInterface = (access & Opcodes.ACC_INTERFACE) > 0;
+		//boolean isAbstrac = (access & Opcodes.ACC_ABSTRACT) > 0;
+		//boolean isInterface = (access & Opcodes.ACC_INTERFACE) > 0;
        
         if(isNative && desc.equals(oldDesc) == false){
 			/* 
@@ -125,10 +124,9 @@ final class CojacClassVisitor extends ClassVisitor {
             LocalVariablesSorter lvs = new FloatVariablesSorter(access, desc, aa);
             ReplaceFloatsMethods rfm = new ReplaceFloatsMethods(fpm, classPath, references);
             mv = new FloatReplacerMethodVisitor(access, desc, aa, lvs, rfm, stats, args, methods, reaction, classPath, factory, references);
-        }
-        else 
+        } else {
             mv = new CojacCheckerMethodVisitor(access, desc, parentMv, stats, args, methods, reaction, classPath, factory);
-
+        }
         mv.visitEnd();
 
         return mv;

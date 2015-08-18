@@ -18,17 +18,12 @@
 
 package ch.eiafr.cojac;
 
-import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenterFactory;
-import ch.eiafr.cojac.reactions.IReaction;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 
 public final class ClassLoaderInstrumenter implements IClassInstrumenter {
     private final Args args;
     private final InstrumentationStats stats;
-    private final IReaction reaction;  //TODO try to remove those unused fields
-    private final IOpcodeInstrumenterFactory factory;
-	private final String[] bypassList;
 
 	private final CojacReferences references;
 	
@@ -38,9 +33,6 @@ public final class ClassLoaderInstrumenter implements IClassInstrumenter {
 		this.references = references;
         this.args = references.getArgs();
         this.stats = references.getStats();
-        this.reaction = references.getReaction();
-        this.factory = references.getOpCodeInstrumenterFactory();
-		this.bypassList = references.getBypassList();
     }
 
     @Override

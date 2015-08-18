@@ -47,8 +47,7 @@ public class FloatVariablesSorter extends LocalVariablesSorter{
         if(args.length == 0){
             firstFrameMapping = null;
             maxRenumber = 0;
-        }
-        else{
+        } else {
             firstFrameMapping = new int[args.length*2];
 
             firstFrameMapping[0] = 0;
@@ -120,21 +119,17 @@ public class FloatVariablesSorter extends LocalVariablesSorter{
                 newLocal.add(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME);
                 newLocal.add(Opcodes.TOP);
                 nLocal++;
-            }
-            else if(object == Opcodes.FLOAT){
+            } else if(object == Opcodes.FLOAT){
                 newLocal.add(COJAC_FLOAT_WRAPPER_INTERNAL_NAME);
-            }
-            else if(object instanceof String && ((String)object).endsWith("[D")){
+            } else if(object instanceof String && ((String)object).endsWith("[D")){
                 String tab = (String) object;
                 tab = tab.replaceAll("D", COJAC_DOUBLE_WRAPPER_TYPE_DESCR);
                 newLocal.add(tab);
-            }
-            else if(object instanceof String && ((String)object).endsWith("[F")){
+            } else if(object instanceof String && ((String)object).endsWith("[F")){
                 String tab = (String) object;
                 tab = tab.replaceAll("F", COJAC_FLOAT_WRAPPER_TYPE_DESCR);
                 newLocal.add(tab);
-            }
-            else{
+            } else{
                 newLocal.add(object);
             }
         }
@@ -143,21 +138,17 @@ public class FloatVariablesSorter extends LocalVariablesSorter{
 		for (Object object : stack) {
 			if(object == Opcodes.DOUBLE){
                 newStack.add(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME);
-            }
-            else if(object == Opcodes.FLOAT){
+            } else if(object == Opcodes.FLOAT){
                 newStack.add(COJAC_FLOAT_WRAPPER_INTERNAL_NAME);
-            }
-            else if(object instanceof String && ((String)object).endsWith("[D")){
+            } else if(object instanceof String && ((String)object).endsWith("[D")){
                 String tab = (String) object;
                 tab = tab.replaceAll("D", COJAC_DOUBLE_WRAPPER_TYPE_DESCR);
                 newStack.add(tab);
-            }
-            else if(object instanceof String && ((String)object).endsWith("[F")){
+            } else if(object instanceof String && ((String)object).endsWith("[F")){
                 String tab = (String) object;
                 tab = tab.replaceAll("F", COJAC_FLOAT_WRAPPER_TYPE_DESCR);
                 newStack.add(tab);
-            }
-            else{
+            } else{
                 newStack.add(object);
             }
 		}

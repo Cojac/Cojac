@@ -23,12 +23,8 @@ import java.util.Map;
 
 public interface ICojacMXBean {
     Map<String, Integer> getCountersMBean();
-
     List<String> getBlacklist();
-
     Map<String, Long> getEvent();
-
     void start();
-
     void stop();
 }

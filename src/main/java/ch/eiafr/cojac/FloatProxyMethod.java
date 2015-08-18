@@ -77,17 +77,10 @@ public class FloatProxyMethod {
 			varIndex += type.getSize();
 		}
 		
-		
-		convertedArrays = convertArgumentsToReal(newMv, desc, opcode, owner);
-
-		
-		newMv.visitMethodInsn(opcode, owner, name, desc, false);
-		
-        
-		checkArraysAfterCall(newMv, convertedArrays, desc);
-		
-		convertReturnType(newMv, desc);
-		
+		convertedArrays = convertArgumentsToReal(newMv, desc, opcode, owner);		
+		newMv.visitMethodInsn(opcode, owner, name, desc, false);       
+		checkArraysAfterCall(newMv, convertedArrays, desc);		
+		convertReturnType(newMv, desc);		
 		newMv.visitInsn(afterFloatReplacement(Type.getReturnType(desc)).getOpcode(IRETURN));
         newMv.visitMaxs(0, 0);
     }
@@ -156,8 +149,7 @@ public class FloatProxyMethod {
 			
 			if(outArgs[i].getSort() == Type.ARRAY || outArgs[i].getSort() == Type.OBJECT){ // else: primitive type
 				mv.visitTypeInsn(CHECKCAST, outArgs[i].getInternalName());
-			}
-			else{
+			} else{
 				mv.visitTypeInsn(CHECKCAST, getPrimitiveWrapper(outArgs[i]).getInternalName());
 				mv.visitMethodInsn(INVOKEVIRTUAL, getPrimitiveWrapper(outArgs[i]).getInternalName(), getWrapperToPrimitiveMethod(outArgs[i]), "()"+outArgs[i].getDescriptor(), false);
 			}
@@ -165,8 +157,7 @@ public class FloatProxyMethod {
 			if(outArgs[i].getSize() == 2){ // Swap when double or long: Object D D
 				mv.visitInsn(DUP2_X1); // D D Object D D
 				mv.visitInsn(POP2); // D D Object
-			}
-			else{
+			} else{
 				mv.visitInsn(SWAP);
 			}
 		}
@@ -230,11 +221,9 @@ public class FloatProxyMethod {
 				
                 if(typeConversions.get(i) != null){
                     convertCojacToRealType(typeConversions.get(i), newMv);
-                }
-				else if(inArgs[i].equals(Type.getType(Object.class))) { // BAPST: maybe to reconsider...
+                } else if(inArgs[i].equals(Type.getType(Object.class))) { // BAPST: maybe to reconsider...
 					convertObjectToReal(newMv, inArgs[i]);
-				}
-				else if(inArgs[i].getSort() == Type.ARRAY && inArgs[i].getElementType().equals(Type.getType(Object.class))){
+				} else if(inArgs[i].getSort() == Type.ARRAY && inArgs[i].getElementType().equals(Type.getType(Object.class))){
 					convertObjectToReal(newMv, inArgs[i]);
 				}
 				convertPrimitiveToObject(newMv, type);
@@ -261,8 +250,7 @@ public class FloatProxyMethod {
 		int returnTypeSize = returnType.getSize();
 		if(returnTypeSize == 1){
 			mv.visitInsn(SWAP);
-		}
-		else if(returnTypeSize == 2){
+		} else if(returnTypeSize == 2){
 			mv.visitInsn(DUP2_X1); // D D Object D D
 			mv.visitInsn(POP2); // D D Object
 		}

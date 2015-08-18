@@ -342,11 +342,6 @@ public final class CojacReferences {
             if (args.isSpecified(Arg.STABILITY_THRESHOLD)) {
                 stabilityThreshold = Double.valueOf(args.getValue(Arg.STABILITY_THRESHOLD));
                 clazz.getMethod("setStabilityThreshold", double.class).invoke(clazz, stabilityThreshold);
-
-//                Class<?> doubleWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.IntervalDouble");
-//                //Class<?> floatWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.IntervalFloat");
-//                doubleWrapperClass.getMethod("setThreshold", double.class).invoke(doubleWrapperClass, threshold);
-//                //floatWrapperClass.getMethod("setThreshold", float.class).invoke(floatWrapperClass, (float) threshold);
             }
 
             if (args.isSpecified(Arg.DISABLE_UNSTABLE_COMPARISONS_CHECK)) {
