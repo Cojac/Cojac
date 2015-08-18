@@ -55,7 +55,8 @@ public enum Arg {
 
     ALL("a"),
     NONE("n"),
-    INTS("ints"),
+    OPCODES("opcodes"),
+    INTS("ints"),  // warning: its ordinal value is used (opcodes must be below)
     FLOATS("floats"),
     DOUBLES("doubles"),
     LONGS("longs"),
@@ -146,6 +147,15 @@ public enum Arg {
 
         return null;
     }
+    
+    public static Arg fromName(String name) {
+        for (Arg arg : values()) {
+            if (arg.name.equals(name)) {
+                return arg;
+            }
+        }
+        return null;
+    }
 
     @SuppressWarnings("static-access")
     static Options createOptions() {
@@ -228,9 +238,16 @@ public enum Arg {
                 true,"Relative precision considered unstable, for the Interval or Stochastic wrappers (eg 0.0001)");
 
         options.addOption(Arg.ALL.shortOpt(),
-                "all", false, "Instrument every operation (int, long, cast)");
+                "all", false, "Instrument every operation (int, long, cast, floats, doubles)");
         options.addOption(Arg.NONE.shortOpt(),
                 "none", false, "Don't instrument any instruction");
+        String allOpcodes="";
+        for (Arg arg : Arg.values())
+            if (arg.isOperator()) allOpcodes+=arg.name+",";
+              // options.addOption(arg.shortOpt(), false, "Instrument the " + arg.shortOpt() + " operation");
+        allOpcodes=allOpcodes.substring(0, allOpcodes.length()-1);
+        options.addOption(Arg.OPCODES.shortOpt(),
+                true, "instruments those opcodes; comma separated list, the longest being "+allOpcodes);
         options.addOption(Arg.MATHS.shortOpt(),
             false, "Detect problems in (Strict)Math.XXX() methods");
         options.addOption(Arg.INTS.shortOpt(),
@@ -243,12 +260,6 @@ public enum Arg {
             false, "Activate all the doubles opcodes");
         options.addOption(Arg.FLOATS.shortOpt(),
             false, "Activate all the floats opcodes");
-
-        for (Arg arg : Arg.values()) {
-            if (arg.isOperator()) {
-                options.addOption(arg.shortOpt(), false, "Instrument the " + arg.shortOpt() + " operation");
-            }
-        }
 
         return options;
     }

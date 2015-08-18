@@ -80,10 +80,21 @@ public final class Args {
             switch(arg) {
             case BIG_DECIMAL_PRECISION:
             case JMX_PORT: Integer.parseInt(val); break;
-            
+            case STABILITY_THRESHOLD: Double.parseDouble(val); break;
+            case OPCODES: processOpcodeList(val); break;
             }
         } catch(Exception e) {
             throw new ParseException(msg);
+        }
+    }
+
+    private void processOpcodeList(String val) throws Exception {
+        String[] t=val.split(",");
+        for(String s:t) {
+            Arg a=Arg.fromName(s);
+            if (a==null || !a.isOperator()) 
+                throw new Exception("bad opcode name");
+            specify(a);
         }
     }
 
@@ -185,10 +196,11 @@ public final class Args {
     }
 
     public boolean isOperationEnabled(Arg arg) {
+        boolean res=isSpecified(arg) || arg.getParent() != null && isSpecified(arg.getParent());
         if (arg.ordinal() >= Arg.INTS.ordinal()) {
-            return isSpecified(arg) || isSpecified(Arg.ALL) || arg.getParent() != null && isSpecified(arg.getParent());
+            return res || isSpecified(Arg.ALL);
         } 
-        return isSpecified(arg) || arg.getParent() != null && isSpecified(arg.getParent());
+        return res;
     }
     
     public ReactionType getReactionType() {
