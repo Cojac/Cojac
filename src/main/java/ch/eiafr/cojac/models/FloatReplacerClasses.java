@@ -40,8 +40,8 @@ public class FloatReplacerClasses {
 	
     // parameters from command line options, and their default values
 	public static int     COJAC_BIGDECIMAL_PRECISION = 100; 
-	public static double  COJAC_STABILITY_THRESHOLD = 1.0;
-	public static boolean COJAC_CHECK_UNSTABLE_COMPARISONS = false;
+	public static double  COJAC_STABILITY_THRESHOLD = 1E-5;
+	public static boolean COJAC_CHECK_UNSTABLE_COMPARISONS = true;
 	
 	public static void setDoubleWrapper(String className){
 		try {

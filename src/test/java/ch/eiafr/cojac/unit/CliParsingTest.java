@@ -22,8 +22,6 @@ import ch.eiafr.cojac.Arg;
 import ch.eiafr.cojac.Args;
 import org.junit.Test;
 
-import java.util.Arrays;
-
 import static org.junit.Assert.assertTrue;
 
 
@@ -31,15 +29,9 @@ public class CliParsingTest {
     @Test
     public void cli05_help() {
         String[] args = {"-h"};
-        String[] files = {};
-        String[] appArgs = {};
         Args a = new Args();
         boolean b = a.parse(args);
         assertTrue(b);
-        String[] effFiles = a.getFiles().toArray(new String[0]);
-        String[] effAppArgs = a.getAppArgs();
-        assertTrue(Arrays.equals(files, effFiles));
-        assertTrue(Arrays.equals(appArgs, effAppArgs));
     }
 
 	@Test
@@ -48,17 +40,11 @@ public class CliParsingTest {
                 "-jmxenable", 
 		        "-jmxhost", "127.0.0.1", 
 		        "-jmxport", "1234", 
-		        "-jmxname", "COJACTEST", "a.jar"
+		        "-jmxname", "COJACTEST"
 		        };
-		String[] files = { "a.jar" };
-		String[] appArgs = {};
 		Args a = new Args();
 		boolean b = a.parse(args);
 		assertTrue(b);
-		String[] effFiles = a.getFiles().toArray(new String[0]);
-		String[] effAppArgs = a.getAppArgs();
-		assertTrue(Arrays.equals(files, effFiles));
-		assertTrue(Arrays.equals(appArgs, effAppArgs));
 		assertTrue(a.getValue(Arg.JMX_HOST).equals("127.0.0.1"));
 		assertTrue(a.getValue(Arg.JMX_PORT).equals("1234"));
 		assertTrue(a.getValue(Arg.JMX_NAME).equals("COJACTEST"));

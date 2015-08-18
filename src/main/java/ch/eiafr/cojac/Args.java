@@ -26,7 +26,6 @@ import org.apache.commons.cli.ParseException;
 
 import ch.eiafr.cojac.models.ReactionType;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -35,14 +34,12 @@ import java.util.Map;
 public final class Args {
     private final Options options = Arg.createOptions();
     private final Map<Arg, ArgValue> values = new EnumMap<>(Arg.class);
-    private final List<String> files = new ArrayList<>(5);
-    private String[] appArgs;
 
     static final String DEFAULT_LOG_FILE_NAME = "COJAC_Report.log";
-    static final String DEFAULT_OUTPUT_DIR = "." + File.separatorChar + "COJAC_Output" + File.separatorChar;
     static final String DEFAULT_JMX_HOST = "localhost";
     static final String DEFAULT_JMX_PORT = "5217";
     static final String DEFAULT_JMX_NAME = "COJAC";
+    static final String DEFAULT_STABILITY_THRESHOLD = "0.0001";
 
     private static String USAGE =
              "java -javaagent:cojac.jar=\"[OPTIONS]\" YourApp [appArgs]\n"
@@ -57,51 +54,16 @@ public final class Args {
     }
 
     public boolean parse(String[] args) {
-        int index = -1;
-
-        for (int i = 0; i < args.length; i++) {
-            if ("--".equalsIgnoreCase(args[i])) {
-                index = i;
-                break;
-            }
-        }
-
-        String[] cojacArgs;
-        if (index >= 0) {
-            int takeNext = index == args.length - 1 ? 0 : 1;
-            cojacArgs = new String[index + takeNext];
-            appArgs = new String[args.length - index - 1 - takeNext];
-            System.arraycopy(args, 0, cojacArgs, 0, index);
-            if (takeNext == 1) {
-                cojacArgs[index] = args[index + 1];
-            }
-            System.arraycopy(args, index + 1 + takeNext, appArgs, 0, appArgs.length);
-        } else {
-            cojacArgs = args;
-            appArgs = new String[0];
-        }
-
+        // in an older version, we parsed <options> <appsOrFiles> <appArgs>...
+        String[] cojacArgs = args; 
         try {
             CommandLine commandLine = new GnuParser().parse(options, cojacArgs);
             for (Arg arg : Arg.values()) {
                 if (commandLine.hasOption(arg.shortOpt())) {
                     values.get(arg).setSpecified();
                     values.get(arg).setValue(commandLine.getOptionValue(arg.shortOpt()));
+                    verifyOptionFormat(arg);
                 }
-            }
-            String[] remainingArgs = commandLine.getArgs();
-            if (remainingArgs.length > 0) {
-                files.add(remainingArgs[0]);
-            }
-            int nAppArgs = appArgs.length + remainingArgs.length - files.size();
-            String[] auxAppArgs = appArgs;
-            appArgs = new String[nAppArgs];
-            int i = 0;
-            for (; i + 1 < remainingArgs.length; i++) {
-                appArgs[i] = remainingArgs[i + 1];
-            }
-            for (String auxAppArg : auxAppArgs) {
-                appArgs[i++] = auxAppArg;
             }
         } catch (ParseException e) {
             System.out.println("Invalid command line.  Reason: " + e.getMessage());
@@ -111,11 +73,21 @@ public final class Args {
         return true;
     }
 
-    private void setDefaults() {
-        if (!isSpecified(Arg.PATH)) {
-            setValue(Arg.PATH, DEFAULT_OUTPUT_DIR);
+    private void verifyOptionFormat(Arg arg) throws ParseException {
+        String val=values.get(arg).getValue();
+        String msg="bad format for option "+arg;
+        try {
+            switch(arg) {
+            case BIG_DECIMAL_PRECISION:
+            case JMX_PORT: Integer.parseInt(val); break;
+            
+            }
+        } catch(Exception e) {
+            throw new ParseException(msg);
         }
+    }
 
+    private void setDefaults() {
         if (isSpecified(Arg.NONE)) {
             disableAll();
         } else if (!areSomeCategoriesSelected() && !areSomeOpcodesSelected()) {
@@ -128,13 +100,8 @@ public final class Args {
             }
         }
 
-
         if (!(isSpecified(Arg.LOG_FILE) || isSpecified(Arg.EXCEPTION) || isSpecified(Arg.CALL_BACK))) {
             specify(Arg.PRINT);
-        }
-
-        if (isSpecified(Arg.NO_CANCELLATION)) {
-            //TODO: consider -XnoCancellation
         }
 
         if (isOperationEnabled(Arg.JMX_ENABLE)) {
@@ -148,6 +115,7 @@ public final class Args {
                 values.get(Arg.JMX_NAME).setValue(DEFAULT_JMX_NAME);
             }
         }
+        values.get(Arg.STABILITY_THRESHOLD).setValue(DEFAULT_STABILITY_THRESHOLD);
     }
 
     private void disableAll() {
@@ -222,14 +190,6 @@ public final class Args {
         } 
         return isSpecified(arg) || arg.getParent() != null && isSpecified(arg.getParent());
     }
-
-    public List<String> getFiles() {
-        return files;
-    }
-
-    public String[] getAppArgs() {
-        return appArgs;
-    }
     
     public ReactionType getReactionType() {
         if (isSpecified(Arg.PRINT)) {
@@ -245,7 +205,7 @@ public final class Args {
         throw new RuntimeException("no reaction is defined!");
     }
 
-
+    //========================================================================
     private static final class ArgValue {
         private boolean specified;
         private String value;

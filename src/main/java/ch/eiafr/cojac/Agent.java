@@ -69,11 +69,12 @@ public final class Agent implements ClassFileTransformer {
             }
             byte[] instrumented= instrumenter.instrument(classfileBuffer, loader);
             if (VERBOSE) {
-				// TODO - FAIL in verbose mode when the instrumented application uses interfaces (only with -R option)
 				/*
-				The interfaces are loaded by this class, the loading of a class by the agent is done without the instrumentation.
-				Once the interface is loaded, it is never reloaded for the same classloader.
-				That means the interface will never be instrumented in verbose mode. 
+				The interfaces are loaded by this class, the loading of a class 
+				by the agent is done without the instrumentation.
+				Once the interface is loaded, it is never reloaded for the same 
+				classloader. That means the interface will never be instrumented 
+				in verbose mode. 
 				*/
                 if (! REPLACE_FLOATS)
                     CheckClassAdapter.verify(new ClassReader(instrumented), PRINT_INSTR_RESULT, new PrintWriter(System.out));
@@ -90,15 +91,12 @@ public final class Agent implements ClassFileTransformer {
 	
 	/**
 	 * This method works only with the FloatReplacerClasses class
-	 * It instrument it to create a static initializer block to set
+	 * It instruments it to create a static initializer block to set
 	 * all the static variables used by the agent and injected in the 
 	 * instrumented application.
 	 * Warning: this is not the only place to set these variables, see class
 	 * "CojacReferences" !
 	 * This is used when there is more than one classloader in the application
-	 * @param byteCode
-	 * @param loader
-	 * @return 
 	 */
 	private byte[] setGlobalFields(byte[] byteCode, ClassLoader loader) {
         ClassReader cr = new ClassReader(byteCode);

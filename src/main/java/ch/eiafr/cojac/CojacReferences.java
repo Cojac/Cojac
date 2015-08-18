@@ -200,7 +200,7 @@ public final class CojacReferences {
         private String doubleWrapper;
         private int bigDecimalPrecision;
         private double stabilityThreshold;
-        private boolean checkUnstableComparisons;
+        private boolean checkUnstableComparisons=true;
         
         private final String[] loadedClasses;
 
@@ -339,8 +339,8 @@ public final class CojacReferences {
                 clazz.getMethod("setBigDecimalPrecision", int.class).invoke(clazz, bigDecimalPrecision);
             }
             
-            if (args.isSpecified(Arg.INTERVAL)) {
-                stabilityThreshold = Double.valueOf(args.getValue(Arg.INTERVAL));
+            if (args.isSpecified(Arg.STABILITY_THRESHOLD)) {
+                stabilityThreshold = Double.valueOf(args.getValue(Arg.STABILITY_THRESHOLD));
                 clazz.getMethod("setStabilityThreshold", double.class).invoke(clazz, stabilityThreshold);
 
 //                Class<?> doubleWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.IntervalDouble");
@@ -349,31 +349,11 @@ public final class CojacReferences {
 //                //floatWrapperClass.getMethod("setThreshold", float.class).invoke(floatWrapperClass, (float) threshold);
             }
 
-            if (args.isSpecified(Arg.INTERVAL_COMP)) {
-                checkUnstableComparisons=true;
-                clazz.getMethod("setCheckUnstableComparisons", boolean.class).invoke(clazz, true);
-//                Class<?> doubleWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.IntervalDouble");
-//                Class<?> floatWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.IntervalFloat");
-//                doubleWrapperClass.getMethod("setCheckComp", boolean.class).invoke(doubleWrapperClass, true);
-//                floatWrapperClass.getMethod("setCheckComp", boolean.class).invoke(floatWrapperClass, true);
+            if (args.isSpecified(Arg.DISABLE_UNSTABLE_COMPARISONS_CHECK)) {
+                checkUnstableComparisons=false;
+                clazz.getMethod("setCheckUnstableComparisons", boolean.class).invoke(clazz, checkUnstableComparisons);
             }
 
-            if (args.isSpecified(Arg.STOCHASTIC)) {
-                stabilityThreshold = Double.valueOf(args.getValue(Arg.STOCHASTIC));
-                clazz.getMethod("setStabilityThreshold", double.class).invoke(clazz, stabilityThreshold);
-//                Class<?> doubleWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.StochasticDouble");
-//                Class<?> floatWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.StochasticFloat");
-//                doubleWrapperClass.getMethod("setThreshold", double.class).invoke(doubleWrapperClass, threshold);
-//                floatWrapperClass.getMethod("setThreshold", double.class).invoke(floatWrapperClass, threshold);
-            }
-
-//            if (args.isSpecified(Arg.STOCHASTIC_NBR_PARALLEL_NUMBER)) {
-//                int nbrParallelNumber = Integer.valueOf(args.getValue(Arg.STOCHASTIC_NBR_PARALLEL_NUMBER));
-//                Class<?> doubleWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.StochasticDouble");
-//                Class<?> floatWrapperClass = loader.loadClass("ch.eiafr.cojac.models.wrappers.StochasticFloat");
-//                doubleWrapperClass.getMethod("setNbrParallelNumber", int.class).invoke(doubleWrapperClass, nbrParallelNumber);
-//                floatWrapperClass.getMethod("setNbrParallelNumber", int.class).invoke(floatWrapperClass, nbrParallelNumber);
-//            }
         }
 
         private void registerInstrumentationStats(MBeanServer mbServer, InstrumentationStats stats) {
@@ -401,10 +381,12 @@ public final class CojacReferences {
         }
     }
 
+    // ========================================================================
     public interface Splitter {
         String[] split(String list);
     }
 
+    // ========================================================================
     public static class CojacClassLoaderSplitter implements Splitter {
         @Override
         public String[] split(String list) {
@@ -412,6 +394,7 @@ public final class CojacReferences {
         }
     }
 
+    // ========================================================================
     public static final class AgentSplitter extends CojacClassLoaderSplitter {
         @Override
         public String[] split(String list) {

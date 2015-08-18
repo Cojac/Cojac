@@ -97,13 +97,13 @@ public abstract class WrappingLauncher {
 	//========================================
 	public static class IntervalWrappingTest extends WrappingLauncher {
         @Override protected void specifyArgs(Args args) {
-            args.setValue(Arg.INTERVAL, "0.001");
+            args.specify(Arg.INTERVAL);
         }
 	}
     //========================================
     public static class StochasticWrappingTest extends WrappingLauncher {
         @Override protected void specifyArgs(Args args) {
-            args.setValue(Arg.STOCHASTIC, "0.001");
+            args.specify(Arg.STOCHASTIC);
         }
     }
     //========================================

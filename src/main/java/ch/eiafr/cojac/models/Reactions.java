@@ -88,13 +88,6 @@ public final class Reactions {
         if (stats!=null) stats.notifyChange(location);
 
         return true;
-        //if (!filtering) { return true; }
-        //Long old = EVENTS.putIfAbsent(location, 1L);
-        //if (old != null) {
-        //    EVENTS.put(location, old + 1);
-        //    return false;
-        //}
-        //return true;
     }
 
     private static int reasonableIndex(StackTraceElement[] t) {
@@ -106,11 +99,6 @@ public final class Reactions {
                 !t[1].getMethodName().startsWith("cojacCheck")) break;
             i++;
         }
-//        if (t.length > 1 && t[1].getMethodName().startsWith("cojacCheck")) {
-//            i = 2;
-//        } else if (t.length > 1 && t[1].toString().startsWith("ch.eiafr.cojac.models.")) {
-//            i = 3;
-//        }
         return i;
     }
     
@@ -121,12 +109,7 @@ public final class Reactions {
         StackTraceElement[] t = new Throwable().getStackTrace();
 
         int i = reasonableIndex(t); // 1;
-//        if (t.length > 1 && t[1].getMethodName().startsWith("cojacCheck")) {
-//            i = 2;
-//        } else if (t.length > 1 && t[1].toString().startsWith("ch.eiafr.cojac.models.")) {
-//            i = 3;
-//        }
-//
+
         String location = "COJAC: " + instructionName + ' ' + t[i++].toString();
 
         if (passesFilter(location)) {
