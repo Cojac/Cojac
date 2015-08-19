@@ -26,12 +26,16 @@ import ch.eiafr.cojac.instrumenters.ReplaceFloatsMethods;
 import ch.eiafr.cojac.models.DoubleNumbers;
 import ch.eiafr.cojac.models.FloatNumbers;
 import ch.eiafr.cojac.reactions.IReaction;
+
+import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 
+
 import static org.objectweb.asm.Opcodes.*;
+
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AnalyzerAdapter;
 import org.objectweb.asm.commons.LocalVariablesSorter;
@@ -136,6 +140,13 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
         mv.visitMethodInsn(opcode, owner, name, descAfter, itf);
     }
 
+    @Override
+    public void visitInvokeDynamicInsn(String name, String desc,
+                                       Handle bsm, Object... bsmArgs) {
+        //TODO: pretty sure we have to somehow instrument invokeDynamic... maybe ask Lucy?
+        super.visitInvokeDynamicInsn(name, desc, bsm, bsmArgs);
+    }
+    
     @Override
     public void visitVarInsn(int opcode, int var) {
         int replacedOpcode = opcode;
