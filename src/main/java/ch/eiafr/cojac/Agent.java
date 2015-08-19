@@ -152,7 +152,7 @@ public final class Agent implements ClassFileTransformer {
 	
 	static String ssss=null;
 	static String extractedClassname(byte[] t) {
-	    ClassVisitor cv=new ClassVisitor(Opcodes.ASM4, null) {
+	    ClassVisitor cv=new ClassVisitor(Opcodes.ASM5, null) {
 	        @SuppressWarnings("unused")
             public void visit(int version, int access, String name, String signature, String supername, String[] interfaces) {
 	            ssss=name; // TODO: better than via a global variable...
@@ -165,7 +165,7 @@ public final class Agent implements ClassFileTransformer {
 	//=======================================================================
 	static class ClassNameExtractor extends ClassVisitor {
         public ClassNameExtractor(ClassVisitor cv) {
-            super(Opcodes.ASM4, cv);
+            super(Opcodes.ASM5, cv);
         }
         @Override
         public void visit(int version, int access, String name, String signature, String supername, String[] interfaces) {

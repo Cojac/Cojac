@@ -73,7 +73,7 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
             String classPath, 
             IOpcodeInstrumenterFactory factory, 
             CojacReferences references) {
-        super(Opcodes.ASM4, lvs);
+        super(Opcodes.ASM5, lvs);
         
         this.aa = aa;
         this.lvs = lvs;

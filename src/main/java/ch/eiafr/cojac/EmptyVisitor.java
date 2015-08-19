@@ -7,7 +7,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 class EmptyVisitor extends ClassVisitor {
-    AnnotationVisitor av = new AnnotationVisitor(Opcodes.ASM4) {
+    AnnotationVisitor av = new AnnotationVisitor(Opcodes.ASM5) {
 
         @Override
         public AnnotationVisitor visitAnnotation(String name, String desc) {
@@ -21,7 +21,7 @@ class EmptyVisitor extends ClassVisitor {
     };
 
     public EmptyVisitor() {
-        super(Opcodes.ASM4);
+        super(Opcodes.ASM5);
     }
 
     @Override
@@ -32,7 +32,7 @@ class EmptyVisitor extends ClassVisitor {
     @Override
     public FieldVisitor visitField(int access, String name, String desc,
                                    String signature, Object value) {
-        return new FieldVisitor(Opcodes.ASM4) {
+        return new FieldVisitor(Opcodes.ASM5) {
 
             @Override
             public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
@@ -44,7 +44,7 @@ class EmptyVisitor extends ClassVisitor {
     @Override
     public MethodVisitor visitMethod(int access, String name, String desc,
                                      String signature, String[] exceptions) {
-        return new MethodVisitor(Opcodes.ASM4) {
+        return new MethodVisitor(Opcodes.ASM5) {
 
             @Override
             public AnnotationVisitor visitAnnotationDefault() {

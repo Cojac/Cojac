@@ -50,7 +50,7 @@ final class CojacClassVisitor extends ClassVisitor {
     private FloatProxyMethod fpm;
 
     CojacClassVisitor(ClassVisitor cv, Methods methods, CojacReferences references, CojacAnnotationVisitor cav) {
-		super(Opcodes.ASM4, cv);
+		super(Opcodes.ASM5, cv);
 
 		this.references = references;
         this.stats = references.getStats();
