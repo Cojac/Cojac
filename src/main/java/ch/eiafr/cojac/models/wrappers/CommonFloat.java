@@ -18,9 +18,6 @@
 
 package ch.eiafr.cojac.models.wrappers;
 
-//import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_DOUBLE_WRAPPER_CLASS;
-//Probably to be renamed COJAC_WRAPPER_CLASS...
-
 import static ch.eiafr.cojac.models.wrappers.CommonDouble.newInstance;
 
 public class CommonFloat extends Number implements Comparable<CommonFloat> {
@@ -198,6 +195,13 @@ public class CommonFloat extends Number implements Comparable<CommonFloat> {
         return this.val.toDouble();
 	}
 
+    public static String COJAC_MAGIC_FLOAT_wrapper() {
+        return newInstance(null).COJAC_MAGIC_wrapper();
+    }
+
+    public static String COJAC_MAGIC_FLOAT_toStr(CommonFloat n) {
+        return n.val.COJAC_MAGIC_toStr();
+    }
     //-------------------------------------------------------------------------
     //--------------------- Auxiliary methods ---------------------------------
     //------------ (not required for the Wrapper mechanism) -------------------

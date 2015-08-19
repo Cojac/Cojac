@@ -20,7 +20,7 @@ package ch.eiafr.cojac.models.wrappers;
 
 import java.lang.reflect.Constructor;
 
-import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_DOUBLE_WRAPPER_CLASS;
+import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_WRAPPER_NG_CLASS;
 //Probably to be renamed COJAC_WRAPPER_CLASS...
 
 public class CommonDouble extends Number implements Comparable<CommonDouble>{
@@ -243,11 +243,11 @@ public class CommonDouble extends Number implements Comparable<CommonDouble>{
     //----------------- "Magic" methods ---------------------------------------
     //-------------------------------------------------------------------------
 
-    public static String COJAC_MAGIC_wrapper() {
+    public static String COJAC_MAGIC_DOUBLE_wrapper() {
         return newInstance(null).COJAC_MAGIC_wrapper();
     }
 
-    public static String COJAC_MAGIC_toStr(CommonDouble n) {
+    public static String COJAC_MAGIC_DOUBLE_toStr(CommonDouble n) {
         return n.val.COJAC_MAGIC_toStr();
     }
     
@@ -262,7 +262,7 @@ public class CommonDouble extends Number implements Comparable<CommonDouble>{
 
     protected static ACojacWrapper newInstance(ACojacWrapper w) {
         try {
-            Constructor<?> c=COJAC_DOUBLE_WRAPPER_CLASS.getConstructor(ACojacWrapper.class);
+            Constructor<?> c=COJAC_WRAPPER_NG_CLASS.getConstructor(ACojacWrapper.class);
             return (ACojacWrapper)c.newInstance(w);
         } catch(Exception e) {
             throw new RuntimeException(e);

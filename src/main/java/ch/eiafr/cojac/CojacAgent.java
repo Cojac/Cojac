@@ -21,10 +21,13 @@ package ch.eiafr.cojac;
 import java.lang.instrument.Instrumentation;
 
 import ch.eiafr.cojac.CojacReferences.CojacReferencesBuilder;
+
 import org.objectweb.asm.Type;
 
 public final class CojacAgent {
     public static void premain(String agentArgs, Instrumentation inst) {
+        //System.out.println("premyeahhh "+(java.util.function.DoubleUnaryOperator)Math::sqrt);System.out.flush();
+
         String[] parsedArgs = {Arg.ALL.shortOpt()};
         if (agentArgs != null) {
             parsedArgs = agentArgs.split(" ");
@@ -44,7 +47,6 @@ public final class CojacAgent {
         
         Agent agent = new Agent(builder.build());
          
-        inst.addTransformer(agent);
-		
+        inst.addTransformer(agent);	
     }
 }

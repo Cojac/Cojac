@@ -51,6 +51,10 @@ public final class Agent implements ClassFileTransformer {
 
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+        // TODO: correctly handle lambdas... : for them className==null; is there
+        //       a way to discover the "enclosing class" from classfileBuffer, 
+        //       to decide if we should instrument or not?
+        
         try {
 			if("ch/eiafr/cojac/models/FloatReplacerClasses".equals(className)) {
                 if (VERBOSE) {
@@ -61,11 +65,13 @@ public final class Agent implements ClassFileTransformer {
             if (!references.hasToBeInstrumented(className)) {
                 if (VERBOSE) {
                     System.out.println("Agent NOT instrumenting "+className +" under "+loader);
+                    if (className==null)
+                        CheckClassAdapter.verify(new ClassReader(classfileBuffer), true, new PrintWriter(System.out));
                 }
                 return classfileBuffer;
             }
             if (VERBOSE) {
-                System.out.println("Agent instrumenting "+className +" under "+loader);
+                System.out.println("Agent     instrumenting "+className +" under "+loader);
             }
             byte[] instrumented= instrumenter.instrument(classfileBuffer, loader);
             if (VERBOSE) {

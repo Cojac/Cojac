@@ -127,7 +127,7 @@ public final class CojacReferences {
 
     public boolean hasToBeInstrumented(String className) {
         if (className == null)
-            return true; // TODO: reconsider that (null for lambdas...)
+            return false; // TODO: reconsider that (null for lambdas...)
         if (args.isSpecified(Arg.REPLACE_FLOATS)) {
             /*
              * TODO: Allow instrumented items to be stored in Lists and
@@ -311,8 +311,7 @@ public final class CojacReferences {
                     args.getValue(Arg.FLOAT_WRAPPER).length() > 0) {
                 // TODO - check if the class exist and warn the user if not.
                 floatWrapper = args.getValue(Arg.FLOAT_WRAPPER);
-                if (floatWrapper.startsWith("cojac."))
-                    floatWrapper = floatWrapper.replace("cojac.", "ch.eiafr.cojac.models.wrappers.");
+                floatWrapper = afterStandardPrefixExpansion(floatWrapper);                
             } else { // default float wrapper
                 floatWrapper = BigDecimalFloat.class.getCanonicalName();
             }
@@ -321,8 +320,7 @@ public final class CojacReferences {
                     args.getValue(Arg.DOUBLE_WRAPPER).length() > 0) {
                 // TODO - check if the class exist and warn the user if not.
                 doubleWrapper = args.getValue(Arg.DOUBLE_WRAPPER);
-                if (doubleWrapper.startsWith("cojac."))
-                    doubleWrapper = doubleWrapper.replace("cojac.", "ch.eiafr.cojac.models.wrappers.");
+                doubleWrapper = afterStandardPrefixExpansion(doubleWrapper);                
             } else { // default double wrapper
                 doubleWrapper = BigDecimalDouble.class.getCanonicalName();
             }
@@ -351,6 +349,17 @@ public final class CojacReferences {
 
         }
 
+        private static String afterStandardPrefixExpansion(String className) {
+            if (className.startsWith("cojac."))
+                className = className.replace("cojac.", "ch.eiafr.cojac.models.wrappers.");
+            try {
+                Class.forName(className);
+            } catch(ClassNotFoundException e) {
+                System.err.println("Warning: class "+className+" not found...");
+            }
+            return className;
+        }
+        
         private void registerInstrumentationStats(MBeanServer mbServer, InstrumentationStats stats) {
             try {
                 String name = args.getValue(Arg.JMX_NAME);

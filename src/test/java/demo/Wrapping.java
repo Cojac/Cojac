@@ -31,6 +31,8 @@ public class Wrapping {
   private static final String WRAPPER=COJAC_MAGIC_DOUBLE_wrapper();
     
   public static void main(String[] args) {
+      System.out.println("yeahhh "+(java.util.function.DoubleUnaryOperator)Math::sqrt);
+
     System.out.println("Wrapper used: "+WRAPPER);
     playWithPrimitiveFloats();
     playWithPrimitiveDoubles();
@@ -50,7 +52,6 @@ public class Wrapping {
     f=f-1; f=f+1; ok(f==a);
     System.out.println(" A "+COJAC_MAGIC_FLOAT_toStr(f));
     f=f%(f+1); ok(f==a);
-    System.out.println(" A "+COJAC_MAGIC_FLOAT_toStr(f));
     f=-(-f); ok(f==a);
     f=Math.abs(f); ok(f==a);
     f=Math.min(f, +10f); ok(f==a);
@@ -93,7 +94,7 @@ public class Wrapping {
     }
     
 
-    //DoubleUnaryOperator[] mathDoubleUnaryOps= {Math::sqrt};
+//    DoubleUnaryOperator[] mathDoubleUnaryOps= {Math::sqrt, (x->x+2)};
 //    for(DoubleUnaryOperator op:mathDoubleUnaryOps) d=op.applyAsDouble(a);
     
     // TODO: this does not work with our wrapping mechanism... :-(
