@@ -54,7 +54,14 @@ public final class Agent implements ClassFileTransformer {
         // TODO: correctly handle lambdas... : for them className==null; is there
         //       a way to discover the "enclosing class" from classfileBuffer, 
         //       to decide if we should instrument or not?
-        
+
+//        if (VERBOSE && className==null) {
+//            System.out.println("null className... "+extractedClassname(classfileBuffer));
+//            //dumpIt(classfileBuffer);
+//            //CheckClassAdapter.verify(new ClassReader(classfileBuffer), true, new PrintWriter(System.out));
+//        }
+        if (className==null) 
+            className=extractedClassname(classfileBuffer);
         try {
 			if("ch/eiafr/cojac/models/FloatReplacerClasses".equals(className)) {
                 if (VERBOSE) {
@@ -65,8 +72,6 @@ public final class Agent implements ClassFileTransformer {
             if (!references.hasToBeInstrumented(className)) {
                 if (VERBOSE) {
                     System.out.println("Agent NOT instrumenting "+className +" under "+loader);
-                    if (className==null)
-                        CheckClassAdapter.verify(new ClassReader(classfileBuffer), true, new PrintWriter(System.out));
                 }
                 return classfileBuffer;
             }
@@ -95,6 +100,21 @@ public final class Agent implements ClassFileTransformer {
         }
     }
 	
+    static int nDumped=0;
+    private static void dumpIt(byte[] t) {
+        String name = "D"+nDumped++;
+        try {
+            java.io.FileOutputStream fos = new java.io.FileOutputStream(name+".class");
+            //    org.objectweb.asm.util.CheckClassAdapter.verify(
+            //        new ClassReader(dump()), false, new PrintWriter(System.err));
+            fos.write(t);
+            fos.close();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+    
 	/**
 	 * This method works only with the FloatReplacerClasses class
 	 * It instruments it to create a static initializer block to set
@@ -130,4 +150,26 @@ public final class Agent implements ClassFileTransformer {
         return cw.toByteArray();
     }
 	
+	static String ssss=null;
+	static String extractedClassname(byte[] t) {
+	    ClassVisitor cv=new ClassVisitor(Opcodes.ASM4, null) {
+	        @SuppressWarnings("unused")
+            public void visit(int version, int access, String name, String signature, String supername, String[] interfaces) {
+	            ssss=name; // TODO: better than via a global variable...
+	        }
+	    };
+	    ClassReader cr=new ClassReader(t);
+	    cr.accept(cv, 0);
+	    return ssss;
+	}
+	//=======================================================================
+	static class ClassNameExtractor extends ClassVisitor {
+        public ClassNameExtractor(ClassVisitor cv) {
+            super(Opcodes.ASM4, cv);
+        }
+        @Override
+        public void visit(int version, int access, String name, String signature, String supername, String[] interfaces) {
+
+        }
+	}
 }

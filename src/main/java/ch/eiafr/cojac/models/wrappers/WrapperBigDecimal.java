@@ -11,7 +11,7 @@ public class WrapperBigDecimal extends ACompactWrapper {
     private static MathContext mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
 
     static {
-        System.out.println("yeah "+(java.util.function.DoubleUnaryOperator)Math::sqrt);
+//        System.out.println("yeah "+(java.util.function.DoubleUnaryOperator)Math::sqrt);
 //        WrapperBigDecimal a=new WrapperBigDecimal(16.0);
 //        System.out.println("ohla: "+a.asInternalString());
 //        ACojacWrapper b=a.math_sqrt();

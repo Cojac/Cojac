@@ -31,7 +31,7 @@ public class Wrapping {
   private static final String WRAPPER=COJAC_MAGIC_DOUBLE_wrapper();
     
   public static void main(String[] args) {
-      System.out.println("yeahhh "+(java.util.function.DoubleUnaryOperator)Math::sqrt);
+//      System.out.println("yeahhh "+(java.util.function.DoubleUnaryOperator)Math::sqrt);
 
     System.out.println("Wrapper used: "+WRAPPER);
     playWithPrimitiveFloats();
@@ -94,8 +94,15 @@ public class Wrapping {
     }
     
 
-//    DoubleUnaryOperator[] mathDoubleUnaryOps= {Math::sqrt, (x->x+2)};
-//    for(DoubleUnaryOperator op:mathDoubleUnaryOps) d=op.applyAsDouble(a);
+    //DoubleUnaryOperator[] mathDoubleUnaryOps= {Math::sqrt};
+
+    // java.lang.NoSuchMethodError: demo.Wrapping.lambda$0(D)D
+    //DoubleUnaryOperator[] mathDoubleUnaryOps= {(x->x+2)};
+    
+    //java.lang.AbstractMethodError: Method demo/Wrapping$$Lambda$6.applyAsDouble(D)D is abstract
+    //  at demo.Wrapping$$Lambda$6/1826771953.applyAsDouble(Unknown Source)
+
+    //for(DoubleUnaryOperator op:mathDoubleUnaryOps) d=op.applyAsDouble(a);
     
     // TODO: this does not work with our wrapping mechanism... :-(
     // DoubleUnaryOperator[] mathDoubleUnaryOps= {Math::sqrt, Math::sin, Math::cos, Math::tan};
