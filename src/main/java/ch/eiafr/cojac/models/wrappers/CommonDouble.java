@@ -21,7 +21,6 @@ package ch.eiafr.cojac.models.wrappers;
 import java.lang.reflect.Constructor;
 
 import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_WRAPPER_NG_CLASS;
-//Probably to be renamed COJAC_WRAPPER_CLASS...
 
 public class CommonDouble extends Number implements Comparable<CommonDouble>{
     //-------------------------------------------------------------------------
@@ -243,6 +242,10 @@ public class CommonDouble extends Number implements Comparable<CommonDouble>{
     //----------------- "Magic" methods ---------------------------------------
     //-------------------------------------------------------------------------
 
+	// TODO: maybe reconsider the magic method mechanism if we really switch 
+	//       to the new generation wrapping (the indirection is annoying...). 
+	//       see cojac.instrumenters.ReplaceFloatsMethods.instrument()
+	
     public static String COJAC_MAGIC_DOUBLE_wrapper() {
         return newInstance(null).COJAC_MAGIC_wrapper();
     }
