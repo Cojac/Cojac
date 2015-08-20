@@ -39,10 +39,10 @@ public class ReplaceFloatsMethods {
     private final ArrayList<String> allMethodsConversions = new ArrayList<>(50);
 
     private static final String FL_NAME = Type.getType(Float.class).getInternalName();
-    private static final String FL_DESCR = Type.getType(Float.class).getDescriptor();
+    public  static final String FL_DESCR = Type.getType(Float.class).getDescriptor();
     
     private static final String DL_NAME = Type.getType(Double.class).getInternalName();
-    private static final String DL_DESCR = Type.getType(Double.class).getDescriptor();
+    public  static final String DL_DESCR = Type.getType(Double.class).getDescriptor();
     
     
     private static final String MATH_NAME = Type.getType(Math.class).getInternalName();

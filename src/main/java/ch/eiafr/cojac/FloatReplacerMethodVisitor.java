@@ -170,7 +170,7 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
 		if(references.hasToBeInstrumented(owner) == false){ // proxy for fields
 			Type type = Type.getType(desc);
 			Type cojacType = afterFloatReplacement(type);
-			if(type.equals(cojacType) == false){
+			if(type.equals(cojacType) == false) {  // the type is being changed
 				if(opcode == GETFIELD || opcode == GETSTATIC){
 					mv.visitFieldInsn(opcode, owner, name, desc);
 					FloatProxyMethod.convertRealToCojacType(type, mv);

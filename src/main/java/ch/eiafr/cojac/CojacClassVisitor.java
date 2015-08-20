@@ -70,7 +70,7 @@ final class CojacClassVisitor extends ClassVisitor {
         fpm = new FloatProxyMethod(this, classPath);
     }
 
-    public boolean isProxyMerhod(String name, String desc){
+    public boolean isProxyMethod(String name, String desc){
         return proxyMethods.contains(name+"_"+desc);
     }
     
