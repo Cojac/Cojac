@@ -406,143 +406,40 @@ public class DoubleInterval implements Comparable<DoubleInterval> {
         return new DoubleInterval(-a.sup, -a.inf);
     }
 
-    /**
-     * @param a
-     *            operand of the sinus operation on interval
-     *
-     * @return a new DoubleInterval that's the result of the sinus operation
-     */
-    public static DoubleInterval sin(DoubleInterval a) {
-        if (a.isNan()) {
-            return new DoubleInterval(Double.NaN);
-        }
-        if (width(a) >= 2 * PI) {
-            return new DoubleInterval(-1.0, 1.0);
-        }
-        double inf;
-        double sup;
-        // convert the interval into the [-2*pi ; 2*pi]
-        if (a.inf < -TWO_PI) {
-            if (a.sup < -TWO_PI) {
-                inf = a.inf % TWO_PI;
-                sup = a.sup % TWO_PI;
-                // inf and sup are between -2*pi and 0
-            } else {
-                inf = a.inf + TWO_PI;
-                sup = a.sup + TWO_PI;
-            }
-        } else if (a.sup > TWO_PI) {
-            if (a.inf > TWO_PI) {
-                inf = a.inf % TWO_PI;
-                sup = a.sup % TWO_PI;
-            } else {
-                inf = a.inf - TWO_PI;
-                sup = a.sup - TWO_PI;
-            }
-        } else {
-            inf = a.inf;
-            sup = a.sup;
-        }
-        assert (inf > -TWO_PI && inf < TWO_PI);
-        assert (sup > -TWO_PI && sup < TWO_PI);
-
-        if (inf > sup) {
-            if (inf > 0.0) {
-                inf -= TWO_PI;
-            } else {
-                sup += TWO_PI;
-            }
-        }
-        assert (inf <= sup);
-
-        if (inf <= -ONE_AND_HALF_PI) { // inf is in section a
-            assert (inf > -TWO_PI && inf <= -ONE_AND_HALF_PI);
-            if (sup <= -ONE_AND_HALF_PI) { // both are in section a
-                assert (sup > -TWO_PI && sup <= -ONE_AND_HALF_PI);
-                return roundedInterval(Math.sin(inf), Math.sin(sup));
-            } else if (sup <= -HALF_PI) { // sup is in section b
-                assert (sup <= -HALF_PI && sup > -ONE_AND_HALF_PI);
-                double v1 = Math.min(Math.sin(inf), Math.sin(sup));
-                return new DoubleInterval(v1 - Math.ulp(v1), 1.0);
-            } else { // sup in int the c section
-                assert (sup > -HALF_PI && sup <= HALF_PI);
-                return new DoubleInterval(-1.0, 1.0);
-            }
-        } else if (inf <= -HALF_PI) { // inf is in b section
-            assert (inf <= -HALF_PI && inf > -ONE_AND_HALF_PI);
-            if (sup <= -HALF_PI) { // both in b section
-                assert (sup <= -HALF_PI && sup > -ONE_AND_HALF_PI);
-                double v1 = Math.sin(sup);
-                double v2 = Math.sin(inf);
-                return roundedInterval(v1, v2);
-            } else if (sup <= HALF_PI) { // sup is in c section
-                assert (sup > -HALF_PI && sup <= HALF_PI);
-                double v1 = -1.0;
-                double v2 = Math.max(Math.sin(inf), Math.sin(sup));
-                return new DoubleInterval(v1, v2 + Math.ulp(v2));
-            } else { // sup is in d section
-                assert (sup > HALF_PI && sup <= ONE_AND_HALF_PI);
-                return new DoubleInterval(-1.0, 1.0);
-            }
-        } else if (inf <= HALF_PI) { // inf is in the c section
-            assert (inf > -HALF_PI && inf <= HALF_PI);
-            if (sup <= HALF_PI) { // both in c section
-                assert (sup > -HALF_PI && sup <= HALF_PI);
-                return roundedInterval(Math.sin(inf), Math.sin(sup));
-            } else if (sup <= ONE_AND_HALF_PI) { // sup in d section
-                assert (sup > HALF_PI && sup <= ONE_AND_HALF_PI);
-                double v1 = Math.min(Math.sin(inf), Math.sin(sup));
-                double v2 = 1.0;
-                return new DoubleInterval(v1 - Math.ulp(v1), v2);
-            } else { // sup is in e section
-                assert (sup <= TWO_PI && sup > ONE_AND_HALF_PI);
-                return new DoubleInterval(-1.0, 1.0);
-            }
-        } else if (inf <= ONE_AND_HALF_PI) { // inf is in d section
-            assert (inf > HALF_PI && inf <= ONE_AND_HALF_PI);
-            if (sup <= ONE_AND_HALF_PI) { // sup is in d section
-                assert (sup > HALF_PI && sup <= ONE_AND_HALF_PI);
-                double v1 = Math.sin(sup);
-                double v2 = Math.sin(inf);
-                return roundedInterval(v1, v2);
-            } // else sup is in e section
-            assert (sup <= TWO_PI && sup > ONE_AND_HALF_PI);
-            double v1 = -1.0;
-            double v2 = Math.max(Math.sin(inf), Math.sin(sup));
-            return new DoubleInterval(v1, v2 + Math.ulp(v2));
-        } else { // both in e section
-            assert (inf > ONE_AND_HALF_PI && inf <= TWO_PI);
-            assert (sup > ONE_AND_HALF_PI && sup <= TWO_PI);
-            double v1 = Math.sin(inf);
-            double v2 = Math.sin(sup);
-            return roundedInterval(v1, v2);
-        }
-    }
-
-    /**
-     * @param a
-     *            operand of the cosinus operation on interval
-     *
-     * @return a new DoubleInterval that's the result of the cosinus operation
-     */
+    /** @return a new DoubleInterval that's the result of the cosine operation on a*/
     public static DoubleInterval cos(DoubleInterval a) {
-        // using sin(x + 2*pi) = cos(x)
-        return sin(new DoubleInterval(a.inf + HALF_PI, a.sup + HALF_PI));
+        if (a.isNan()) return new DoubleInterval(Double.NaN);
+        DoubleInterval wholeDomain = new DoubleInterval(-1,+1);
+        if (width(a) >= TWO_PI) return wholeDomain;
+        double inf = (a.inf % TWO_PI + TWO_PI) % TWO_PI; // now inf is in [0..2PI[
+        double sup = inf + width(a);
+        if (inf <= PI) {
+            if (sup >= TWO_PI) return wholeDomain;
+            if (sup <= PI) // monotone decreasing...
+                return roundedInterval(Math.cos(sup), Math.cos(inf));
+            double max=Math.max(Math.cos(inf), Math.cos(sup));
+            DoubleInterval x= roundedInterval(-1, max);
+            return new DoubleInterval(-1, x.sup); // "unround" x.inf
+        }
+        if (sup >= TWO_PI+PI) return wholeDomain;
+        if (sup < TWO_PI) // monotone increasing...
+            return roundedInterval(Math.cos(inf), Math.cos(sup));
+        double min=Math.min(Math.cos(inf), Math.cos(sup));
+        DoubleInterval x= roundedInterval(min, +1);
+        return new DoubleInterval(x.inf, +1); // "unround" x.sup
     }
 
-    /**
-     * Max and min are in -pi & pi
-     *
-     * @param a
-     *            operand of the cosinus operation on interval
-     *
-     * @return a new DoubleInterval that's the result of the cosinus operation
-     */
+    /** @return a new DoubleInterval that's the result of the sine operation on a*/
+    public static DoubleInterval sin(DoubleInterval a) {
+        // using sin(x + pi/2) = cos(x)
+        return cos(new DoubleInterval(a.inf - HALF_PI, a.sup - HALF_PI));
+    }
+
+    /** @return a new DoubleInterval that's the result of the tangent operation on a*/
     public static DoubleInterval tan(DoubleInterval a) {
         // (see [Julmy15], p. 26)
-        if (a.isNan()) {
+        if (a.isNan()) 
             return new DoubleInterval(Double.NaN);
-        }
         DoubleInterval wholeDomain = new DoubleInterval(Double.NEGATIVE_INFINITY, 
                                                         Double.POSITIVE_INFINITY);
         if (width(a) >= PI)
