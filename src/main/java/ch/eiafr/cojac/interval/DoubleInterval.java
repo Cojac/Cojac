@@ -539,75 +539,23 @@ public class DoubleInterval implements Comparable<DoubleInterval> {
      * @return a new DoubleInterval that's the result of the cosinus operation
      */
     public static DoubleInterval tan(DoubleInterval a) {
-        //TODO: double-check this implementation (see [Julmy15], p. 26)
+        // (see [Julmy15], p. 26)
         if (a.isNan()) {
             return new DoubleInterval(Double.NaN);
         }
-        if (width(a) >= PI) {
-            return new DoubleInterval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-        }
-        double inf;
-        double sup;
-        // convert the interval into the [-2*pi ; 2*pi]
-        if (a.inf < -PI) {
-            if (a.sup < -PI) {
-                inf = a.inf % PI;
-                sup = a.sup % PI;
-                // inf and sup are between -2*pi and 0
-            } else {
-                inf = a.inf + PI;
-                sup = a.sup + PI;
-            }
-        } else if (a.sup > PI) {
-            if (a.inf > PI) {
-                inf = a.inf % PI;
-                sup = a.sup % PI;
-            } else {
-                inf = a.inf - PI;
-                sup = a.sup - PI;
-            }
-        } else {
-            inf = a.inf;
-            sup = a.sup;
-        }
-        assert (inf > -PI && inf < PI);
-        assert (sup > -PI && sup < PI);
-
-        if (inf > sup) {
-            if (inf > 0.0) {
-                inf -= PI;
-            } else {
-                sup += PI;
-            }
-        }
-        assert (inf <= sup);
-
-        if (inf < -HALF_PI) { // inf is in the a section
-            assert (inf > -PI && inf < -HALF_PI);
-            if (sup < -HALF_PI) { // sup is in the a section
-                assert (sup > -PI && sup < -HALF_PI);
-                double v1 = Math.tan(inf);
-                double v2 = Math.tan(sup);
-                return roundedInterval(v1, v2);
-            } // else... sup is in the b section
-            assert (sup >= -HALF_PI && sup < HALF_PI);
-            return new DoubleInterval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-        } else if (inf < HALF_PI) { // inf is in the b section
-            assert (inf >= -HALF_PI && inf < HALF_PI);
-            if (sup < HALF_PI) { // sup is in the b section
-                assert (sup > -HALF_PI && sup < HALF_PI);
-                double v1 = Math.tan(inf);
-                double v2 = Math.tan(sup);
-                return roundedInterval(v1, v2);
-            } // else sup is in the c section
-            return new DoubleInterval(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-        } else { // inf is in the c section
-            assert (inf >= HALF_PI && inf < PI);
-            assert (sup >= HALF_PI && sup < PI);
-            double v1 = Math.tan(inf);
-            double v2 = Math.tan(sup);
-            return roundedInterval(v1, v2);
-        }
+        DoubleInterval wholeDomain = new DoubleInterval(Double.NEGATIVE_INFINITY, 
+                                                        Double.POSITIVE_INFINITY);
+        if (width(a) >= PI)
+            return wholeDomain;
+        double inf = (a.inf % PI + PI) % PI; // now inf is in [0..PI[
+        double sup = inf + width(a);
+        if (inf <= HALF_PI && sup >= HALF_PI)
+            return wholeDomain;
+        if (sup >= ONE_AND_HALF_PI)
+            return wholeDomain;
+        double v1 = Math.tan(inf);
+        double v2 = Math.tan(sup);
+        return roundedInterval(v1, v2);
     }
 
     /**
