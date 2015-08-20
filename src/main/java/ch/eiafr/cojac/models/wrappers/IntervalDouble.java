@@ -306,7 +306,7 @@ public class IntervalDouble extends Number implements
     @Override public int compareTo(IntervalDouble o) {
         int compResult = this.interval.compareTo(o.interval);
         if (COJAC_CHECK_UNSTABLE_COMPARISONS) {
-            if (this.interval.strictCompareTo(o.interval)) return 0;
+            if (this.interval.strictlyEquals(o.interval)) return 0;
             if (this.interval.overlaps(o.interval))
                 reportBadComparison();
         }

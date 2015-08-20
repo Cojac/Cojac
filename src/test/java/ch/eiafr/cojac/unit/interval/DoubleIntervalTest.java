@@ -111,20 +111,20 @@ public class DoubleIntervalTest
     public void testStrictCompareTo() throws Exception {
         DoubleInterval a = new DoubleInterval(0.0);
         DoubleInterval b = new DoubleInterval(0.0,0.0);
-        assertTrue(String.format("Test a == b : %s == %s",a,b),a.strictCompareTo(b));
-        assertTrue(String.format("Test b == a : %s == %s",b,a),b.strictCompareTo(a));
+        assertTrue(String.format("Test a == b : %s == %s",a,b),a.strictlyEquals(b));
+        assertTrue(String.format("Test b == a : %s == %s",b,a),b.strictlyEquals(a));
 
         // Some special operation with the interval !
         DoubleInterval c = DoubleInterval.add(a,a);
-        assertFalse(String.format("Test c != a : %s != %s (??? : [0.0;0.0] + [0.0;0.0] != [0.0;0.0])", c, a), c.strictCompareTo(a));
+        assertFalse(String.format("Test c != a : %s != %s (??? : [0.0;0.0] + [0.0;0.0] != [0.0;0.0])", c, a), c.strictlyEquals(a));
 
         // NaN
         a = new DoubleInterval(NaN,NaN);
         double v1 = rndDouble();
         double v2 = getBiggerRndDouble(v1);
         b = new DoubleInterval(v1,v2);
-        assertFalse(String.format("Test NaN : %s <=> %s",a,b),a.strictCompareTo(b));
-        assertFalse(String.format("Test NaN : %s <=> %s", b, a), b.strictCompareTo(a));
+        assertFalse(String.format("Test NaN : %s <=> %s",a,b),a.strictlyEquals(b));
+        assertFalse(String.format("Test NaN : %s <=> %s", b, a), b.strictlyEquals(a));
     }
 
     @Test
@@ -225,7 +225,7 @@ public class DoubleIntervalTest
         assertTrue(String.format("Test [-9.0;-5.9] E (a - b) : %s E (%s - %s)",baRes,b,a), ba.contains(baRes));
 
         // Test ab == -ba
-        assertTrue(String.format("Test ab == ba : %s == %s", abRes, baRes), ab.strictCompareTo(DoubleInterval.neg(ba)));
+        assertTrue(String.format("Test ab == ba : %s == %s", abRes, baRes), ab.strictlyEquals(DoubleInterval.neg(ba)));
 
         // Test NaN
         DoubleInterval nan = new DoubleInterval(NaN);
@@ -257,7 +257,7 @@ public class DoubleIntervalTest
 
         // test a * b == b * a
         DoubleInterval ba = DoubleInterval.mul(b,a);
-        assertTrue(String.format("Test a*b == b*a : %s == %s",ab,ba),ab.strictCompareTo(ba));
+        assertTrue(String.format("Test a*b == b*a : %s == %s",ab,ba),ab.strictlyEquals(ba));
 
         // test NaN
         DoubleInterval nan = new DoubleInterval(NaN);
@@ -340,7 +340,7 @@ public class DoubleIntervalTest
         DoubleInterval aPow2 = DoubleInterval.pow2(a);
         DoubleInterval aPow  = DoubleInterval.pow(a,2.0);
 
-        assertTrue(String.format("Test pow2(a) == pow(a,2.0) : %s == %s", aPow2, aPow), aPow2.strictCompareTo(aPow));
+        assertTrue(String.format("Test pow2(a) == pow(a,2.0) : %s == %s", aPow2, aPow), aPow2.strictlyEquals(aPow));
     }
 
     @Test
@@ -546,9 +546,9 @@ public class DoubleIntervalTest
         DoubleInterval bRes = new DoubleInterval(0.0,5.0);
         DoubleInterval cRes = new DoubleInterval(5.0,7.0);
 
-        assertTrue(DoubleInterval.abs(a).strictCompareTo(aRes));
-        assertTrue(DoubleInterval.abs(b).strictCompareTo(bRes));
-        assertTrue(DoubleInterval.abs(c).strictCompareTo(cRes));
+        assertTrue(DoubleInterval.abs(a).strictlyEquals(aRes));
+        assertTrue(DoubleInterval.abs(b).strictlyEquals(bRes));
+        assertTrue(DoubleInterval.abs(c).strictlyEquals(cRes));
     }
 
     @Test
@@ -561,9 +561,9 @@ public class DoubleIntervalTest
         DoubleInterval bRes = new DoubleInterval(-5.0,2.0);
         DoubleInterval cRes = new DoubleInterval(5.0,7.0);
 
-        assertTrue(DoubleInterval.neg(a).strictCompareTo(aRes));
-        assertTrue(DoubleInterval.neg(b).strictCompareTo(bRes));
-        assertTrue(DoubleInterval.neg(c).strictCompareTo(cRes));
+        assertTrue(DoubleInterval.neg(a).strictlyEquals(aRes));
+        assertTrue(DoubleInterval.neg(b).strictlyEquals(bRes));
+        assertTrue(DoubleInterval.neg(c).strictlyEquals(cRes));
     }
 
     @Test
@@ -688,6 +688,6 @@ public class DoubleIntervalTest
     }
 
     private void testIntervalBounds(DoubleInterval a) throws Exception {
-        assertTrue(String.format("DoubleInterval %s is degenerated",a),a.testBounds());
+        assertTrue(String.format("DoubleInterval %s is degenerated",a),a.hasValidBounds());
     }
 }
