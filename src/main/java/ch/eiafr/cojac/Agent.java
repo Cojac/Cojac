@@ -100,6 +100,7 @@ public final class Agent implements ClassFileTransformer {
         }
     }
 	
+    /*
     static int nDumped=0;
     private static void dumpIt(byte[] t) {
         String name = "D"+nDumped++;
@@ -112,8 +113,8 @@ public final class Agent implements ClassFileTransformer {
         } catch(Exception e) {
             e.printStackTrace();
         }
-
     }
+    */
     
 	/**
 	 * This method works only with the FloatReplacerClasses class

@@ -141,11 +141,11 @@ public class BasicFloat extends Number implements Comparable<BasicFloat> {
     }
     
     public static BasicFloat i2f(int a) {
-        return new BasicFloat((float)a);
+        return new BasicFloat(a);
     }
     
     public static BasicFloat l2f(long a) {
-        return new BasicFloat((float)a);
+        return new BasicFloat(a);
     }
 
     //-------------------------------------------------------------------------

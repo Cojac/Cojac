@@ -41,7 +41,8 @@ public class FloatProxyNotInstrumented {
 		this.d2 = d2;
 	}
 	
-	public void instanceMethod(short s1, long l1, double d1, double d2, byte b1, boolean bo1, char c1,  float f1){
+	@SuppressWarnings("unused")
+    public void instanceMethod(short s1, long l1, double d1, double d2, byte b1, boolean bo1, char c1,  float f1){
 		this.d1 = d1;
 		this.l1 = l1;
 		this.f1 = f1;
@@ -53,6 +54,7 @@ public class FloatProxyNotInstrumented {
 	static float static_f1;
 	static double static_d2;
 	
+    @SuppressWarnings("unused")
 	public static void staticMethod(long l1, double d1, short s1, double d2, byte b1, boolean bo1, char c1,  float f1){
 		static_d1 = d1;
 		static_l1 = l1;

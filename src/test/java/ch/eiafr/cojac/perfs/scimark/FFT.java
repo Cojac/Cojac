@@ -33,8 +33,8 @@ package ch.eiafr.cojac.perfs.scimark;
 public class FFT {
 
     public static final double num_flops(int N) {
-        double Nd = (double) N;
-        double logN = (double) log2(N);
+        double Nd = N;
+        double logN = log2(N);
 
         return (5.0 * Nd - 2) * logN + 2 * (Nd + 1);
     }
@@ -139,7 +139,7 @@ public class FFT {
             double w_real = 1.0;
             double w_imag = 0.0;
 
-            double theta = 2.0 * direction * Math.PI / (2.0 * (double) dual);
+            double theta = 2.0 * direction * Math.PI / (2.0 * dual);
             double s = Math.sin(theta);
             double t = Math.sin(theta / 2.0);
             double s2 = 2.0 * t * t;

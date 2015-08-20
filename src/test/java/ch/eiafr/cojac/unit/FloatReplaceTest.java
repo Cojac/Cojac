@@ -8,7 +8,6 @@ import org.junit.Test;
 import ch.eiafr.cojac.Agent;
 import ch.eiafr.cojac.Arg;
 import ch.eiafr.cojac.Args;
-import ch.eiafr.cojac.CojacReferences;
 import ch.eiafr.cojac.CojacReferences.CojacReferencesBuilder;
 import static ch.eiafr.cojac.unit.AgentTest.*;
 import java.net.URL;
@@ -19,7 +18,7 @@ public class FloatReplaceTest {
 
     Class<?> tinyExample;
     
-	public FloatReplaceTest() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+	public FloatReplaceTest() throws ClassNotFoundException {
         super();
         loadOperationsWithAgent(getClassFileTransformer());
     }

@@ -1,7 +1,6 @@
 package ch.eiafr.cojac.unit;
 
 import java.lang.instrument.ClassFileTransformer;
-import java.lang.instrument.Instrumentation;
 
 import static ch.eiafr.cojac.unit.AgentTest.*;
 

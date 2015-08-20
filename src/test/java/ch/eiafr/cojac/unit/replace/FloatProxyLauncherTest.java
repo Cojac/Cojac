@@ -34,7 +34,7 @@ public class FloatProxyLauncherTest {
 
     Class<?> floatProxyTest;
     
-	public FloatProxyLauncherTest() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+	public FloatProxyLauncherTest() throws ClassNotFoundException {
         super();
         loadOperationsWithAgent(getClassFileTransformer());
     }

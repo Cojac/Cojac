@@ -20,9 +20,9 @@ package ch.eiafr.cojac.perfs.scimark;
 
 public class Jacobi {
     public static final double num_flops(int M, int N, int num_iterations) {
-        double Md = (double) M;
-        double Nd = (double) N;
-        double num_iterD = (double) num_iterations;
+        double Md =  M;
+        double Nd =  N;
+        double num_iterD =  num_iterations;
 
         return (Md - 1) * (Nd - 1) * num_iterD * 6.0;
     }

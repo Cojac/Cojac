@@ -26,9 +26,7 @@ import org.apache.commons.cli.ParseException;
 
 import ch.eiafr.cojac.models.ReactionType;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
 
 public final class Args {

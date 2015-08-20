@@ -181,11 +181,11 @@ public class StochasticFloat extends Number implements
     }
 
     public static StochasticFloat i2f(int a) {
-        return new StochasticFloat((float) a);
+        return new StochasticFloat(a);
     }
 
     public static StochasticFloat l2f(long a) {
-        return new StochasticFloat((float) a);
+        return new StochasticFloat(a);
     }
 
     //-------------------------------------------------------------------------
@@ -243,7 +243,7 @@ public class StochasticFloat extends Number implements
     }
 
     @Override public double doubleValue() {
-        return (double) this.value;
+        return this.value;
     }
 
     //-------------------------------------------------------------------------

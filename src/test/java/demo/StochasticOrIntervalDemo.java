@@ -93,7 +93,7 @@ public class StochasticOrIntervalDemo
         System.out.println("\n--- Test PI");
         float pi;
         System.out.println(pi = computePiF());
-        System.out.println(COJAC_MAGIC_DOUBLE_toStr(pi));
+        System.out.println(COJAC_MAGIC_FLOAT_toStr(pi));
         System.out.println("Pi relative error : " + COJAC_MAGIC_FLOAT_relativeError(pi));
     }
 
@@ -140,14 +140,14 @@ public class StochasticOrIntervalDemo
             {
                 res += tmp;
                 numerator += 2;
-                tmp = 4.0F / (float) numerator;
+                tmp = 4.0F / numerator;
                 alt = false;
             }
             else
             {
                 res -= tmp;
                 numerator += 2;
-                tmp = 4.0F / (float) numerator;
+                tmp = 4.0F / numerator;
                 alt = true;
             }
         }
@@ -164,11 +164,6 @@ public class StochasticOrIntervalDemo
     public static String COJAC_MAGIC_DOUBLE_toStr(double a)
     {
         return Double.toString(a);
-    }
-
-    public static String COJAC_MAGIC_DOUBLE_toStr(float a)
-    {
-        return "";
     }
 
     public static double COJAC_MAGIC_DOUBLE_relativeError(double n)

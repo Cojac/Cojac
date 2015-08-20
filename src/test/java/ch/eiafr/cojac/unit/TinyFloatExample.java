@@ -203,18 +203,16 @@ public class TinyFloatExample {
         if (f>0){
             float a=f+f;
             return a;
-        } else {
-            float a=f*f;
-            return a;
-        }
+        } // else 
+        float a=f*f;
+        return a;
     }
     
     public static float simpleFcmp(float f){
         if (f>0){
             return f+f;
-        } else {
-            return f*f;
-        }
+        } // else {
+        return f*f;
     }
 
     protected static float fct2(float f, float g) {

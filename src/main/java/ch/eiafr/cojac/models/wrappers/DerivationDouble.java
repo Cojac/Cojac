@@ -238,11 +238,11 @@ public class DerivationDouble extends Number implements
     }
 
     public static DerivationDouble i2d(int a) {
-        return new DerivationDouble((double) a);
+        return new DerivationDouble(a);
     }
 
     public static DerivationDouble l2d(long a) {
-        return new DerivationDouble((double) a);
+        return new DerivationDouble(a);
     }
 
     //-------------------------------------------------------------------------

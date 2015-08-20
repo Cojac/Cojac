@@ -27,7 +27,6 @@ import static ch.eiafr.cojac.unit.AgentTest.instrumentation;
 
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 
 import org.junit.Test;
 

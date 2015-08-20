@@ -222,11 +222,11 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
     }
     
     public static BasicDouble i2d(int a) {
-        return new BasicDouble((double)a);
+        return new BasicDouble(a);
     }
     
     public static BasicDouble l2d(long a) {
-        return new BasicDouble((double)a);
+        return new BasicDouble(a);
     }
 
     //-------------------------------------------------------------------------

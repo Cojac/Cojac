@@ -21,7 +21,7 @@ package ch.eiafr.cojac.perfs;
 import ch.eiafr.cojac.Arg;
 import ch.eiafr.cojac.Args;
 import ch.eiafr.cojac.perfs.opcodes.*;
-import ch.eiafr.cojac.perfs.scimark.SciMark;
+//import ch.eiafr.cojac.perfs.scimark.SciMark;
 import ch.eiafr.cojac.Agent;
 import ch.eiafr.cojac.CojacReferences.CojacReferencesBuilder;
 import ch.eiafr.cojac.unit.AgentTest;
@@ -90,9 +90,8 @@ public class COJACBenchmark {
         bench(1, "SciMark SOR", new SciMarkSORRunnable(), "ch.eiafr.cojac.perfs.SciMarkSORRunnable");
         bench(1, "SciMark Sparse Mat Mult", new SciMarkSparseMatmultRunnable(), "ch.eiafr.cojac.perfs.SciMarkSparseMatmultRunnable");
 
-
-        linpackBenchmark();
-        sciMarkBenchmark();
+        // linpackBenchmark();
+        // sciMarkBenchmark();
     }
 
     private static void benchSum() throws Exception {
@@ -110,12 +109,13 @@ public class COJACBenchmark {
         benchWithArrays(1, "Shell Sort", new ShellSortRunnable(), "ch.eiafr.cojac.perfs.ShellSortRunnable", arraySize);
     }
 
+    /* 
     private static void linpackBenchmark() throws Exception {
         System.out.println("Start linpack not instrumented");
         new Linpack().run_benchmark();
 
         System.out.println("Start linpack instrumented");
-        Object linpack = null; //TODO getFromClassLoader("ch.eiafr.cojac.perfs.Linpack", false);
+        Object linpack = null; //TO DO getFromClassLoader("ch.eiafr.cojac.perfs.Linpack", false);
         Method m = linpack.getClass().getMethod("run_benchmark");
 
         m.invoke(linpack);
@@ -126,11 +126,12 @@ public class COJACBenchmark {
         new SciMark().run(false);
 
         System.out.println("Start SciMMark2 instrumented");
-        Object scimark = null; //TODO getFromClassLoader("ch.eiafr.cojac.perfs.scimark.SciMark", false);
+        Object scimark = null; //TO DO getFromClassLoader("ch.eiafr.cojac.perfs.scimark.SciMark", false);
         Method m = scimark.getClass().getMethod("run", Boolean.TYPE);
 
         m.invoke(scimark, false);
     }
+    */
 
     private static void setArray(int[] array, Object instrumented) throws Exception {
         Class<?> cls = instrumented.getClass();

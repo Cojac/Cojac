@@ -22,7 +22,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+
 import static junit.framework.Assert.assertEquals;
+
 import org.junit.Assert;
 
 public class FloatProxy {
@@ -137,7 +139,8 @@ public class FloatProxy {
 	public static void castedObjectPassingByMethod() throws Exception{
 		Float f1 = new Float(5243.132);
 		FloatProxyNotInstrumented fpni = new FloatProxyNotInstrumented();
-		Float f2 = (Float) fpni.castedObjectPassing(f1);
+		@SuppressWarnings("unused")
+        Float f2 = (Float) fpni.castedObjectPassing(f1);
 	}
 	
 	public static void castedObjectReturningByMethod() throws Exception{
@@ -188,7 +191,7 @@ public class FloatProxy {
 		a.add(5.8f);
 		a.add(7.8f);
 		a.add(2.3f);
-		Comparator fc = new Comparator<Float>(){
+		Comparator<Float> fc = new Comparator<Float>(){
 			 @Override
 			public int compare(Float f1, Float f2) {
 				return Float.compare(f1, f2);

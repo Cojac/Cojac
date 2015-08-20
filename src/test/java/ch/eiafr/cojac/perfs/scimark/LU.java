@@ -36,7 +36,7 @@ public class LU {
     public static final double num_flops(int N) {
         // rougly 2/3*N^3
 
-        double Nd = (double) N;
+        double Nd = N;
 
         return (2.0 * Nd * Nd * Nd / 3.0);
     }

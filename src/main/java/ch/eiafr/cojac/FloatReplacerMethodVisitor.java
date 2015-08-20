@@ -55,13 +55,11 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
 	
     private final IOpcodeInstrumenterFactory factory;
     private final InstrumentationStats stats;
-    private final Args args;
     private final Methods methods;
     private final IReaction reaction;
     private final String classPath;
     public static final boolean DONT_INSTRUMENTn = false;
    
-    private final LocalVariablesSorter lvs;
     private final AnalyzerAdapter aa;
     private final ReplaceFloatsMethods rfm;
 
@@ -80,13 +78,11 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
         super(Opcodes.ASM5, lvs);
         
         this.aa = aa;
-        this.lvs = lvs;
         this.rfm = rfm;
 
 		this.references = references;
 		
         this.stats = stats;
-        this.args = args;
         this.factory = factory;
 
         this.methods = methods;

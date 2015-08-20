@@ -5,7 +5,6 @@ import java.lang.instrument.ClassFileTransformer;
 import ch.eiafr.cojac.Agent;
 import ch.eiafr.cojac.Arg;
 import ch.eiafr.cojac.Args;
-import ch.eiafr.cojac.CojacReferences;
 import ch.eiafr.cojac.CojacReferences.CojacReferencesBuilder;
 
 public class BasicAgentTest extends AbstractAgentTest {
