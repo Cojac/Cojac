@@ -7,6 +7,7 @@ import java.math.MathContext;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
 
+//TODO: unstability checking
 public class WrapperBigDecimal extends ACompactWrapper {
     private static MathContext mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
 
