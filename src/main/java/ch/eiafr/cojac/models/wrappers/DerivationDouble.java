@@ -2,7 +2,7 @@ package ch.eiafr.cojac.models.wrappers;
 
 //TODO: (not related to this class...) Maybe expand COJAC as: 
 //      "Climbing Over Java Arithmetic Computation" or
-//      "Creating Other Judicious Arithmetic Capabilities"
+//      "Creating Other Judicious|Juicy Arithmetic Capabilities"
 
 public class DerivationDouble extends Number implements
         Comparable<DerivationDouble> {

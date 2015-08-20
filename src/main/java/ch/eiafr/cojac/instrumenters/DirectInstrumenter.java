@@ -107,7 +107,7 @@ final class DirectInstrumenter implements IOpcodeInstrumenter {
     }
 
     @Override
-    public void instrument(MethodVisitor mv, int opCode, String classPath, Methods methods, IReaction r, LocalVariablesSorter src) {
+    public void instrument(MethodVisitor mv, int opCode) { //, String classPath, Methods methods, IReaction r, LocalVariablesSorter src) {
         mv.visitLdcInsn(reaction.value());
         mv.visitLdcInsn(logFileName);
 

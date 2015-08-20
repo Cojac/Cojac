@@ -127,7 +127,8 @@ public final class CojacReferences {
 
     public boolean hasToBeInstrumented(String className) {
         if (className == null)
-            return false; // TODO: reconsider that (null for lambdas...)
+            return false; // TODO: reconsider that (null was for lambdas...) 
+                          // is our new Agent.extractedClassname() trick complete?
         if (args.isSpecified(Arg.REPLACE_FLOATS)) {
             /*
              * TODO: Allow instrumented items to be stored in Lists and
@@ -309,7 +310,6 @@ public final class CojacReferences {
                 NoSuchMethodException, SecurityException {
             if (args.isSpecified(Arg.FLOAT_WRAPPER) &&
                     args.getValue(Arg.FLOAT_WRAPPER).length() > 0) {
-                // TODO - check if the class exist and warn the user if not.
                 floatWrapper = args.getValue(Arg.FLOAT_WRAPPER);
                 floatWrapper = afterStandardPrefixExpansion(floatWrapper);                
             } else { // default float wrapper
@@ -318,7 +318,6 @@ public final class CojacReferences {
 
             if (args.isSpecified(Arg.DOUBLE_WRAPPER) &&
                     args.getValue(Arg.DOUBLE_WRAPPER).length() > 0) {
-                // TODO - check if the class exist and warn the user if not.
                 doubleWrapper = args.getValue(Arg.DOUBLE_WRAPPER);
                 doubleWrapper = afterStandardPrefixExpansion(doubleWrapper);                
             } else { // default double wrapper

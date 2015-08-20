@@ -136,7 +136,7 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
     }
 
     @Override
-    public void instrument(MethodVisitor mv, int opCode, String classPath, Methods methods, IReaction r, LocalVariablesSorter src) {
+    public void instrument(MethodVisitor mv, int opCode) { //, String classPath, Methods methods, IReaction r, LocalVariablesSorter src) {
         InvokableMethod replacementMethod = invocations.get(opCode);
         InvokableMethod conversionMethod = conversions.get(opCode);
         if (replacementMethod != null) {

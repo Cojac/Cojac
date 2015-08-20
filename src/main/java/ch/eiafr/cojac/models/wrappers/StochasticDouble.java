@@ -442,7 +442,6 @@ public class StochasticDouble extends Number implements
     }
 
 
-    // TODO: check whether it is a "relativeError", or the "numberOfStableDigits"
     private double relativeError() {
         double mean = 0.0F;
         for (int i = 0; i < nbrParallelNumber; i++) {
@@ -460,6 +459,7 @@ public class StochasticDouble extends Number implements
 
         double Cr = (Math.sqrt(nbrParallelNumber) * Math.abs(mean)) /
                 (Math.sqrt(sigmaSquare) * Tb);
+        // Cr is the numberOfStableDigits; turn that into relativeError
         return Math.pow(10.0, -Cr);
     }
     

@@ -19,8 +19,6 @@ public class DoubleInterval implements Comparable<DoubleInterval> {
     public final double inf;
     public final double sup;
 
-    //private final boolean isNan; // TODO: remove that field
-
     private static final double HALF_PI = PI / 2.0;
     private static final double ONE_AND_HALF_PI = PI * 1.5;
     private static final double TWO_PI = PI * 2.0;

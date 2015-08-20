@@ -35,8 +35,6 @@ final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
     private final IOpcodeInstrumenterFactory factory;
     private final InstrumentationStats stats;
     private final Args args;
-    private final Methods methods;
-    private final IReaction reaction;
     private final String classPath;
 
     private static final List<String> UNARY_METHODS = Arrays.asList(
@@ -52,15 +50,13 @@ final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
     private static final List<String> BINARY_METHODS =
         Arrays.asList("atan2", "pow", "hypot", "copySign", "nextAfter", "scalb");
 
-    CojacCheckerMethodVisitor(int access, String desc, MethodVisitor mv, InstrumentationStats stats, Args args, Methods methods, IReaction reaction, String classPath, IOpcodeInstrumenterFactory factory) {
+    CojacCheckerMethodVisitor(int access, String desc, MethodVisitor mv, InstrumentationStats stats, Args args, String classPath, IOpcodeInstrumenterFactory factory) {
         super(Opcodes.ASM5, access, desc, mv);
 
         this.stats = stats;
         this.args = args;
         this.factory = factory;
 
-        this.methods = methods;
-        this.reaction = reaction;
         this.classPath = classPath;
     }
 
@@ -72,7 +68,7 @@ final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
         if (instrumenter == null) {
             super.visitInsn(opCode);
         } else {
-            instrumenter.instrument(mv, opCode, classPath, methods, reaction, this);
+            instrumenter.instrument(mv, opCode); //, classPath, methods, reaction, this);
         }
     }
 
@@ -81,18 +77,10 @@ final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
         int opCode=Opcodes.IINC;
         IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opCode);
         if (args.isOperationEnabled(Arg.IINC)) {
-            if ( methods != null) {// Maybe make better than methods != null
-                visitVarInsn(ILOAD, index);
-                mv.visitLdcInsn(value);
-                mv.visitMethodInsn(INVOKESTATIC, classPath, methods.getMethod(IINC), Signatures.CHECK_INTEGER_BINARY, false);
-                visitVarInsn(ISTORE, index);
-            } else {
-                visitVarInsn(ILOAD, index);
-                mv.visitLdcInsn(value);
-                instrumenter.instrument(mv, opCode, classPath, methods, reaction, this);
-                visitVarInsn(ISTORE, index);
-            }
-
+            visitVarInsn(ILOAD, index);
+            mv.visitLdcInsn(value);
+            instrumenter.instrument(mv, opCode);//, classPath, methods, reaction, this);
+            visitVarInsn(ISTORE, index);
             stats.incrementCounterValue(Opcodes.IINC); //Arg.IINC);
         } else {
             super.visitIincInsn(index, value);

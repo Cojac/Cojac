@@ -55,9 +55,6 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
 	
     private final IOpcodeInstrumenterFactory factory;
     private final InstrumentationStats stats;
-    private final Methods methods;
-    private final IReaction reaction;
-    private final String classPath;
     public static final boolean DONT_INSTRUMENTn = false;
    
     private final AnalyzerAdapter aa;
@@ -70,8 +67,7 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
             LocalVariablesSorter lvs, 
             ReplaceFloatsMethods rfm, 
             InstrumentationStats stats, 
-            Args args, Methods methods, 
-            IReaction reaction, 
+            Args args,  
             String classPath, 
             IOpcodeInstrumenterFactory factory, 
             CojacReferences references) {
@@ -79,15 +75,9 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
         
         this.aa = aa;
         this.rfm = rfm;
-
 		this.references = references;
-		
         this.stats = stats;
         this.factory = factory;
-
-        this.methods = methods;
-        this.reaction = reaction;
-        this.classPath = classPath;
     }
 	
     @Override
@@ -117,7 +107,7 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
         IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opCode);
         if (instrumenter != null) {
             stats.incrementCounterValue(opCode);
-            instrumenter.instrument(mv, opCode, classPath, methods, reaction, null);
+            instrumenter.instrument(mv, opCode); //, classPath, methods, reaction, null);
         } else { // Delegate to parent
             mv.visitInsn(opCode);
         }

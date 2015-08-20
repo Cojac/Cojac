@@ -36,7 +36,6 @@ final class CojacClassVisitor extends ClassVisitor {
     private final IOpcodeInstrumenterFactory factory;
     private final InstrumentationStats stats;
     private final Args args;
-    private final Methods methods;
     private final IReaction reaction;
     
 	private final CojacReferences references;
@@ -49,13 +48,12 @@ final class CojacClassVisitor extends ClassVisitor {
 	
     private FloatProxyMethod fpm;
 
-    CojacClassVisitor(ClassVisitor cv, Methods methods, CojacReferences references, CojacAnnotationVisitor cav) {
+    CojacClassVisitor(ClassVisitor cv, CojacReferences references, CojacAnnotationVisitor cav) {
 		super(Opcodes.ASM5, cv);
 
 		this.references = references;
         this.stats = references.getStats();
         this.args = references.getArgs();
-        this.methods = methods;
         this.reaction = references.getReaction();
         this.factory = references.getOpCodeInstrumenterFactory();
         this.cav = cav;
@@ -123,9 +121,9 @@ final class CojacClassVisitor extends ClassVisitor {
             AnalyzerAdapter aa = new AnalyzerAdapter(classPath, access, name, desc, parentMv);
             LocalVariablesSorter lvs = new FloatVariablesSorter(access, desc, aa);
             ReplaceFloatsMethods rfm = new ReplaceFloatsMethods(fpm, classPath, references);
-            mv = new FloatReplacerMethodVisitor(access, desc, aa, lvs, rfm, stats, args, methods, reaction, classPath, factory, references);
+            mv = new FloatReplacerMethodVisitor(access, desc, aa, lvs, rfm, stats, args, classPath, factory, references);
         } else {
-            mv = new CojacCheckerMethodVisitor(access, desc, parentMv, stats, args, methods, reaction, classPath, factory);
+            mv = new CojacCheckerMethodVisitor(access, desc, parentMv, stats, args, classPath, factory);
         }
         mv.visitEnd();
 

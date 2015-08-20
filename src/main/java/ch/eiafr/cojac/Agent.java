@@ -51,9 +51,9 @@ public final class Agent implements ClassFileTransformer {
 
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
-        // TODO: correctly handle lambdas... : for them className==null; is there
-        //       a way to discover the "enclosing class" from classfileBuffer, 
-        //       to decide if we should instrument or not?
+        // TODO: verify if we correctly handle lambdas... : for them className==null;
+        //       we try to discover the "enclosing class" from classfileBuffer, 
+        //       to decide if we should instrument or not.
 
 //        if (VERBOSE && className==null) {
 //            System.out.println("null className... "+extractedClassname(classfileBuffer));

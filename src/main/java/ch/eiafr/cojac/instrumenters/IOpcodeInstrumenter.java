@@ -26,5 +26,5 @@ import org.objectweb.asm.commons.LocalVariablesSorter;
 public interface IOpcodeInstrumenter {
     boolean wantsToInstrument(int opcode);
     //TODO: seems that the 4 last parameters are now obsolete...
-    void instrument(MethodVisitor methodVisitor, int opCode, String classPath, Methods methods, IReaction reaction, LocalVariablesSorter src);
+    void instrument(MethodVisitor methodVisitor, int opCode);//, String classPath, Methods methods, IReaction reaction, LocalVariablesSorter src);
 }
