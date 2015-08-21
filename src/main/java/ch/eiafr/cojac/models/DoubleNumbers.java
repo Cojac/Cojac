@@ -250,7 +250,14 @@ public class DoubleNumbers {
 	
 	private static void mergeDoubleArray(Object original, Object cojac, int dimension) throws Exception{
         if(dimension == 1){
-            mergeDoubleArray((double[])original, (Object[]) cojac);
+            if(original instanceof double[])
+                mergeDoubleArray((double[])original, (Object[]) cojac);
+            if(original instanceof Double[]) {
+                Double[] t=(Double[])original;
+                double[] t1=new double[t.length];
+                for(int i=0; i<t.length; i++) t1[i]=t[i];
+                mergeDoubleArray(t1, (Object[]) cojac);
+            }
         }
         else{
 			Object[] originalArray = (Object[])original;

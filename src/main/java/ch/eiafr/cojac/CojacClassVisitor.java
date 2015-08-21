@@ -36,7 +36,6 @@ final class CojacClassVisitor extends ClassVisitor {
     private final IOpcodeInstrumenterFactory factory;
     private final InstrumentationStats stats;
     private final Args args;
-    private final IReaction reaction;
     
 	private final CojacReferences references;
 	
@@ -54,7 +53,6 @@ final class CojacClassVisitor extends ClassVisitor {
 		this.references = references;
         this.stats = references.getStats();
         this.args = references.getArgs();
-        this.reaction = references.getReaction();
         this.factory = references.getOpCodeInstrumenterFactory();
         this.cav = cav;
         proxyMethods = new ArrayList<>();    

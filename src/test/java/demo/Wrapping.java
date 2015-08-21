@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.IntUnaryOperator;
 
@@ -155,6 +156,7 @@ public class Wrapping {
   private static double twiceDouble(double d) { return 2*d;  }
 
   public static void playWithCollection() {  //TODO: rewrite
+    myCojacDebugDump.f(new ArrayList<Double>());
     double a=1.0;
     double b= a/3.0;
     System.out.println("oneThird orig: "+b);
@@ -163,7 +165,10 @@ public class Wrapping {
     l1.add(new MyWrapper(b));
     double c=l1.get(0).dValue;
     ArrayList<Double> l2=new ArrayList<>();
-    l2.add(b);
+    l2.add(b); l2.add(b/2);
+    Collections.sort(l2);
+    System.out.println("oneThird in sorted list: "+COJAC_MAGIC_DOUBLE_toStr(l2.get(0)));
+
 
     System.out.println("oneThird in list: "+COJAC_MAGIC_DOUBLE_toStr(c));
     Double d=b;
@@ -174,8 +179,9 @@ public class Wrapping {
   public static void playWithArrays() { //TODO: rewrite
     double a=1.0;
     double b= a/3.0;
-    double[]t=new double[]{b};
+    double[]t=new double[]{b, b/2};
     Arrays.sort(t);
+    System.out.println("oneThird in sorted primitive array: "+COJAC_MAGIC_DOUBLE_toStr(t[0]));   
   }
   
   private static void playWithGUI() {
@@ -186,6 +192,19 @@ public class Wrapping {
   
   private static void ok(boolean b) {
     if (!b) throw new RuntimeException("bad news...");
+  }
+  //======================================================================
+  static class myCojacDebugDump {
+      public static void f(ArrayList<Double> c) {
+          double b=1; b/=3.0;
+          Double[]t2=new Double[]{b, b/2};
+          Arrays.sort(t2);
+          System.out.println("oneThird in sorted jwrapper array: "+COJAC_MAGIC_DOUBLE_toStr(t2[0]));   
+
+          Double d=3.0;
+          if(d.equals(d))
+              c.add(d);
+      }
   }
   //======================================================================
   static class MyWrapper {

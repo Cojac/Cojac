@@ -126,7 +126,7 @@ public class Wrapping {
     d=new Double(d.shortValue()); ok(d==a);
     d=new Double(d.byteValue()); ok(d==a);
     ok(d.compareTo(a)==0);
-    ok(d.equals(a));
+    ok(d.equals(a));  // "java/lang/Double", "equals", "(Ljava/lang/Object;)Z"
     ok(!d.isNaN());
     ok(!d.isInfinite());
   }

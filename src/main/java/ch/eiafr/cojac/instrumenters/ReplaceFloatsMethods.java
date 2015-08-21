@@ -95,12 +95,14 @@ public class ReplaceFloatsMethods {
 
         invocations.put(new MethodSignature(FL_NAME, "parseFloat", "(Ljava/lang/String;)F"), new InvokableMethod(CFW_N, "fromString", "(Ljava/lang/String;)"+CFW, INVOKESTATIC));
         
+        invocations.put(new MethodSignature(FL_NAME, "equals", "(Ljava/lang/Object;)Z"), new InvokableMethod(CFW_N, "equals", "(Ljava/lang/Object;)Z", INVOKEVIRTUAL));
+
         allMethodsConversions.add(FL_NAME); // use proxy to call every other methods from Float
                
         // Doubles replacements
         suppressions.put(new MethodSignature(DL_NAME, "valueOf", "(D)"+DL_DESCR), CDW_N); // delete if the value is already a DoubleWrapper
         suppressions.put(new MethodSignature(DL_NAME, "doubleValue", "()D"), null); // delete in every case (keep DoubleWrapper)
-        
+                
         // WRAPPER SPEC: DW.fromDouble(double) -> DW
         invocations.put(new MethodSignature(DL_NAME, "valueOf", "(D)"+DL_DESCR), new InvokableMethod(CDW_N, "fromDouble", "(D)"+CDW, INVOKESTATIC));
 
@@ -114,7 +116,11 @@ public class ReplaceFloatsMethods {
         invocations.put(new MethodSignature(DL_NAME, "intValue", "()I"), new InvokableMethod(CDW_N, "d2i", "("+CDW+")I", INVOKESTATIC));
         invocations.put(new MethodSignature(DL_NAME, "longValue", "()J"), new InvokableMethod(CDW_N, "d2l", "("+CDW+")J", INVOKESTATIC));
 
-        invocations.put(new MethodSignature(DL_NAME, "parseFloat", "(Ljava/lang/String;)D"), new InvokableMethod(CDW_N, "fromString", "(Ljava/lang/String;)"+CDW, INVOKESTATIC));
+        invocations.put(new MethodSignature(DL_NAME, "parseDouble", "(Ljava/lang/String;)D"), new InvokableMethod(CDW_N, "fromString", "(Ljava/lang/String;)"+CDW, INVOKESTATIC));
+        
+        invocations.put(new MethodSignature(DL_NAME, "equals", "(Ljava/lang/Object;)Z"), new InvokableMethod(CDW_N, "equals", "(Ljava/lang/Object;)Z", INVOKEVIRTUAL));
+        // TODO: consider adding more methods to "invocations", especially DL_NAME, "equals", "(Ljava/lang/Object;)Z"
+
         
         allMethodsConversions.add(DL_NAME); // use proxy to call every other methods from Double
 

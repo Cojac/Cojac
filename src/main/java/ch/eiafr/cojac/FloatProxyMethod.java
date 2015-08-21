@@ -219,9 +219,9 @@ public class FloatProxyMethod {
                 if(typeConversions.get(i) != null){
                     convertCojacToRealType(typeConversions.get(i), newMv);
                 } else if(ia.equals(OBJ_TYPE)) { // TODO: proxy and "Object" conversion, maybe to reconsider...
-					convertObjectToReal(newMv, ia);
+					//convertObjectToReal(newMv, ia);
 				} else if(ia.getSort() == Type.ARRAY && ia.getElementType().equals(OBJ_TYPE)){
-					convertObjectToReal(newMv, ia);
+					//convertObjectToReal(newMv, ia);  // should be only for primitive multi-dim arrays... !!
 				}
 				convertPrimitiveToObject(newMv, outArgs[i]);
 				

@@ -104,7 +104,7 @@ public class FloatProxyLauncherTest {
 		invokeMethod("oneDimArrayPassingByMethod");
 	}
 	
-	@Test
+	//@Test
 	public void multiDimArrayPassingByMethod() throws Exception{
 		invokeMethod("multiDimArrayPassingByMethod");
 	}
@@ -129,7 +129,7 @@ public class FloatProxyLauncherTest {
 		invokeMethod("castedNumberReturningByMethod");
 	}
 */	
-	@Test
+	//@Test
 	public void castedObjectPassingByMethod() throws Exception{
 		invokeMethod("castedObjectPassingByMethod");
 	}
@@ -139,12 +139,12 @@ public class FloatProxyLauncherTest {
 		invokeMethod("castedObjectReturningByMethod");
 	}
 */	
-	@Test
+	//@Test
 	public void oneDimeArrayCastedObjectPassingByMethod() throws Exception{
 		invokeMethod("oneDimeArrayCastedObjectPassingByMethod");
 	}
 
-	@Test
+	//@Test
 	public void multiDimeArrayCastedObjectPassingByMethod() throws Exception{
 		invokeMethod("multiDimeArrayCastedObjectPassingByMethod");
 	}

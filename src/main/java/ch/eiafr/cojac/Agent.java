@@ -79,6 +79,7 @@ public final class Agent implements ClassFileTransformer {
                 System.out.println("Agent     instrumenting "+className +" under "+loader);
             }
             byte[] instrumented= instrumenter.instrument(classfileBuffer, loader);
+            trackForDebuggingPurposes(className, instrumented);
             if (VERBOSE) {
 				/*
 				The interfaces are loaded by this class, the loading of a class 
@@ -100,7 +101,6 @@ public final class Agent implements ClassFileTransformer {
         }
     }
 	
-    /*
     static int nDumped=0;
     private static void dumpIt(byte[] t) {
         String name = "D"+nDumped++;
@@ -114,9 +114,16 @@ public final class Agent implements ClassFileTransformer {
             e.printStackTrace();
         }
     }
-    */
     
-	/**
+	private void trackForDebuggingPurposes(String className, byte[] instrumented) {
+        if (!className.contains("CojacDebugDump")) return;
+        System.out.println("being dumped: "+className);
+        dumpIt(instrumented);
+        // and then: e:\_apps\java\jdk1.8.0_5\bin\javap -p -c -l D*.class
+        // TODO: disable that debugging dump, once we have a perfect Cojac ;)
+    }
+
+    /**
 	 * This method works only with the FloatReplacerClasses class
 	 * It instruments it to create a static initializer block to set
 	 * all the static variables used by the agent and injected in the 

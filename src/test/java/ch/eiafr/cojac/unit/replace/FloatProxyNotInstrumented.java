@@ -79,13 +79,18 @@ public class FloatProxyNotInstrumented {
 		return array;
 	}
 	
-	
 	public Object castedObjectPassing(Object val){
 		Float f = (Float)val;
 		f += 432.1f;
 		return f;
 	}
 	
+	public Float jWrapperPassing(Float val){
+	    Float f = val;
+	    f += 432.1f;
+	    return f;
+	}
+
 	public Object oneDimeArrayCastedObjectFloat(Object val){
 		float[] f = (float[])val;
 		f[2] *= 0.789f;
