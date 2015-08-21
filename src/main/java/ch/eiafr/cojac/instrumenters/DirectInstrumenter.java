@@ -21,12 +21,9 @@ package ch.eiafr.cojac.instrumenters;
 import ch.eiafr.cojac.Arg;
 import ch.eiafr.cojac.Args;
 import ch.eiafr.cojac.InstrumentationStats;
-import ch.eiafr.cojac.Methods;
 import ch.eiafr.cojac.Signatures;
 import ch.eiafr.cojac.models.ReactionType;
-import ch.eiafr.cojac.reactions.IReaction;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.commons.LocalVariablesSorter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -107,7 +104,7 @@ final class DirectInstrumenter implements IOpcodeInstrumenter {
     }
 
     @Override
-    public void instrument(MethodVisitor mv, int opCode) { //, String classPath, Methods methods, IReaction r, LocalVariablesSorter src) {
+    public void instrument(MethodVisitor mv, int opCode) { 
         mv.visitLdcInsn(reaction.value());
         mv.visitLdcInsn(logFileName);
 

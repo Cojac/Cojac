@@ -21,7 +21,6 @@ package ch.eiafr.cojac;
 import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenter;
 import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenterFactory;
 import ch.eiafr.cojac.models.CheckedMaths;
-import ch.eiafr.cojac.reactions.IReaction;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.LocalVariablesSorter;

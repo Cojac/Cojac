@@ -1,8 +1,26 @@
+---------------- A faire (21.08.15) ------------------------------------
+
+- renommer certaines options
+- concevoir quelques cas d'utilisation en guise de démo
+- concevoir et réaliser une vidéo de démonstration
+- revoir la doc (wiki, user-guide) et github
+- poster la vidéo, puis diffuser le lien, faire relayer l'information
+  canaux possibles : Heinz Kabutz (java specialists), JavaWorld,
+                     contacts personnels...
+
+- traiter correctement les lambdas (instrumenter invokeDynamic)
+- tests automatiques : compléter certains tests unitaires, 
+                       ajouter des tests "crash-or-not" comme Java2Demo
+- avoir au moins un test de performance pour ReplaceFloat
+- envisager le wrapper "new generation" : implémenter les 4 modèles, puis voir
+- cerner/attaquer le problème des collections : le proxy doit-il convertir
+  DoubleWrapper->Double pour des invocations qui demandent des Object ?
+- reconsidérer le problème des "callbacks"; peut-on dupliquer toutes les méthodes
+  instrumentées avec une méthode passerelle ? 
+- 
 
 
-
------------------------ OLDER NOTES (might not be relevant now) --------------
-Issues for enriched numbers (option -R)
+----------------- Issues for enriched numbers (option -R) --------------
 
 - Verbose mode & interface: interfaces risk to be loaded by the verifier class
 and to don't get instrumented.
@@ -27,8 +45,8 @@ and to don't get instrumented.
   the uninstrumented abstract class java.awt.font.GraphicAttribute, is created
   and given to swing, which finally tries to call 'float getAdvance()'; this
   will be not found, and we get an AbstractMethodError.
-  That particular problem happens to have a workaround: add a bypass to Cojac: 
-  with: -b java2d.demos.Fonts.AttributedStr$ScalableImageGraphicAttribute  
+  That particular problem happens to have a workaround via the "bypass" option: 
+      -b java2d.demos.Fonts.AttributedStr$ScalableImageGraphicAttribute  
   
   
 ----------------------- OLDER NOTES (might not be relevant now) --------------

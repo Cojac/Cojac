@@ -18,22 +18,24 @@
 
 package ch.eiafr.cojac.instrumenters;
 
-import ch.eiafr.cojac.Args;
-import static ch.eiafr.cojac.models.FloatReplacerClasses.*;
-import ch.eiafr.cojac.InstrumentationStats;
-import ch.eiafr.cojac.Methods;
-import ch.eiafr.cojac.models.DoubleNumbers;
-import ch.eiafr.cojac.models.FloatNumbers;
-import ch.eiafr.cojac.reactions.IReaction;
+import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_DOUBLE_WRAPPER_INTERNAL_NAME;
+import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_DOUBLE_WRAPPER_TYPE_DESCR;
+import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_FLOAT_WRAPPER_INTERNAL_NAME;
+import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_FLOAT_WRAPPER_TYPE_DESCR;
+import static org.objectweb.asm.Opcodes.*;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.objectweb.asm.MethodVisitor;
 
-import static org.objectweb.asm.Opcodes.*;
+import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.LocalVariablesSorter;
+
+import ch.eiafr.cojac.Args;
+import ch.eiafr.cojac.InstrumentationStats;
+import ch.eiafr.cojac.models.DoubleNumbers;
+import ch.eiafr.cojac.models.FloatNumbers;
 
 
 final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
@@ -51,7 +53,6 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
                 // FLOATS
                 FRETURN, 
                 FCONST_0, FCONST_1, FCONST_2, 
-                // FLOAD, FSTORE, // TODO: nothing to do here?
                 I2F, L2F, D2F, F2D, F2I, F2L,
                 FMUL, FADD, FDIV, FSUB, FREM, FNEG, 
                 FCMPG, FCMPL, 
@@ -136,7 +137,7 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
     }
 
     @Override
-    public void instrument(MethodVisitor mv, int opCode) { //, String classPath, Methods methods, IReaction r, LocalVariablesSorter src) {
+    public void instrument(MethodVisitor mv, int opCode) { 
         InvokableMethod replacementMethod = invocations.get(opCode);
         InvokableMethod conversionMethod = conversions.get(opCode);
         if (replacementMethod != null) {

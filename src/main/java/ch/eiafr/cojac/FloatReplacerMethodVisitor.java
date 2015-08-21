@@ -25,7 +25,6 @@ import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
 import ch.eiafr.cojac.instrumenters.ReplaceFloatsMethods;
 import ch.eiafr.cojac.models.DoubleNumbers;
 import ch.eiafr.cojac.models.FloatNumbers;
-import ch.eiafr.cojac.reactions.IReaction;
 
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
