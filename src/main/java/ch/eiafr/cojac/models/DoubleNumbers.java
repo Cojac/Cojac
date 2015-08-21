@@ -225,7 +225,14 @@ public class DoubleNumbers {
 	
 	private static void mergeFloatArray(Object original, Object cojac, int dimension) throws Exception{
         if(dimension == 1){
-            mergeFloatArray((float[])original, (Object[]) cojac);
+            if(original instanceof float[])
+                mergeFloatArray((float[])original, (Object[]) cojac);
+            else if(original instanceof Float[]) {
+                Float[] t=(Float[])original;
+                float[] t1=new float[t.length];
+                for(int i=0; i<t.length; i++) t1[i]=t[i];
+                mergeFloatArray(t1, (Object[]) cojac);
+            }
         }
         else{
 			Object[] originalArray = (Object[])original;
@@ -252,7 +259,7 @@ public class DoubleNumbers {
         if(dimension == 1){
             if(original instanceof double[])
                 mergeDoubleArray((double[])original, (Object[]) cojac);
-            if(original instanceof Double[]) {
+            else if(original instanceof Double[]) {
                 Double[] t=(Double[])original;
                 double[] t1=new double[t.length];
                 for(int i=0; i<t.length; i++) t1[i]=t[i];

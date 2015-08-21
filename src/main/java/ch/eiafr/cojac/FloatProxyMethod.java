@@ -220,8 +220,8 @@ public class FloatProxyMethod {
                     convertCojacToRealType(typeConversions.get(i), newMv);
                 } else if(ia.equals(OBJ_TYPE)) { // TODO: proxy and "Object" conversion, maybe to reconsider...
 					//convertObjectToReal(newMv, ia);
-				} else if(ia.getSort() == Type.ARRAY && ia.getElementType().equals(OBJ_TYPE)){
-					//convertObjectToReal(newMv, ia);  // should be only for primitive multi-dim arrays... !!
+				} else if(ia.getSort() == Type.ARRAY && ia.getElementType().equals(OBJ_TYPE)) {
+					//convertObjectToReal(newMv, ia);  // should be only for primitive multi-dim arrays (?)
 				}
 				convertPrimitiveToObject(newMv, outArgs[i]);
 				
@@ -240,6 +240,14 @@ public class FloatProxyMethod {
             newMv.visitMaxs(0, 0);
 		}
 		return convertedArrays;
+	}
+	
+	private static boolean isPrimitiveFloatOrDoubleMultiArray(Type ia) {
+	    if(ia.getSort() != Type.ARRAY) return false;
+	    Type eltType=ia.getElementType();
+	    if (eltType.equals(JWRAPPER_FLOAT_TYPE) || eltType.equals(JWRAPPER_DOUBLE_TYPE))
+	        return true;
+	    return isPrimitiveFloatOrDoubleMultiArray(eltType);
 	}
     
 	private void checkArraysAfterCall(MethodVisitor mv, HashMap<Integer, Type> convertedArrays, String desc){
