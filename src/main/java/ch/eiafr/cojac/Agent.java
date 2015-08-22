@@ -158,26 +158,20 @@ public final class Agent implements ClassFileTransformer {
         return cw.toByteArray();
     }
 	
-	static String ssss=null;
 	static String extractedClassname(byte[] t) {
-	    ClassVisitor cv=new ClassVisitor(Opcodes.ASM5, null) {
-	        @SuppressWarnings("unused")
-            public void visit(int version, int access, String name, String signature, String supername, String[] interfaces) {
-	            ssss=name; // TODO: better than via a global variable...
-	        }
-	    };
+	    ClassNameExtractor cv=new ClassNameExtractor();
 	    ClassReader cr=new ClassReader(t);
 	    cr.accept(cv, 0);
-	    return ssss;
+	    return cv.unitName;
 	}
 	//=======================================================================
 	static class ClassNameExtractor extends ClassVisitor {
-        public ClassNameExtractor(ClassVisitor cv) {
-            super(Opcodes.ASM5, cv);
-        }
+	    public String unitName=null;
+        public ClassNameExtractor() { super(Opcodes.ASM5); }
+        @SuppressWarnings("unused")
         @Override
         public void visit(int version, int access, String name, String signature, String supername, String[] interfaces) {
-
+            unitName=name;
         }
 	}
 }

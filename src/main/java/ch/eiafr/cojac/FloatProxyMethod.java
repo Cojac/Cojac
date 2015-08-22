@@ -218,11 +218,18 @@ public class FloatProxyMethod {
 				
                 if(typeConversions.get(i) != null){
                     convertCojacToRealType(typeConversions.get(i), newMv);
-                } else if(ia.equals(OBJ_TYPE)) { // TODO: proxy and "Object" conversion, maybe to reconsider...
-					//convertObjectToReal(newMv, ia);
+                } 
+                /* Note: Mr Monnard decided to convert also Object and Object[] parameters;
+                         Except for .equals() that is now explicitly detected, I can't see
+                         where such a pattern is used (a library method with Object parameters
+                         that will really expect a Float/Double object...). 
+                         Maybe more tests will show he had good reasons!
+                } else if(ia.equals(OBJ_TYPE)) { 
+					convertObjectToReal(newMv, ia);
 				} else if(ia.getSort() == Type.ARRAY && ia.getElementType().equals(OBJ_TYPE)) {
-					//convertObjectToReal(newMv, ia);  // should be only for primitive multi-dim arrays (?)
+					convertObjectToReal(newMv, ia);  // should be only for primitive multi-dim arrays (?)
 				}
+				*/
 				convertPrimitiveToObject(newMv, outArgs[i]);
 				
 				if(ia.getSort() == Type.ARRAY){ // If it is an array, keep the two arrays references (cojac & original)

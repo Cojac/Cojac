@@ -104,10 +104,16 @@ public class FloatProxyLauncherTest {
 		invokeMethod("oneDimArrayPassingByMethod");
 	}
 	
-	//@Test
+	@Test
 	public void multiDimArrayPassingByMethod() throws Exception{
 		invokeMethod("multiDimArrayPassingByMethod");
 	}
+
+	@Test
+	public void arrayModifiedInMethodWithReference() throws Exception{
+	    invokeMethod("arrayModifiedInMethodWithReference");
+	}
+	    
 /*	
 	@Test
 	public void oneDimArrayField() throws Exception{
@@ -128,18 +134,24 @@ public class FloatProxyLauncherTest {
 	public void castedNumberReturningByMethod() throws Exception{
 		invokeMethod("castedNumberReturningByMethod");
 	}
-*/	
-	//@Test
-	public void castedObjectPassingByMethod() throws Exception{
-		invokeMethod("castedObjectPassingByMethod");
-	}
-/*	
+
 	@Test
 	public void castedObjectReturningByMethod() throws Exception{
 		invokeMethod("castedObjectReturningByMethod");
 	}
 */	
+
+/* Note: I decided to change the specification : a call to an
+         uninstrumented f(Object) or g(Object[]) will now directly
+         receive our CojacWrapper; in R. Monnard version, they were converted
+         by the proxy (see cojac.FloatProxyMethod.createConvertMethod())  
+
 	//@Test
+    public void castedObjectPassingByMethod() throws Exception{
+        invokeMethod("castedObjectPassingByMethod");
+    }
+
+    //@Test
 	public void oneDimeArrayCastedObjectPassingByMethod() throws Exception{
 		invokeMethod("oneDimeArrayCastedObjectPassingByMethod");
 	}
@@ -148,15 +160,12 @@ public class FloatProxyLauncherTest {
 	public void multiDimeArrayCastedObjectPassingByMethod() throws Exception{
 		invokeMethod("multiDimeArrayCastedObjectPassingByMethod");
 	}
-	
-	@Test
-	public void arrayModifiedInMethodWithReference() throws Exception{
-		invokeMethod("arrayModifiedInMethodWithReference");
-	}
-	
-	// TODO - Fix array references & proxy bug
+
+*/
+
+	// TODO - Fix array references & proxy limitation
 	/*
-	 This test fails, this is a known bug,
+	 This test fails, this is a known limitation,
 	 When an array is passed to the not-instrumented side, and the array is modified
 	 through an other method than the passing method, the instrumented array is not modified
 	*/
@@ -169,7 +178,7 @@ public class FloatProxyLauncherTest {
 	
 	// TODO - Fix instrumented callback passed to not-instrumented side
 	/*
-	 This test fails, this is a known bug,
+	 This test fails, this is a known limitation,
 	 When a callback is created by the user to sort a floats array for example,
 	 the class passed is instrumented and the types did not match the original types
 	 in the not-instrumented side.
