@@ -1,171 +1,216 @@
 package ch.eiafr.cojac.unit.replace;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.function.DoubleUnaryOperator;
+
 import org.junit.Assert;
 
-/* ------------------------------------------
-To be run without Cojac, or with cojac with those options:
-    -javaagent:D:\Git-MyRepository\cojac\target\cojac.jar=
-
-"-R -FW cojac.BasicFloat -DW cojac.BasicDouble"
-"-BDP 3"
-... soon:
-"-STO"
-"-I"
-"-AD"
-
- ------------------------------------------ */
-
 public class Wrapping {  
+    public final double dField;
+    public final float  fField;
+    public static double dStaticField;
+    public static float  fStaticField;
 
-  public static String COJAC_MAGIC_DOUBLE_wrapper() { return ""; }
-  @SuppressWarnings("unused")
-  public static String COJAC_MAGIC_DOUBLE_toStr(double n) { return ""; }
-  @SuppressWarnings("unused")
-  public static String COJAC_MAGIC_FLOAT_toStr(float  n) { return ""; }
+    public Wrapping(double d, float f) {
+        this.dField=d;
+        this.fField=f;
+        dStaticField=d;
+        fStaticField=f;
+    }
+    //-----------------------------------------------------------------------
 
-  private static final String WRAPPER=COJAC_MAGIC_DOUBLE_wrapper();
-    
-  public static void main(String[] args) {
-      go();
-  }
-  public static void go() {
-    //System.out.println("Wrapper used: "+WRAPPER);
-    playWithPrimitiveFloats();
-    playWithPrimitiveDoubles();
-    playWithJavaFloatWrapper();
-    playWithJavaDoubleWrapper();
-//    playWithArrays();
-//    playWithCollection();
-    //System.out.println("The end.");
-  }
-  
-  public static void playWithPrimitiveFloats() {
-    final float a=0.5f;
-    float f=a;
-    f=twiceFloat(f)/2; ok(f==a);
-    f=f*2; f=f/2; ok(f==a);
-    f=f-1; f=f+1; ok(f==a);
-    f=f%(f+1); ok(f==a);
-    //System.out.println(" A "+COJAC_MAGIC_FLOAT_toStr(f));
-    f=-(-f); ok(f==a);
-    f=Math.abs(f); ok(f==a);
-    f=Math.min(f, +10f); ok(f==a);
-    f=Math.max(f, -10f); ok(f==a);
-    
-    double d=f;
-    f=(float)d; ok(f==a);
-    int i=(int)(2*f);
-    f=((float)i)/2; ok(f==a);
-    long l=(long)(2*f);
-    f=((float)l/2); ok(f==a);
-    String s=COJAC_MAGIC_FLOAT_toStr(f);
-    ok((WRAPPER.length()>0) == (s.length()>0));
-  }
-  
-  public static void playWithPrimitiveDoubles() {
-    final double a=0.5;
-    double d=a;
-    d=twiceDouble(d)/2; ok(d==a);
-    d=d*2; d=d/2; ok(d==a);
-    d=d-1; d=d+1; ok(d==a);
-    d=d%(d+1); ok(d==a);
-    d=-(-d); ok(d==a);
-    d=Math.abs(d); ok(d==a);
-    d=Math.min(d, +10f); ok(d==a);
-    d=Math.max(d, -10f); ok(d==a);
-    
-    int i=(int)(2*d);
-    d=((float)i)/2; ok(d==a);
-    long l=(long)(2*d);
-    d=((float)l/2); ok(d==a);
-    String s=COJAC_MAGIC_DOUBLE_toStr(d);
-    ok((WRAPPER.length()>0) == (s.length()>0));
-    // WrappingAux.f(3.2); this won't work, because the AgentTest trick won't instrument other classes
-    
-    // TODO: this does not work with our wrapping mechanism... :-(
-    // DoubleUnaryOperator[] mathDoubleUnaryOps= {Wrapping::mySqrt}; // OR
-    // DoubleUnaryOperator[] mathDoubleUnaryOps= {Math::sqrt, Math::sin, Math::cos, Math::tan};
-    // (strange... the latter works under surefire, not with -javaagent:cojac.jar...)
-    // for(DoubleUnaryOperator op:mathDoubleUnaryOps) d=op.applyAsDouble(a);
-  }
-  
-  private static double mySqrt(double x) {
-      return Math.sqrt(x);
-  }
+    public static String COJAC_MAGIC_DOUBLE_wrapper() { return ""; }
+    @SuppressWarnings("unused")
+    public static String COJAC_MAGIC_DOUBLE_toStr(double n) { return ""; }
+    @SuppressWarnings("unused")
+    public static String COJAC_MAGIC_FLOAT_toStr(float  n) { return ""; }
 
-  public static void playWithJavaFloatWrapper() {
-    final float a=1.0f;
-    Float f=a; ok(f==a);
-    f=new Float(a); ok(f==a);
-    f=new Float(""+a); ok(f==a);
-    f=new Float((double)f); ok(f==a);
-    f=new Float(f.doubleValue()); ok(f==a);
-    f=new Float(f.floatValue()); ok(f==a);
-    f=new Float(f.intValue()); ok(f==a);
-    f=new Float(f.longValue()); ok(f==a);
-    f=new Float(f.shortValue()); ok(f==a);
-    f=new Float(f.byteValue()); ok(f==a);
-    ok(f.compareTo(a)==0);
-    //ok(f.equals(a));
-    ok(!f.isNaN());
-    ok(!f.isInfinite());
-  }
+    private static final String WRAPPER=COJAC_MAGIC_DOUBLE_wrapper();
 
-  public static void playWithJavaDoubleWrapper() {
-    final double a=1.0f;
-    Double d=a; ok(d==a);
-    d=new Double(a); ok(d==a);
-    d=new Double(""+a); ok(d==a);
-    d=new Double(d); ok(d==a);
-    d=new Double(d.doubleValue()); ok(d==a);
-    d=new Double(d.floatValue()); ok(d==a);
-    d=new Double(d.intValue()); ok(d==a);
-    d=new Double(d.longValue()); ok(d==a);
-    d=new Double(d.shortValue()); ok(d==a);
-    d=new Double(d.byteValue()); ok(d==a);
-    ok(d.compareTo(a)==0);
-    ok(d.equals(a));  // "java/lang/Double", "equals", "(Ljava/lang/Object;)Z"
-    ok(!d.isNaN());
-    ok(!d.isInfinite());
-  }
+    public static void main(String[] args) {
+        go();
+    }
 
-  private static float  twiceFloat(float f)  { return 2f*f; }
-  private static double twiceDouble(double d) { return 2*d;  }
+    public static void go() {
+        //System.out.println("Wrapper used: "+WRAPPER);
+        playWithPrimitiveFloats();
+        playWithPrimitiveDoubles();
+        playWithJavaFloatWrapper();
+        playWithJavaDoubleWrapper();
+        playWithArrays();
+        playWithCollection();
+        playWithLambdas();
+        playWithFields();
+        //System.out.println("The end.");
+    }
 
-  public static void playWithCollection() {  //TODO: rewrite
-    double a=1.0;
-    double b= a/3.0;
-    System.out.println("oneThird orig: "+b);
-    System.out.println("oneThird: "+COJAC_MAGIC_DOUBLE_toStr(b));
-    ArrayList<MyWrapper> l1=new ArrayList<>();
-    l1.add(new MyWrapper(b));
-    double c=l1.get(0).dValue;
-    ArrayList<Double> l2=new ArrayList<>();
-    l2.add(b);
+    public static void playWithPrimitiveFloats() {
+        final float a=0.5f;
+        float f=a;
+        f=twiceFloat(f)/2; ok(f==a);
+        f=f-1; f=f+1; ok(f==a);
+        f=f*2; f=f/2; ok(f==a);
+        f=f%(f+1); ok(f==a);
+        f=-(-f); ok(f==a);
+        f=Math.abs(f); ok(f==a);
+        f=Math.min(f, +10f); ok(f==a);
+        f=Math.max(f, -10f); ok(f==a);
 
-    System.out.println("oneThird in list: "+COJAC_MAGIC_DOUBLE_toStr(c));
-    Double d=b;
-    System.out.println("oneThird origWrapper: "+b);
-    System.out.println("oneThird wrapper magic: "+COJAC_MAGIC_DOUBLE_toStr(d));
-  }
+        double d=f;
+        f=(float)d; ok(f==a);
+        int i=(int)(2*f);
+        f=((float)i)/2; ok(f==a);
+        long l=(long)(2*f);
+        f=((float)l/2); ok(f==a);
+        String s=COJAC_MAGIC_FLOAT_toStr(f);
+        ok((WRAPPER.length()>0) == (s.length()>0));
+    }
 
-  public static void playWithArrays() { //TODO: rewrite
-    double a=1.0;
-    double b= a/3.0;
-    double[]t=new double[]{b};
-    Arrays.sort(t);
-  }
-  
-  private static void ok(boolean b) {
-      Assert.assertTrue("bad news...", b);
-      //if (!b) throw new RuntimeException("bad news...");
-  }
-  //======================================================================
-  static class MyWrapper {
-    public final double dValue;
-    public final float fValue;
-    MyWrapper(double d) { dValue=d; fValue=(float)d; }
-  }
+    public static void playWithPrimitiveDoubles() {
+        final double a=0.5;
+        double d=a;
+        d=twiceDouble(d)/2; ok(d==a);
+        d=d-1; d=d+1; ok(d==a);
+        d=d*2; d=d/2; ok(d==a);
+        d=d%(d+1); ok(d==a);
+        d=-(-d); ok(d==a);
+        d=Math.abs(d); ok(d==a);
+        d=Math.min(d, +10f); ok(d==a);
+        d=Math.max(d, -10f); ok(d==a);
+        d=Math.sqrt(Math.pow(d, 2)); ok(d==a);
+        int i=(int)(2*d);
+        d=((float)i)/2; ok(d==a);
+        long l=(long)(2*d);
+        d=((float)l/2); ok(d==a);
+        String s=COJAC_MAGIC_DOUBLE_toStr(d);
+        ok((WRAPPER.length()>0) == (s.length()>0));
+
+        // WrappingAux.f(3.2); this won't work, because the AgentTest trick won't instrument other classes
+    }
+
+    public static void playWithLambdas() {
+        //TODO reconsider and expand... Remember that for now under surefire tests, 
+        // only one class is instrumented, and lambdas seem to be in isolated "classes"...
+        double a = 1.0;
+        a = a/3.0;
+        double d = a;
+        DoubleUnaryOperator unOp;
+        unOp = Math::sqrt;
+        //mv.visitInvokeDynamicInsn(
+        //   "applyAsDouble", 
+        //   "()Ljava/util/function/DoubleUnaryOperator;",
+        //   new Handle(Opcodes.H_INVOKESTATIC, 
+        //              "java/lang/invoke/LambdaMetafactory", 
+        //              "metafactory", 
+        //              "(Ljava/lang/invoke/MethodHandles$Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;"
+        //             ),
+        //             new Object[]{Type.getType("(D)D"), 
+        //                          new Handle(Opcodes.H_INVOKESTATIC, 
+        //                                     "java/lang/Math", 
+        //                                     "sqrt", 
+        //                                     "(D)D"), 
+        //                          Type.getType("(D)D")
+        //                         }
+        //);
+        
+        d=unOp.applyAsDouble(a*a);   // but the "enrichment" is lost...
+
+        // TODO: this does not work for the moment...
+        //  unOp = (x->(x+2)-2);
+//mv.visitInvokeDynamicInsn(... new Handle(Opcodes.H_INVOKESTATIC, "ch/eiafr/cojac/unit/replace/Wrapping", "lambda$0", "(D)D"), Type.getType("(D)D")});
+              //      unOp.applyAsDouble(a); ok(d==a);
+        //    unOp = Wrapping::mySqrt;
+//mv.visitInvokeDynamicInsn(...new Handle(Opcodes.H_INVOKESTATIC, "ch/eiafr/cojac/unit/replace/Wrapping", "mySqrt", "(D)D"), Type.getType("(D)D")});
+        //      unOp.applyAsDouble(a*a); ok(d==a);
+    }
+
+    private static double mySqrt(double x) {
+        return Math.sqrt(x);
+    }
+
+    public static void playWithJavaFloatWrapper() {
+        final float a=1.0f;
+        Float f=a; ok(f==a);
+        f=new Float(a); ok(f==a);
+        f=new Float(""+a); ok(f==a);
+        f=new Float((double)f); ok(f==a);
+        f=new Float(f.doubleValue()); ok(f==a);
+        f=new Float(f.floatValue()); ok(f==a);
+        f=new Float(f.intValue()); ok(f==a);
+        f=new Float(f.longValue()); ok(f==a);
+        f=new Float(f.shortValue()); ok(f==a);
+        f=new Float(f.byteValue()); ok(f==a);
+        ok(f.compareTo(a)==0);
+        //ok(f.equals(a));
+        ok(!f.isNaN());
+        ok(!f.isInfinite());
+    }
+
+    public static void playWithFields() {
+        double b=1.0;
+        b= b/3.0;
+        Wrapping w=new Wrapping(b, (float)b);
+        ok(w.dField==b);
+        ok(w.fField==(float)b);
+        ok(dStaticField==b);
+        ok(fStaticField==(float)b);
+    }
+        
+    public static void playWithJavaDoubleWrapper() {
+        final double a=1.0f;
+        Double d=a; ok(d==a);
+        d=new Double(a); ok(d==a);
+        d=new Double(""+a); ok(d==a);
+        d=new Double(d); ok(d==a);
+        d=new Double(d.doubleValue()); ok(d==a);
+        d=new Double(d.floatValue()); ok(d==a);
+        d=new Double(d.intValue()); ok(d==a);
+        d=new Double(d.longValue()); ok(d==a);
+        d=new Double(d.shortValue()); ok(d==a);
+        d=new Double(d.byteValue()); ok(d==a);
+        ok(d.compareTo(a)==0);
+        ok(d.equals(a)); 
+        ok(!d.isNaN());
+        ok(!d.isInfinite());
+    }
+
+    private static float  twiceFloat(float f)  { return 2f*f; }
+    private static double twiceDouble(double d) { return 2*d;  }
+
+    public static void playWithCollection() {
+        double a= 1.0;
+        double b= a/3.0;
+        ArrayList<Double> l=new ArrayList<>();
+        l.add(b); l.add(b/2);
+        Collections.sort(l);
+        ok(keepsEnrichment(l.get(0)));
+        ok(l.get(1)==b);
+    }
+
+    public static void playWithArrays() { 
+        double b=1.0;
+        b= b/3.0;
+        double a=b;
+        double[]t=new double[]{b, b/2};
+        Arrays.sort(t);
+        ok(keepsEnrichment(t[0]));
+        ok(t[1]==b);
+        double[][]tt={{b}};
+        ok(tt[0][0]==a);
+    }
+
+    /** works only if d happens to have a long development, and only 
+     * for BigDecimal wrapping (with a number of digits > 16) */
+    static boolean keepsEnrichment(double d) {
+        if (!WRAPPER.equals("BigDecimal")) return true;
+        String s1=""+d;
+        String s2=COJAC_MAGIC_DOUBLE_toStr(d);
+        return s2.length()>s1.length();
+    }
+
+    private static void ok(boolean b) {
+        Assert.assertTrue("bad news...", b);
+        //if (!b) throw new RuntimeException("bad news...");
+    }
 }

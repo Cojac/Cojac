@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.function.DoubleUnaryOperator;
-import java.util.function.IntUnaryOperator;
 
 import javax.swing.JFrame;
 
@@ -115,7 +114,7 @@ public class Wrapping {
 
   /** works only if d has a chance to have a long development, and only 
    * for BigDecimal wrapping (with a number of digits > 16) */
-  static boolean isRich(double d) {
+  static boolean keepsEnrichment(double d) {
       if (!WRAPPER.equals("BigDecimal")) return true;
       String s1=""+d;
       String s2=COJAC_MAGIC_DOUBLE_toStr(d);
@@ -176,7 +175,7 @@ public class Wrapping {
     l2.add(b); l2.add(b/2);
     Collections.sort(l2);
     System.out.println("oneThird in sorted list: "+COJAC_MAGIC_DOUBLE_toStr(l2.get(0)));
-    ok(isRich(l2.get(0)));
+    ok(keepsEnrichment(l2.get(0)));
 
     System.out.println("oneThird in list: "+COJAC_MAGIC_DOUBLE_toStr(c));
     Double d=b;
@@ -190,7 +189,7 @@ public class Wrapping {
     double[]t=new double[]{b, b/2};
     Arrays.sort(t);
     System.out.println("oneThird in sorted primitive array: "+COJAC_MAGIC_DOUBLE_toStr(t[0]));   
-    ok(isRich(t[0]));
+    ok(keepsEnrichment(t[0]));
   }
   
   private static void playWithGUI() {
