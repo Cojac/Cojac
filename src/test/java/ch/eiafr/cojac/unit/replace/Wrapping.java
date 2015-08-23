@@ -31,7 +31,7 @@ public class Wrapping implements DoubleUnaryOperator {
     public static void main(String[] args) {
         go();
     }
-
+    
     public static void go() {
         //System.out.println("Wrapper used: "+WRAPPER);
         playWithPrimitiveFloats();
@@ -230,4 +230,8 @@ public class Wrapping implements DoubleUnaryOperator {
     public double applyAsDouble(double operand) {
         return operand + 1.0;
     }
+    
+//  public static void badOverload(double d) {}
+//  public static void badOverload(Double d) {}  // This won't work (same instrumented signature)!
+
 }

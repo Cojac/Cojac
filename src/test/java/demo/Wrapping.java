@@ -163,7 +163,8 @@ public class Wrapping {
   private static double twiceDouble(double d) { return 2*d;  }
 
   public static void playWithCollection() {  //TODO: rewrite
-    myCojacDebugDump.f(new ArrayList<Double>());
+    MyCojacDebugDump.f(3);
+    //myCojacDebugDump.f(new ArrayList<Double>());
     double a=1.0;
     double b= a/3.0;
     System.out.println("oneThird orig: "+b);
@@ -202,17 +203,24 @@ public class Wrapping {
     if (!b) throw new RuntimeException("bad news...");
   }
   //======================================================================
-  static class myCojacDebugDump {
-      public static void f(ArrayList<Double> c) {
-          double b=1; b/=3.0;
-          Double[]t2=new Double[]{b, b/2};
-          Arrays.sort(t2);
-          System.out.println("oneThird in sorted jwrapper array: "+COJAC_MAGIC_DOUBLE_toStr(t2[0]));   
-
-          Double d=3.0;
-          if(d.equals(d))
-              c.add(d);
+  static class MyCojacDebugDump {
+      public MyCojacDebugDump(int a) {
+          
       }
+      
+      public static int f(int a) {
+          return 2*a;
+      }
+//      public static void f(ArrayList<Double> c) {
+//          double b=1; b/=3.0;
+//          Double[]t2=new Double[]{b, b/2};
+//          Arrays.sort(t2);
+//          System.out.println("oneThird in sorted jwrapper array: "+COJAC_MAGIC_DOUBLE_toStr(t2[0]));   
+//
+//          Double d=3.0;
+//          if(d.equals(d))
+//              c.add(d);
+//      }
   }
   //======================================================================
   static class MyWrapper {

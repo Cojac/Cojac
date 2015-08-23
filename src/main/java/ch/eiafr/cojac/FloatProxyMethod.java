@@ -50,6 +50,7 @@ public class FloatProxyMethod {
     
     public void proxyCall(MethodVisitor mv, int opcode, String owner, String name, String desc){
 		HashMap<Integer, Type> convertedArrays = convertArgumentsToReal(mv, desc, opcode, owner);	
+		//TODO: in general, would it be possible to avoid the proxy when no "instrumented" types are concerned?
 		mv.visitMethodInsn(opcode, owner, name, desc, (opcode == INVOKEINTERFACE));
 		checkArraysAfterCall(mv, convertedArrays, desc);
 		convertReturnType(mv, desc);
