@@ -39,7 +39,7 @@ final class CojacClassVisitor extends ClassVisitor {
     
 	private final CojacReferences references;
 	
-    private String classPath;
+    private String crtClassName;
     
     private final CojacAnnotationVisitor cav;
     
@@ -62,8 +62,8 @@ final class CojacClassVisitor extends ClassVisitor {
     public void visit(int version, int access, String name, String signature, String supername, String[] interfaces) {
         cv.visit(version, access, name, signature, supername, interfaces);
 
-        classPath = name;
-        fpm = new FloatProxyMethod(this, classPath);
+        crtClassName = name;
+        fpm = new FloatProxyMethod(this, crtClassName);
     }
 
     public boolean isProxyMethod(String name, String desc){
@@ -92,13 +92,13 @@ final class CojacClassVisitor extends ClassVisitor {
 			transform types and call the good native method.
 			*/
             cv.visitMethod(access, name, oldDesc, signature, exceptions);
-            fpm.nativeCall(null, access, classPath, name, oldDesc);
+            fpm.nativeCall(null, access, crtClassName, name, oldDesc);
             return null;
         }
         
         MethodVisitor mv = cv.visitMethod(access, name, desc, signature, exceptions);
 
-        String currentMethodID = classPath + '/' + name;
+        String currentMethodID = crtClassName + '/' + name;
 
         if (cav.isClassAnnotated() || cav.isMethodAnnotated(currentMethodID)) {
             return mv;
@@ -116,12 +116,12 @@ final class CojacClassVisitor extends ClassVisitor {
         MethodVisitor mv;
         if (args.isSpecified(Arg.REPLACE_FLOATS)){
 			// Create the MethodVisitor delegation chain: FloatReplacerMethodVisitor -> LocalVariableSorter -> AnalyzerAdapter -> parentMv
-            AnalyzerAdapter aa = new AnalyzerAdapter(classPath, access, name, desc, parentMv);
+            AnalyzerAdapter aa = new AnalyzerAdapter(crtClassName, access, name, desc, parentMv);
             LocalVariablesSorter lvs = new FloatVariablesSorter(access, desc, aa);
-            ReplaceFloatsMethods rfm = new ReplaceFloatsMethods(fpm, classPath, references);
-            mv = new FloatReplacerMethodVisitor(access, desc, aa, lvs, rfm, stats, args, classPath, factory, references);
+            ReplaceFloatsMethods rfm = new ReplaceFloatsMethods(fpm, crtClassName, references);
+            mv = new FloatReplacerMethodVisitor(access, desc, aa, lvs, rfm, stats, args, crtClassName, factory, references);
         } else {
-            mv = new CojacCheckerMethodVisitor(access, desc, parentMv, stats, args, classPath, factory);
+            mv = new CojacCheckerMethodVisitor(access, desc, parentMv, stats, args, crtClassName, factory);
         }
         mv.visitEnd();
 

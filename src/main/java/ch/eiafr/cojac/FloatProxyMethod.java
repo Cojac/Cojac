@@ -30,22 +30,22 @@ import org.objectweb.asm.MethodVisitor;
 import static org.objectweb.asm.Opcodes.*;
 import org.objectweb.asm.Type;
 
-
 public class FloatProxyMethod {
     private final CojacClassVisitor ccv;
     
     private static final Type JWRAPPER_FLOAT_TYPE  = Type.getType(Float.class);
     private static final Type JWRAPPER_DOUBLE_TYPE = Type.getType(Double.class);
+    private static final Type OBJ_ARRAY_TYPE=Type.getType("[Ljava/lang/Object;");
     private static final Type   OBJ_TYPE = Type.getType(Object.class);
     private static final String OBJ_DESC = OBJ_TYPE.getDescriptor();
     
 	private static final String COJAC_TYPE_CONVERT_NAME = "COJAC_TYPE_CONVERT";
     
-    private final String classPath;
+    private final String crtClassName;
     
     public FloatProxyMethod(CojacClassVisitor ccv, String classPath){
         this.ccv = ccv;
-        this.classPath = classPath;
+        this.crtClassName = classPath;
     }
     
     public void proxyCall(MethodVisitor mv, int opcode, String owner, String name, String desc){
@@ -104,11 +104,10 @@ public class FloatProxyMethod {
 		        if(Arrays.equals(inArgs, outArgs)) return;
 		*/
 		
-		Type objArrayType=Type.getType("[Ljava/lang/Object;");
-		String convertDesc = Type.getMethodDescriptor(objArrayType, inArgs);
+		String convertDesc = Type.getMethodDescriptor(OBJ_ARRAY_TYPE, inArgs);
 		
 		convertedArrays = createConvertMethod(convertDesc, inArgs, outArgs, typeConversions);
-		mv.visitMethodInsn(INVOKESTATIC, classPath, COJAC_TYPE_CONVERT_NAME, convertDesc, false);
+		mv.visitMethodInsn(INVOKESTATIC, crtClassName, COJAC_TYPE_CONVERT_NAME, convertDesc, false);
 		
 		// conversion of owner if invokevirtual
 		if(opcode == INVOKEVIRTUAL){
@@ -249,6 +248,7 @@ public class FloatProxyMethod {
 		return convertedArrays;
 	}
 	
+	/* just an idea - useless for the moment...
 	private static boolean isPrimitiveFloatOrDoubleMultiArray(Type ia) {
 	    if(ia.getSort() != Type.ARRAY) return false;
 	    Type eltType=ia.getElementType();
@@ -256,6 +256,7 @@ public class FloatProxyMethod {
 	        return true;
 	    return isPrimitiveFloatOrDoubleMultiArray(eltType);
 	}
+	*/
     
 	private void checkArraysAfterCall(MethodVisitor mv, HashMap<Integer, Type> convertedArrays, String desc){
 		Type returnType = Type.getReturnType(desc);
@@ -403,5 +404,72 @@ public class FloatProxyMethod {
 		mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "convertFromObjectToCojac", "("+OBJ_DESC+")"+OBJ_DESC, false);
 		mv.visitTypeInsn(CHECKCAST, afterFloatReplacement(aType).getInternalName());
 	}
-	
 }
+
+/*============================================================================
+
+-----------------------------------------------
+(1) Existing mechanism, from [Monnard14, p. 19]:
+-----------------------------------------------
+
+...public void unInstrumentedCallee(float f, int i, double d);
+
+class MyClass {
+  public static void instrumentedCaller(){
+    float f; int i, double d;
+    ... 
+    ref.unInstrumentedCallee(f, i, d);
+  }
+}
+
+class MyClass { // after instrumentation
+  public static void instrumentedCaller(){
+    FloatWrapper f; int i; DoubleWrapper d;
+    Object[] obj = COJAC_TYPE_CONVERT(f, i, d);  // but only on stack, no additional local var
+    ref.unInstrumentedCallee((float)obj[0], (int)obj[1], (double)obj[2]);
+  }
+ 
+  public static Object[] COJAC_TYPE_CONVERT(FloatWrapper f, int i, DoubleWrapper d){
+    Object[] obj = new Object[3];
+    obj[0] = FloatWrapper.toFloat(f);
+    obj[1] = i;
+    obj[2] = DoubleWrapper.toDouble(d);
+    return obj;
+  }
+}
+
+-----------------------------------------------
+(1) Idea of a new mechanism, for invokevirtual/invokeinterface 
+    of a possibly overridden instrumented method
+-----------------------------------------------
+
+class MyClass { // after instrumentation
+  public static void instrumentedCaller(){
+    FloatWrapper f; int i; DoubleWrapper d;
+    Object[] obj = COJAC_TYPE_CONVERT(f, i, d);
+    try {
+      ref.possiblyUninstrumentedCallee((FloatWrapper)obj[0], (int)obj[2], (DoubleWrapper)obj[4]); // signature 
+    } catch (NoSuchMethodError e) {
+      ref.possiblyUninstrumentedCallee((float)obj[1], (int)obj[3], (double)obj[5]);
+      // and convert back return value and maybe post-process arrays
+    } 
+  }
+ 
+  public static Object[] COJAC_TYPE_CONVERT(FloatWrapper f, int i, DoubleWrapper d){
+    Object[] obj = new Object[6];
+    obj[0] = FloatWrapper.toFloat(f);
+    obj[1] = f;
+    obj[1] = i;
+    obj[2] = i;
+    obj[2] = DoubleWrapper.toDouble(d);
+    obj[3] = d;
+    // if needed add a first parameter for 'ref' and put it in the array
+    return obj;
+  }
+}
+
+
+============================================================================*/
+
+
+
