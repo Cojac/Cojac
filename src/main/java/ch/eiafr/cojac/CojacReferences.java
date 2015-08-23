@@ -23,8 +23,6 @@ import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenterFactory;
 import ch.eiafr.cojac.models.Reactions;
 import ch.eiafr.cojac.models.wrappers.BigDecimalDouble;
 import ch.eiafr.cojac.models.wrappers.BigDecimalFloat;
-import ch.eiafr.cojac.reactions.ClassLoaderReaction;
-import ch.eiafr.cojac.reactions.IReaction;
 import ch.eiafr.cojac.utils.ReflectionUtils;
 
 import org.objectweb.asm.ClassWriter;
@@ -47,7 +45,6 @@ public final class CojacReferences {
 
     private final Args args;
     private final InstrumentationStats stats;
-    private final IReaction reaction;
     private final IOpcodeInstrumenterFactory factory;
     private final MBeanServer mbServer;
     private final String[] bypassList;
@@ -63,7 +60,6 @@ public final class CojacReferences {
     private CojacReferences(CojacReferencesBuilder builder) {
         this.args = builder.args;
         this.stats = builder.stats;
-        this.reaction = builder.reaction;
         this.factory = builder.factory;
         this.mbServer = builder.mbServer;
         this.bypassList = builder.bypassList;
@@ -111,10 +107,6 @@ public final class CojacReferences {
 
     public InstrumentationStats getStats() {
         return stats;
-    }
-
-    public IReaction getReaction() {
-        return reaction;
     }
 
     public IOpcodeInstrumenterFactory getOpCodeInstrumenterFactory() {
@@ -191,7 +183,6 @@ public final class CojacReferences {
         private final Args args;
         private ClassLoader loader;
         private InstrumentationStats stats;
-        private IReaction reaction;
         private IOpcodeInstrumenterFactory factory;
         private MBeanServer mbServer;
         private StringBuilder sbBypassList;
@@ -225,7 +216,6 @@ public final class CojacReferences {
 
         public CojacReferences build() {
             this.stats = new InstrumentationStats();
-            this.reaction = new ClassLoaderReaction(args);
             this.sbBypassList = new StringBuilder(STANDARD_PACKAGES);
 
             if (args.isSpecified(Arg.BIG_DECIMAL_PRECISION)) {

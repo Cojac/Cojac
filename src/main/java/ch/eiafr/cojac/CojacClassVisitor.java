@@ -22,7 +22,6 @@ import static ch.eiafr.cojac.models.FloatReplacerClasses.*;
 import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenterFactory;
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.replaceFloatMethodDescription;
 import ch.eiafr.cojac.instrumenters.ReplaceFloatsMethods;
-import ch.eiafr.cojac.reactions.IReaction;
 import java.util.ArrayList;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
