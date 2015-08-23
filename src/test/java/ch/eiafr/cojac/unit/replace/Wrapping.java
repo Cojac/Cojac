@@ -6,7 +6,7 @@ import java.util.function.DoubleUnaryOperator;
 
 import org.junit.Assert;
 
-public class Wrapping {  
+public class Wrapping implements DoubleUnaryOperator {  
     public final double dField;
     public final float  fField;
     public static double dStaticField;
@@ -42,6 +42,7 @@ public class Wrapping {
         playWithCollection();
         playWithLambdas();
         playWithFields();
+        playWithInterfaces();
         //System.out.println("The end.");
     }
 
@@ -90,7 +91,7 @@ public class Wrapping {
     }
 
     public static void playWithLambdas() {
-        //TODO reconsider and expand... Remember that for now under surefire tests, 
+        //TODO reconsider and expand... Remember that for now, under that surefire test, 
         // only one class is instrumented, and lambdas seem to be in isolated "classes"...
         double a = 1.0;
         a = a/3.0;
@@ -200,6 +201,17 @@ public class Wrapping {
         ok(tt[0][0]==a);
     }
 
+    public static void playWithInterfaces() {
+        double b=1.0;
+        b= b/3.0;
+        Wrapping w = new Wrapping(b, (float)b);
+        b=w.applyAsDouble(b);
+        ok(keepsEnrichment(b));
+        DoubleUnaryOperator o=w;
+        //b=o.applyAsDouble(b);  // this does not work... "Wrapping.applyAsDouble(D)D is abstract"
+    }
+
+    
     /** works only if d happens to have a long development, and only 
      * for BigDecimal wrapping (with a number of digits > 16) */
     static boolean keepsEnrichment(double d) {
@@ -212,5 +224,10 @@ public class Wrapping {
     private static void ok(boolean b) {
         Assert.assertTrue("bad news...", b);
         //if (!b) throw new RuntimeException("bad news...");
+    }
+
+    @Override
+    public double applyAsDouble(double operand) {
+        return operand + 1.0;
     }
 }

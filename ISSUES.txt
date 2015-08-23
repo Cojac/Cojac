@@ -9,15 +9,21 @@
                      contacts personnels...
 
 - traiter correctement les lambdas (instrumenter invokeDynamic)
+- Attaquer le vrai gros problème : invokevirtual/invokeinterface vers des
+  méthodes qui auront été instrumentées. Si l'invocation est dans du code
+  non instrumenté, on parlait de "callback". Mais peut-on faire mieux quand on
+  peut instrumenter l'invocation ? Comment savoir si la méthode-cible est 
+  instrumentée ou non ?
+- reconsidérer le problème des "callbacks"; peut-on dupliquer toutes les méthodes
+  instrumentées avec une méthode passerelle ? D'après [Monnard14, p. 19], 
+  "This idea is not implemented but it is not hard to implement it"
 - tests automatiques : compléter certains tests unitaires, 
                        ajouter des tests "crash-or-not" comme Java2Demo
 - avoir au moins un test de performance pour ReplaceFloat
-- envisager le wrapper "new generation" : implémenter les 4 modèles, puis voir
-- cerner/attaquer le problème des collections : le proxy doit-il convertir
-  DoubleWrapper->Double pour des invocations qui demandent des Object ?
-- reconsidérer le problème des "callbacks"; peut-on dupliquer toutes les méthodes
-  instrumentées avec une méthode passerelle ? 
-- 
+- envisager le wrapper "new generation" : implémenter les 4 modèles, et voir...
+- valider l'approche de collections "riches" (plus de conversions
+  DoubleWrapper->Double pour des invocations qui demandent des Object) 
+
 
 
 ----------------- Issues for enriched numbers (option -R) --------------
