@@ -1,4 +1,4 @@
----------------- A faire (21.08.15) ------------------------------------
+---------------- A faire (24.08.15) ------------------------------------
 
 - renommer certaines options
 - concevoir quelques cas d'utilisation en guise de démo
@@ -13,10 +13,12 @@
   méthodes qui auront été instrumentées. Si l'invocation est dans du code
   non instrumenté, on parlait de "callback". Mais peut-on faire mieux quand on
   peut instrumenter l'invocation ? Comment savoir si la méthode-cible est 
-  instrumentée ou non ?
+  instrumentée ou non ? cf. FloatProxyMethod pour une ébauche d'idée
 - reconsidérer le problème des "callbacks"; peut-on dupliquer toutes les méthodes
   instrumentées avec une méthode passerelle ? D'après [Monnard14, p. 19], 
   "This idea is not implemented but it is not hard to implement it"
+- alternativement, on pourrait tenter d'instrumenter "offline" toute la librairie
+  standard, ne gardant le proxy que pour les méthodes natives...
 - tests automatiques : compléter certains tests unitaires, 
                        ajouter des tests "crash-or-not" comme Java2Demo
 - avoir au moins un test de performance pour ReplaceFloat
