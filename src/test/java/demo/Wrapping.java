@@ -211,16 +211,16 @@ public class Wrapping {
       public static int f(int a) {
           return 2*a;
       }
-//      public static void f(ArrayList<Double> c) {
-//          double b=1; b/=3.0;
-//          Double[]t2=new Double[]{b, b/2};
-//          Arrays.sort(t2);
-//          System.out.println("oneThird in sorted jwrapper array: "+COJAC_MAGIC_DOUBLE_toStr(t2[0]));   
-//
-//          Double d=3.0;
-//          if(d.equals(d))
-//              c.add(d);
-//      }
+      public static void f(ArrayList<Double> c) {
+          double b=1; b/=3.0;
+          Double[]t2=new Double[]{b, b/2};
+          Arrays.sort(t2);
+          System.out.println("oneThird in sorted jwrapper array: "+COJAC_MAGIC_DOUBLE_toStr(t2[0]));   
+
+          Double d=3.0;
+          if(d.equals(d))
+              c.add(d);
+      }
   }
   //======================================================================
   static class MyWrapper {

@@ -21,8 +21,8 @@ package ch.eiafr.cojac.instrumenters;
 import ch.eiafr.cojac.CojacReferences;
 import ch.eiafr.cojac.FloatProxyMethod;
 import static ch.eiafr.cojac.models.FloatReplacerClasses.*;
-
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
+import static ch.eiafr.cojac.FloatProxyMethod.needsConversion;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -190,16 +190,16 @@ public class ReplaceFloatsMethods {
     public boolean instrument(MethodVisitor mv, int opcode, String owner, String name, String desc, Object stackTop){
         MethodSignature ms = new MethodSignature(owner, name, desc);
         
-		if(name.startsWith(COJAC_MAGIC_CALL_DOUBLE_PREFIX)){
+		if(name.startsWith(COJAC_MAGIC_CALL_DOUBLE_PREFIX)) {
 			cojacMagicCall(mv, name, desc, CDW_N);
 			return true;
 		}
-		if(name.startsWith(COJAC_MAGIC_CALL_FLOAT_PREFIX)){
+		if(name.startsWith(COJAC_MAGIC_CALL_FLOAT_PREFIX)) {
 			cojacMagicCall(mv, name, desc, CFW_N);
 			return true;
 		}
 		
-        if(suppressions.containsKey(ms)){
+        if(suppressions.containsKey(ms)) {
             Object supressionMethod = suppressions.get(ms);
             if(supressionMethod == null)
                 return true;
@@ -208,16 +208,18 @@ public class ReplaceFloatsMethods {
         }
         
         InvokableMethod replacementMethod = invocations.get(ms);
-        if(replacementMethod != null){
+        if(replacementMethod != null) {
             replacementMethod.invoke(mv);
             return true;
         }
-        if(allMethodsConversions.contains(owner)){
+        if(allMethodsConversions.contains(owner)) {
+            if (!needsConversion(owner, desc)) return false;
             fpm.proxyCall(mv, opcode, owner, name, desc);
             return true;
         }
 		
-		if(references.hasToBeInstrumented(owner) == false){
+		if(references.hasToBeInstrumented(owner) == false) {
+            if (!needsConversion(owner, desc)) return false;
 			fpm.proxyCall(mv, opcode, owner, name, desc);
 			return true;
 		}

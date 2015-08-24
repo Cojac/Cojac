@@ -26,8 +26,12 @@ import static ch.eiafr.cojac.instrumenters.ReplaceFloatsMethods.FL_DESCR;
 import static ch.eiafr.cojac.instrumenters.ReplaceFloatsMethods.DL_DESCR;
 
 import java.util.HashMap;
+
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+
 import static org.objectweb.asm.Opcodes.*;
+
 import org.objectweb.asm.Type;
 
 public class FloatProxyMethod {
@@ -49,11 +53,10 @@ public class FloatProxyMethod {
     }
     
     public void proxyCall(MethodVisitor mv, int opcode, String owner, String name, String desc){
-		HashMap<Integer, Type> convertedArrays = convertArgumentsToReal(mv, desc, opcode, owner);	
-		//TODO: in general, would it be possible to avoid the proxy when no "instrumented" types are concerned?
-		mv.visitMethodInsn(opcode, owner, name, desc, (opcode == INVOKEINTERFACE));
-		checkArraysAfterCall(mv, convertedArrays, desc);
-		convertReturnType(mv, desc);
+        HashMap<Integer, Type> convertedArrays = convertArgumentsToReal(mv, desc, opcode, owner);	
+        mv.visitMethodInsn(opcode, owner, name, desc, (opcode == INVOKEINTERFACE));
+        checkArraysAfterCall(mv, convertedArrays, desc);
+        convertReturnType(mv, desc);
     }
     
     public void nativeCall(MethodVisitor mv, int access, String owner, String name, String desc){
@@ -85,6 +88,24 @@ public class FloatProxyMethod {
 		newMv.visitInsn(afterFloatReplacement(Type.getReturnType(desc)).getOpcode(IRETURN));
         newMv.visitMaxs(0, 0);
     }
+    
+    public static boolean needsConversion(String owner, String desc) {
+        if(owner.equals(JWRAPPER_FLOAT_TYPE .getInternalName())) return true;
+        if(owner.equals(JWRAPPER_DOUBLE_TYPE.getInternalName())) return true;
+//        switch (opcode) {
+//        case Opcodes.INVOKEDYNAMIC:
+//        case Opcodes.INVOKEVIRTUAL:
+//        case Opcodes.INVOKEINTERFACE:
+//            return true; // at least owner (this) conversion
+//        }
+        for (Type t:Type.getArgumentTypes(desc))
+            if (needsConversion(t)) return true;
+        return needsConversion(Type.getReturnType(desc));
+    }
+    
+    private static boolean needsConversion(Type t) {
+        return ! afterFloatReplacement(t).equals(t);
+    }
 	
 	private HashMap<Integer, Type> convertArgumentsToReal(MethodVisitor mv, String desc, int opcode, String owner){
 		HashMap<Integer, Type> typeConversions = new HashMap<>();
@@ -98,12 +119,6 @@ public class FloatProxyMethod {
 				typeConversions.put(i, outArgs[i]);
 			}
 		}
-		
-		/*  TODO - if no conversion, no need to call the conversion (performance
-		     optimization) but don't forget to convert the owner in
-		     case of invokevirtual...
-		        if(Arrays.equals(inArgs, outArgs)) return;
-		*/
 		
 		String convertDesc = Type.getMethodDescriptor(OBJ_ARRAY_TYPE, inArgs);
 		
