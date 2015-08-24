@@ -9,7 +9,7 @@ import java.util.function.DoubleUnaryOperator;
 
 //TODO: add unstability checking
 public class WrapperBigDecimal extends ACompactWrapper {
-    private static MathContext mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
+    private static MathContext mathContext = null;
 
     static {
 //        System.out.println("yeah "+(java.util.function.DoubleUnaryOperator)Math::sqrt);
@@ -24,6 +24,8 @@ public class WrapperBigDecimal extends ACompactWrapper {
         this(new BigDecimal(v, mathContext));
     }
     private WrapperBigDecimal(BigDecimal v) {
+        if (mathContext==null)
+            mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
         value=v;
     }
     //-------------------------------------------------------------------------
@@ -49,8 +51,12 @@ public class WrapperBigDecimal extends ACompactWrapper {
     public ACojacWrapper dsub(ACojacWrapper b) { return new WrapperBigDecimal(value.subtract(big(b), mathContext)); }
     public ACojacWrapper dmul(ACojacWrapper b) { return new WrapperBigDecimal(value.multiply(big(b), mathContext)); }
     public ACojacWrapper ddiv(ACojacWrapper b) { return new WrapperBigDecimal(value.divide(big(b), mathContext)); }
-    public ACojacWrapper drem(ACojacWrapper b) { return new WrapperBigDecimal(value.remainder(big(b), mathContext)); }
     public ACojacWrapper dneg()                { return new WrapperBigDecimal(value.negate(mathContext)); }
+    public ACojacWrapper drem(ACojacWrapper b) {
+        BigDecimal rem=value.remainder(big(b), mathContext);
+        if(this.value.compareTo(BigDecimal.ZERO)<0) rem=rem.negate();
+        return new WrapperBigDecimal(rem); 
+    }
     
     @Override
     public double toDouble() {

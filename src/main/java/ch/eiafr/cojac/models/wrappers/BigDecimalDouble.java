@@ -37,9 +37,11 @@ public class BigDecimalDouble extends Number implements
     final boolean isInfinite;
     final boolean isPositiveInfinite;
 
-    private static MathContext mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
+    private static MathContext mathContext = null;
 
     BigDecimalDouble(BigDecimal v) {
+        if (mathContext==null)
+            mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
         val = v;
         isNaN = isInfinite = isPositiveInfinite = false;
     }
@@ -49,6 +51,8 @@ public class BigDecimalDouble extends Number implements
     //-------------------------------------------------------------------------
 
     public BigDecimalDouble(double v) {
+        if (mathContext==null)
+            mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
         if (Double.isNaN(v)) {
             isNaN = true;
             isInfinite = isPositiveInfinite = false;
@@ -65,7 +69,8 @@ public class BigDecimalDouble extends Number implements
     }
 
     public BigDecimalDouble(String v) {
-        //mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
+        if (mathContext==null)
+            mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
         val = new BigDecimal(v, mathContext);
         isNaN = isInfinite = isPositiveInfinite = false;
     }
@@ -175,45 +180,15 @@ public class BigDecimalDouble extends Number implements
 
     public static int d2i(BigDecimalDouble a) {
         return (int) toDouble(a);
-//        if (a.isNaN)
-//            return (int) Double.NaN;
-//        if (a.isInfinite) {
-//            if (a.isPositiveInfinite)
-//                return (int) Double.POSITIVE_INFINITY;
-//            else
-//                return (int) Double.NEGATIVE_INFINITY;
-//        }
-//        return a.val.intValue();
     }
 
     public static long d2l(BigDecimalDouble a) {
         return (long) toDouble(a);
-//        if (a.isNaN)
-//            return (long) Double.NaN;
-//        if (a.isInfinite) {
-//            if (a.isPositiveInfinite)
-//                return (long) Double.POSITIVE_INFINITY;
-//            else
-//                return (long) Double.NEGATIVE_INFINITY;
-//        }
-//        return a.val.longValue();
     }
-
-//    public static BigDecimalFloat d2f(BigDecimalDouble a) {
-//        if (a.isNaN)
-//            return new BigDecimalFloat(Float.NaN);
-//        if (a.isInfinite) {
-//            if (a.isPositiveInfinite)
-//                return new BigDecimalFloat(Float.POSITIVE_INFINITY);
-//            else
-//                return new BigDecimalFloat(Float.NEGATIVE_INFINITY);
-//        }
-//        return new BigDecimalFloat(a.val);
-//    }
 
     // TODO : make better functions for all math function !
     //        A library has been tried (24.08.15), but it was not really convincing; 
-    //        maybe look deeper inside...
+    //        maybe look deeper inside (http://arxiv.org/src/0908.3030v2/anc)...
 
     public static BigDecimalDouble math_sqrt(BigDecimalDouble a) {
         return new BigDecimalDouble(sqrtHeron(a.val));
