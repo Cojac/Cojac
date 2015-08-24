@@ -115,9 +115,7 @@ public class ReplaceFloatsMethods {
         
         invocations.put(new MethodSignature(DL_NAME, "equals", "(Ljava/lang/Object;)Z"), new InvokableMethod(CDW_N, "equals", "(Ljava/lang/Object;)Z", INVOKEVIRTUAL));
         invocations.put(new MethodSignature("java/util/Arrays", "sort", "([D)V"), new InvokableMethod("java/util/Arrays", "sort", "([Ljava/lang/Object;)V", INVOKESTATIC));
-        // TODO: consider handling other Arrays.* methods (binarySearch, fill...)
-
-        // TODO: consider adding a rule for Object.<init>(), so that it will not be stupidly handled by the proxy...
+        // TODO: consider handling other Arrays.xyz methods (binarySearch, fill...)
         
         allMethodsConversions.add(DL_NAME); // use proxy to call every other methods from Double
 

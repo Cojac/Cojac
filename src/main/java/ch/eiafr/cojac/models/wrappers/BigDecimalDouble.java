@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Objects;
 
+import ch.eiafr.cojac.utils.rjm.BigDecimalMath;
 import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_BIGDECIMAL_PRECISION;
 
 public class BigDecimalDouble extends Number implements
@@ -135,8 +136,9 @@ public class BigDecimalDouble extends Number implements
             double bVal = b.getDoubleInfiniteValue();
             return new BigDecimalDouble(aVal % bVal);
         }
-        // TODO: write a correct drem operation on BigInteger
-        return new BigDecimalDouble(a.val.remainder(b.val, mathContext));
+        BigDecimal rem=a.val.remainder(b.val, mathContext);
+        if(a.val.compareTo(BigDecimal.ZERO)<0) rem=rem.negate();
+        return new BigDecimalDouble(rem);
     }
 
     public static BigDecimalDouble dneg(BigDecimalDouble a) {
@@ -284,7 +286,7 @@ public class BigDecimalDouble extends Number implements
     }
     
     public static BigDecimalDouble math_pow(BigDecimalDouble base, BigDecimalDouble exponent) {
-        // TODO: use the pow method from BigDecimal
+        //return new BigDecimalDouble(BigDecimalMath.pow(base.val, exponent.val));
         return new BigDecimalDouble(Math.pow(base.doubleValue(), exponent.doubleValue()));
     }
 

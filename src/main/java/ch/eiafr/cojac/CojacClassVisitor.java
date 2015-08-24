@@ -86,10 +86,8 @@ final class CojacClassVisitor extends ClassVisitor {
 		//boolean isInterface = (access & Opcodes.ACC_INTERFACE) > 0;
        
         if(isNative && desc.equals(oldDesc) == false){
-			/* 
-			If the native method has not the same descriptor, create a method to
-			transform types and call the good native method.
-			*/
+			/*  If the native method has not the same descriptor, create a 
+			     method to transform types and call the good native method. */
             cv.visitMethod(access, name, oldDesc, signature, exceptions);
             fpm.nativeCall(null, access, crtClassName, name, oldDesc);
             return null;
@@ -107,9 +105,6 @@ final class CojacClassVisitor extends ClassVisitor {
         
         return instrumentMethod(mv, access, desc, name);
     }
-
-    //        if (args.isSpecified(Arg.REPLACE_FLOATS))
-    //          desc=replaceFloatMethodDescription(desc);
 
     private MethodVisitor instrumentMethod(MethodVisitor parentMv, int access, String desc, String name) {
         MethodVisitor mv;

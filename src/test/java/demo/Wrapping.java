@@ -41,7 +41,7 @@ public class Wrapping {
     playWithArrays();
     playWithCollection();
     playWithGUI();
-    System.out.println("The end.");
+    System.out.println("The end.");    
   }
   
   public static void playWithPrimitiveFloats() {

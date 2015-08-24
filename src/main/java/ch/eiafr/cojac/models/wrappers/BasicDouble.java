@@ -167,8 +167,6 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
     public static BasicDouble math_toDegrees(BasicDouble a){
         return new BasicDouble(Math.toDegrees(a.val));
     }
-
-    // TODO: design a mechanism to ensure any wrapper implements the whole required set of methods
 	
 	/*
     public static MyWrapper math_sqrt(MyWrapper a) {

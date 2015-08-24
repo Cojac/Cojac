@@ -119,11 +119,11 @@ public final class CojacReferences {
 
     public boolean hasToBeInstrumented(String className) {
         if (className == null)
-            return false; // TODO: reconsider that (null was for lambdas...) 
-                          // is our new Agent.extractedClassname() trick complete?
+            return false; 
+        // TODO: null name was for lambdas; is our Agent.extractedClassname() fix sound?
         if (args.isSpecified(Arg.REPLACE_FLOATS)) {
-            /*
-             * TODO: Allow instrumented items to be stored in Lists and
+            /* BAP, 24.08.15: this comment is probably no more relevant...
+             * to do: Allow instrumented items to be stored in Lists and
              * Collections. We don't want to lose the enriched information when
              * the application uses lists or collections. The proxy has to
              * identify them and decide if a conversion is needed. Currently the

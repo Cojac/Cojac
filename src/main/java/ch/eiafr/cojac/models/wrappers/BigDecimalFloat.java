@@ -136,8 +136,9 @@ public class BigDecimalFloat extends Number implements
             float bVal = b.getFloatInfiniteValue();
             return new BigDecimalFloat(aVal % bVal);
         }
-        // TODO: write a correct frem operation on BigInteger
-        return new BigDecimalFloat(a.val.remainder(b.val, mathContext)); 
+        BigDecimal rem=a.val.remainder(b.val, mathContext);
+        if(a.val.compareTo(BigDecimal.ZERO)<0) rem=rem.negate();
+        return new BigDecimalFloat(rem);
     }
 
     public static BigDecimalFloat fneg(BigDecimalFloat a) {

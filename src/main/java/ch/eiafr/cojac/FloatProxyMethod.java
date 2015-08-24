@@ -28,7 +28,6 @@ import static ch.eiafr.cojac.instrumenters.ReplaceFloatsMethods.DL_DESCR;
 import java.util.HashMap;
 
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
 
 import static org.objectweb.asm.Opcodes.*;
 
@@ -92,12 +91,6 @@ public class FloatProxyMethod {
     public static boolean needsConversion(String owner, String desc) {
         if(owner.equals(JWRAPPER_FLOAT_TYPE .getInternalName())) return true;
         if(owner.equals(JWRAPPER_DOUBLE_TYPE.getInternalName())) return true;
-//        switch (opcode) {
-//        case Opcodes.INVOKEDYNAMIC:
-//        case Opcodes.INVOKEVIRTUAL:
-//        case Opcodes.INVOKEINTERFACE:
-//            return true; // at least owner (this) conversion
-//        }
         for (Type t:Type.getArgumentTypes(desc))
             if (needsConversion(t)) return true;
         return needsConversion(Type.getReturnType(desc));
@@ -409,11 +402,13 @@ public class FloatProxyMethod {
 		return null;
 	}
 	
-	private void convertObjectToReal(MethodVisitor mv, Type aType){
+	/*
+	 private void convertObjectToReal(MethodVisitor mv, Type aType){
 		mv.visitTypeInsn(CHECKCAST, OBJ_TYPE.getInternalName());
 		mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "convertFromObjectToReal", "("+OBJ_DESC+")"+OBJ_DESC, false);
 		mv.visitTypeInsn(CHECKCAST, aType.getInternalName());
 	}
+	*/
 	
 	private void convertObjectToCojac(MethodVisitor mv, Type aType){
 		mv.visitTypeInsn(CHECKCAST, OBJ_TYPE.getInternalName());
