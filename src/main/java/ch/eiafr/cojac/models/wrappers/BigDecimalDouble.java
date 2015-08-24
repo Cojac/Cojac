@@ -22,7 +22,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Objects;
 
-import ch.eiafr.cojac.utils.rjm.BigDecimalMath;
+//import ch.eiafr.cojac.utils.rjm.BigDecimalMath;
 import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_BIGDECIMAL_PRECISION;
 
 public class BigDecimalDouble extends Number implements
@@ -212,6 +212,8 @@ public class BigDecimalDouble extends Number implements
 //    }
 
     // TODO : make better functions for all math function !
+    //        A library has been tried (24.08.15), but it was not really convincing; 
+    //        maybe look deeper inside...
 
     public static BigDecimalDouble math_sqrt(BigDecimalDouble a) {
         return new BigDecimalDouble(sqrtHeron(a.val));
