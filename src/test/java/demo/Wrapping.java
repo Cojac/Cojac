@@ -221,6 +221,13 @@ public class Wrapping {
           if(d.equals(d))
               c.add(d);
       }
+      static int g(int a) {
+          try {
+              return 3/a;
+          } catch(NoSuchMethodError|AbstractMethodError e) {
+              return a/7;
+          }
+      }
   }
   //======================================================================
   static class MyWrapper {

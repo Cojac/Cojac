@@ -23,6 +23,7 @@
                        ajouter des tests "crash-or-not" comme Java2Demo
 - avoir au moins un test de performance pour ReplaceFloat
 - envisager le wrapper "new generation" : implémenter les 4 modèles, et voir...
+- mesurer le code coverage de nos tests
 - valider l'approche de collections "riches" (plus de conversions
   DoubleWrapper->Double pour des invocations qui demandent des Object) 
 
