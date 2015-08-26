@@ -1,7 +1,7 @@
 ---------------- A faire (24.08.15) ------------------------------------
 
 - renommer certaines options
-- concevoir quelques cas d'utilisation en guise de démo
+- choisir quelques cas d'utilisation en guise de démo
 - concevoir et réaliser une vidéo de démonstration
 - revoir la doc (wiki, user-guide) et github
 - poster la vidéo, puis diffuser le lien, faire relayer l'information
@@ -53,7 +53,7 @@ and to don't get instrumented.
   java2d.demos.Fonts.AttributedStr$ScalableImageGraphicAttribute, which extends 
   the uninstrumented abstract class java.awt.font.GraphicAttribute, is created
   and given to swing, which finally tries to call 'float getAdvance()'; this
-  will be not found, and we get an AbstractMethodError.
+  won't be found, and we get an AbstractMethodError.
   That particular problem happens to have a workaround via the "bypass" option: 
       -b java2d.demos.Fonts.AttributedStr$ScalableImageGraphicAttribute  
   

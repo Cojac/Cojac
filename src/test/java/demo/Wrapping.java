@@ -203,6 +203,8 @@ public class Wrapping {
     if (!b) throw new RuntimeException("bad news...");
   }
   //======================================================================
+  // any class with name containing "CojacDebugDump" will be dumped after
+  // instrumentation, for debugging purposes (see cojac/Agent)
   static class MyCojacDebugDump {
       public MyCojacDebugDump(int a) {
           
