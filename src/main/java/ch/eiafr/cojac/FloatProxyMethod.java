@@ -52,7 +52,9 @@ public class FloatProxyMethod {
     
     public void proxyCall(MethodVisitor mv, int opcode, String owner, String name, String desc){
         HashMap<Integer, Type> convertedArrays = convertArgumentsToReal(mv, desc, opcode, owner);	
+        // stack >> allParamsArr [newOwner] nprm0 nprm1 nprm2...
         mv.visitMethodInsn(opcode, owner, name, desc, (opcode == INVOKEINTERFACE));
+        // stack >> allParamsArr [possibleResult]
         checkArraysAfterCall(mv, convertedArrays, desc);
         convertReturnType(mv, desc);
     }
@@ -285,6 +287,7 @@ public class FloatProxyMethod {
 	*/
     
 	private static void checkArraysAfterCall(MethodVisitor mv, HashMap<Integer, Type> convertedArrays, String desc){
+        // stack >> allParamsArr [possibleResult]
 		Type returnType = Type.getReturnType(desc);
 		int returnTypeSize = returnType.getSize();
 		if(returnTypeSize == 1){
@@ -293,23 +296,36 @@ public class FloatProxyMethod {
 			mv.visitInsn(DUP2_X1); // D D Object D D
 			mv.visitInsn(POP2); // D D Object
 		}
+        // stack >> [possibleResult] allParamsArr
 		for(int pos: convertedArrays.keySet()) {
 			// Type type = convertedArrays.get(pos);
 			mv.visitInsn(DUP);
+	        // stack >> [possibleResult] allParamsArr allParamsArr
 			mv.visitLdcInsn(pos);
+            // stack >> [possibleResult] allParamsArr allParamsArr i
 			mv.visitInsn(AALOAD);
+            // stack >> [possibleResult] allParamsArr allParamsArr[i]
 			mv.visitTypeInsn(CHECKCAST, "["+OBJ_TYPE.getDescriptor());
-			
+            // stack >> [possibleResult] allParamsArr allParamsArr[i]  (of type Object[])
 			mv.visitInsn(DUP);
+            // stack >> [possibleResult] allParamsArr allParamsArr[i]  allParamsArr[i]
 			mv.visitLdcInsn(0);
+            // stack >> [possibleResult] allParamsArr allParamsArr[i]  allParamsArr[i] 0  
 			mv.visitInsn(AALOAD);
+            // stack >> [possibleResult] allParamsArr allParamsArr[i]  allParamsArr[i][0]    
 			mv.visitInsn(SWAP);
+            // stack >> [possibleResult] allParamsArr allParamsArr[i][0] allParamsArr[i]
 			mv.visitLdcInsn(1);
+            // stack >> [possibleResult] allParamsArr allParamsArr[i][0] allParamsArr[i] 1
 			mv.visitInsn(AALOAD);
+            // stack >> [possibleResult] allParamsArr allParamsArr[i][0] allParamsArr[i][1]
 			// mergeOriginalArrayIntoCojac
 			mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "mergeOriginalArrayIntoCojac", "("+OBJ_DESC+OBJ_DESC+")V", false);
+	        // stack >> [possibleResult] allParamsArr
 		}
+        // stack >> [possibleResult] allParamsArr
 		mv.visitInsn(POP);
+        // stack >> [possibleResult]
 	}
 
 	public static void convertRealToCojacType(Type realType, MethodVisitor mv){
