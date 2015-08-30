@@ -50,15 +50,6 @@ public class FloatProxyMethod {
         this.crtClassName = classPath;
     }
     
-    public void proxyCall(MethodVisitor mv, int opcode, String owner, String name, String desc){
-        HashMap<Integer, Type> convertedArrays = convertArgumentsToReal(mv, desc, opcode, owner);	
-        // stack >> allParamsArr [newOwner] nprm0 nprm1 nprm2...
-        mv.visitMethodInsn(opcode, owner, name, desc, (opcode == INVOKEINTERFACE));
-        // stack >> allParamsArr [possibleResult]
-        checkArraysAfterCall(mv, convertedArrays, desc);
-        convertReturnType(mv, desc);
-    }
-    
     public void nativeCall(MethodVisitor mv, int access, String owner, String name, String desc){
 		HashMap<Integer, Type> convertedArrays;
         boolean isStatic = (access & ACC_STATIC) > 0;
@@ -87,6 +78,15 @@ public class FloatProxyMethod {
 		convertReturnType(newMv, desc);		
 		newMv.visitInsn(afterFloatReplacement(Type.getReturnType(desc)).getOpcode(IRETURN));
         newMv.visitMaxs(0, 0);
+    }
+    
+    public void proxyCall(MethodVisitor mv, int opcode, String owner, String name, String desc){
+        HashMap<Integer, Type> convertedArrays = convertArgumentsToReal(mv, desc, opcode, owner);   
+        // stack >> allParamsArr [newOwner] nprm0 nprm1 nprm2...
+        mv.visitMethodInsn(opcode, owner, name, desc, (opcode == INVOKEINTERFACE));
+        // stack >> allParamsArr [possibleResult]
+        checkArraysAfterCall(mv, convertedArrays, desc);
+        convertReturnType(mv, desc);
     }
     
     public static boolean needsConversion(String owner, String desc) {
