@@ -199,6 +199,10 @@ public class Wrapping implements DoubleUnaryOperator {
         ok(t[1]==b);
         double[][]tt={{b}};
         ok(tt[0][0]==a);
+        //double[] t2=(double[])t.clone();  // TODO: does not work...
+        // double[][] t2a=(double[][])tt.clone();  // TODO: does not work...
+        Double[] t3={b};
+        //Double[] t4=(Double[])t3.clone(); // TODO: does not work...
     }
 
     public static void playWithInterfaces() {

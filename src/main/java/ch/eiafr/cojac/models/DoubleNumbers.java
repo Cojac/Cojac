@@ -80,6 +80,7 @@ public class DoubleNumbers {
             a = convertArray(input);
         } else {
             Class<?> compType = arrayClass(double.class, dimensions - 1);
+            // TODO: need a way to choose between primitive or JavaWrapper. -> same in FloatNumbers
             a = Array.newInstance(compType, input.length);
             Object[] b = (Object[]) a; // All arrays or multi-arrays can be cast to Object[]
             for (int i = 0; i < b.length; i++) {

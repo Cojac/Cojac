@@ -186,6 +186,11 @@ public class ReplaceFloatsMethods {
     
     /** method call instrumentation; returns true if it was instrumented */
     public boolean instrument(MethodVisitor mv, int opcode, String owner, String name, String desc, Object stackTop){
+//        if (name.contains("clone")) { 
+//            System.out.println(owner);
+//            System.out.println(name);
+//            System.out.println(desc);
+//        }
         MethodSignature ms = new MethodSignature(owner, name, desc);
         
 		if(name.startsWith(COJAC_MAGIC_CALL_DOUBLE_PREFIX)) {
@@ -211,13 +216,13 @@ public class ReplaceFloatsMethods {
             return true;
         }
         if(allMethodsConversions.contains(owner)) {
-            if (!needsConversion(owner, desc)) return false;
+            if (!needsConversion(owner, name, desc)) return false;
             fpm.proxyCall(mv, opcode, owner, name, desc);
             return true;
         }
 		
 		if(references.hasToBeInstrumented(owner) == false) {
-            if (!needsConversion(owner, desc)) return false;
+            if (!needsConversion(owner, name, desc)) return false;
 			fpm.proxyCall(mv, opcode, owner, name, desc);
 			return true;
 		}

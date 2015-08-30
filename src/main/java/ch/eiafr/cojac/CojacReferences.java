@@ -163,6 +163,9 @@ public final class CojacReferences {
                     }
                 }
             }
+            if(className.startsWith("[")) { // Arrays... think of t.clone()
+                return false;
+            }
 
         }
         for (String standardPackage : bypassList) {
