@@ -28,6 +28,7 @@ import static ch.eiafr.cojac.instrumenters.ReplaceFloatsMethods.DL_DESCR;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 
 import static org.objectweb.asm.Opcodes.*;
@@ -119,7 +120,55 @@ public class FloatProxyMethod {
         // stack >> [newPossibleResult]
     }
     
-    public static boolean needsConversion(String owner, String name, String desc) {
+    public void proxyCallBetter(MethodVisitor mv, int opcode, String owner, String name, String desc){
+        ConversionContext cc=new ConversionContext(opcode, owner, name, desc);
+        // stack >> allParamsArr [target] nprm0 nprm1 nprm2...
+        convertArgumentsToReal(mv, cc);           
+        // stack >> [target] allParamsArr [target] allParamsArr
+        maybeConvertTarget(mv, cc.opcode, cc.owner);
+        // stack >> [target] allParamsArr [newTarget] allParamsArr
+        explodeOnStack(mv, cc, true); 
+        Label lBeginTry = new Label();
+        Label lEndTry = new Label();
+        Label lBeginHandler = new Label();
+        mv.visitTryCatchBlock(lBeginTry, lEndTry, lBeginHandler, "java/lang/NoSuchMethodError");
+        mv.visitTryCatchBlock(lBeginTry, lEndTry, lBeginHandler, "java/lang/AbstractMethodError");
+        mv.visitLabel(lBeginTry);
+        String descAfter=replaceFloatMethodDescription(desc);
+        mv.visitMethodInsn(opcode, owner, name, descAfter, (opcode == INVOKEINTERFACE));
+        // stack >> [target] allParamsArr [possibleResult]
+
+        // stack >> [target] allParamsArr [newTarget] nprm0 nprm1 nprm2...
+        mv.visitMethodInsn(opcode, owner, name, desc, (opcode == INVOKEINTERFACE));
+        // stack >> [target] allParamsArr [possibleResult]
+        checkArraysAfterCall(mv, cc.convertedArrays, desc);
+        // stack >> [target] [possibleResult]
+        int resultWidth=Type.getReturnType(desc).getSize();
+        if(hasTarget(opcode)) {
+            if(resultWidth==0) {
+                mv.visitInsn(POP);
+            } else if (resultWidth==1) {
+                mv.visitInsn(SWAP);
+                mv.visitInsn(POP);
+            } else { // resultWidth==2) 
+                mv.visitInsn(DUP2_X1);
+                // stack >> possibleResult target possibleResult
+                mv.visitInsn(POP2);
+                // stack >> possibleResult target
+                mv.visitInsn(POP);
+                // stack >> possibleResult
+            }
+        }
+        // stack >> [possibleResult]
+        convertReturnType(mv, desc);
+        // stack >> [newPossibleResult]
+        mv.visitLabel(lEndTry);
+        mv.visitLabel(lBeginHandler);
+
+    }
+
+    
+    public boolean needsConversion(String owner, String name, String desc) {
         if(owner.equals(JWRAPPER_FLOAT_TYPE .getInternalName())) return true;
         if(owner.equals(JWRAPPER_DOUBLE_TYPE.getInternalName())) return true;
         if(name.equals("clone") && desc.equals("()Ljava/lang/Object;")) return true;

@@ -22,7 +22,6 @@ import ch.eiafr.cojac.CojacReferences;
 import ch.eiafr.cojac.FloatProxyMethod;
 import static ch.eiafr.cojac.models.FloatReplacerClasses.*;
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
-import static ch.eiafr.cojac.FloatProxyMethod.needsConversion;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -211,13 +210,13 @@ public class ReplaceFloatsMethods {
             return true;
         }
         if(allMethodsConversions.contains(owner)) {
-            if (!needsConversion(owner, name, desc)) return false;
+            if (!fpm.needsConversion(owner, name, desc)) return false;
             fpm.proxyCall(mv, opcode, owner, name, desc);
             return true;
         }
 		
 		if(references.hasToBeInstrumented(owner) == false) {
-            if (!needsConversion(owner, name, desc)) return false;
+            if (!fpm.needsConversion(owner, name, desc)) return false;
 			fpm.proxyCall(mv, opcode, owner, name, desc);
 			return true;
 		}
