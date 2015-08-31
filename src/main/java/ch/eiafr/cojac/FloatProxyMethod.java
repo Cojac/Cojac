@@ -82,8 +82,6 @@ public class FloatProxyMethod {
     }
     
     public void proxyCall(MethodVisitor mv, int opcode, String owner, String name, String desc){
-        if (name.contains("clone")) 
-            System.out.println("AAAAA "+owner+" "+name+" "+desc);
         // stack >> allParamsArr [target] nprm0 nprm1 nprm2...
         Map<Integer, Type> convertedArrays = convertArgumentsToReal(mv, desc, opcode, owner);   
         // stack >> allParamsArr [newTarget] nprm0 nprm1 nprm2...
@@ -197,7 +195,6 @@ public class FloatProxyMethod {
         }
         Type ownerType=Type.getType(owner);
         Type afterType = afterFloatReplacement(ownerType);
-        if (owner.startsWith("[")) System.out.println("ghgh "+ownerType+" "+afterType);
         if (!ownerType.equals(afterType)) {
             mv.visitInsn(SWAP);
             convertCojacToRealType(ownerType, mv);
@@ -351,9 +348,9 @@ public class FloatProxyMethod {
             mv.visitTypeInsn(CHECKCAST, OBJ_TYPE.getInternalName());
             mv.visitLdcInsn(realType.getDimensions());
             if(realType.getElementType().equals(Type.FLOAT_TYPE)){
-                mv.visitMethodInsn(INVOKESTATIC, FN_NAME, "convertArrayToCojac", "("+OBJ_DESC+"I)"+OBJ_DESC, false);
+                mv.visitMethodInsn(INVOKESTATIC, FN_NAME, "convertPrimitiveArrayToCojac", "("+OBJ_DESC+"I)"+OBJ_DESC, false);
             } else if(realType.getElementType().equals(Type.DOUBLE_TYPE)){
-                mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "convertArrayToCojac", "("+OBJ_DESC+"I)"+OBJ_DESC, false);
+                mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "convertPrimitiveArrayToCojac", "("+OBJ_DESC+"I)"+OBJ_DESC, false);
             }
             mv.visitTypeInsn(CHECKCAST, afterFloatReplacement(realType).getInternalName());
         }
@@ -366,6 +363,13 @@ public class FloatProxyMethod {
 	    return false;
 	}
     
+    private static boolean isJWrapperFloatOrDoubleArray(Type realType) {
+        if(realType.getSort() != Type.ARRAY) return false;
+        Type t=realType.getElementType();
+        if(t.equals(JWRAPPER_DOUBLE_TYPE) || t.equals(JWRAPPER_FLOAT_TYPE)) return true;
+        return false;
+    }
+
     public static void convertCojacToRealType(Type realType, MethodVisitor mv){
         if(realType.equals(Type.FLOAT_TYPE)){
             mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "toFloat", "("+COJAC_FLOAT_WRAPPER_TYPE_DESCR+")F", false);
@@ -375,14 +379,18 @@ public class FloatProxyMethod {
             mv.visitMethodInsn(INVOKESTATIC, COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "toDouble", "("+COJAC_DOUBLE_WRAPPER_TYPE_DESCR+")D", false);
         } else if(realType.equals(JWRAPPER_DOUBLE_TYPE)){
             mv.visitMethodInsn(INVOKESTATIC, COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "toRealDoubleWrapper", "("+COJAC_DOUBLE_WRAPPER_TYPE_DESCR+")"+DL_DESCR, false);
-        } else if(isPrimitiveFloatOrDoubleArray(realType)) {
+        } else if(isPrimitiveFloatOrDoubleArray(realType) || isJWrapperFloatOrDoubleArray(realType)) {
             mv.visitTypeInsn(CHECKCAST, OBJ_TYPE.getInternalName());
             mv.visitLdcInsn(realType.getDimensions());
             Type eType=realType.getElementType();
-            if(eType.equals(Type.FLOAT_TYPE) || eType.equals(JWRAPPER_FLOAT_TYPE)) {
-                mv.visitMethodInsn(INVOKESTATIC, FN_NAME, "convertArrayToReal", "("+OBJ_DESC+"I)"+OBJ_DESC, false);
-            } else if(eType.equals(Type.DOUBLE_TYPE) || eType.equals(JWRAPPER_DOUBLE_TYPE)) {
-                mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "convertArrayToReal", "("+OBJ_DESC+"I)"+OBJ_DESC, false);
+            if(eType.equals(Type.FLOAT_TYPE)) {
+                mv.visitMethodInsn(INVOKESTATIC, FN_NAME, "convertArrayToPrimitive", "("+OBJ_DESC+"I)"+OBJ_DESC, false);
+            } else if(eType.equals(Type.DOUBLE_TYPE)) {
+                mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "convertArrayToPrimitive", "("+OBJ_DESC+"I)"+OBJ_DESC, false);
+            } else if(eType.equals(JWRAPPER_FLOAT_TYPE)) {
+                mv.visitMethodInsn(INVOKESTATIC, FN_NAME, "convertArrayToJWrapper", "("+OBJ_DESC+"I)"+OBJ_DESC, false);
+            } else if(eType.equals(JWRAPPER_DOUBLE_TYPE)) {
+                mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "convertArrayToJWrapper", "("+OBJ_DESC+"I)"+OBJ_DESC, false);
             }
             mv.visitTypeInsn(CHECKCAST, realType.getInternalName());
         }

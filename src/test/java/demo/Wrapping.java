@@ -211,10 +211,10 @@ public class Wrapping {
       }
       
       public static int f(int a) {
-          double[][] t1={{2.0}};
-          double[][] t2=(double[][])t1.clone(); // TODO: does not work...
-          double[] t11={2.0};
-          double[] t21=(double[])t11.clone(); // TODO: does not work...
+//          double[][] t1={{2.0}};
+//          double[][] t2=(double[][])t1.clone(); 
+//          double[] t11={2.0};
+//          double[] t21=(double[])t11.clone(); 
           
           Double[] t3={2.0};
           Double[] t4=(Double[])t3.clone(); // TODO: does not work...

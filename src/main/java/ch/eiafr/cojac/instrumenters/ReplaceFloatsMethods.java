@@ -186,11 +186,6 @@ public class ReplaceFloatsMethods {
     
     /** method call instrumentation; returns true if it was instrumented */
     public boolean instrument(MethodVisitor mv, int opcode, String owner, String name, String desc, Object stackTop){
-//        if (name.contains("clone")) { 
-//            System.out.println(owner);
-//            System.out.println(name);
-//            System.out.println(desc);
-//        }
         MethodSignature ms = new MethodSignature(owner, name, desc);
         
 		if(name.startsWith(COJAC_MAGIC_CALL_DOUBLE_PREFIX)) {

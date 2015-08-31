@@ -22,6 +22,7 @@ import static ch.eiafr.cojac.models.FloatReplacerClasses.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 
+// Warning: the public methods are accessed by reflection...
 
 public class DoubleNumbers {
 	
@@ -45,7 +46,7 @@ public class DoubleNumbers {
         return array;
     }
     
-    private static Object[] convertArray(double[] array) throws Exception{
+    private static Object[] cojacFromPrimitive1D(double[] array) throws Exception{
         Object[] a = (Object[]) Array.newInstance(COJAC_DOUBLE_WRAPPER_CLASS, array.length);
         for (int i = 0; i < a.length; i++)
             a[i] = COJAC_DOUBLE_WRAPPER_CLASS.getConstructor(double.class).newInstance(array[i]);
@@ -53,7 +54,25 @@ public class DoubleNumbers {
         return a;
     }
     
-    private static double[] convertArray(Object[] array) throws Exception{
+    private static Object[] cojacFromJWrapper1D(Double[] array) throws Exception{
+        Object[] a = (Object[]) Array.newInstance(COJAC_DOUBLE_WRAPPER_CLASS, array.length);
+        for (int i = 0; i < a.length; i++)
+            a[i] = COJAC_DOUBLE_WRAPPER_CLASS.getConstructor(double.class).newInstance(array[i].doubleValue());
+        // WRAPPER SPEC: DW(double)
+        return a;
+    }
+
+    private static Double[] jWrapperFromCojac1D(Object[] array) throws Exception{
+        Double[] a = new Double[array.length];
+        for (int i = 0; i < a.length; i++){
+            Method m = COJAC_DOUBLE_WRAPPER_CLASS.getMethod("toRealDoubleWrapper", new Class[] {COJAC_DOUBLE_WRAPPER_CLASS});
+            a[i] = (Double)m.invoke(COJAC_DOUBLE_WRAPPER_CLASS, array[i]);
+            // WRAPPER SPEC: DW.toRealDoubleWrapper(DW) -> Double
+        }
+        return a;
+    }
+    
+    private static double[] primitiveFromCojac1D(Object[] array) throws Exception{
         double[] a = new double[array.length];
         for (int i = 0; i < a.length; i++){
 			Method m = COJAC_DOUBLE_WRAPPER_CLASS.getMethod("toDouble", new Class[] {COJAC_DOUBLE_WRAPPER_CLASS});
@@ -64,7 +83,7 @@ public class DoubleNumbers {
     }
     
 	// Get the Type of an array of type compClass with the number of dimensions
-    private static Class<?> arrayClass(Class<?> compClass, int dimensions) {
+    static Class<?> arrayClass(Class<?> compClass, int dimensions) {
         if (dimensions == 0) {
             return compClass;
         }
@@ -73,40 +92,72 @@ public class DoubleNumbers {
         return dummy.getClass();
     }
 
-    public static Object convertArrayToReal(Object array, int dimensions) throws Exception {
+    public static Object convertArrayToPrimitive(Object array, int dimensions) throws Exception {
         Object a;
 		Object[] input = (Object[])array;
         if(dimensions == 1){
-            a = convertArray(input);
+            a = primitiveFromCojac1D(input);
         } else {
             Class<?> compType = arrayClass(double.class, dimensions - 1);
             // TODO: need a way to choose between primitive or JavaWrapper. -> same in FloatNumbers
             a = Array.newInstance(compType, input.length);
             Object[] b = (Object[]) a; // All arrays or multi-arrays can be cast to Object[]
             for (int i = 0; i < b.length; i++) {
-                b[i] = convertArrayToReal(input[i], dimensions-1); // Initialise the others dimensions
+                b[i] = convertArrayToPrimitive(input[i], dimensions-1); // Initialise the others dimensions
+            }
+        }
+        return a;
+    }
+    
+    public static Object convertArrayToJWrapper(Object array, int dimensions) throws Exception {
+        Object a;
+        Object[] input = (Object[])array;
+        if(dimensions == 1){
+            a = jWrapperFromCojac1D(input);
+        } else {
+            Class<?> compType = arrayClass(Double.class, dimensions - 1);
+            a = Array.newInstance(compType, input.length);
+            Object[] b = (Object[]) a; // All arrays or multi-arrays can be cast to Object[]
+            for (int i = 0; i < b.length; i++) {
+                b[i] = convertArrayToJWrapper(input[i], dimensions-1); // Initialise the others dimensions
             }
         }
         return a;
     }
 	
-	public static Object convertArrayToCojac(Object array, int dimensions) throws Exception {
+	public static Object convertPrimitiveArrayToCojac(Object array, int dimensions) throws Exception {
         Object a;
         if(dimensions == 1){
-            a = convertArray((double[])array);
+            a = cojacFromPrimitive1D((double[])array);
         } else {
 			Object[] input = (Object[])array;
             Class<?> compType = arrayClass(COJAC_DOUBLE_WRAPPER_CLASS, dimensions - 1);
             a = Array.newInstance(compType, input.length);
             Object[] b = (Object[]) a; // All arrays or multi-arrays can be cast to Object[]
             for (int i = 0; i < b.length; i++) {
-                b[i] = convertArrayToCojac(input[i], dimensions-1); // Initialise the others dimensions
+                b[i] = convertPrimitiveArrayToCojac(input[i], dimensions-1); // Initialise the others dimensions
             }
         }
         return a;
     }
     
-	public static Object initialize(Object a) throws Exception{
+    public static Object convertJWrapperArrayToCojac(Object array, int dimensions) throws Exception {
+        Object a;
+        if(dimensions == 1){
+            a = cojacFromJWrapper1D((Double[])array);
+        } else {
+            Object[] input = (Object[])array;
+            Class<?> compType = arrayClass(COJAC_DOUBLE_WRAPPER_CLASS, dimensions - 1);
+            a = Array.newInstance(compType, input.length);
+            Object[] b = (Object[]) a; // All arrays or multi-arrays can be cast to Object[]
+            for (int i = 0; i < b.length; i++) {
+                b[i] = convertJWrapperArrayToCojac(input[i], dimensions-1); // Initialise the others dimensions
+            }
+        }
+        return a;
+    }
+
+    public static Object initialize(Object a) throws Exception{
 		if(a == null)
 			return COJAC_DOUBLE_WRAPPER_CLASS.getConstructor(double.class).newInstance(0);
         // WRAPPER SPEC: DW(double)
@@ -124,14 +175,14 @@ public class DoubleNumbers {
 		if(obj == null)
 			return obj;
 		if(obj.getClass().isArray()){
-			Class<?> type = getArrayType(obj);
+			Class<?> type = getArrayElementType(obj);
 			if(type.equals(COJAC_FLOAT_WRAPPER_CLASS)){
 				int dim = getArrayDimension(obj);
-				return FloatNumbers.convertArrayToReal(obj, dim);
+				return FloatNumbers.convertArrayToPrimitive(obj, dim);
 			}
 			if(type.equals(COJAC_DOUBLE_WRAPPER_CLASS)){
 				int dim = getArrayDimension(obj);
-				return DoubleNumbers.convertArrayToReal(obj, dim);
+				return convertArrayToPrimitive(obj, dim);
 			}
 			if(isPrimitiveType(type))
 				return obj;
@@ -157,15 +208,19 @@ public class DoubleNumbers {
 		if(obj == null)
 			return obj;
 		if(obj.getClass().isArray()){
-			Class<?> type = getArrayType(obj);
-			if(type.equals(float.class) || type.equals(Float.class)){
-				int dim = getArrayDimension(obj);
-				return FloatNumbers.convertArrayToCojac(obj, dim);
+			Class<?> type = getArrayElementType(obj);
+			if(type.equals(float.class)){
+				return FloatNumbers.convertPrimitiveArrayToCojac(obj, getArrayDimension(obj));
 			}
-			if(type.equals(double.class) || type.equals(Double.class)){
-				int dim = getArrayDimension(obj);
-				return DoubleNumbers.convertArrayToCojac(obj, dim);
+            if(type.equals(Float.class)){
+                return FloatNumbers.convertJWrapperArrayToCojac(obj, getArrayDimension(obj));
+            }
+			if(type.equals(double.class)) {
+				return convertPrimitiveArrayToCojac(obj, getArrayDimension(obj));
 			}
+            if(type.equals(Double.class)){
+                return convertJWrapperArrayToCojac(obj, getArrayDimension(obj));
+            }
 			if(isPrimitiveType(type))
 				return obj;
 			Object array[] = (Object[]) obj;
@@ -189,7 +244,7 @@ public class DoubleNumbers {
 				type.equals(long.class) || type.equals(short.class);
 	}
 	
-	private static Class<?> getArrayType(Object array){
+	private static Class<?> getArrayElementType(Object array){
 		Class<?> type = array.getClass();
 		while (type.isArray())
 			type = type.getComponentType();
@@ -211,7 +266,7 @@ public class DoubleNumbers {
 			return;
 		}
 		if(cojac.getClass().isArray()){
-			Class<?> type = getArrayType(cojac);
+			Class<?> type = getArrayElementType(cojac);
 			if(type.equals(COJAC_FLOAT_WRAPPER_CLASS)){
 				int dim = getArrayDimension(cojac);
 				mergeFloatArray(original, cojac, dim);

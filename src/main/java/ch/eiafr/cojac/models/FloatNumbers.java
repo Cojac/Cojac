@@ -19,6 +19,7 @@
 package ch.eiafr.cojac.models;
 
 import static ch.eiafr.cojac.models.FloatReplacerClasses.*;
+import static ch.eiafr.cojac.models.DoubleNumbers.arrayClass;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 
@@ -32,7 +33,6 @@ public class FloatNumbers {
         // WRAPPER SPEC: FW(float)
         return a;
     }
-
     
     public static Object initializeMultiArray(Object array, int dimensions) throws Exception {
         Object a[] = (Object[]) array;
@@ -43,7 +43,7 @@ public class FloatNumbers {
         return array;
     }
     
-	private static Object[] wrapperArrayFromPrimitive(float[] array) throws Exception{
+	private static Object[] cojacFromPrimitive1D(float[] array) throws Exception{
         Object[] a = (Object[]) Array.newInstance(COJAC_FLOAT_WRAPPER_CLASS, array.length);
         for (int i = 0; i < a.length; i++)
             a[i] = COJAC_FLOAT_WRAPPER_CLASS.getConstructor(float.class).newInstance(array[i]);
@@ -51,7 +51,25 @@ public class FloatNumbers {
         return a;
     }
 	
-	private static float[] primitiveArrayFromWrapper(Object[] array) throws Exception{
+    private static Object[] cojacFromJWrapper1D(Float[] array) throws Exception{
+        Object[] a = (Object[]) Array.newInstance(COJAC_FLOAT_WRAPPER_CLASS, array.length);
+        for (int i = 0; i < a.length; i++)
+            a[i] = COJAC_FLOAT_WRAPPER_CLASS.getConstructor(float.class).newInstance(array[i]);
+        // WRAPPER SPEC: FW(float)
+        return a;
+    }
+    
+    private static Float[] jWrapperFromCojac1D(Object[] array) throws Exception{
+        Float[] a = new Float[array.length];
+        for (int i = 0; i < a.length; i++){
+            Method m = COJAC_FLOAT_WRAPPER_CLASS.getMethod("toRealFloatWrapper", new Class[] {COJAC_FLOAT_WRAPPER_CLASS});
+            a[i] = (Float)m.invoke(COJAC_FLOAT_WRAPPER_CLASS, array[i]);
+        }
+        // WRAPPER SPEC: FW.toFloat(FW) -> float
+        return a;
+    }
+
+    private static float[] primitiveFromCojac1D(Object[] array) throws Exception{
         float[] a = new float[array.length];
         for (int i = 0; i < a.length; i++){
 			Method m = COJAC_FLOAT_WRAPPER_CLASS.getMethod("toFloat", new Class[] {COJAC_FLOAT_WRAPPER_CLASS});
@@ -61,50 +79,80 @@ public class FloatNumbers {
         return a;
     }
 	
-	// Get the Type of an array of type compClass with the number of dimensions
-    private static Class<?> arrayClass(Class<?> compClass, int dimensions) {
-        if (dimensions == 0) {
-            return compClass;
-        }
-        int[] dims = new int[dimensions];
-        Object dummy = Array.newInstance(compClass, dims);
-        return dummy.getClass();
-    }
+//	// Get the Type of an array of type compClass with the number of dimensions
+//    private static Class<?> arrayClass(Class<?> compClass, int dimensions) {
+//        if (dimensions == 0) {
+//            return compClass;
+//        }
+//        int[] dims = new int[dimensions];
+//        Object dummy = Array.newInstance(compClass, dims);
+//        return dummy.getClass();
+//    }
 
-    public static Object convertArrayToReal(Object array, int dimensions) throws Exception {
+    public static Object convertArrayToPrimitive(Object array, int dimensions) throws Exception {
         Object a;
 		Object[] input = (Object[])array;
         if(dimensions == 1){
-            a = primitiveArrayFromWrapper(input);
-        }
-        else{
+            a = primitiveFromCojac1D(input);
+        } else {
             Class<?> compType = arrayClass(float.class, dimensions - 1);
             a = Array.newInstance(compType, input.length);
             Object[] b = (Object[]) a; // All arrays or multi-arrays can be cast to Object[]
             for (int i = 0; i < b.length; i++) {
-                b[i] = convertArrayToReal(input[i], dimensions-1); // Initialise the others dimensions
+                b[i] = convertArrayToPrimitive(input[i], dimensions-1); // Initialise the others dimensions
             }
         }
         return a;
     }
 	
-	public static Object convertArrayToCojac(Object array, int dimensions) throws Exception {
+    public static Object convertArrayToJWrapper(Object array, int dimensions) throws Exception {
+        Object a;
+        Object[] input = (Object[])array;
+        if(dimensions == 1){
+            a = jWrapperFromCojac1D(input);
+        } else {
+            Class<?> compType = arrayClass(Float.class, dimensions - 1);
+            a = Array.newInstance(compType, input.length);
+            Object[] b = (Object[]) a; // All arrays or multi-arrays can be cast to Object[]
+            for (int i = 0; i < b.length; i++) {
+                b[i] = convertArrayToJWrapper(input[i], dimensions-1); // Initialise the others dimensions
+            }
+        }
+        return a;
+    }
+
+    public static Object convertPrimitiveArrayToCojac(Object array, int dimensions) throws Exception {
         Object a;
         if(dimensions == 1){
-            a = wrapperArrayFromPrimitive((float[])array);
-        }
-        else{
+            a = cojacFromPrimitive1D((float[])array);
+        } else {
 			Object[] input = (Object[])array;
             Class<?> compType = arrayClass(COJAC_FLOAT_WRAPPER_CLASS, dimensions - 1);
             a = Array.newInstance(compType, input.length);
             Object[] b = (Object[]) a; // All arrays or multi-arrays can be cast to Object[]
             for (int i = 0; i < b.length; i++) {
-                b[i] = convertArrayToCojac(input[i], dimensions-1); // Initialise the others dimensions
+                b[i] = convertPrimitiveArrayToCojac(input[i], dimensions-1); // Initialise the others dimensions
             }
         }
         return a;
     }
-	 /*
+
+	public static Object convertJWrapperArrayToCojac(Object array, int dimensions) throws Exception {
+	    Object a;
+	    if(dimensions == 1){
+	        a = cojacFromJWrapper1D((Float[])array);
+	    } else {
+	        Object[] input = (Object[])array;
+	        Class<?> compType = arrayClass(COJAC_FLOAT_WRAPPER_CLASS, dimensions - 1);
+	        a = Array.newInstance(compType, input.length);
+	        Object[] b = (Object[]) a; // All arrays or multi-arrays can be cast to Object[]
+	        for (int i = 0; i < b.length; i++) {
+	            b[i] = convertJWrapperArrayToCojac(input[i], dimensions-1); // Initialise the others dimensions
+	        }
+	    }
+	    return a;
+	}
+/*
 	 // Not the good way
     public static Object convertArrayToCojac(Object array, int dimensions){
         Object a[] = (Object[]) array;
@@ -128,7 +176,5 @@ public class FloatNumbers {
         // WRAPPER SPEC: FW(float)
 		return obj;
 	}
-	
-	
-	
+
 }
