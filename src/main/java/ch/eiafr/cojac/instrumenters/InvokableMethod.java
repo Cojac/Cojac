@@ -71,7 +71,8 @@ public final class InvokableMethod {
         return Type.getMethodDescriptor(returnAfter, after);
     }
 
-	public static Type afterFloatReplacement(Type type){
+    /** Float|float|Double|double [array] -> CojacWrapper */
+    public static Type afterFloatReplacement(Type type){
         if(type.equals(Type.getType(Float.class)))
             return COJAC_FLOAT_WRAPPER_TYPE;
         if(type.equals(Type.FLOAT_TYPE))
@@ -93,6 +94,7 @@ public final class InvokableMethod {
         return type; 
     }
 	
+    /** Float|float|Double|double [array] -> CojacWrapper */
     public static String afterFloatReplacement(String typeDescr) {
         return afterFloatReplacement(Type.getType(typeDescr)).getDescriptor();
     }

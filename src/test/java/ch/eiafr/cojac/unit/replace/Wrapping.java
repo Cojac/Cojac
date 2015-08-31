@@ -90,7 +90,7 @@ public class Wrapping implements DoubleUnaryOperator {
         // WrappingAux.f(3.2); this won't work, because the AgentTest trick won't instrument other classes
     }
 
-    public static void playWithLambdas() {
+    private static void playWithLambdas() {
         //TODO reconsider and expand... Remember that for now, under that surefire test, 
         // only one class is instrumented, and lambdas seem to be in isolated "classes"...
         double a = 1.0;

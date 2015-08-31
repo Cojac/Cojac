@@ -69,15 +69,19 @@ public class FloatProxyMethod {
 			varIndex += type.getSize();
 		}
         convertArgumentsToReal(mv, cc);           
-        // stack >> allParamsArr [newTarget] allParamsArr
-        explodeOnStack(mv, cc, true); // Explode the object array to put arguments on stack
-        // stack >> allParamsArr [newTarget] nprm0 nprm1 nprm2...
+        // stack >> [target] allParamsArr [target] allParamsArr
+        maybeConvertTarget(mv, cc.opcode, cc.owner);
+        // stack >> [target] allParamsArr [newTarget] allParamsArr
+        explodeOnStack(mv, cc, true); 
+        // stack >> [target] allParamsArr [newTarget] nprm0 nprm1 nprm2...
 		newMv.visitMethodInsn(opcode, owner, name, desc, false);       
-        // stack >> allParamsArr [possibleResult]
+        // stack >> [target] allParamsArr [possibleResult]
 		checkArraysAfterCall(newMv, cc.convertedArrays, desc);		
-        // stack >> [possibleResult]
+        // stack >> [target] [possibleResult]
 		convertReturnType(newMv, desc);		
+        // stack >> [target] [newPossibleResult]
 		newMv.visitInsn(afterFloatReplacement(Type.getReturnType(desc)).getOpcode(IRETURN));
+        // stack >> [target]       // left on the stack... not a problem!
         newMv.visitMaxs(0, 0);
     }
     
@@ -85,14 +89,34 @@ public class FloatProxyMethod {
         ConversionContext cc=new ConversionContext(opcode, owner, name, desc);
         // stack >> allParamsArr [target] nprm0 nprm1 nprm2...
         convertArgumentsToReal(mv, cc);           
-        // stack >> allParamsArr [newTarget] allParamsArr
-        explodeOnStack(mv, cc, true); // Explode the object array to put arguments on stack
-        // stack >> allParamsArr [newTarget] nprm0 nprm1 nprm2...
+        // stack >> [target] allParamsArr [target] allParamsArr
+        maybeConvertTarget(mv, cc.opcode, cc.owner);
+        // stack >> [target] allParamsArr [newTarget] allParamsArr
+        explodeOnStack(mv, cc, true); 
+        // stack >> [target] allParamsArr [newTarget] nprm0 nprm1 nprm2...
         mv.visitMethodInsn(opcode, owner, name, desc, (opcode == INVOKEINTERFACE));
-        // stack >> allParamsArr [possibleResult]
+        // stack >> [target] allParamsArr [possibleResult]
         checkArraysAfterCall(mv, cc.convertedArrays, desc);
+        // stack >> [target] [possibleResult]
+        int resultWidth=Type.getReturnType(desc).getSize();
+        if(hasTarget(opcode)) {
+            if(resultWidth==0) {
+                mv.visitInsn(POP);
+            } else if (resultWidth==1) {
+                mv.visitInsn(SWAP);
+                mv.visitInsn(POP);
+            } else { // resultWidth==2) 
+                mv.visitInsn(DUP2_X1);
+                // stack >> possibleResult target possibleResult
+                mv.visitInsn(POP2);
+                // stack >> possibleResult target
+                mv.visitInsn(POP);
+                // stack >> possibleResult
+            }
+        }
         // stack >> [possibleResult]
         convertReturnType(mv, desc);
+        // stack >> [newPossibleResult]
     }
     
     public static boolean needsConversion(String owner, String name, String desc) {
@@ -125,16 +149,18 @@ public class FloatProxyMethod {
         // stack >> [target] prm0 prm1 prm2...
         mv.visitMethodInsn(INVOKESTATIC, crtClassName, COJAC_TYPE_CONVERT_NAME, convertDesc, false);
         // stack >> [target] allParamsArr
-        maybeConvertTarget(mv, cc.opcode, cc.owner);
-        // stack >> [newTarget] allParamsArr
-
-        // Keep the reference of converted arrays
-        if(cc.opcode == INVOKEVIRTUAL || cc.opcode == INVOKEINTERFACE || cc.opcode == INVOKESPECIAL){
-            mv.visitInsn(DUP_X1);
+        // We'll need a reference to converted arrays (for merging purposes)
+        // and a copy of the target (trying first without proxy)...
+        if(hasTarget(cc.opcode)){
+            mv.visitInsn(DUP2);
         } else {
             mv.visitInsn(DUP);
         }
-        // stack >> allParamsArr [newTarget] allParamsArr
+        // stack >> [target] allParamsArr [target] allParamsArr
+    }
+
+    private static boolean hasTarget(int opcode) {
+        return opcode == INVOKEVIRTUAL || opcode == INVOKEINTERFACE || opcode == INVOKESPECIAL;
     }
     
     private static void explodeOnStack(MethodVisitor mv, ConversionContext cc, boolean wantTheConversion) {
@@ -176,6 +202,9 @@ public class FloatProxyMethod {
     }
 
     private static void maybeConvertTarget(MethodVisitor mv, int opcode, String owner) {
+        // stack >> [target] allParamsArr
+        if(!hasTarget(opcode)) return;
+        // stack >> target allParamsArr
         if(opcode != INVOKEVIRTUAL) return;   // not sure for invokeinterface or invokedynamic...
         if(owner.equals(JWRAPPER_FLOAT_TYPE.getInternalName())) {
             mv.visitInsn(SWAP);
@@ -186,13 +215,14 @@ public class FloatProxyMethod {
             convertCojacToRealType(JWRAPPER_DOUBLE_TYPE, mv);
             mv.visitInsn(SWAP);
         }
-        Type ownerType=Type.getType(owner);
+        Type ownerType=Type.getType(owner); // TODO: doesn't that case contain the preceding two?
         Type afterType = afterFloatReplacement(ownerType);
         if (!ownerType.equals(afterType)) {
             mv.visitInsn(SWAP);
             convertCojacToRealType(ownerType, mv);
             mv.visitInsn(SWAP);
         }
+        // stack >> [newTarget] allParamsArr
     }
 	
 	private static void convertReturnType(MethodVisitor mv, String desc) {
@@ -287,6 +317,7 @@ public class FloatProxyMethod {
 		if(returnTypeSize == 1){
 			mv.visitInsn(SWAP);
 		} else if(returnTypeSize == 2) {
+		    // mv.visitInsn(NOP); just a marker as a debugging helper
 			mv.visitInsn(DUP2_X1); // D D Object D D
 			mv.visitInsn(POP2); // D D Object
 		}
@@ -460,8 +491,8 @@ public class FloatProxyMethod {
         final String owner, name, desc;
         final Type[] outArgs;
         final Type[] inArgs;
-        Map<Integer, Type> typeConversions = new HashMap<>();
-        Map<Integer, Type> convertedArrays = new HashMap<>();   
+        final Map<Integer, Type> typeConversions = new HashMap<>();
+        final Map<Integer, Type> convertedArrays = new HashMap<>();   
         
         public ConversionContext(int opcode, String owner, String name, String desc) {
             this.opcode=opcode;

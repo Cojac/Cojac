@@ -220,6 +220,116 @@ public class Wrapping {
           Double[] t4=(Double[])t3.clone(); // TODO: does not work...
           return 2*a;
       }
+      public static void playLambdas() {
+          double a = 1.0;
+          a = a/3.0;
+          double d = a;
+          DoubleUnaryOperator unOp;
+          unOp = Math::sqrt;
+          d=unOp.applyAsDouble(a*a);   // but the "enrichment" is lost...
+          /*
+  // access flags 0x9
+  public static playLambdas() : void
+   L0
+    LINENUMBER 224 L0
+    DCONST_1
+    DSTORE 0
+   L1
+    LINENUMBER 225 L1
+    DLOAD 0: a
+    LDC 3.0
+    DDIV
+    DSTORE 0: a
+   L2
+    LINENUMBER 226 L2
+    DLOAD 0: a
+    DSTORE 2
+   L3
+    LINENUMBER 228 L3
+    INVOKEDYNAMIC applyAsDouble() : DoubleUnaryOperator [
+      // handle kind 0x6 : INVOKESTATIC
+      LambdaMetafactory.metafactory(MethodHandles$Lookup, String, MethodType, MethodType, MethodHandle, MethodType) : CallSite
+      // arguments:
+      (double) : double, 
+      // handle kind 0x6 : INVOKESTATIC
+      Math.sqrt(double) : double, 
+      (double) : double
+    ]
+    ASTORE 4
+   L4
+    LINENUMBER 229 L4
+    ALOAD 4: unOp
+    DLOAD 0: a
+    DLOAD 0: a
+    DMUL
+    INVOKEINTERFACE DoubleUnaryOperator.applyAsDouble (double) : double
+    DSTORE 2: d
+   L5
+    LINENUMBER 230 L5
+    RETURN
+   L6
+    LOCALVARIABLE a double L1 L6 0
+    LOCALVARIABLE d double L3 L6 2
+    LOCALVARIABLE unOp DoubleUnaryOperator L4 L6 4
+    MAXSTACK = 5
+    MAXLOCALS = 5
+    
+      public static void playLambdas();
+    Code:
+       0: dconst_1      
+       1: invokestatic  #152                // Method ch/eiafr/cojac/models/wrappers/CommonDouble.fromDouble:(D)Lch/eiafr/cojac/models/wrappers/CommonDouble;
+       4: astore_0      
+       5: aload_0       
+       6: ldc2_w        #36                 // double 3.0d
+       9: invokestatic  #152                // Method ch/eiafr/cojac/models/wrappers/CommonDouble.fromDouble:(D)Lch/eiafr/cojac/models/wrappers/CommonDouble;
+      12: invokestatic  #174                // Method ch/eiafr/cojac/models/wrappers/CommonDouble.ddiv:(Lch/eiafr/cojac/models/wrappers/CommonDouble;Lch/eiafr/cojac/models/wrappers/CommonDouble;)Lch/eiafr/cojac/models/wrappers/CommonDouble;
+      15: astore_0      
+      16: aload_0       
+      17: astore_2      
+      18: invokedynamic #175,  0            // InvokeDynamic #1:applyAsDouble:()Ljava/util/function/DoubleUnaryOperator;
+      23: astore        4
+      25: aload         4
+      27: aload_0       
+      28: aload_0       
+      29: invokestatic  #178                // Method ch/eiafr/cojac/models/wrappers/CommonDouble.dmul:(Lch/eiafr/cojac/models/wrappers/CommonDouble;Lch/eiafr/cojac/models/wrappers/CommonDouble;)Lch/eiafr/cojac/models/wrappers/CommonDouble;
+      32: invokestatic  #186                // Method COJAC_TYPE_CONVERT:(Lch/eiafr/cojac/models/wrappers/CommonDouble;)[Ljava/lang/Object;
+      35: dup2          
+      36: dup           
+      37: ldc           #155                // int 0
+      39: aaload        
+      40: checkcast     #188                // class "[Ljava/lang/Object;"
+      43: ldc           #158                // int 1
+      45: aaload        
+      46: checkcast     #19                 // class java/lang/Double
+      49: invokevirtual #73                 // Method java/lang/Double.doubleValue:()D
+      52: dup2_x1       
+      53: pop2          
+      54: pop           
+      55: invokeinterface #42,  3           // InterfaceMethod java/util/function/DoubleUnaryOperator.applyAsDouble:(D)D
+      60: dup2_x1       
+      61: pop2          
+      62: pop           
+      63: dup2_x1       
+      64: pop2          
+=====>65: invokestatic  #152                // Method ch/eiafr/cojac/models/wrappers/CommonDouble.fromDouble:(D)Lch/eiafr/cojac/models/wrappers/CommonDouble;
+      68: astore_2      
+      69: return        
+    LineNumberTable:
+      line 224: 0
+      line 225: 5
+      line 226: 16
+      line 228: 18
+      line 229: 25
+      line 230: 69
+    LocalVariableTable:
+      Start  Length  Slot  Name   Signature
+          5      65     0     a   Lch/eiafr/cojac/models/wrappers/CommonDouble;
+         18      52     2     d   Lch/eiafr/cojac/models/wrappers/CommonDouble;
+         25      45     4  unOp   Ljava/util/function/DoubleUnaryOperator;
+*/
+          
+      }
+      
       public static void f(ArrayList<Double> c) {
           double b=1; b/=3.0;
           Double[]t2=new Double[]{b, b/2};
