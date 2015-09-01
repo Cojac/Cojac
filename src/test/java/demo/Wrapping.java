@@ -31,6 +31,7 @@ public class Wrapping {
   private static final String WRAPPER=COJAC_MAGIC_DOUBLE_wrapper();
     
   public static void main(String[] args) {
+      new MyCojacDebugDump(8);
 //      System.out.println("yeahhh "+(java.util.function.DoubleUnaryOperator)Math::sqrt);
 
     System.out.println("Wrapper used: "+WRAPPER);
@@ -170,15 +171,15 @@ public class Wrapping {
     System.out.println("oneThird orig: "+b);
     System.out.println("oneThird: "+COJAC_MAGIC_DOUBLE_toStr(b));
     ArrayList<MyWrapper> l1=new ArrayList<>();
-    l1.add(new MyWrapper(b));
-    double c=l1.get(0).dValue;
+//    l1.add(new MyWrapper(b));
+//    double c=l1.get(0).dValue;
     ArrayList<Double> l2=new ArrayList<>();
     l2.add(b); l2.add(b/2);
     Collections.sort(l2);
     System.out.println("oneThird in sorted list: "+COJAC_MAGIC_DOUBLE_toStr(l2.get(0)));
     ok(keepsEnrichment(l2.get(0)));
 
-    System.out.println("oneThird in list: "+COJAC_MAGIC_DOUBLE_toStr(c));
+//    System.out.println("oneThird in list: "+COJAC_MAGIC_DOUBLE_toStr(c));
     Double d=b;
     System.out.println("oneThird origWrapper: "+b);
     System.out.println("oneThird wrapper magic: "+COJAC_MAGIC_DOUBLE_toStr(d));
@@ -205,28 +206,62 @@ public class Wrapping {
   //======================================================================
   // any class with name containing "CojacDebugDump" will be dumped after
   // instrumentation, for debugging purposes (see cojac/Agent)
-  static class MyCojacDebugDump {
+  static class MyCojacDebugDump { // implements DoubleUnaryOperator {
+      //MyWrapper mmm;
       public MyCojacDebugDump(int a) {
-          
+          //mmm=new MyWrapper(0.2);
       }
       
+//      @Override public double applyAsDouble(double operand) {
+//         return 2*operand;
+//      }
+
       public static int f(int a) {
 //          double[][] t1={{2.0}};
 //          double[][] t2=(double[][])t1.clone(); 
 //          double[] t11={2.0};
 //          double[] t21=(double[])t11.clone(); 
           
-          Double[] t3={2.0};
-          Double[] t4=(Double[])t3.clone(); // TODO: does not work...
-          return 2*a;
+//          Double[] t3={2.0};
+//          Double[] t4=(Double[])t3.clone(); // TODO: does not work...
+//          return 2*a;
+          return 9;
+//          DoubleUnaryOperator op;
+//          op=new MyCojacDebugDump(0);
+//          return (int) op.applyAsDouble(2.1);
       }
+ 
+      public static void f(ArrayList<Double> c) {
+//          double b=1; b/=3.0;
+//          Double[]t2=new Double[]{b, b/2};
+//          Arrays.sort(t2);
+//          System.out.println("oneThird in sorted jwrapper array: "+COJAC_MAGIC_DOUBLE_toStr(t2[0]));   
+//          Double d=3.0;
+//          if(d.equals(d))
+//              c.add(d);
+      }
+
+      static int g(int a) {
+          int b=a;
+          try {
+              System.out.println(a);
+          } catch(NoSuchMethodError|AbstractMethodError e) {
+              System.out.println(b);
+          }
+          return b;
+      }
+
+
+      
       public static void playLambdas() {
-          double a = 1.0;
-          a = a/3.0;
-          double d = a;
-          DoubleUnaryOperator unOp;
-          unOp = Math::sqrt;
-          d=unOp.applyAsDouble(a*a);   // but the "enrichment" is lost...
+//          double a = 1.0;
+//          a = a/3.0;
+//          double d = a;
+//          DoubleUnaryOperator unOp;
+//          unOp = Math::sqrt;
+//          d=unOp.applyAsDouble(a*a);   // but the "enrichment" is lost...
+      }
+
           /*
   // access flags 0x9
   public static playLambdas() : void
@@ -327,33 +362,14 @@ public class Wrapping {
          18      52     2     d   Lch/eiafr/cojac/models/wrappers/CommonDouble;
          25      45     4  unOp   Ljava/util/function/DoubleUnaryOperator;
 */
-          
-      }
       
-      public static void f(ArrayList<Double> c) {
-          double b=1; b/=3.0;
-          Double[]t2=new Double[]{b, b/2};
-          Arrays.sort(t2);
-          System.out.println("oneThird in sorted jwrapper array: "+COJAC_MAGIC_DOUBLE_toStr(t2[0]));   
-
-          Double d=3.0;
-          if(d.equals(d))
-              c.add(d);
-      }
-      static int g(int a) {
-          try {
-              return 3/a;
-          } catch(NoSuchMethodError|AbstractMethodError e) {
-              return a/7;
-          }
-      }
   }
   //======================================================================
-  static class MyWrapper {
-    public final double dValue;
-    public final float fValue;
-    MyWrapper(double d) {dValue=d; fValue=(float)d;}
-  }
+  static class MyWrapper { }
+//    public final double dValue;
+//    public final float fValue;
+//    MyWrapper(double d) {dValue=d; fValue=(float)d;}
+//  }
   //======================================================================
   static class SimpleGUI extends JFrame {
       public SimpleGUI() {

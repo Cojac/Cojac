@@ -87,6 +87,10 @@ public class FloatProxyMethod {
     }
     
     public void proxyCall(MethodVisitor mv, int opcode, String owner, String name, String desc){
+//        if (opcode==INVOKEVIRTUAL || opcode==INVOKEINTERFACE) {
+//            proxyCallBetter(mv, opcode, owner, name, desc);
+//            return;
+//        }
         ConversionContext cc=new ConversionContext(opcode, owner, name, desc);
         // stack >> allParamsArr [target] nprm0 nprm1 nprm2...
         convertArgumentsToReal(mv, cc);           
@@ -120,20 +124,31 @@ public class FloatProxyMethod {
         // stack >> [newPossibleResult]
     }
     
+    
+    // it does not work at all... unfortunately, every frame starts with an 
+    // empty operand stack, to the "catch" section cannot expect
+    // to have the "[target] allParamsArr" on the stack (before the exception)
+    // GOSH...
     public void proxyCallBetter(MethodVisitor mv, int opcode, String owner, String name, String desc){
+        
         Label lBeginTry = new Label(), lEndTry = new Label(); 
         Label lBeginHandler = new Label(), lEndHandler = new Label();
         String descAfter=replaceFloatMethodDescription(desc);
         ConversionContext cc=new ConversionContext(opcode, owner, name, desc);
-        // stack >> allParamsArr [target] nprm0 nprm1 nprm2...
+        // stack >> allParamsArr [target] prm0 prm1 prm2...
         convertArgumentsToReal(mv, cc);           
         // stack >> [target] allParamsArr [target] allParamsArr
+        // TODO: store "[target] allParamsArr" into added local variables
+        
+        explodeOnStack(mv, cc, false); 
+        // stack >> [target] allParamsArr [target] prm0 prm1 prm2...
         // try to call as if that method was indeed instrumented...
         mv.visitTryCatchBlock(lBeginTry, lEndTry, lBeginHandler, "java/lang/NoSuchMethodError");
         mv.visitTryCatchBlock(lBeginTry, lEndTry, lBeginHandler, "java/lang/AbstractMethodError");
         mv.visitLabel(lBeginTry);
         mv.visitMethodInsn(opcode, owner, name, descAfter, (opcode == INVOKEINTERFACE));
         // stack >> [target] allParamsArr [possibleResult]
+        //TODO: remove those lines up to GOTO
         int resultWidth=Type.getReturnType(descAfter).getSize();
         if (resultWidth==0) {
             mv.visitInsn(POP);
@@ -141,13 +156,13 @@ public class FloatProxyMethod {
                 mv.visitInsn(POP);
             }
         } else if (resultWidth==1) {
-            mv.visitInsn(DUP2_X1);
+            mv.visitInsn(SWAP);
             mv.visitInsn(POP);
             if(hasTarget(opcode)) {
                 mv.visitInsn(SWAP);
                 mv.visitInsn(POP);
             }
-        } else { // resultWidth==2)
+        } else { // (resultWidth==2)
             mv.visitInsn(DUP2_X1);
             mv.visitInsn(POP2);
             mv.visitInsn(POP);
@@ -164,6 +179,7 @@ public class FloatProxyMethod {
         mv.visitLabel(lBeginHandler);
         // stack >> [target] allParamsArr exception
         mv.visitInsn(POP); // we don't need the exception object
+        // TODO: load "[target] allParamsArr" from the added locals
         // stack >> [target] allParamsArr
         maybeConvertTarget(mv, cc.opcode, cc.owner);
         // stack >> [newTarget] allParamsArr
@@ -282,7 +298,7 @@ public class FloatProxyMethod {
             convertCojacToRealType(JWRAPPER_DOUBLE_TYPE, mv);
             mv.visitInsn(SWAP);
         }
-        Type ownerType=Type.getType(owner); // TODO: doesn't that case contain the preceding two?
+        Type ownerType=Type.getType(owner); //apparently that case doesn't contain the preceding two
         Type afterType = afterFloatReplacement(ownerType);
         if (!ownerType.equals(afterType)) {
             mv.visitInsn(SWAP);
