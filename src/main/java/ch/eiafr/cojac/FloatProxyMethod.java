@@ -121,49 +121,67 @@ public class FloatProxyMethod {
     }
     
     public void proxyCallBetter(MethodVisitor mv, int opcode, String owner, String name, String desc){
+        Label lBeginTry = new Label(), lEndTry = new Label(); 
+        Label lBeginHandler = new Label(), lEndHandler = new Label();
+        String descAfter=replaceFloatMethodDescription(desc);
         ConversionContext cc=new ConversionContext(opcode, owner, name, desc);
         // stack >> allParamsArr [target] nprm0 nprm1 nprm2...
         convertArgumentsToReal(mv, cc);           
         // stack >> [target] allParamsArr [target] allParamsArr
-        maybeConvertTarget(mv, cc.opcode, cc.owner);
-        // stack >> [target] allParamsArr [newTarget] allParamsArr
-        explodeOnStack(mv, cc, true); 
-        Label lBeginTry = new Label();
-        Label lEndTry = new Label();
-        Label lBeginHandler = new Label();
+        // try to call as if that method was indeed instrumented...
         mv.visitTryCatchBlock(lBeginTry, lEndTry, lBeginHandler, "java/lang/NoSuchMethodError");
         mv.visitTryCatchBlock(lBeginTry, lEndTry, lBeginHandler, "java/lang/AbstractMethodError");
         mv.visitLabel(lBeginTry);
-        String descAfter=replaceFloatMethodDescription(desc);
         mv.visitMethodInsn(opcode, owner, name, descAfter, (opcode == INVOKEINTERFACE));
         // stack >> [target] allParamsArr [possibleResult]
-
-        // stack >> [target] allParamsArr [newTarget] nprm0 nprm1 nprm2...
-        mv.visitMethodInsn(opcode, owner, name, desc, (opcode == INVOKEINTERFACE));
-        // stack >> [target] allParamsArr [possibleResult]
-        checkArraysAfterCall(mv, cc.convertedArrays, desc);
-        // stack >> [target] [possibleResult]
-        int resultWidth=Type.getReturnType(desc).getSize();
-        if(hasTarget(opcode)) {
-            if(resultWidth==0) {
+        int resultWidth=Type.getReturnType(descAfter).getSize();
+        if (resultWidth==0) {
+            mv.visitInsn(POP);
+            if(hasTarget(opcode)) {
                 mv.visitInsn(POP);
-            } else if (resultWidth==1) {
+            }
+        } else if (resultWidth==1) {
+            mv.visitInsn(DUP2_X1);
+            mv.visitInsn(POP);
+            if(hasTarget(opcode)) {
                 mv.visitInsn(SWAP);
                 mv.visitInsn(POP);
-            } else { // resultWidth==2) 
+            }
+        } else { // resultWidth==2)
+            mv.visitInsn(DUP2_X1);
+            mv.visitInsn(POP2);
+            mv.visitInsn(POP);
+            if(hasTarget(opcode)) {
                 mv.visitInsn(DUP2_X1);
-                // stack >> possibleResult target possibleResult
                 mv.visitInsn(POP2);
-                // stack >> possibleResult target
                 mv.visitInsn(POP);
-                // stack >> possibleResult
             }
         }
         // stack >> [possibleResult]
+        mv.visitJumpInsn(GOTO, lEndHandler);  // and we're done !
+        mv.visitLabel(lEndTry);
+        
+        mv.visitLabel(lBeginHandler);
+        // stack >> [target] allParamsArr exception
+        mv.visitInsn(POP); // we don't need the exception object
+        // stack >> [target] allParamsArr
+        maybeConvertTarget(mv, cc.opcode, cc.owner);
+        // stack >> [newTarget] allParamsArr
+        if (hasTarget(opcode)) {
+            mv.visitInsn(DUP_X1);
+        } else {
+            mv.visitInsn(DUP);
+        }
+        // stack >> allParamsArr [newTarget] allParamsArr
+        explodeOnStack(mv, cc, true); 
+        // stack >> allParamsArr [newTarget] nprm0 nprm1 nprm2...
+        mv.visitMethodInsn(opcode, owner, name, desc, (opcode == INVOKEINTERFACE));
+        // stack >> allParamsArr [possibleResult]
+        checkArraysAfterCall(mv, cc.convertedArrays, desc);
+        // stack >> [possibleResult]
         convertReturnType(mv, desc);
         // stack >> [newPossibleResult]
-        mv.visitLabel(lEndTry);
-        mv.visitLabel(lBeginHandler);
+        mv.visitLabel(lEndHandler);
 
     }
 
