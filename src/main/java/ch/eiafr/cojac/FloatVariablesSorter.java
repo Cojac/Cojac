@@ -53,7 +53,7 @@ public class FloatVariablesSorter extends LocalVariablesSorter{
         Type[] args = Type.getArgumentTypes(desc);
         
         if(args.length == 0){
-            firstFrameMapping = null;
+            firstFrameMapping = new int[0]; // BAPST, was: =null;
             maxRenumber = 0;
         } else {
             firstFrameMapping = new int[args.length*2];
@@ -75,9 +75,9 @@ public class FloatVariablesSorter extends LocalVariablesSorter{
 
     @Override public void visitCode() {
         super.visitCode();
-//        paramArrayVar = newLocal(OBJ_ARRAY_TYPE);
-//        targetVar = newLocal(OBJ_TYPE);
-//        visitInsn(Opcodes.NOP); visitInsn(Opcodes.NOP);
+        paramArrayVar = newLocal(OBJ_ARRAY_TYPE);
+        targetVar = newLocal(OBJ_TYPE);
+        visitInsn(Opcodes.NOP); visitInsn(Opcodes.NOP);
     }
     
     @Override

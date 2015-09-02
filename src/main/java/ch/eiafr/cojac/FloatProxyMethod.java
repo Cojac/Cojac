@@ -90,7 +90,7 @@ public class FloatProxyMethod {
     
     public void proxyCall(MethodVisitor mv, int opcode, String owner, String name, String desc){
         if (false && opcode==INVOKEVIRTUAL ) { //|| opcode==INVOKEINTERFACE
-            proxyCallBetter(mv, opcode, owner, name, desc);
+            proxyCallBetterWithoutVars(mv, opcode, owner, name, desc);
             return;
         }
         ConversionContext cc=new ConversionContext(opcode, owner, name, desc);
@@ -127,93 +127,167 @@ public class FloatProxyMethod {
     }
     
     
+    static final boolean EMPTY_STACK_TRICK=false;
     // it does not work at all... 
     // GOSH...
     // is it possible to avoid defining those 2 new local vars?
     // Remember: mv is in fact a FloatVariableSorter...
-    public void proxyCallBetter(MethodVisitor mv, int opcode, String owner, String name, String desc){
+    public void proxyCallBetterWithVars(MethodVisitor mv, int opcode, String owner, String name, String desc){
         int paramArrayVar=-1;
         int targetVar=-1;
-        checkNotNullStack(mv);
+        ;; checkNotNullStack(mv);
         Object[] localsInFrame = ((FloatVariablesSorter)mv).analyzerAdapter.locals.toArray();
         Object[] stackEInFrame = ((FloatVariablesSorter)mv).analyzerAdapter.stack.toArray();
-        //System.out.println(mv.getClass());
-        if(mv instanceof FloatVariablesSorter) {
-            paramArrayVar = ((FloatVariablesSorter)mv).paramArrayVar;
-            targetVar = ((FloatVariablesSorter)mv).targetVar;
-        } else { System.out.println("oh no..."); new Exception("ach").printStackTrace(); }
+
+        paramArrayVar = ((FloatVariablesSorter)mv).paramArrayVar;
+        targetVar = ((FloatVariablesSorter)mv).targetVar;
         Label lBeginTry = new Label(), lEndTry = new Label(); 
         Label lBeginHandler = new Label(), lEndHandler = new Label();
         String descAfter=replaceFloatMethodDescription(desc);
         Type returnType=Type.getReturnType(descAfter);
         ConversionContext cc=new ConversionContext(opcode, owner, name, desc);
         // stack >> target prm0 prm1 prm2...
-        checkNotNullStack(mv);
-        convertArgumentsToReal(mv, cc);           
+        ;; checkNotNullStack(mv);
+        convertArgumentsToReal(mv, cc);
         // stack >> target allParamsArr target allParamsArr
-        checkNotNullStack(mv);
-        String targetType=stackTopClass(mv);
+        ;; checkNotNullStack(mv);
         mv.visitVarInsn(ASTORE, paramArrayVar);
-        checkNotNullStack(mv);
-        targetType=stackTopClass(mv);
+        ;; checkNotNullStack(mv);
+        String targetType=stackTopClass(mv);
         mv.visitVarInsn(ASTORE, targetVar);
         // stack >> target allParamsArr
-        checkNotNullStack(mv);
+        ;; checkNotNullStack(mv);
         explodeOnStack(mv, cc, false); 
         // stack >> target prm0 prm1 prm2...
-        checkNotNullStack(mv);
+        ;; checkNotNullStack(mv);
         // try to call as if that method was indeed instrumented...
         mv.visitTryCatchBlock(lBeginTry, lEndTry, lBeginHandler, "java/lang/NoSuchMethodError");
         mv.visitTryCatchBlock(lBeginTry, lEndTry, lBeginHandler, "java/lang/AbstractMethodError");
         mv.visitLabel(lBeginTry);
         mv.visitMethodInsn(opcode, owner, name, descAfter, (opcode == INVOKEINTERFACE));
         // stack >> [possibleResult]
-        checkNotNullStack(mv);
-
-        //TODO: remove those lines up to GOTO
-//        int resultWidth=Type.getReturnType(descAfter).getSize();
-//        if (resultWidth==0) {
-//            mv.visitInsn(POP);
-//                mv.visitInsn(POP);
-//        } else if (resultWidth==1) {
-//            mv.visitInsn(SWAP);
-//            mv.visitInsn(POP);
-//                mv.visitInsn(SWAP);
-//                mv.visitInsn(POP);
-//        } else { // (resultWidth==2)
-//            mv.visitInsn(DUP2_X1);
-//            mv.visitInsn(POP2);
-//            mv.visitInsn(POP);
-//                mv.visitInsn(DUP2_X1);
-//                mv.visitInsn(POP2);
-//                mv.visitInsn(POP);
-//        }
+        ;; checkNotNullStack(mv);
         // stack >> [possibleResult]
         mv.visitLabel(lEndTry);
-        checkNotNullStack(mv);
+        ;; checkNotNullStack(mv);
         mv.visitJumpInsn(GOTO, lEndHandler);  // and we're done !
+        
         mv.visitLabel(lBeginHandler);
-        Object[] stackContent=addTo(stackEInFrame, "java/lang/IncompatibleClassChangeError");
-//        mv.visitFrame(F_NEW, localsInFrame.length, localsInFrame, 
-//                              stackContent.length, stackContent);
+        Object[] stackContent=stackEInFrame;
+        if (EMPTY_STACK_TRICK) stackContent=new Object[0];
+        stackContent=addTo(stackContent, "java/lang/IncompatibleClassChangeError");
         mv.visitFrame(F_NEW, localsInFrame.length, localsInFrame, 
-                1, new Object[] {"java/lang/IncompatibleClassChangeError"});
+                              stackContent.length, stackContent);
 
-        checkNotNullStack(mv);
+        ;; checkNotNullStack(mv);
         mv.visitInsn(NOP); //just a debugging marker...
-        // stack >> [target] allParamsArr exception
+        // stack >>  exception  // TODO check that: ... or target allParamsArr ??
         mv.visitInsn(POP); // we don't need the exception object
+        // stack >>  
         mv.visitVarInsn(ALOAD, targetVar);
         mv.visitTypeInsn(CHECKCAST, targetType);
+        // stack >> target 
         mv.visitVarInsn(ALOAD, paramArrayVar);
+        // stack >> target allParamsArr
         mv.visitInsn(NOP); mv.visitInsn(NOP);
         // stack >> target allParamsArr
         maybeConvertTarget(mv, cc.opcode, cc.owner);
         // stack >> newTarget allParamsArr
         mv.visitInsn(DUP_X1);
-        // stack >> allParamsArr [newTarget] allParamsArr
+        // stack >> allParamsArr newTarget allParamsArr
         explodeOnStack(mv, cc, true); 
-        // stack >> allParamsArr [newTarget] nprm0 nprm1 nprm2...
+        // stack >> allParamsArr newTarget nprm0 nprm1 nprm2...
+        mv.visitMethodInsn(opcode, owner, name, desc, (opcode == INVOKEINTERFACE));
+        // stack >> allParamsArr [possibleResult]
+        checkArraysAfterCall(mv, cc.convertedArrays, desc);
+        // stack >> [possibleResult]
+        convertReturnType(mv, desc);
+        // stack >> [newPossibleResult]
+        mv.visitLabel(lEndHandler);
+        mv.visitInsn(NOP); 
+        stackContent=stackEInFrame;
+        if (EMPTY_STACK_TRICK) stackContent=new Object[0];
+        stackContent=addReturnTypeTo(stackContent, returnType);
+        mv.visitFrame(F_NEW, localsInFrame.length, localsInFrame, 
+                              stackContent.length, stackContent);
+       mv.visitInsn(NOP); 
+    }
+
+    public void proxyCallBetterWithoutVars(MethodVisitor mv, int opcode, String owner, String name, String desc){
+        ;; checkNotNullStack(mv);
+        Object[] localsInFrame = ((FloatVariablesSorter)mv).analyzerAdapter.locals.toArray();
+        Object[] stackEInFrame = ((FloatVariablesSorter)mv).analyzerAdapter.stack.toArray();
+        Label lBeginTry = new Label(), lEndTry = new Label(); 
+        Label lBeginHandler = new Label(), lEndHandler = new Label();
+        String descAfter=replaceFloatMethodDescription(desc);
+        Type returnType=Type.getReturnType(descAfter);
+        ConversionContext cc=new ConversionContext(opcode, owner, name, desc);
+        // stack >> target prm0 prm1 prm2...
+        ;; checkNotNullStack(mv);
+        convertArgumentsToReal(mv, cc);           
+        // stack >> target allParamsArr target allParamsArr
+        ;; checkNotNullStack(mv);
+        mv.visitInsn(DUP2); 
+        // stack >> target allParamsArr target allParamsArr target allParamsArr
+        mv.visitInsn(POP); 
+        // stack >> target allParamsArr target allParamsArr target
+        String targetType=stackTopClass(mv);
+        mv.visitInsn(POP); 
+        // stack >> target allParamsArr target allParamsArr
+        ;; checkNotNullStack(mv);
+        explodeOnStack(mv, cc, false); 
+        // stack >> target allParamsArr target prm0 prm1 prm2...
+        ;; checkNotNullStack(mv);
+        // try to call as if that method was indeed instrumented...
+        mv.visitTryCatchBlock(lBeginTry, lEndTry, lBeginHandler, "java/lang/NoSuchMethodError");
+        mv.visitTryCatchBlock(lBeginTry, lEndTry, lBeginHandler, "java/lang/AbstractMethodError");
+        mv.visitLabel(lBeginTry);
+        mv.visitMethodInsn(opcode, owner, name, descAfter, (opcode == INVOKEINTERFACE));
+        // stack >> target allParamsArr [possibleResult]
+        ;; checkNotNullStack(mv);
+        {
+            int resultWidth=Type.getReturnType(descAfter).getSize();
+            if (resultWidth==0) {
+                mv.visitInsn(POP);
+                mv.visitInsn(POP);
+            } else if (resultWidth==1) {
+                mv.visitInsn(SWAP);
+                mv.visitInsn(POP);
+                mv.visitInsn(SWAP);
+                mv.visitInsn(POP);
+            } else { // (resultWidth==2)
+                mv.visitInsn(DUP2_X1);
+                mv.visitInsn(POP2);
+                mv.visitInsn(POP);
+                mv.visitInsn(DUP2_X1);
+                mv.visitInsn(POP2);
+                mv.visitInsn(POP);
+            }
+        }
+        // stack >> [possibleResult]
+        mv.visitLabel(lEndTry);
+        ;; checkNotNullStack(mv);
+        mv.visitJumpInsn(GOTO, lEndHandler);  // and we're done !
+        
+        Object[] stackContent=stackEInFrame;
+        if (EMPTY_STACK_TRICK) stackContent=new Object[0];
+        stackContent=addTo(stackContent, targetType);
+        stackContent=addTo(stackContent, OBJ_ARRAY_TYPE.getInternalName());
+        stackContent=addTo(stackContent, "java/lang/IncompatibleClassChangeError");
+        mv.visitLabel(lBeginHandler);
+        mv.visitInsn(NOP); //just a debugging marker...
+        mv.visitFrame(F_NEW, localsInFrame.length, localsInFrame, 
+                              stackContent.length, stackContent);
+        ;; checkNotNullStack(mv);
+        // stack >> target allParamsArr exception
+        mv.visitInsn(POP); // we don't need the exception object
+        // stack >> target allParamsArr
+        maybeConvertTarget(mv, cc.opcode, cc.owner);
+        // stack >> newTarget allParamsArr
+        mv.visitInsn(DUP_X1);
+        // stack >> allParamsArr newTarget allParamsArr
+        explodeOnStack(mv, cc, true); 
+        // stack >> allParamsArr newTarget nprm0 nprm1 nprm2...
         mv.visitMethodInsn(opcode, owner, name, desc, (opcode == INVOKEINTERFACE));
         // stack >> allParamsArr [possibleResult]
         checkArraysAfterCall(mv, cc.convertedArrays, desc);
@@ -222,13 +296,14 @@ public class FloatProxyMethod {
         // stack >> [newPossibleResult]
         mv.visitLabel(lEndHandler);
         stackContent=stackEInFrame;
-        stackContent=new Object[0];
+        if (EMPTY_STACK_TRICK) stackContent=new Object[0];
         stackContent=addReturnTypeTo(stackContent, returnType);
         mv.visitFrame(F_NEW, localsInFrame.length, localsInFrame, 
                               stackContent.length, stackContent);
        mv.visitInsn(NOP); 
     }
 
+    
     private Object[] addReturnTypeTo(Object[] stackContent, Type returnType) {
         int sort=returnType.getSort();
         if (sort==Type.VOID) return stackContent;
