@@ -30,10 +30,12 @@ import java.util.Map;
 
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 
 import static org.objectweb.asm.Opcodes.*;
 
 import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.LocalVariablesSorter;
 
 public class FloatProxyMethod {
     private static final Type JWRAPPER_FLOAT_TYPE  = Type.getType(Float.class);
@@ -87,12 +89,12 @@ public class FloatProxyMethod {
     }
     
     public void proxyCall(MethodVisitor mv, int opcode, String owner, String name, String desc){
-//        if (opcode==INVOKEVIRTUAL || opcode==INVOKEINTERFACE) {
-//            proxyCallBetter(mv, opcode, owner, name, desc);
-//            return;
-//        }
+        if (false && opcode==INVOKEVIRTUAL ) { //|| opcode==INVOKEINTERFACE
+            proxyCallBetter(mv, opcode, owner, name, desc);
+            return;
+        }
         ConversionContext cc=new ConversionContext(opcode, owner, name, desc);
-        // stack >> allParamsArr [target] nprm0 nprm1 nprm2...
+        // stack >> [target] nprm0 nprm1 nprm2...
         convertArgumentsToReal(mv, cc);           
         // stack >> [target] allParamsArr [target] allParamsArr
         maybeConvertTarget(mv, cc.opcode, cc.owner);
@@ -125,69 +127,90 @@ public class FloatProxyMethod {
     }
     
     
-    // it does not work at all... unfortunately, every frame starts with an 
-    // empty operand stack, to the "catch" section cannot expect
-    // to have the "[target] allParamsArr" on the stack (before the exception)
+    // it does not work at all... 
     // GOSH...
+    // is it possible to avoid defining those 2 new local vars?
+    // Remember: mv is in fact a FloatVariableSorter...
     public void proxyCallBetter(MethodVisitor mv, int opcode, String owner, String name, String desc){
-        
+        int paramArrayVar=-1;
+        int targetVar=-1;
+        checkNotNullStack(mv);
+        Object[] localsInFrame = ((FloatVariablesSorter)mv).analyzerAdapter.locals.toArray();
+        Object[] stackEInFrame = ((FloatVariablesSorter)mv).analyzerAdapter.stack.toArray();
+        //System.out.println(mv.getClass());
+        if(mv instanceof FloatVariablesSorter) {
+            paramArrayVar = ((FloatVariablesSorter)mv).paramArrayVar;
+            targetVar = ((FloatVariablesSorter)mv).targetVar;
+        } else { System.out.println("oh no..."); new Exception("ach").printStackTrace(); }
         Label lBeginTry = new Label(), lEndTry = new Label(); 
         Label lBeginHandler = new Label(), lEndHandler = new Label();
         String descAfter=replaceFloatMethodDescription(desc);
+        Type returnType=Type.getReturnType(descAfter);
         ConversionContext cc=new ConversionContext(opcode, owner, name, desc);
-        // stack >> allParamsArr [target] prm0 prm1 prm2...
+        // stack >> target prm0 prm1 prm2...
+        checkNotNullStack(mv);
         convertArgumentsToReal(mv, cc);           
-        // stack >> [target] allParamsArr [target] allParamsArr
-        // TODO: store "[target] allParamsArr" into added local variables
-        
+        // stack >> target allParamsArr target allParamsArr
+        checkNotNullStack(mv);
+        String targetType=stackTopClass(mv);
+        mv.visitVarInsn(ASTORE, paramArrayVar);
+        checkNotNullStack(mv);
+        targetType=stackTopClass(mv);
+        mv.visitVarInsn(ASTORE, targetVar);
+        // stack >> target allParamsArr
+        checkNotNullStack(mv);
         explodeOnStack(mv, cc, false); 
-        // stack >> [target] allParamsArr [target] prm0 prm1 prm2...
+        // stack >> target prm0 prm1 prm2...
+        checkNotNullStack(mv);
         // try to call as if that method was indeed instrumented...
         mv.visitTryCatchBlock(lBeginTry, lEndTry, lBeginHandler, "java/lang/NoSuchMethodError");
         mv.visitTryCatchBlock(lBeginTry, lEndTry, lBeginHandler, "java/lang/AbstractMethodError");
         mv.visitLabel(lBeginTry);
         mv.visitMethodInsn(opcode, owner, name, descAfter, (opcode == INVOKEINTERFACE));
-        // stack >> [target] allParamsArr [possibleResult]
-        //TODO: remove those lines up to GOTO
-        int resultWidth=Type.getReturnType(descAfter).getSize();
-        if (resultWidth==0) {
-            mv.visitInsn(POP);
-            if(hasTarget(opcode)) {
-                mv.visitInsn(POP);
-            }
-        } else if (resultWidth==1) {
-            mv.visitInsn(SWAP);
-            mv.visitInsn(POP);
-            if(hasTarget(opcode)) {
-                mv.visitInsn(SWAP);
-                mv.visitInsn(POP);
-            }
-        } else { // (resultWidth==2)
-            mv.visitInsn(DUP2_X1);
-            mv.visitInsn(POP2);
-            mv.visitInsn(POP);
-            if(hasTarget(opcode)) {
-                mv.visitInsn(DUP2_X1);
-                mv.visitInsn(POP2);
-                mv.visitInsn(POP);
-            }
-        }
         // stack >> [possibleResult]
-        mv.visitJumpInsn(GOTO, lEndHandler);  // and we're done !
+        checkNotNullStack(mv);
+
+        //TODO: remove those lines up to GOTO
+//        int resultWidth=Type.getReturnType(descAfter).getSize();
+//        if (resultWidth==0) {
+//            mv.visitInsn(POP);
+//                mv.visitInsn(POP);
+//        } else if (resultWidth==1) {
+//            mv.visitInsn(SWAP);
+//            mv.visitInsn(POP);
+//                mv.visitInsn(SWAP);
+//                mv.visitInsn(POP);
+//        } else { // (resultWidth==2)
+//            mv.visitInsn(DUP2_X1);
+//            mv.visitInsn(POP2);
+//            mv.visitInsn(POP);
+//                mv.visitInsn(DUP2_X1);
+//                mv.visitInsn(POP2);
+//                mv.visitInsn(POP);
+//        }
+        // stack >> [possibleResult]
         mv.visitLabel(lEndTry);
-        
+        checkNotNullStack(mv);
+        mv.visitJumpInsn(GOTO, lEndHandler);  // and we're done !
         mv.visitLabel(lBeginHandler);
+        Object[] stackContent=addTo(stackEInFrame, "java/lang/IncompatibleClassChangeError");
+//        mv.visitFrame(F_NEW, localsInFrame.length, localsInFrame, 
+//                              stackContent.length, stackContent);
+        mv.visitFrame(F_NEW, localsInFrame.length, localsInFrame, 
+                1, new Object[] {"java/lang/IncompatibleClassChangeError"});
+
+        checkNotNullStack(mv);
+        mv.visitInsn(NOP); //just a debugging marker...
         // stack >> [target] allParamsArr exception
         mv.visitInsn(POP); // we don't need the exception object
-        // TODO: load "[target] allParamsArr" from the added locals
-        // stack >> [target] allParamsArr
+        mv.visitVarInsn(ALOAD, targetVar);
+        mv.visitTypeInsn(CHECKCAST, targetType);
+        mv.visitVarInsn(ALOAD, paramArrayVar);
+        mv.visitInsn(NOP); mv.visitInsn(NOP);
+        // stack >> target allParamsArr
         maybeConvertTarget(mv, cc.opcode, cc.owner);
-        // stack >> [newTarget] allParamsArr
-        if (hasTarget(opcode)) {
-            mv.visitInsn(DUP_X1);
-        } else {
-            mv.visitInsn(DUP);
-        }
+        // stack >> newTarget allParamsArr
+        mv.visitInsn(DUP_X1);
         // stack >> allParamsArr [newTarget] allParamsArr
         explodeOnStack(mv, cc, true); 
         // stack >> allParamsArr [newTarget] nprm0 nprm1 nprm2...
@@ -198,9 +221,49 @@ public class FloatProxyMethod {
         convertReturnType(mv, desc);
         // stack >> [newPossibleResult]
         mv.visitLabel(lEndHandler);
-
+        stackContent=stackEInFrame;
+        stackContent=new Object[0];
+        stackContent=addReturnTypeTo(stackContent, returnType);
+        mv.visitFrame(F_NEW, localsInFrame.length, localsInFrame, 
+                              stackContent.length, stackContent);
+       mv.visitInsn(NOP); 
     }
 
+    private Object[] addReturnTypeTo(Object[] stackContent, Type returnType) {
+        int sort=returnType.getSort();
+        if (sort==Type.VOID) return stackContent;
+        if (sort==Type.ARRAY || returnType.getSort()==Type.OBJECT) 
+            return addTo(stackContent, returnType.getInternalName());
+        // else primitive type
+        switch (sort) {
+        case Type.BOOLEAN:
+        case Type.BYTE:
+        case Type.CHAR:
+        case Type.SHORT:
+        case Type.INT:
+            return addTo(stackContent, Opcodes.INTEGER);
+        case Type.LONG:
+            return addTo(addTo(stackContent, Opcodes.LONG), Opcodes.TOP);
+        }
+        return stackContent;
+    }
+
+    private Object[] addTo(Object[] s, Object e) {
+        Object[] t=new Object[s.length+1];
+        t[t.length-1]=e;
+        return t;
+    }
+
+    private String stackTopClass(MethodVisitor mv) {
+        Object o=((FloatVariablesSorter)mv).stackTop();
+        if (o instanceof String) return (String) o;
+        return null;
+    }
+    
+    private void checkNotNullStack(MethodVisitor mv) {
+        if ( ((FloatVariablesSorter)mv).analyzerAdapter.stack != null) return; 
+        throw new RuntimeException("STUPID NULL stack!!!");
+    }
     
     public boolean needsConversion(String owner, String name, String desc) {
         if(owner.equals(JWRAPPER_FLOAT_TYPE .getInternalName())) return true;
@@ -298,7 +361,7 @@ public class FloatProxyMethod {
             convertCojacToRealType(JWRAPPER_DOUBLE_TYPE, mv);
             mv.visitInsn(SWAP);
         }
-        Type ownerType=Type.getType(owner); //apparently that case doesn't contain the preceding two
+        Type ownerType=Type.getType(owner); // that case doesn't contain the preceding two
         Type afterType = afterFloatReplacement(ownerType);
         if (!ownerType.equals(afterType)) {
             mv.visitInsn(SWAP);

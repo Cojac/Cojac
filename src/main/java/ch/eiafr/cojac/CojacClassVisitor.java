@@ -109,9 +109,11 @@ final class CojacClassVisitor extends ClassVisitor {
     private MethodVisitor instrumentMethod(MethodVisitor parentMv, int access, String desc, String name) {
         MethodVisitor mv;
         if (args.isSpecified(Arg.REPLACE_FLOATS)){
-			// Create the MethodVisitor delegation chain: FloatReplacerMethodVisitor -> LocalVariableSorter -> AnalyzerAdapter -> parentMv
+			// Create the MethodVisitor delegation chain: 
+            // FloatReplacerMethodVisitor -> LocalVariableSorter -> AnalyzerAdapter -> parentMv
+            // the last one (parentMv) is typically a MethodWriter
             AnalyzerAdapter aa = new AnalyzerAdapter(crtClassName, access, name, desc, parentMv);
-            LocalVariablesSorter lvs = new FloatVariablesSorter(access, desc, aa);
+            FloatVariablesSorter lvs = new FloatVariablesSorter(access, desc, aa);
             ReplaceFloatsMethods rfm = new ReplaceFloatsMethods(fpm, crtClassName, references);
             mv = new FloatReplacerMethodVisitor(access, desc, aa, lvs, rfm, stats, args, crtClassName, factory, references);
         } else {
@@ -121,7 +123,6 @@ final class CojacClassVisitor extends ClassVisitor {
 
         return mv;
     }
-
 
     @Override
     public FieldVisitor visitField(int accessFlags, String fieldName, String fieldType, String genericSignature, Object initValStatic) {

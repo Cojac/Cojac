@@ -24,6 +24,7 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.AnalyzerAdapter;
 import org.objectweb.asm.commons.LocalVariablesSorter;
 
 /**
@@ -33,15 +34,22 @@ import org.objectweb.asm.commons.LocalVariablesSorter;
  * variable remappage to the LocalVariableSorter.
  */
 public class FloatVariablesSorter extends LocalVariablesSorter{
-    
+    private static final Type OBJECT_TYPE = Type .getObjectType("java/lang/Object");
+    private static final Type OBJ_ARRAY_TYPE=Type.getType("[Ljava/lang/Object;");
+    private static final Type   OBJ_TYPE = Type.getType(Object.class);
+
     private final int[] firstFrameMapping;
     private final int maxRenumber;
-    private static final Type OBJECT_TYPE = Type
-            .getObjectType("java/lang/Object");
     
-    public FloatVariablesSorter(int access, String desc, MethodVisitor mv) {
+    protected int paramArrayVar=-1;
+    protected int targetVar=-1;
+    protected final AnalyzerAdapter analyzerAdapter;
+
+    
+    public FloatVariablesSorter(int access, String desc, AnalyzerAdapter mv) {
         super(Opcodes.ASM5, access, desc, mv);
 
+        analyzerAdapter=mv;
         Type[] args = Type.getArgumentTypes(desc);
         
         if(args.length == 0){
@@ -65,7 +73,13 @@ public class FloatVariablesSorter extends LocalVariablesSorter{
         }
     }
 
-
+    @Override public void visitCode() {
+        super.visitCode();
+//        paramArrayVar = newLocal(OBJ_ARRAY_TYPE);
+//        targetVar = newLocal(OBJ_TYPE);
+//        visitInsn(Opcodes.NOP); visitInsn(Opcodes.NOP);
+    }
+    
     @Override
     public void visitVarInsn(final int opcode, final int var) {
         Type type;
@@ -162,4 +176,13 @@ public class FloatVariablesSorter extends LocalVariablesSorter{
         return firstFrameMapping[var];
     }
     
+    protected Object stackTop(){
+        AnalyzerAdapter aa = analyzerAdapter;
+        if(aa.stack == null)
+            return null;
+        if(aa.stack.isEmpty())
+            return null;
+        return aa.stack.get(aa.stack.size()-1);
+    }
+
 }
