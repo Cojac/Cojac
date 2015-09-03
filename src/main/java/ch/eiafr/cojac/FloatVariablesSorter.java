@@ -33,7 +33,7 @@ import org.objectweb.asm.commons.LocalVariablesSorter;
  * parameters passing for method invocation and delegate the other local
  * variable remappage to the LocalVariableSorter.
  */
-public class FloatVariablesSorter extends LocalVariablesSorter{
+public class FloatVariablesSorter extends LocalVariablesSorter {
     private static final Type OBJECT_TYPE = Type .getObjectType("java/lang/Object");
     private static final Type OBJ_ARRAY_TYPE=Type.getType("[Ljava/lang/Object;");
     private static final Type   OBJ_TYPE = Type.getType(Object.class);
@@ -75,9 +75,11 @@ public class FloatVariablesSorter extends LocalVariablesSorter{
 
     @Override public void visitCode() {
         super.visitCode();
-        paramArrayVar = newLocal(OBJ_ARRAY_TYPE);
-        targetVar = newLocal(OBJ_TYPE);
-        visitInsn(Opcodes.NOP); visitInsn(Opcodes.NOP);
+//        newLocal(Type.BYTE_TYPE);  // marker
+//        paramArrayVar = newLocal(OBJ_ARRAY_TYPE);
+//        targetVar = newLocal(OBJ_TYPE);
+//        newLocal(Type.BYTE_TYPE); // marker
+//        visitInsn(Opcodes.NOP); // marker
     }
     
     @Override

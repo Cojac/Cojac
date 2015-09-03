@@ -22,6 +22,8 @@ import static ch.eiafr.cojac.models.FloatReplacerClasses.*;
 import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenterFactory;
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.replaceFloatMethodDescription;
 import ch.eiafr.cojac.instrumenters.ReplaceFloatsMethods;
+
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
@@ -30,6 +32,9 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AnalyzerAdapter;
 import org.objectweb.asm.commons.LocalVariablesSorter;
+import org.objectweb.asm.util.Printer;
+import org.objectweb.asm.util.Textifier;
+import org.objectweb.asm.util.TraceMethodVisitor;
 
 final class CojacClassVisitor extends ClassVisitor {
     private final IOpcodeInstrumenterFactory factory;
@@ -112,6 +117,14 @@ final class CojacClassVisitor extends ClassVisitor {
 			// Create the MethodVisitor delegation chain: 
             // FloatReplacerMethodVisitor -> LocalVariableSorter -> AnalyzerAdapter -> parentMv
             // the last one (parentMv) is typically a MethodWriter
+            if (name.contains("dumpMethod")) {
+                Printer printer=new Textifier(Opcodes.ASM5) {
+                    public void visitMethodEnd() {
+                        print(new PrintWriter(System.out));
+                    }
+                };
+                parentMv = new TraceMethodVisitor(parentMv, printer);
+            }
             AnalyzerAdapter aa = new AnalyzerAdapter(crtClassName, access, name, desc, parentMv);
             FloatVariablesSorter lvs = new FloatVariablesSorter(access, desc, aa);
             ReplaceFloatsMethods rfm = new ReplaceFloatsMethods(fpm, crtClassName, references);
