@@ -124,7 +124,7 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
 
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-        if(rfm.instrument(mv, opcode, owner, name, desc, stackTop())){
+        if(rfm.instrumentCall(mv, opcode, owner, name, desc, stackTop())){
             return;
         }
         

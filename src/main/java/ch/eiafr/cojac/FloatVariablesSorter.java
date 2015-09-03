@@ -32,8 +32,9 @@ import org.objectweb.asm.commons.LocalVariablesSorter;
  * The FloatVariablesSorter is used to remap the variable defined by the
  * parameters passing for method invocation and delegate the other local
  * variable remappage to the LocalVariableSorter.
+ * It transforms: visitFrame(), visitVarInsn(), visitIinc(), visitLocalVariable()
  */
-public class FloatVariablesSorter extends LocalVariablesSorter {
+public class FloatVariablesSorter extends MethodVisitor {
     private static final Type OBJECT_TYPE = Type .getObjectType("java/lang/Object");
     private static final Type OBJ_ARRAY_TYPE=Type.getType("[Ljava/lang/Object;");
     private static final Type   OBJ_TYPE = Type.getType(Object.class);
@@ -47,7 +48,7 @@ public class FloatVariablesSorter extends LocalVariablesSorter {
 
     
     public FloatVariablesSorter(int access, String desc, AnalyzerAdapter mv) {
-        super(Opcodes.ASM5, access, desc, mv);
+        super(Opcodes.ASM5, mv);
 
         analyzerAdapter=mv;
         Type[] args = Type.getArgumentTypes(desc);
@@ -73,15 +74,6 @@ public class FloatVariablesSorter extends LocalVariablesSorter {
         }
     }
 
-    @Override public void visitCode() {
-        super.visitCode();
-//        newLocal(Type.BYTE_TYPE);  // marker
-//        paramArrayVar = newLocal(OBJ_ARRAY_TYPE);
-//        targetVar = newLocal(OBJ_TYPE);
-//        newLocal(Type.BYTE_TYPE); // marker
-//        visitInsn(Opcodes.NOP); // marker
-    }
-    
     @Override
     public void visitVarInsn(final int opcode, final int var) {
         Type type;

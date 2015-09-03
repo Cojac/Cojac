@@ -183,8 +183,11 @@ public class ReplaceFloatsMethods {
         allMethodsConversions.add(MATH_NAME);
     }
     
-    /** method call instrumentation; returns true if it was instrumented */
-    public boolean instrument(MethodVisitor mv, int opcode, String owner, String name, String desc, Object stackTop){
+    /** method call instrumentation; returns true if it was instrumented 
+     *  (suppressed, replaced, proxied, redirected as magic call) 
+     *  @param desc
+     *   the original descriptor (before replacing floats/double) */
+    public boolean instrumentCall(MethodVisitor mv, int opcode, String owner, String name, String desc, Object stackTop){
         MethodSignature ms = new MethodSignature(owner, name, desc);
         
 		if(name.startsWith(COJAC_MAGIC_CALL_DOUBLE_PREFIX)) {

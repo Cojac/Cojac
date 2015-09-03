@@ -35,7 +35,10 @@ import org.objectweb.asm.Opcodes;
 import static org.objectweb.asm.Opcodes.*;
 
 import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.AnalyzerAdapter;
 import org.objectweb.asm.commons.LocalVariablesSorter;
+
+import ch.eiafr.cojac.CojacClassVisitor.MyLocalAdder;
 
 public class FloatProxyMethod {
     private static final Type JWRAPPER_FLOAT_TYPE  = Type.getType(Float.class);
@@ -47,6 +50,8 @@ public class FloatProxyMethod {
 	private static final String COJAC_TYPE_CONVERT_NAME = "COJAC_TYPE_CONVERT";
     
     private final CojacClassVisitor ccv;
+    private AnalyzerAdapter aaAfter;
+    private MyLocalAdder mla;
     private final String crtClassName;
     
     public FloatProxyMethod(CojacClassVisitor ccv, String classPath){
@@ -89,8 +94,9 @@ public class FloatProxyMethod {
     }
     
     public void proxyCall(MethodVisitor mv, int opcode, String owner, String name, String desc){
-        if (false && opcode==INVOKEVIRTUAL ) { //|| opcode==INVOKEINTERFACE
-            proxyCallBetterWithVars(mv, opcode, owner, name, desc);
+        if (opcode==INVOKEVIRTUAL ) { //|| opcode==INVOKEINTERFACE
+            proxyCallAndStupidVars(mv, opcode, owner, name, desc);
+            //proxyCallBetterWithVars(mv, opcode, owner, name, desc);
             return;
         }
         ConversionContext cc=new ConversionContext(opcode, owner, name, desc);
@@ -125,9 +131,60 @@ public class FloatProxyMethod {
         convertReturnType(mv, desc);
         // stack >> [newPossibleResult]
     }
+
+    public void proxyCallAndStupidVars(MethodVisitor mv, int opcode, String owner, String name, String desc){
+        int paramArrayVar = mla.paramArrayVar();
+        int targetVar = mla.targetVar();
+
+        ConversionContext cc=new ConversionContext(opcode, owner, name, desc);
+        // stack >> [target] nprm0 nprm1 nprm2...
+        convertArgumentsToReal(mv, cc);           
+        // stack >> [target] allParamsArr [target] allParamsArr
+        
+        mv.visitVarInsn(ASTORE, paramArrayVar);
+        // stack >> target allParamsArr target 
+        String targetType=stackTopClass(mv);
+        System.out.println("BON SANG: "+targetType +" "+owner +" "+name +" "+desc);
+        mv.visitVarInsn(ASTORE, targetVar);
+//        // stack >> target allParamsArr 
+        mv.visitVarInsn(ALOAD, targetVar);
+        //mv.visitTypeInsn(CHECKCAST, targetType);  // STUPID cast fails... !?!?!?
+        // stack >> target allParamsArr target 
+        mv.visitVarInsn(ALOAD, paramArrayVar);
+        // stack >> target allParamsArr target allParamsArr
+
+        maybeConvertTarget(mv, cc.opcode, cc.owner);
+        // stack >> [target] allParamsArr [newTarget] allParamsArr
+        explodeOnStack(mv, cc, true); 
+        // stack >> [target] allParamsArr [newTarget] nprm0 nprm1 nprm2...
+        mv.visitMethodInsn(opcode, owner, name, desc, (opcode == INVOKEINTERFACE));
+        // stack >> [target] allParamsArr [possibleResult]
+        checkArraysAfterCall(mv, cc.convertedArrays, desc);
+        // stack >> [target] [possibleResult]
+        int resultWidth=Type.getReturnType(desc).getSize();
+        if(hasTarget(opcode)) {
+            if(resultWidth==0) {
+                mv.visitInsn(POP);
+            } else if (resultWidth==1) {
+                mv.visitInsn(SWAP);
+                mv.visitInsn(POP);
+            } else { // resultWidth==2) 
+                mv.visitInsn(DUP2_X1);
+                // stack >> possibleResult target possibleResult
+                mv.visitInsn(POP2);
+                // stack >> possibleResult target
+                mv.visitInsn(POP);
+                // stack >> possibleResult
+            }
+        }
+        // stack >> [possibleResult]
+        convertReturnType(mv, desc);
+        // stack >> [newPossibleResult]
+    }
+
     
     
-    static final boolean EMPTY_STACK_TRICK=false;
+    //static final boolean EMPTY_STACK_TRICK=false;
     // it does not work at all... 
     // GOSH...
     // Remember: mv is in fact a FloatVariableSorter...
@@ -135,11 +192,10 @@ public class FloatProxyMethod {
         int paramArrayVar=-1;
         int targetVar=-1;
         ;; checkNotNullStack(mv);
-        Object[] localsInFrame = ((FloatVariablesSorter)mv).analyzerAdapter.locals.toArray();
-        Object[] stackEInFrame = ((FloatVariablesSorter)mv).analyzerAdapter.stack.toArray();
-        System.out.println("141: "+((FloatVariablesSorter)mv).analyzerAdapter.locals);
-        paramArrayVar = ((FloatVariablesSorter)mv).paramArrayVar;
-        targetVar = ((FloatVariablesSorter)mv).targetVar;
+        Object[] localsInFrame = aaAfter.locals.toArray();
+        Object[] stackEInFrame = aaAfter.stack.toArray();
+        paramArrayVar = mla.paramArrayVar();
+        targetVar = mla.targetVar();
         Label lBeginTry = new Label(), lEndTry = new Label(); 
         Label lBeginHandler = new Label(), lEndHandler = new Label();
         String descAfter=replaceFloatMethodDescription(desc);
@@ -174,7 +230,8 @@ public class FloatProxyMethod {
         mv.visitLabel(lBeginHandler);
         Object[] stackContent=new Object[0]; // empty stack when "catch" block starts
         stackContent=addTo(stackContent, "java/lang/IncompatibleClassChangeError");
-        mv.visitFrame(F_NEW, localsInFrame.length, localsInFrame, 
+        // CAUTION: we bypass 'mv' and directly talk to the AnalyzerAdapter!
+        aaAfter.visitFrame(F_NEW, localsInFrame.length, localsInFrame, 
                               stackContent.length, stackContent);
 
         ;; checkNotNullStack(mv);
@@ -183,7 +240,7 @@ public class FloatProxyMethod {
         mv.visitInsn(POP); // we don't need the exception object
         // stack >>  
         mv.visitVarInsn(ALOAD, targetVar);
-        mv.visitTypeInsn(CHECKCAST, targetType);
+        //mv.visitTypeInsn(CHECKCAST, targetType);
         // stack >> target 
         mv.visitVarInsn(ALOAD, paramArrayVar);
         // stack >> target allParamsArr
@@ -204,11 +261,10 @@ public class FloatProxyMethod {
         mv.visitLabel(lEndHandler);
         mv.visitInsn(NOP); 
         stackContent=stackEInFrame;
-        if (EMPTY_STACK_TRICK) stackContent=new Object[0];
         stackContent=addReturnTypeTo(stackContent, returnType);
-        mv.visitFrame(F_NEW, localsInFrame.length, localsInFrame, 
+        aaAfter.visitFrame(F_NEW, localsInFrame.length, localsInFrame, 
                               stackContent.length, stackContent);
-       mv.visitInsn(NOP); 
+        mv.visitInsn(NOP); 
     }
 
     // CAUTION: according to ASM User Guide, "...the stack is cleared,
@@ -241,13 +297,13 @@ public class FloatProxyMethod {
     }
 
     private String stackTopClass(MethodVisitor mv) {
-        Object o=((FloatVariablesSorter)mv).stackTop();
+        Object o=((FloatVariablesSorter)mv).stackTop(); // that's from aaAfter indeed...
         if (o instanceof String) return (String) o;
         return null;
     }
     
     private void checkNotNullStack(MethodVisitor mv) {
-        if ( ((FloatVariablesSorter)mv).analyzerAdapter.stack != null) return; 
+        if (aaAfter.stack != null) return; 
         throw new RuntimeException("STUPID NULL stack!!!");
     }
     
@@ -617,6 +673,12 @@ public class FloatProxyMethod {
 		mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "convertFromObjectToCojac", "("+OBJ_DESC+")"+OBJ_DESC, false);
 		mv.visitTypeInsn(CHECKCAST, afterFloatReplacement(aType).getInternalName());
 	}
+	
+    public void setUsefulPartners(AnalyzerAdapter aaAfter, MyLocalAdder mla) {
+        this.aaAfter=aaAfter;
+        this.mla=mla;
+    }
+
     //========================================================================
     static class ConversionContext {
         final int opcode; 
@@ -636,7 +698,6 @@ public class FloatProxyMethod {
         }
     }
     //========================================================================
-
 }
 
 /*============================================================================

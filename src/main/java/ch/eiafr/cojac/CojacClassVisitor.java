@@ -35,6 +35,7 @@ import org.objectweb.asm.commons.LocalVariablesSorter;
 import org.objectweb.asm.util.Printer;
 import org.objectweb.asm.util.Textifier;
 import org.objectweb.asm.util.TraceMethodVisitor;
+import org.objectweb.asm.commons.LocalVariablesSorter;
 
 final class CojacClassVisitor extends ClassVisitor {
     private final IOpcodeInstrumenterFactory factory;
@@ -108,16 +109,17 @@ final class CojacClassVisitor extends ClassVisitor {
                 
         mv.visitEnd();
         
-        return instrumentMethod(mv, access, desc, name);
+        return instrumentMethod(mv, access, desc, oldDesc, name);
     }
 
-    private MethodVisitor instrumentMethod(MethodVisitor parentMv, int access, String desc, String name) {
+    private MethodVisitor instrumentMethod(MethodVisitor parentMv, int access, String desc, String oldDesc, String name) {
         MethodVisitor mv;
         if (args.isSpecified(Arg.REPLACE_FLOATS)){
 			// Create the MethodVisitor delegation chain: 
             // FloatReplacerMethodVisitor -> LocalVariableSorter -> AnalyzerAdapter -> parentMv
             // the last one (parentMv) is typically a MethodWriter
-            if (name.contains("dumpMethod")) {
+            
+            if (name.contains("dumpMethod")) { // "dumpMethod"
                 Printer printer=new Textifier(Opcodes.ASM5) {
                     public void visitMethodEnd() {
                         print(new PrintWriter(System.out));
@@ -128,7 +130,11 @@ final class CojacClassVisitor extends ClassVisitor {
             AnalyzerAdapter aa = new AnalyzerAdapter(crtClassName, access, name, desc, parentMv);
             FloatVariablesSorter lvs = new FloatVariablesSorter(access, desc, aa);
             ReplaceFloatsMethods rfm = new ReplaceFloatsMethods(fpm, crtClassName, references);
-            mv = new FloatReplacerMethodVisitor(access, desc, aa, lvs, rfm, stats, args, crtClassName, factory, references);
+            FloatReplacerMethodVisitor frmv = new FloatReplacerMethodVisitor(access, desc, aa, lvs, rfm, stats, args, crtClassName, factory, references);
+            //AnalyzerAdapter aaBefore = new AnalyzerAdapter(crtClassName, access, name, oldDesc, frmv);
+            MyLocalAdder mla = new MyLocalAdder(access, oldDesc, frmv);
+            fpm.setUsefulPartners(aa, mla);
+            mv = mla;
         } else {
             mv = new CojacCheckerMethodVisitor(access, desc, parentMv, stats, args, crtClassName, factory);
         }
@@ -174,8 +180,7 @@ final class CojacClassVisitor extends ClassVisitor {
                     return super.visitField(accessFlags, fieldName, desc, genericSignature, null);
                 }
             }
-            
-            
+                     
         }
         return super.visitField(accessFlags, fieldName, fieldType, genericSignature, initValStatic);
     }
@@ -186,36 +191,32 @@ final class CojacClassVisitor extends ClassVisitor {
 //        return fv;
 //    }
 
-    
-//  @Override
-//  public AnnotationVisitor visitAnnotation(String arg0, boolean arg1) {
-//      return super.visitAnnotation(arg0, arg1);
-//  }
+    //========================================================================
+    static class MyLocalAdder extends LocalVariablesSorter {
+        private static final Type OBJ_ARRAY_TYPE=Type.getType("[Ljava/lang/Object;");
+        private static final Type     OBJ_TYPE = Type.getType(Object.class);
 
-//  @Override
-//  public void visitAttribute(Attribute arg0) {
-//      super.visitAttribute(arg0);
-//  }
+        private int paramArrayVar=-1;
+        private int targetVar=-1;
 
-//  @Override
-//  public void visitEnd() {
-//      super.visitEnd();
-//  }
-//
-//    @Override
-//    public void visitInnerClass(String arg0, String arg1, String arg2, int arg3) {
-//        super.visitInnerClass(arg0, arg1, arg2, arg3);
-//    }
-//
-//    @Override
-//    public void visitOuterClass(String arg0, String arg1, String arg2) {
-//        super.visitOuterClass(arg0, arg1, arg2);
-//    }
-//
-//    @Override
-//    public void visitSource(String arg0, String arg1) {
-//        super.visitSource(arg0, arg1);
-//    }
-    
+        protected MyLocalAdder(int access, String desc, MethodVisitor mv) {
+            super(Opcodes.ASM5, access, desc, mv);
+        }
+        
+        @Override public void visitCode() {
+            super.visitCode();
+            paramArrayVar = newLocal(OBJ_ARRAY_TYPE);
+            targetVar = newLocal(OBJ_TYPE);
+        }
+
+        public int paramArrayVar() {
+            return paramArrayVar;
+        }
+
+        public int targetVar() {
+            return targetVar;
+        }
+    }
+    //========================================================================
 
 }
