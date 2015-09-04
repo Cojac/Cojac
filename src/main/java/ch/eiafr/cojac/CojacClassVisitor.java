@@ -34,6 +34,7 @@ import org.objectweb.asm.commons.AnalyzerAdapter;
 import org.objectweb.asm.commons.LocalVariablesSorter;
 import org.objectweb.asm.util.Printer;
 import org.objectweb.asm.util.Textifier;
+import org.objectweb.asm.util.ASMifier;
 import org.objectweb.asm.util.TraceMethodVisitor;
 import org.objectweb.asm.commons.LocalVariablesSorter;
 
@@ -107,7 +108,7 @@ final class CojacClassVisitor extends ClassVisitor {
             return mv;
         }
                 
-        mv.visitEnd();
+        mv.visitEnd();  //TODO: was it safe to call visitEnd() ???
         
         return instrumentMethod(mv, access, desc, oldDesc, name);
     }
@@ -115,17 +116,13 @@ final class CojacClassVisitor extends ClassVisitor {
     private MethodVisitor instrumentMethod(MethodVisitor parentMv, int access, String desc, String oldDesc, String name) {
         MethodVisitor mv;
         if (args.isSpecified(Arg.REPLACE_FLOATS)){
+            String dumpPattern="TinyFloatExample"; // "Dump"
 			// Create the MethodVisitor delegation chain: 
             // FloatReplacerMethodVisitor -> LocalVariableSorter -> AnalyzerAdapter -> parentMv
             // the last one (parentMv) is typically a MethodWriter
             
-            if (name.contains("dumpMethod")) { // "dumpMethod"
-                Printer printer=new Textifier(Opcodes.ASM5) {
-                    public void visitMethodEnd() {
-                        print(new PrintWriter(System.out));
-                    }
-                };
-                parentMv = new TraceMethodVisitor(parentMv, printer);
+            if (crtClassName.contains(dumpPattern)) { // name.contains("dumpMethod")) { // "dumpMethod"
+                parentMv = new TraceMethodVisitor(parentMv, newPrinter("FINAL  "+name+desc));
             }
             AnalyzerAdapter aa = new AnalyzerAdapter(crtClassName, access, name, desc, parentMv);
             FloatVariablesSorter lvs = new FloatVariablesSorter(access, desc, aa);
@@ -134,15 +131,36 @@ final class CojacClassVisitor extends ClassVisitor {
             //AnalyzerAdapter aaBefore = new AnalyzerAdapter(crtClassName, access, name, oldDesc, frmv);
             MyLocalAdder mla = new MyLocalAdder(access, oldDesc, frmv);
             fpm.setUsefulPartners(aa, mla);
-            mv = mla;
+            mv = frmv;
+            if (crtClassName.contains(dumpPattern))
+                mv= new TraceMethodVisitor(mv, newPrinter("BEFORE "+name+desc));
         } else {
             mv = new CojacCheckerMethodVisitor(access, desc, parentMv, stats, args, crtClassName, factory);
         }
-        mv.visitEnd();
+        mv.visitEnd();  //TODO: was it safe to call visitEnd() ???
 
         return mv;
     }
 
+    
+    
+    private Printer newPrinter(final String s) {
+        Printer printer=new ASMifier(Opcodes.ASM5, "mv", 0) {
+//            @Override public void visitInsn(final int opcode) {
+//                System.out.println(opcode);
+//                super.visitInsn(opcode);
+//            }
+            
+            @Override public void visitMethodEnd() {
+                System.out.println("======================== "+s+" ==================");
+                PrintWriter p=new PrintWriter(System.out);
+                print(p);
+                p.flush();
+            }
+        };
+        return printer;
+    }
+    
     @Override
     public FieldVisitor visitField(int accessFlags, String fieldName, String fieldType, String genericSignature, Object initValStatic) {
         if (args.isSpecified(Arg.REPLACE_FLOATS)) {
@@ -205,17 +223,26 @@ final class CojacClassVisitor extends ClassVisitor {
         
         @Override public void visitCode() {
             super.visitCode();
-            paramArrayVar = newLocal(OBJ_ARRAY_TYPE);
-            targetVar = newLocal(OBJ_TYPE);
+//            paramArrayVar = newLocal(OBJ_ARRAY_TYPE);
+//            targetVar = newLocal(OBJ_TYPE);
         }
 
         public int paramArrayVar() {
+            if (paramArrayVar<0)
+                paramArrayVar = newLocal(OBJ_ARRAY_TYPE);
             return paramArrayVar;
         }
 
         public int targetVar() {
+            if (targetVar<0)
+                targetVar = newLocal(OBJ_TYPE);
             return targetVar;
         }
+        
+//        public void arghhh() {
+//            paramArrayVar = newLocal(Type.BOOLEAN_TYPE);
+//            targetVar = newLocal(Type.BYTE_TYPE);
+//        }
     }
     //========================================================================
 

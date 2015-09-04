@@ -94,9 +94,9 @@ public class FloatProxyMethod {
     }
     
     public void proxyCall(MethodVisitor mv, int opcode, String owner, String name, String desc){
-        if (opcode==INVOKEVIRTUAL ) { //|| opcode==INVOKEINTERFACE
-            proxyCallAndStupidVars(mv, opcode, owner, name, desc);
-            //proxyCallBetterWithVars(mv, opcode, owner, name, desc);
+        if (false && opcode==INVOKEVIRTUAL ) { //|| opcode==INVOKEINTERFACE
+            //proxyCallAndStupidVars(mv, opcode, owner, name, desc);
+            proxyCallBetterWithVars(mv, opcode, owner, name, desc);
             return;
         }
         ConversionContext cc=new ConversionContext(opcode, owner, name, desc);
@@ -144,15 +144,16 @@ public class FloatProxyMethod {
         mv.visitVarInsn(ASTORE, paramArrayVar);
         // stack >> target allParamsArr target 
         String targetType=stackTopClass(mv);
-        System.out.println("BON SANG: "+targetType +" "+owner +" "+name +" "+desc);
         mv.visitVarInsn(ASTORE, targetVar);
-//        // stack >> target allParamsArr 
+        // stack >> target allParamsArr 
+        mv.visitInsn(NOP); mv.visitInsn(NOP);
         mv.visitVarInsn(ALOAD, targetVar);
+        System.out.println("BON SANG: "+targetType +" "+owner +" "+name +" "+desc+" $ "+stackTopClass(mv));
         //mv.visitTypeInsn(CHECKCAST, targetType);  // STUPID cast fails... !?!?!?
         // stack >> target allParamsArr target 
         mv.visitVarInsn(ALOAD, paramArrayVar);
         // stack >> target allParamsArr target allParamsArr
-
+        
         maybeConvertTarget(mv, cc.opcode, cc.owner);
         // stack >> [target] allParamsArr [newTarget] allParamsArr
         explodeOnStack(mv, cc, true); 
@@ -216,9 +217,11 @@ public class FloatProxyMethod {
         // stack >> target prm0 prm1 prm2...
         ;; checkNotNullStack(mv);
         // try to call as if that method was indeed instrumented...
+        mv.visitTryCatchBlock(lBeginTry, lEndTry, lBeginHandler, "java/lang/ClassCastException");
         mv.visitTryCatchBlock(lBeginTry, lEndTry, lBeginHandler, "java/lang/NoSuchMethodError");
         mv.visitTryCatchBlock(lBeginTry, lEndTry, lBeginHandler, "java/lang/AbstractMethodError");
         mv.visitLabel(lBeginTry);
+        mv.visitTypeInsn(CHECKCAST, owner); // that cast might fail
         mv.visitMethodInsn(opcode, owner, name, descAfter, (opcode == INVOKEINTERFACE));
         // stack >> [possibleResult]
         ;; checkNotNullStack(mv);
@@ -229,7 +232,8 @@ public class FloatProxyMethod {
         
         mv.visitLabel(lBeginHandler);
         Object[] stackContent=new Object[0]; // empty stack when "catch" block starts
-        stackContent=addTo(stackContent, "java/lang/IncompatibleClassChangeError");
+        //stackContent=addTo(stackContent, "java/lang/IncompatibleClassChangeError");
+        stackContent=addTo(stackContent, "java/lang/ClassCastException");
         // CAUTION: we bypass 'mv' and directly talk to the AnalyzerAdapter!
         aaAfter.visitFrame(F_NEW, localsInFrame.length, localsInFrame, 
                               stackContent.length, stackContent);
@@ -240,7 +244,7 @@ public class FloatProxyMethod {
         mv.visitInsn(POP); // we don't need the exception object
         // stack >>  
         mv.visitVarInsn(ALOAD, targetVar);
-        //mv.visitTypeInsn(CHECKCAST, targetType);
+        mv.visitTypeInsn(CHECKCAST, targetType); //targetType
         // stack >> target 
         mv.visitVarInsn(ALOAD, paramArrayVar);
         // stack >> target allParamsArr

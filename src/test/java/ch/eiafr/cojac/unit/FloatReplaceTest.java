@@ -43,7 +43,7 @@ public class FloatReplaceTest {
 	    try {
 	        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
 	        classLoader.loadClass("ch.eiafr.cojac.unit.TFEAux");
-	        tinyExample = classLoader.loadClass("ch.eiafr.cojac.unit.TinyFloatExample");
+	        tinyExample = classLoader.loadClass("ch.eiafr.cojac.unit.TinyFloatExample2");
 	    } finally {
 	        instrumentation.removeTransformer(classFileTransformer);
 	    }
