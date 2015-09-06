@@ -214,13 +214,13 @@ public class ReplaceFloatsMethods {
         }
         if(allMethodsConversions.contains(owner)) {
             if (!fpm.needsConversion(owner, name, desc)) return false;
-            fpm.proxyCall(mv, opcode, owner, name, desc);
+            fpm.proxyCall(mv, opcode, owner, name, desc, false);
             return true;
         }
 		
 		if(references.hasToBeInstrumented(owner) == false) {
             if (!fpm.needsConversion(owner, name, desc)) return false;
-			fpm.proxyCall(mv, opcode, owner, name, desc);
+			fpm.proxyCall(mv, opcode, owner, name, desc, true);
 			return true;
 		}
 		

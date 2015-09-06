@@ -93,10 +93,11 @@ public class FloatProxyMethod {
         newMv.visitMaxs(0, 0);
     }
     
-    public void proxyCall(MethodVisitor mv, int opcode, String owner, String name, String desc){
-        if (false &&  opcode==INVOKEVIRTUAL ) { //|| opcode==INVOKEINTERFACE  false && 
-            proxyCallAndStupidVars(mv, opcode, owner, name, desc);
-            //proxyCallBetterWithVars(mv, opcode, owner, name, desc);
+    public void proxyCall(MethodVisitor mv, int opcode, String owner, 
+            String name, String desc, boolean tryUnproxied){
+        if (false && tryUnproxied && opcode==INVOKEVIRTUAL ) { //|| opcode==INVOKEINTERFACE  false && 
+            //proxyCallAndStupidVars(mv, opcode, owner, name, desc);
+            proxyCallBetterWithVars(mv, opcode, owner, name, desc);
             return;
         }
         ConversionContext cc=new ConversionContext(opcode, owner, name, desc);
@@ -132,6 +133,7 @@ public class FloatProxyMethod {
         // stack >> [newPossibleResult]
     }
 
+    // this one is just to show we can use 2 additional variables...
     public void proxyCallAndStupidVars(MethodVisitor mv, int opcode, String owner, String name, String desc){
         int paramArrayVar = mla.paramArrayVar();
         int targetVar = mla.targetVar();
@@ -149,8 +151,9 @@ public class FloatProxyMethod {
         // stack >> target allParamsArr 
         mv.visitInsn(NOP); mv.visitInsn(NOP);
         mv.visitVarInsn(ALOAD, targetVar);
-        System.out.println("BON SANG: "+targetType +" "+owner +" "+name +" "+desc+" $ "+stackTopClass(mv));
-        mv.visitTypeInsn(CHECKCAST, targetType);  // STUPID cast fails... !?!?!?
+        if (!targetType.equals(stackTopClass(mv)))
+            System.out.println("BON SANG: "+targetType +" "+owner +" "+name +" "+desc+" $ "+stackTopClass(mv));
+        mv.visitTypeInsn(CHECKCAST, targetType);  
         
         // stack >> target allParamsArr target 
         mv.visitVarInsn(ALOAD, paramArrayVar);
@@ -223,6 +226,12 @@ public class FloatProxyMethod {
         mv.visitTryCatchBlock(lBeginTry, lEndTry, lBeginHandler, "java/lang/NoSuchMethodError");
         mv.visitTryCatchBlock(lBeginTry, lEndTry, lBeginHandler, "java/lang/AbstractMethodError");
         mv.visitLabel(lBeginTry);
+        
+        // OK, this is not the right way to detect if the call will be reasonable
+        // it's the bytecode verifier that can't accept bad parameters...
+        // maybe try to call a util function isCallable(obj, owner, name, descAfter)
+        // that will check that via reflection...
+        
         mv.visitTypeInsn(CHECKCAST, owner); // that cast might fail
         mv.visitMethodInsn(opcode, owner, name, descAfter, (opcode == INVOKEINTERFACE));
         // stack >> [possibleResult]
@@ -303,7 +312,7 @@ public class FloatProxyMethod {
     }
 
     private String stackTopClass(MethodVisitor mv) {
-        Object o=((FloatVariablesSorter)mv).stackTop(); // that's from aaAfter indeed...
+        Object o = this.stackTop(); // that's taken from aaAfter indeed...
         if (o instanceof String) return (String) o;
         return null;
     }
@@ -684,6 +693,16 @@ public class FloatProxyMethod {
         this.aaAfter=aaAfter;
         this.mla=mla;
     }
+
+    protected Object stackTop(){
+        AnalyzerAdapter aa = aaAfter;
+        if(aa.stack == null)
+            return null;
+        if(aa.stack.isEmpty())
+            return null;
+        return aa.stack.get(aa.stack.size()-1);
+    }
+
 
     //========================================================================
     static class ConversionContext {

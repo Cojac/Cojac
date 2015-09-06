@@ -184,13 +184,4 @@ public class FloatVariablesSorter extends MethodVisitor {
         return firstFrameMapping[var];
     }
     
-    protected Object stackTop(){
-        AnalyzerAdapter aa = analyzerAdapter;
-        if(aa.stack == null)
-            return null;
-        if(aa.stack.isEmpty())
-            return null;
-        return aa.stack.get(aa.stack.size()-1);
-    }
-
 }

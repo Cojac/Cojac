@@ -116,7 +116,7 @@ final class CojacClassVisitor extends ClassVisitor {
     private MethodVisitor instrumentMethod(MethodVisitor parentMv, int access, String desc, String oldDesc, String name) {
         MethodVisitor mv;
         if (args.isSpecified(Arg.REPLACE_FLOATS)){
-            String dumpPattern="Dump"; // "Dump"
+            String dumpPattern="TinyFloatExample2"; // "Dump"
 			// Create the MethodVisitor delegation chain: 
             // FloatReplacerMethodVisitor -> LocalVariableSorter -> AnalyzerAdapter -> parentMv
             // the last one (parentMv) is typically a MethodWriter
