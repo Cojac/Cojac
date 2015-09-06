@@ -169,10 +169,16 @@ public class TinyFloatExample {
         Double.toHexString(d1);
         d1.compareTo(d2);
         
-        
         double v = d1 + d2 + d3 + d4;
-        
+        if (causesParamRemappingWrapper(2.0, 3.0) < 0) 
+            throw new RuntimeException("stupid bug");
         return a + b + v;
+    }
+    
+    static Double causesParamRemappingWrapper(Double a, Double b) {
+        Double c = -1.5;
+        Double d = -1.5;
+        return a;
     }
     
     public static void testMathLib(){

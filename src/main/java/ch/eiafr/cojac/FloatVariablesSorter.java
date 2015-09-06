@@ -47,11 +47,11 @@ public class FloatVariablesSorter extends MethodVisitor {
     protected final AnalyzerAdapter analyzerAdapter;
 
     
-    public FloatVariablesSorter(int access, String desc, AnalyzerAdapter mv) {
+    public FloatVariablesSorter(int access, String oldDesc, AnalyzerAdapter mv) {
         super(Opcodes.ASM5, mv);
 
         analyzerAdapter=mv;
-        Type[] args = Type.getArgumentTypes(desc);
+        Type[] args = Type.getArgumentTypes(oldDesc);
         
         if(args.length == 0){
             firstFrameMapping = new int[0]; // BAPST, was: =null;
@@ -66,9 +66,11 @@ public class FloatVariablesSorter extends MethodVisitor {
                 firstFrameMapping[index] = nbrVars;
                 index += arg.getSize();
                 nbrVars += arg.getSize();
-                if (arg.equals(COJAC_DOUBLE_WRAPPER_TYPE)) {
+                if (arg.equals(Type.DOUBLE_TYPE)) {
+                //if (arg.equals(COJAC_DOUBLE_WRAPPER_TYPE)) {
                     index ++;
                 }
+                assert !arg.equals(COJAC_DOUBLE_WRAPPER_TYPE); // this would be strange (the descriptor is the old one)
             }
             maxRenumber = index;
         }

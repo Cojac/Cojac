@@ -108,7 +108,7 @@ final class CojacClassVisitor extends ClassVisitor {
             return mv;
         }
                 
-        mv.visitEnd();  //TODO: was it safe to call visitEnd() ???
+        //mv.visitEnd();  //TODO: was it safe to call visitEnd() ???
         
         return instrumentMethod(mv, access, desc, oldDesc, name);
     }
@@ -116,7 +116,7 @@ final class CojacClassVisitor extends ClassVisitor {
     private MethodVisitor instrumentMethod(MethodVisitor parentMv, int access, String desc, String oldDesc, String name) {
         MethodVisitor mv;
         if (args.isSpecified(Arg.REPLACE_FLOATS)){
-            String dumpPattern="TinyFloatExample"; // "Dump"
+            String dumpPattern="Dump"; // "Dump"
 			// Create the MethodVisitor delegation chain: 
             // FloatReplacerMethodVisitor -> LocalVariableSorter -> AnalyzerAdapter -> parentMv
             // the last one (parentMv) is typically a MethodWriter
@@ -125,9 +125,13 @@ final class CojacClassVisitor extends ClassVisitor {
                 parentMv = new TraceMethodVisitor(parentMv, newPrinter("FINAL  "+name+desc));
             }
             AnalyzerAdapter aa = new AnalyzerAdapter(crtClassName, access, name, desc, parentMv);
-            FloatVariablesSorter lvs = new FloatVariablesSorter(access, desc, aa);
+            FloatVariablesSorter lvs = new FloatVariablesSorter(access, oldDesc, aa);
+            MethodVisitor aux=lvs;
+            if (crtClassName.contains(dumpPattern)) {
+                aux = new TraceMethodVisitor(lvs, newPrinter("JUST BEFORE LVS "+name+desc));
+            }
             ReplaceFloatsMethods rfm = new ReplaceFloatsMethods(fpm, crtClassName, references);
-            FloatReplacerMethodVisitor frmv = new FloatReplacerMethodVisitor(access, desc, aa, lvs, rfm, stats, args, crtClassName, factory, references);
+            FloatReplacerMethodVisitor frmv = new FloatReplacerMethodVisitor(access, desc, aa, aux, rfm, stats, args, crtClassName, factory, references);
             //AnalyzerAdapter aaBefore = new AnalyzerAdapter(crtClassName, access, name, oldDesc, frmv);
             MyLocalAdder mla = new MyLocalAdder(access, oldDesc, frmv);
             fpm.setUsefulPartners(aa, mla);
@@ -137,7 +141,7 @@ final class CojacClassVisitor extends ClassVisitor {
         } else {
             mv = new CojacCheckerMethodVisitor(access, desc, parentMv, stats, args, crtClassName, factory);
         }
-        mv.visitEnd();  //TODO: was it safe to call visitEnd() ???
+        //mv.visitEnd();  //TODO: was it safe to call visitEnd() ???
 
         return mv;
     }

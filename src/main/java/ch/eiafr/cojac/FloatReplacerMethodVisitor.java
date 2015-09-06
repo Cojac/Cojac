@@ -58,13 +58,13 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
    
     private final AnalyzerAdapter aa;
     private final ReplaceFloatsMethods rfm;
-    private final FloatVariablesSorter lvs;
+    //private final FloatVariablesSorter lvs;
 
 	public static final String FN_NAME = Type.getType(FloatNumbers.class).getInternalName();
 	public static final String DN_NAME = Type.getType(DoubleNumbers.class).getInternalName();
 	
     FloatReplacerMethodVisitor(int access, String desc, AnalyzerAdapter aa, 
-            FloatVariablesSorter lvs, 
+            MethodVisitor lvs, 
             ReplaceFloatsMethods rfm, 
             InstrumentationStats stats, 
             Args args,  
@@ -73,7 +73,7 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
             CojacReferences references) {
         super(Opcodes.ASM5, lvs);
         
-        this.lvs=lvs;
+        //this.lvs=lvs;
         this.aa = aa;
         this.rfm = rfm;
 		this.references = references;
@@ -81,13 +81,13 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
         this.factory = factory;
     }
 	
-    protected int paramArrayVar() {
-        return lvs.paramArrayVar;
-    }
-
-    protected int targetVar() {
-        return lvs.targetVar;
-    }
+//    protected int paramArrayVar() {
+//        return lvs.paramArrayVar;
+//    }
+//
+//    protected int targetVar() {
+//        return lvs.targetVar;
+//    }
 
     @Override
     public void visitInsn(int opCode) {
