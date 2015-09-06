@@ -135,7 +135,7 @@ final class CojacClassVisitor extends ClassVisitor {
             //AnalyzerAdapter aaBefore = new AnalyzerAdapter(crtClassName, access, name, oldDesc, frmv);
             MyLocalAdder mla = new MyLocalAdder(access, oldDesc, frmv);
             fpm.setUsefulPartners(aa, mla);
-            mv = frmv;
+            mv = mla;
             if (crtClassName.contains(dumpPattern))
                 mv= new TraceMethodVisitor(mv, newPrinter("BEFORE "+name+desc));
         } else {

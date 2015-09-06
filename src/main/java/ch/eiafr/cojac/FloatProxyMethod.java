@@ -94,9 +94,9 @@ public class FloatProxyMethod {
     }
     
     public void proxyCall(MethodVisitor mv, int opcode, String owner, String name, String desc){
-        if (false && opcode==INVOKEVIRTUAL ) { //|| opcode==INVOKEINTERFACE
-            //proxyCallAndStupidVars(mv, opcode, owner, name, desc);
-            proxyCallBetterWithVars(mv, opcode, owner, name, desc);
+        if (false &&  opcode==INVOKEVIRTUAL ) { //|| opcode==INVOKEINTERFACE  false && 
+            proxyCallAndStupidVars(mv, opcode, owner, name, desc);
+            //proxyCallBetterWithVars(mv, opcode, owner, name, desc);
             return;
         }
         ConversionContext cc=new ConversionContext(opcode, owner, name, desc);
@@ -143,13 +143,15 @@ public class FloatProxyMethod {
         
         mv.visitVarInsn(ASTORE, paramArrayVar);
         // stack >> target allParamsArr target 
+        
         String targetType=stackTopClass(mv);
         mv.visitVarInsn(ASTORE, targetVar);
         // stack >> target allParamsArr 
         mv.visitInsn(NOP); mv.visitInsn(NOP);
         mv.visitVarInsn(ALOAD, targetVar);
         System.out.println("BON SANG: "+targetType +" "+owner +" "+name +" "+desc+" $ "+stackTopClass(mv));
-        //mv.visitTypeInsn(CHECKCAST, targetType);  // STUPID cast fails... !?!?!?
+        mv.visitTypeInsn(CHECKCAST, targetType);  // STUPID cast fails... !?!?!?
+        
         // stack >> target allParamsArr target 
         mv.visitVarInsn(ALOAD, paramArrayVar);
         // stack >> target allParamsArr target allParamsArr

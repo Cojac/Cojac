@@ -20,6 +20,8 @@ package ch.eiafr.cojac;
 
 import static ch.eiafr.cojac.models.FloatReplacerClasses.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -53,27 +55,34 @@ public class FloatVariablesSorter extends MethodVisitor {
         analyzerAdapter=mv;
         Type[] args = Type.getArgumentTypes(oldDesc);
         
-        if(args.length == 0){
-            firstFrameMapping = new int[0]; // BAPST, was: =null;
-            maxRenumber = 0;
-        } else {
-            firstFrameMapping = new int[args.length*2];
-
-            firstFrameMapping[0] = 0;
-            int index = (Opcodes.ACC_STATIC & access) == 0 ? 1 : 0;
-            int nbrVars = (Opcodes.ACC_STATIC & access) == 0 ? 1 : 0;
+//        if(args.length == 0){
+//            firstFrameMapping = new int[0]; // BAPST, was: =null;
+//            maxRenumber = 0;
+//        } else {
+            firstFrameMapping = new int[1+args.length*2]; // +1 for 'this'
+            Arrays.fill(firstFrameMapping, -1); // so that unwritten cells will cause problems...
+            boolean hasTarget = (Opcodes.ACC_STATIC & access) == 0; // not static -> there is a 'this' param
+            int oldVarIndex = 0;
+            int newVarIndex = 0;
+            int lastIndexSet = -1;
+            if (hasTarget) {
+                oldVarIndex=newVarIndex=1;
+                firstFrameMapping[0]=0; // 'this' remains 'this'...
+                lastIndexSet=0;
+            }
             for (Type arg : args) {
-                firstFrameMapping[index] = nbrVars;
-                index += arg.getSize();
-                nbrVars += arg.getSize();
+                firstFrameMapping[oldVarIndex] = newVarIndex;
+                lastIndexSet=oldVarIndex;
+                oldVarIndex += arg.getSize();
+                newVarIndex += arg.getSize();
                 if (arg.equals(Type.DOUBLE_TYPE)) {
                 //if (arg.equals(COJAC_DOUBLE_WRAPPER_TYPE)) {
-                    index ++;
+                    newVarIndex--;
                 }
                 assert !arg.equals(COJAC_DOUBLE_WRAPPER_TYPE); // this would be strange (the descriptor is the old one)
             }
-            maxRenumber = index;
-        }
+            maxRenumber = lastIndexSet;
+//        }
     }
 
     @Override
@@ -124,11 +133,10 @@ public class FloatVariablesSorter extends MethodVisitor {
     @Override
     public void visitFrame(int type, int nLocal, final Object[] local, int nStack, final Object[] stack) {
         ArrayList<Object> newLocal = new ArrayList<>();
+        int nDummySlotsToAdd=0;
         for (Object object : local) {
             if(object == Opcodes.DOUBLE){
                 newLocal.add(COJAC_DOUBLE_WRAPPER_INTERNAL_NAME);
-                newLocal.add(Opcodes.TOP);
-                nLocal++;
             } else if(object == Opcodes.FLOAT){
                 newLocal.add(COJAC_FLOAT_WRAPPER_INTERNAL_NAME);
             } else if(object instanceof String && ((String)object).endsWith("[D")){
@@ -143,7 +151,11 @@ public class FloatVariablesSorter extends MethodVisitor {
                 newLocal.add(object);
             }
         }
-		
+		while(nDummySlotsToAdd>0) {
+            newLocal.add(Opcodes.TOP); // or maybe Opcodes.NULL marker?
+            nLocal++;
+		}
+        
 		ArrayList<Object> newStack = new ArrayList<>();
 		for (Object object : stack) {
 			if(object == Opcodes.DOUBLE){
@@ -166,7 +178,7 @@ public class FloatVariablesSorter extends MethodVisitor {
     }
 
     private int remapFirstFrame(final int var, final Type type){
-        if(var + type.getSize() > maxRenumber){
+        if(var > maxRenumber){
             return var;
         }
         return firstFrameMapping[var];
