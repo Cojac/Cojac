@@ -38,7 +38,7 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AnalyzerAdapter;
 import org.objectweb.asm.commons.LocalVariablesSorter;
 
-import ch.eiafr.cojac.CojacClassVisitor.MyLocalAdder;
+import ch.eiafr.cojac.FloatReplaceClassVisitor.MyLocalAdder;
 
 public class FloatProxyMethod {
     private static final Type JWRAPPER_FLOAT_TYPE  = Type.getType(Float.class);
@@ -49,12 +49,12 @@ public class FloatProxyMethod {
     
 	private static final String COJAC_TYPE_CONVERT_NAME = "COJAC_TYPE_CONVERT";
     
-    private final CojacClassVisitor ccv;
+    private final FloatReplaceClassVisitor ccv;
     private AnalyzerAdapter aaAfter;
     private MyLocalAdder mla;
     private final String crtClassName;
     
-    public FloatProxyMethod(CojacClassVisitor ccv, String classPath){
+    public FloatProxyMethod(FloatReplaceClassVisitor ccv, String classPath){
         this.ccv = ccv;
         this.crtClassName = classPath;
     }
