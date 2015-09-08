@@ -25,6 +25,7 @@ import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
 import static ch.eiafr.cojac.instrumenters.ReplaceFloatsMethods.FL_DESCR;
 import static ch.eiafr.cojac.instrumenters.ReplaceFloatsMethods.DL_DESCR;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -149,7 +150,6 @@ public class FloatProxyMethod {
         int paramArrayVar=-1;
         int targetVar=-1;
         ;; checkNotNullStack();
-        Object[] localsInFrame = aaAfter.locals.toArray();
         Object[] stackEInFrame = aaAfter.stack.toArray();
         if(crtClassName.contains("RunWindow")) System.out.println("A: "+java.util.Arrays.toString(stackEInFrame));
         if(crtClassName.contains("RunWindow")) System.out.println(desc + owner);
@@ -169,6 +169,7 @@ public class FloatProxyMethod {
         String targetType=stackTopClass();
         mv.visitVarInsn(ASTORE, targetVar);
         // stack >> target allParamsArr
+        Object[] localsInFrame = aaAfter.locals.toArray();
         mv.visitInsn(SWAP);
         // stack >> allParamsArr target
         mv.visitInsn(DUP_X1);
@@ -181,8 +182,12 @@ public class FloatProxyMethod {
         // stack >> target allParamsArr nullOrMeth
         mv.visitInsn(DUP);
         // stack >> target allParamsArr nullOrMeth nullOrMeth
+        ArrayList<Object> scl=new ArrayList<Object>(aaAfter.stack);
+        scl.remove(scl.size()-1); // remove the last nullOrMeth
+        Object[] stackContent=scl.toArray(); 
         mv.visitJumpInsn(IFNULL, lBeginHandler);
-        // visitFrame... //TODO
+        aaAfter.visitFrame(F_NEW, localsInFrame.length, localsInFrame, 
+                                  stackContent.length, stackContent);
         // stack >> target allParamsArr nullOrMeth
         mv.visitInsn(DUP_X2);
         // stack >> meth target allParamsArr 
@@ -200,11 +205,9 @@ public class FloatProxyMethod {
         mv.visitJumpInsn(GOTO, lEndHandler);  // and we're done !
         
         mv.visitLabel(lBeginHandler);
-        Object[] stackContent=new Object[0]; 
-        stackContent=addTo(stackContent, "java/lang/Throwable");
         // CAUTION: we bypass 'mv' and directly talk to the AnalyzerAdapter!
         aaAfter.visitFrame(F_NEW, localsInFrame.length, localsInFrame, 
-                              stackContent.length, stackContent);
+                                   stackContent.length, stackContent);
         ;; checkNotNullStack();
         mv.visitInsn(NOP); //just a debugging marker...
         // stack >>  exception  // TODO check that: ... or target allParamsArr ??
