@@ -36,7 +36,6 @@ import static org.objectweb.asm.Opcodes.*;
 
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AnalyzerAdapter;
-import org.objectweb.asm.commons.LocalVariablesSorter;
 
 import ch.eiafr.cojac.FloatReplaceClassVisitor.MyLocalAdder;
 
@@ -95,7 +94,7 @@ public class FloatProxyMethod {
     
     public void proxyCall(MethodVisitor mv, int opcode, String owner, 
             String name, String desc, boolean tryUnproxied){
-        if (false && tryUnproxied && opcode==INVOKEVIRTUAL ) { //|| opcode==INVOKEINTERFACE  false && 
+        if (tryUnproxied && opcode==INVOKEVIRTUAL ) { //|| opcode==INVOKEINTERFACE  false && 
             //proxyCallAndStupidVars(mv, opcode, owner, name, desc);
             proxyCallBetterWithVars(mv, opcode, owner, name, desc);
             return;
@@ -133,71 +132,12 @@ public class FloatProxyMethod {
         // stack >> [newPossibleResult]
     }
 
-    // this one is just to show we can use 2 additional variables...
-    public void proxyCallAndStupidVars(MethodVisitor mv, int opcode, String owner, String name, String desc){
-        int paramArrayVar = mla.paramArrayVar();
-        int targetVar = mla.targetVar();
-
-        ConversionContext cc=new ConversionContext(opcode, owner, name, desc);
-        // stack >> [target] nprm0 nprm1 nprm2...
-        convertArgumentsToReal(mv, cc);           
-        // stack >> [target] allParamsArr [target] allParamsArr
-        
-        mv.visitVarInsn(ASTORE, paramArrayVar);
-        // stack >> target allParamsArr target 
-        
-        String targetType=stackTopClass(mv);
-        mv.visitVarInsn(ASTORE, targetVar);
-        // stack >> target allParamsArr 
-        mv.visitInsn(NOP); mv.visitInsn(NOP);
-        mv.visitVarInsn(ALOAD, targetVar);
-        if (!targetType.equals(stackTopClass(mv)))
-            System.out.println("BON SANG: "+targetType +" "+owner +" "+name +" "+desc+" $ "+stackTopClass(mv));
-        mv.visitTypeInsn(CHECKCAST, targetType);  
-        
-        // stack >> target allParamsArr target 
-        mv.visitVarInsn(ALOAD, paramArrayVar);
-        // stack >> target allParamsArr target allParamsArr
-        
-        maybeConvertTarget(mv, cc.opcode, cc.owner);
-        // stack >> [target] allParamsArr [newTarget] allParamsArr
-        explodeOnStack(mv, cc, true); 
-        // stack >> [target] allParamsArr [newTarget] nprm0 nprm1 nprm2...
-        mv.visitMethodInsn(opcode, owner, name, desc, (opcode == INVOKEINTERFACE));
-        // stack >> [target] allParamsArr [possibleResult]
-        checkArraysAfterCall(mv, cc.convertedArrays, desc);
-        // stack >> [target] [possibleResult]
-        int resultWidth=Type.getReturnType(desc).getSize();
-        if(hasTarget(opcode)) {
-            if(resultWidth==0) {
-                mv.visitInsn(POP);
-            } else if (resultWidth==1) {
-                mv.visitInsn(SWAP);
-                mv.visitInsn(POP);
-            } else { // resultWidth==2) 
-                mv.visitInsn(DUP2_X1);
-                // stack >> possibleResult target possibleResult
-                mv.visitInsn(POP2);
-                // stack >> possibleResult target
-                mv.visitInsn(POP);
-                // stack >> possibleResult
-            }
-        }
-        // stack >> [possibleResult]
-        convertReturnType(mv, desc);
-        // stack >> [newPossibleResult]
-    }
-
     
-    
-    //static final boolean EMPTY_STACK_TRICK=false;
-    // it does not work at all... 
-    // GOSH...
-    // Remember: mv is in fact a FloatVariableSorter...
+    // it does not work at all...  GOSH !
     public void proxyCallBetterWithVars(MethodVisitor mv, int opcode, String owner, String name, String desc){
         int paramArrayVar=-1;
         int targetVar=-1;
-        ;; checkNotNullStack(mv);
+        ;; checkNotNullStack();
         Object[] localsInFrame = aaAfter.locals.toArray();
         Object[] stackEInFrame = aaAfter.stack.toArray();
         paramArrayVar = mla.paramArrayVar();
@@ -208,37 +148,36 @@ public class FloatProxyMethod {
         Type returnType=Type.getReturnType(descAfter);
         ConversionContext cc=new ConversionContext(opcode, owner, name, desc);
         // stack >> target prm0 prm1 prm2...
-        ;; checkNotNullStack(mv);
         convertArgumentsToReal(mv, cc);
         // stack >> target allParamsArr target allParamsArr
-        ;; checkNotNullStack(mv);
         mv.visitVarInsn(ASTORE, paramArrayVar);
-        ;; checkNotNullStack(mv);
-        String targetType=stackTopClass(mv);
+        // stack >> target allParamsArr target
+        String targetType=stackTopClass();
         mv.visitVarInsn(ASTORE, targetVar);
         // stack >> target allParamsArr
-        ;; checkNotNullStack(mv);
-        explodeOnStack(mv, cc, false); 
-        // stack >> target prm0 prm1 prm2...
-        ;; checkNotNullStack(mv);
+        
         // try to call as if that method was indeed instrumented...
         mv.visitTryCatchBlock(lBeginTry, lEndTry, lBeginHandler, "java/lang/ClassCastException");
         mv.visitTryCatchBlock(lBeginTry, lEndTry, lBeginHandler, "java/lang/NoSuchMethodError");
         mv.visitTryCatchBlock(lBeginTry, lEndTry, lBeginHandler, "java/lang/AbstractMethodError");
         mv.visitLabel(lBeginTry);
         
+        mv.visitInsn(SWAP);
+        // stack >> allParamsArr target
+        mv.visitTypeInsn(CHECKCAST, owner); // that cast might fail
+        mv.visitInsn(SWAP);
+        // stack >> target allParamsArr
+        explodeOnStack(mv, cc, false); 
+        // stack >> target prm0 prm1 prm2...
+        
         // OK, this is not the right way to detect if the call will be reasonable
         // it's the bytecode verifier that can't accept bad parameters...
         // maybe try to call a util function isCallable(obj, owner, name, descAfter)
         // that will check that via reflection...
         
-        mv.visitTypeInsn(CHECKCAST, owner); // that cast might fail
         mv.visitMethodInsn(opcode, owner, name, descAfter, (opcode == INVOKEINTERFACE));
         // stack >> [possibleResult]
-        ;; checkNotNullStack(mv);
-        // stack >> [possibleResult]
         mv.visitLabel(lEndTry);
-        ;; checkNotNullStack(mv);
         mv.visitJumpInsn(GOTO, lEndHandler);  // and we're done !
         
         mv.visitLabel(lBeginHandler);
@@ -248,8 +187,7 @@ public class FloatProxyMethod {
         // CAUTION: we bypass 'mv' and directly talk to the AnalyzerAdapter!
         aaAfter.visitFrame(F_NEW, localsInFrame.length, localsInFrame, 
                               stackContent.length, stackContent);
-
-        ;; checkNotNullStack(mv);
+        ;; checkNotNullStack();
         mv.visitInsn(NOP); //just a debugging marker...
         // stack >>  exception  // TODO check that: ... or target allParamsArr ??
         mv.visitInsn(POP); // we don't need the exception object
@@ -311,13 +249,13 @@ public class FloatProxyMethod {
         return t;
     }
 
-    private String stackTopClass(MethodVisitor mv) {
+    private String stackTopClass() {
         Object o = this.stackTop(); // that's taken from aaAfter indeed...
         if (o instanceof String) return (String) o;
         return null;
     }
     
-    private void checkNotNullStack(MethodVisitor mv) {
+    private void checkNotNullStack() {
         if (aaAfter.stack != null) return; 
         throw new RuntimeException("STUPID NULL stack!!!");
     }
@@ -335,17 +273,6 @@ public class FloatProxyMethod {
         return ! afterFloatReplacement(t).equals(t);
     }
 	
-    private static Type[] typesAfterReplacement(Type[] javArgs, Map<Integer, Type> conv) {
-        Type cojArgs[] = new Type[javArgs.length];
-        for (int i = 0; i < javArgs.length; i++) {
-            cojArgs[i] = afterFloatReplacement(javArgs[i]);
-            if(cojArgs[i].equals(javArgs[i]) == false){
-                conv.put(i, javArgs[i]);
-            }
-        }
-        return cojArgs;
-    }
-    
     private void convertArgumentsToReal(MethodVisitor mv, ConversionContext cc){        
         String convertDesc = Type.getMethodDescriptor(OBJ_ARRAY_TYPE, cc.inArgs);
         createConvertMethod(convertDesc, cc);
@@ -377,7 +304,7 @@ public class FloatProxyMethod {
             mv.visitLdcInsn(i);
             mv.visitInsn(AALOAD);
             boolean keepBothVersions = (oa.getSort() == Type.ARRAY ||
-                                        cc.typeConversions.get(i) != null);
+                                        cc.needsConversion(i));
             if(keepBothVersions){
                 mv.visitTypeInsn(CHECKCAST, "["+OBJ_TYPE.getDescriptor());
                 mv.visitLdcInsn(wantTheConversion?1:0);
@@ -460,7 +387,7 @@ public class FloatProxyMethod {
             newMv.visitLdcInsn(i);
             newMv.visitVarInsn(getLoadOpcode(ia), varIndex);
             varIndex += cc.inArgs[i].getSize();
-            boolean keepBothVersions = (ia.getSort() == Type.ARRAY || cc.typeConversions.get(i) != null);
+            boolean keepBothVersions = (ia.getSort() == Type.ARRAY || cc.needsConversion(i));
             if(keepBothVersions){ // keep the old reference (the Cojac one)
                 newMv.visitLdcInsn(2);
                 newMv.visitTypeInsn(ANEWARRAY, OBJ_TYPE.getInternalName());
@@ -472,8 +399,8 @@ public class FloatProxyMethod {
                 newMv.visitInsn(AASTORE);
             }
 
-            if(cc.typeConversions.get(i) != null){
-                convertCojacToRealType(cc.typeConversions.get(i), newMv);
+            if(cc.needsConversion(i)) {
+                convertCojacToRealType(cc.asOriginalJavaType(i), newMv);
             } 
             /* Note: Mr Monnard decided to convert also Object and Object[] parameters;
                          Except for .equals() that is now explicitly detected, I can't see
@@ -619,23 +546,18 @@ public class FloatProxyMethod {
         }
     }
 
-    private static int getLoadOpcode(Type type){
-        switch(type.getSort()){
+    private static int getLoadOpcode(Type type) {
+        switch(type.getSort()) {
             case Type.ARRAY:
-            case Type.OBJECT:
-                return ALOAD;
-            case Type.DOUBLE:
-                return DLOAD;
-            case Type.FLOAT:
-                return FLOAD;
+            case Type.OBJECT:  return ALOAD;
+            case Type.DOUBLE:  return DLOAD;
+            case Type.FLOAT:   return FLOAD;
 			case Type.CHAR:
 			case Type.BOOLEAN:
             case Type.BYTE:
             case Type.SHORT:
-            case Type.INT:
-                return ILOAD;
-            case Type.LONG:
-                return LLOAD;
+            case Type.INT:     return ILOAD;
+            case Type.LONG:    return LLOAD;
         }
         return -1;
     }
@@ -694,7 +616,7 @@ public class FloatProxyMethod {
         this.mla=mla;
     }
 
-    protected Object stackTop(){
+    private Object stackTop(){
         AnalyzerAdapter aa = aaAfter;
         if(aa.stack == null)
             return null;
@@ -706,12 +628,14 @@ public class FloatProxyMethod {
 
     //========================================================================
     static class ConversionContext {
-        final int opcode; 
-        final String owner, name, desc;
-        final Type[] outArgs;
-        final Type[] inArgs;
-        final Map<Integer, Type> typeConversions = new HashMap<>();
-        final Map<Integer, Type> convertedArrays = new HashMap<>();   
+        private final int opcode; 
+        private final String owner, name, desc;
+        /** with double, Float etc... */
+        private final Type[] outArgs;
+        /** with DW, FW etc... */
+        private final Type[] inArgs;
+        private final Map<Integer, Type> typeConversions = new HashMap<>();
+        private final Map<Integer, Type> convertedArrays = new HashMap<>();   
         
         public ConversionContext(int opcode, String owner, String name, String desc) {
             this.opcode=opcode;
@@ -719,7 +643,26 @@ public class FloatProxyMethod {
             this.name=name;
             this.desc=desc;
             outArgs = Type.getArgumentTypes(desc);
-            inArgs = typesAfterReplacement(outArgs, typeConversions);
+            inArgs = typesAfterReplacement(outArgs);
+        }
+        
+        public boolean needsConversion(int i) {
+            return typeConversions.containsKey(i);
+        }
+        
+        public Type asOriginalJavaType(int i) {
+            return outArgs[i];
+        }
+
+        private Type[] typesAfterReplacement(Type[] javArgs) {
+            Type cojArgs[] = new Type[javArgs.length];
+            for (int i = 0; i < javArgs.length; i++) {
+                cojArgs[i] = afterFloatReplacement(javArgs[i]);
+                if(cojArgs[i].equals(javArgs[i]) == false){
+                    typeConversions.put(i, javArgs[i]);
+                }
+            }
+            return cojArgs;
         }
     }
     //========================================================================

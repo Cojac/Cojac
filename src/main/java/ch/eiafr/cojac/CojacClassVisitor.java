@@ -18,25 +18,11 @@
 
 package ch.eiafr.cojac;
 
-import static ch.eiafr.cojac.models.FloatReplacerClasses.*;
-import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenterFactory;
-import static ch.eiafr.cojac.instrumenters.InvokableMethod.replaceFloatMethodDescription;
-import ch.eiafr.cojac.instrumenters.ReplaceFloatsMethods;
-
-import java.io.PrintWriter;
-import java.util.ArrayList;
 import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.AnalyzerAdapter;
-import org.objectweb.asm.commons.LocalVariablesSorter;
-import org.objectweb.asm.util.Printer;
-import org.objectweb.asm.util.Textifier;
-import org.objectweb.asm.util.ASMifier;
-import org.objectweb.asm.util.TraceMethodVisitor;
-import org.objectweb.asm.commons.LocalVariablesSorter;
+
+import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenterFactory;
 
 public class CojacClassVisitor extends ClassVisitor {
     protected final IOpcodeInstrumenterFactory factory;
@@ -64,17 +50,15 @@ public class CojacClassVisitor extends ClassVisitor {
     @Override
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
         //boolean isNative = (access & Opcodes.ACC_NATIVE) > 0;
-		//boolean isAbstrac = (access & Opcodes.ACC_ABSTRACT) > 0;
-		//boolean isInterface = (access & Opcodes.ACC_INTERFACE) > 0;       
         MethodVisitor mv = cv.visitMethod(access, name, desc, signature, exceptions);
         String currentMethodID = crtClassName + '/' + name;
         if (cav.isClassAnnotated() || cav.isMethodAnnotated(currentMethodID)) {
             return mv;
         }      
-        return instrumentMethod(mv, access, desc, desc, name);
+        return instrumentMethod(mv, access, desc);
     }
 
-    private MethodVisitor instrumentMethod(MethodVisitor parentMv, int access, String desc, String oldDesc, String name) {
+    private MethodVisitor instrumentMethod(MethodVisitor parentMv, int access, String desc) {
         MethodVisitor mv=null;
         mv = new CojacCheckerMethodVisitor(access, desc, parentMv, stats, args, crtClassName, factory);
         return mv;

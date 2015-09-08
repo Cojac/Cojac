@@ -18,35 +18,42 @@
 
 package ch.eiafr.cojac;
 
-import static ch.eiafr.cojac.models.FloatReplacerClasses.*;
-import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenter;
-import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenterFactory;
-import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
-import ch.eiafr.cojac.instrumenters.ReplaceFloatsMethods;
-import ch.eiafr.cojac.models.DoubleNumbers;
-import ch.eiafr.cojac.models.FloatNumbers;
+import static ch.eiafr.cojac.instrumenters.InvokableMethod.afterFloatReplacement;
+import static ch.eiafr.cojac.instrumenters.InvokableMethod.replaceFloatMethodDescription;
+import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_DOUBLE_WRAPPER_INTERNAL_NAME;
+import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_DOUBLE_WRAPPER_TYPE;
+import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_DOUBLE_WRAPPER_TYPE_DESCR;
+import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_FLOAT_WRAPPER_INTERNAL_NAME;
+import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_FLOAT_WRAPPER_TYPE;
+import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_FLOAT_WRAPPER_TYPE_DESCR;
+import static org.objectweb.asm.Opcodes.*;
 
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-
-
-
-import static org.objectweb.asm.Opcodes.*;
-
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AnalyzerAdapter;
-import org.objectweb.asm.commons.LocalVariablesSorter;
+
+import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenter;
+import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenterFactory;
+import ch.eiafr.cojac.instrumenters.ReplaceFloatsMethods;
+import ch.eiafr.cojac.models.DoubleNumbers;
+import ch.eiafr.cojac.models.FloatNumbers;
 
 /**
  * There is a delegation chain in place for MethodVisitors:
- * FloatReplacerMethodVisitor -> FloatVariableSorter -> AnalyzerAdapter -> parentMv
- * (the -> means "delegate to")
+ * MyLocalAdder                    adds two local variables
+ *  -> FloatReplacerMethodVisitor  main bytecode transformation (with helper class FloatProxyMethod)
+ *   -> FloatVariableSorter        remaps parameters index (due to the replacement of double (2 slots) as objects (1 slot))
+ *    -> AnalyzerAdapter           keeps track of effective stack, so that we know the type of the top
+ *     -> parentMv                 typically the final Writer
+ * (the -> means "delegates to")
+ * With maybe some intermediate TraceMethodVisitor to help debugging...
  * The AnalyzerAdapter keep the representation of the operand stack and the local variables
- * Only the operand stack can be used in this class.
+ * Only the operand stack can be used in that class.
  * The load and store operation indices (for the slot of each local variable) are
- * remapped in the FloatVariableSorter (which extends LocalVariableSorter).
+ * remapped in the FloatVariableSorter.
  */
 final class FloatReplacerMethodVisitor extends MethodVisitor {
 	
@@ -63,12 +70,10 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
 	public static final String FN_NAME = Type.getType(FloatNumbers.class).getInternalName();
 	public static final String DN_NAME = Type.getType(DoubleNumbers.class).getInternalName();
 	
-    FloatReplacerMethodVisitor(int access, String desc, AnalyzerAdapter aa, 
+    FloatReplacerMethodVisitor(AnalyzerAdapter aa, 
             MethodVisitor lvs, 
             ReplaceFloatsMethods rfm, 
             InstrumentationStats stats, 
-            Args args,  
-            String classPath, 
             IOpcodeInstrumenterFactory factory, 
             CojacReferences references) {
         super(Opcodes.ASM5, lvs);
