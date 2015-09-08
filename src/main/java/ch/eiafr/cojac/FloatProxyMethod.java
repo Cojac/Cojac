@@ -140,6 +140,9 @@ public class FloatProxyMethod {
         ;; checkNotNullStack();
         Object[] localsInFrame = aaAfter.locals.toArray();
         Object[] stackEInFrame = aaAfter.stack.toArray();
+        if(crtClassName.contains("RunWindow")) System.out.println("A: "+java.util.Arrays.toString(stackEInFrame));
+        if(crtClassName.contains("RunWindow")) System.out.println(desc + owner);
+
         paramArrayVar = mla.paramArrayVar();
         targetVar = mla.targetVar();
         Label lBeginTry = new Label(), lEndTry = new Label(); 
@@ -183,7 +186,7 @@ public class FloatProxyMethod {
         mv.visitLabel(lBeginHandler);
         Object[] stackContent=new Object[0]; // empty stack when "catch" block starts
         //stackContent=addTo(stackContent, "java/lang/IncompatibleClassChangeError");
-        stackContent=addTo(stackContent, "java/lang/ClassCastException");
+        stackContent=addTo(stackContent, "java/lang/Throwable");
         // CAUTION: we bypass 'mv' and directly talk to the AnalyzerAdapter!
         aaAfter.visitFrame(F_NEW, localsInFrame.length, localsInFrame, 
                               stackContent.length, stackContent);
@@ -213,8 +216,11 @@ public class FloatProxyMethod {
         // stack >> [newPossibleResult]
         mv.visitLabel(lEndHandler);
         mv.visitInsn(NOP); 
-        stackContent=stackEInFrame;
+        if(crtClassName.contains("RunWindow")) System.out.println("A: "+java.util.Arrays.toString(stackEInFrame));
+        stackContent=removeTargetAndParams(stackEInFrame, cc.outArgs.length);
         stackContent=addReturnTypeTo(stackContent, returnType);
+        if(crtClassName.contains("RunWindow")) System.out.println("E: "+aaAfter.stack);
+        if(crtClassName.contains("RunWindow")) System.out.println("F: "+java.util.Arrays.toString(stackContent));
         aaAfter.visitFrame(F_NEW, localsInFrame.length, localsInFrame, 
                               stackContent.length, stackContent);
         mv.visitInsn(NOP); 
@@ -224,10 +230,17 @@ public class FloatProxyMethod {
     // the exception is pushed on this empty stack, and executions continues at catch"
 //    public void proxyCallBetterWithoutVars(MethodVisitor mv, int opcode, String owner, String name, String desc){
 
+    private Object[] removeTargetAndParams(Object[] stackEInFrame, int nParam) {
+        Object[] res=new Object[stackEInFrame.length-nParam-1]; // -1 for the target
+        for(int i=0; i<res.length; i++)
+            res[i]=stackEInFrame[i];
+        return res;
+    }
+
     private Object[] addReturnTypeTo(Object[] stackContent, Type returnType) {
         int sort=returnType.getSort();
         if (sort==Type.VOID) return stackContent;
-        if (sort==Type.ARRAY || returnType.getSort()==Type.OBJECT) 
+        if (sort==Type.ARRAY || sort==Type.OBJECT) 
             return addTo(stackContent, returnType.getInternalName());
         // else primitive type
         switch (sort) {
@@ -238,13 +251,15 @@ public class FloatProxyMethod {
         case Type.INT:
             return addTo(stackContent, Opcodes.INTEGER);
         case Type.LONG:
-            return addTo(addTo(stackContent, Opcodes.LONG), Opcodes.TOP);
+            return addTo(stackContent, Opcodes.LONG);
+            //return addTo(addTo(stackContent, Opcodes.LONG), Opcodes.TOP);
         }
         return stackContent;
     }
 
     private Object[] addTo(Object[] s, Object e) {
         Object[] t=new Object[s.length+1];
+        System.arraycopy(s, 0, t, 0, s.length);
         t[t.length-1]=e;
         return t;
     }
