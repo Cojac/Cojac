@@ -21,6 +21,7 @@ package ch.eiafr.cojac.models;
 import static ch.eiafr.cojac.models.FloatReplacerClasses.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import org.objectweb.asm.Type;
 
 // Warning: the public methods are accessed by reflection...
 
@@ -343,4 +344,20 @@ public class DoubleNumbers {
 		}
 	}
 	
+	public static boolean canCall(Object c, String methodName, String desc) {
+	    if (c==null) return false;
+	    Class<?> clazz=c.getClass();
+//	    boolean found=false;
+//	    if (Type.getInternalName(clazz).equals(owner)) found=true;
+//	    for(Class<?> itf: clazz.getInterfaces()) {
+//	        if (Type.getInternalName(itf).equals(owner)) found=true;
+//	    }
+	    Method[] mt=clazz.getMethods();
+	    for(Method m:mt) {
+	        if (!m.getName().equals(methodName)) continue;
+	        String d=Type.getMethodDescriptor(m);
+	        if (d.equals(desc)) return true;
+	    }
+	    return false;
+	}
 }

@@ -175,6 +175,9 @@ public class FloatProxyMethod {
         
         // OK, this is not the right way to detect if the call will be reasonable
         // it's the bytecode verifier that can't accept bad parameters...
+        // AND above all, the stack is emptied when jumping to the catch() section,
+        // so all the slots before <target> are lost!!
+        
         // maybe try to call a util function isCallable(obj, owner, name, descAfter)
         // that will check that via reflection...
         
