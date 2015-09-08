@@ -20,6 +20,7 @@ package ch.eiafr.cojac.models;
 
 import static ch.eiafr.cojac.models.FloatReplacerClasses.*;
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import org.objectweb.asm.Type;
 
@@ -344,9 +345,19 @@ public class DoubleNumbers {
 		}
 	}
 	
-	public static boolean canCall(Object c, String methodName, String desc) {
-	    if (c==null) return false;
-	    Class<?> clazz=c.getClass();
+    public static Object myInvoke(Method m, Object target, Object[] prms) {
+        try {
+            return m.invoke(target,  prms);
+        } catch (IllegalAccessException | 
+                IllegalArgumentException | 
+                InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Method possibleMethod(Object target, String methodName, String desc) {
+	    if (target==null) return null;
+	    Class<?> clazz=target.getClass();
 //	    boolean found=false;
 //	    if (Type.getInternalName(clazz).equals(owner)) found=true;
 //	    for(Class<?> itf: clazz.getInterfaces()) {
@@ -356,8 +367,8 @@ public class DoubleNumbers {
 	    for(Method m:mt) {
 	        if (!m.getName().equals(methodName)) continue;
 	        String d=Type.getMethodDescriptor(m);
-	        if (d.equals(desc)) return true;
+	        if (d.equals(desc)) return m;
 	    }
-	    return false;
+	    return null;
 	}
 }

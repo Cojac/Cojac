@@ -134,7 +134,18 @@ public class FloatProxyMethod {
 
     
     // it does not work at all...  GOSH !
-    public void proxyCallBetterWithVars(MethodVisitor mv, int opcode, String owner, String name, String desc){
+    // OK, try-catch was not the right way to detect if the call will be reasonable
+    // it's the bytecode verifier that can't accept bad parameters...
+    // AND above all, the stack is emptied when jumping to the catch() section,
+    // so all the slots before <target> are lost!!
+    // Maybe try to call a util function isCallable(obj, owner, name, descAfter)
+    // that will check that via reflection... Well, we'll have to invoke the method
+    // by reflection (the target cannot be cast to something known at runtime!
+   public void proxyCallBetterWithVars(MethodVisitor mv, int opcode, String owner, String name, String desc){
+        String pm = "possibleMethod";
+        String pmDesc = "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/reflect/Method;";
+        String myInvoke = "myInvoke";
+        String myInvokeDesc = "(Ljava/lang/reflect/Method;Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;";
         int paramArrayVar=-1;
         int targetVar=-1;
         ;; checkNotNullStack();
@@ -158,37 +169,38 @@ public class FloatProxyMethod {
         String targetType=stackTopClass();
         mv.visitVarInsn(ASTORE, targetVar);
         // stack >> target allParamsArr
-        
-        // try to call as if that method was indeed instrumented...
-        mv.visitTryCatchBlock(lBeginTry, lEndTry, lBeginHandler, "java/lang/ClassCastException");
-        mv.visitTryCatchBlock(lBeginTry, lEndTry, lBeginHandler, "java/lang/NoSuchMethodError");
-        mv.visitTryCatchBlock(lBeginTry, lEndTry, lBeginHandler, "java/lang/AbstractMethodError");
-        mv.visitLabel(lBeginTry);
-        
         mv.visitInsn(SWAP);
         // stack >> allParamsArr target
-        mv.visitTypeInsn(CHECKCAST, owner); // that cast might fail
-        mv.visitInsn(SWAP);
-        // stack >> target allParamsArr
-        explodeOnStack(mv, cc, false); 
-        // stack >> target prm0 prm1 prm2...
-        
-        // OK, this is not the right way to detect if the call will be reasonable
-        // it's the bytecode verifier that can't accept bad parameters...
-        // AND above all, the stack is emptied when jumping to the catch() section,
-        // so all the slots before <target> are lost!!
-        
-        // maybe try to call a util function isCallable(obj, owner, name, descAfter)
-        // that will check that via reflection...
-        
-        mv.visitMethodInsn(opcode, owner, name, descAfter, (opcode == INVOKEINTERFACE));
-        // stack >> [possibleResult]
+        mv.visitInsn(DUP_X1);
+        // stack >> target allParamsArr target
+        mv.visitLdcInsn(name);
+        // stack >> target allParamsArr target methName
+        mv.visitLdcInsn(descAfter);
+        // stack >> target allParamsArr target methName methDesc
+        mv.visitMethodInsn(INVOKESTATIC, DN_NAME, pm, pmDesc, false);
+        // stack >> target allParamsArr nullOrMeth
+        mv.visitInsn(DUP);
+        // stack >> target allParamsArr nullOrMeth nullOrMeth
+        mv.visitJumpInsn(IFNULL, lBeginHandler);
+        // visitFrame... //TODO
+        // stack >> target allParamsArr nullOrMeth
+        mv.visitInsn(DUP_X2);
+        // stack >> meth target allParamsArr 
+        // TODO try to implement this... tedious, right?
+        // something similar to explodeOnStack, but building an Array of parameters
+        // stack >> meth target appropriatePrmArr 
+        mv.visitMethodInsn(INVOKESTATIC, DN_NAME, myInvoke, myInvokeDesc, false);
+        // stack >> [ResultOrNull]
+        if (cc.hasReturn()) {
+            mv.visitTypeInsn(CHECKCAST, returnType.getInternalName());
+        } else {
+            mv.visitInsn(POP); // discard the dummy null result
+        }
         mv.visitLabel(lEndTry);
         mv.visitJumpInsn(GOTO, lEndHandler);  // and we're done !
         
         mv.visitLabel(lBeginHandler);
-        Object[] stackContent=new Object[0]; // empty stack when "catch" block starts
-        //stackContent=addTo(stackContent, "java/lang/IncompatibleClassChangeError");
+        Object[] stackContent=new Object[0]; 
         stackContent=addTo(stackContent, "java/lang/Throwable");
         // CAUTION: we bypass 'mv' and directly talk to the AnalyzerAdapter!
         aaAfter.visitFrame(F_NEW, localsInFrame.length, localsInFrame, 
@@ -219,11 +231,10 @@ public class FloatProxyMethod {
         // stack >> [newPossibleResult]
         mv.visitLabel(lEndHandler);
         mv.visitInsn(NOP); 
-        if(crtClassName.contains("RunWindow")) System.out.println("A: "+java.util.Arrays.toString(stackEInFrame));
         stackContent=removeTargetAndParams(stackEInFrame, cc.outArgs.length);
         stackContent=addReturnTypeTo(stackContent, returnType);
-        if(crtClassName.contains("RunWindow")) System.out.println("E: "+aaAfter.stack);
-        if(crtClassName.contains("RunWindow")) System.out.println("F: "+java.util.Arrays.toString(stackContent));
+//        if(crtClassName.contains("RunWindow")) System.out.println("E: "+aaAfter.stack);
+//        if(crtClassName.contains("RunWindow")) System.out.println("F: "+java.util.Arrays.toString(stackContent));
         aaAfter.visitFrame(F_NEW, localsInFrame.length, localsInFrame, 
                               stackContent.length, stackContent);
         mv.visitInsn(NOP); 
@@ -682,6 +693,11 @@ public class FloatProxyMethod {
             }
             return cojArgs;
         }
+        
+        public boolean hasReturn() {
+            return !Type.getReturnType(desc).equals(Type.VOID_TYPE);
+        }
+        
     }
     //========================================================================
 }

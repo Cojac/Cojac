@@ -206,7 +206,7 @@ public class Wrapping {
   //======================================================================
   // any class with name containing "CojacDebugDump" will be dumped after
   // instrumentation, for debugging purposes (see cojac/Agent)
-  static class MyCojacDebugDump { // implements DoubleUnaryOperator {
+  static class MyCojacDebugDump implements DoubleUnaryOperator { // implements DoubleUnaryOperator {
       //MyWrapper mmm;
       public MyCojacDebugDump(int a) {
           //mmm=new MyWrapper(0.2);
@@ -225,10 +225,10 @@ public class Wrapping {
 //          Double[] t3={2.0};
 //          Double[] t4=(Double[])t3.clone(); // TODO: does not work...
 //          return 2*a;
-          return 9;
-//          DoubleUnaryOperator op;
-//          op=new MyCojacDebugDump(0);
-//          return (int) op.applyAsDouble(2.1);
+//          return 9;
+          DoubleUnaryOperator op;
+          op=new MyCojacDebugDump(0);
+          return (int) op.applyAsDouble(2.1);
       }
  
       public static void f(ArrayList<Double> c) {
@@ -261,6 +261,11 @@ public class Wrapping {
 //          unOp = Math::sqrt;
 //          d=unOp.applyAsDouble(a*a);   // but the "enrichment" is lost...
       }
+
+    @Override
+    public double applyAsDouble(double operand) {
+        return 2*operand;
+    }
 
           /*
   // access flags 0x9
