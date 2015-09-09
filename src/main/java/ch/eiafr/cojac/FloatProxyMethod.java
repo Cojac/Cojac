@@ -26,6 +26,7 @@ import static ch.eiafr.cojac.instrumenters.ReplaceFloatsMethods.FL_DESCR;
 import static ch.eiafr.cojac.instrumenters.ReplaceFloatsMethods.DL_DESCR;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -95,7 +96,7 @@ public class FloatProxyMethod {
     
     public void proxyCall(MethodVisitor mv, int opcode, String owner, 
             String name, String desc, boolean tryUnproxied){
-        if (false && tryUnproxied && opcode==INVOKEVIRTUAL ) { //|| opcode==INVOKEINTERFACE  false && 
+        if (tryUnproxied && opcode==INVOKEVIRTUAL ) { //|| opcode==INVOKEINTERFACE  false && 
             //proxyCallAndStupidVars(mv, opcode, owner, name, desc);
             proxyCallBetterWithVars(mv, opcode, owner, name, desc);
             return;
@@ -149,17 +150,18 @@ public class FloatProxyMethod {
         final String myInvokeDesc = "(Ljava/lang/reflect/Method;Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;";
         int paramArrayVar=-1;
         int targetVar=-1;
-        ;; checkNotNullStack();
+        //checkNotNullStack();
         Object[] stackEInFrame = aaAfter.stack.toArray();
-
+        System.out.println("AA: "+owner+" "+name+desc);
         paramArrayVar = mla.paramArrayVar();
         targetVar = mla.targetVar();
-        Label lBeginTry = new Label(), lEndTry = new Label(); 
+        //Label lEndTry = new Label(); 
         Label lBeginHandler = new Label(), lEndHandler = new Label();
         String descAfter=replaceFloatMethodDescription(desc);
         Type returnType=Type.getReturnType(descAfter);
         ConversionContext cc=new ConversionContext(opcode, owner, name, desc);
         // stack >> target prm0 prm1 prm2...
+        System.out.println("A0: "+aaAfter.stack);
         convertArgumentsToReal(mv, cc);
         // stack >> target allParamsArr target allParamsArr
         mv.visitVarInsn(ASTORE, paramArrayVar);
@@ -180,43 +182,67 @@ public class FloatProxyMethod {
         // stack >> target allParamsArr nullOrMeth
         mv.visitInsn(DUP);
         // stack >> target allParamsArr nullOrMeth nullOrMeth
+        System.out.println("A1: "+aaAfter.stack);
+        
         ArrayList<Object> scl=new ArrayList<Object>(aaAfter.stack);
         scl.remove(scl.size()-1); // remove the last nullOrMeth
-        Object[] stackContent=scl.toArray(); 
+        Object[] stackContent=scl.toArray(); //target allParamsArr nullOrMeth
+        
         mv.visitJumpInsn(IFNULL, lBeginHandler);
         aaAfter.visitFrame(F_NEW, localsInFrame.length, localsInFrame, 
                                   stackContent.length, stackContent);
-        // stack >> target allParamsArr nullOrMeth
+        System.out.println("A2a: "+aaAfter.stack);
+        // stack >> target allParamsArr meth
         mv.visitInsn(DUP_X2);
-        // stack >> meth target allParamsArr 
-        // TODO try to implement this... tedious, right?
-        // something similar to explodeOnStack, but building an Array of parameters
+        System.out.println("A2b: "+aaAfter.stack);
+        // stack >> meth target allParamsArr meth
+        mv.visitInsn(POP);
+        // stack >> meth target allParamsArr
+        mv.visitLdcInsn(cc.inArgs.length);
+        System.out.println("A2z: "+cc.inArgs.length+" "+Arrays.toString(cc.inArgs)+" "+Arrays.toString(cc.outArgs));
+        System.out.println("A2c: "+aaAfter.stack);
+        // stack >> meth target allParamsArr n
+        mv.visitInsn(AALOAD);
+        System.out.println("A2d: "+aaAfter.stack);
+        // stack >> meth target asObjPrm
+        mv.visitTypeInsn(CHECKCAST, "["+OBJ_TYPE.getDescriptor());
         // stack >> meth target appropriatePrmArr 
+        System.out.println("A3: "+aaAfter.stack);
         mv.visitMethodInsn(INVOKESTATIC, DN_NAME, myInvoke, myInvokeDesc, false);
+        System.out.println("A3a: "+aaAfter.stack);
         // stack >> [ResultOrNull]
         if (cc.hasReturn()) {
-            mv.visitTypeInsn(CHECKCAST, returnType.getInternalName());
+            Type cojReturnType=Type.getReturnType(desc);
+            if (cc.hasPrimitiveResult()) {
+                System.out.println("A3bb: "+aaAfter.stack);
+                String jWrapperName=getJWrapper(cojReturnType).getInternalName();
+                mv.visitTypeInsn(CHECKCAST, jWrapperName);
+                mv.visitMethodInsn(INVOKEVIRTUAL, jWrapperName, getWrapperToPrimitiveMethod(cojReturnType), "()"+cojReturnType.getDescriptor(), false);
+            } else {
+                mv.visitTypeInsn(CHECKCAST, cojReturnType.getInternalName());
+            }
         } else {
+            System.out.println("A3b1: "+aaAfter.stack);
             mv.visitInsn(POP); // discard the dummy null result
+            System.out.println("A3b2: "+aaAfter.stack);
         }
-        mv.visitLabel(lEndTry);
+        // stack >> [possibleResult]
+        //;; mv.visitLabel(lEndTry);
+        System.out.println("A4: "+aaAfter.stack);
         mv.visitJumpInsn(GOTO, lEndHandler);  // and we're done !
-        
-        mv.visitLabel(lBeginHandler);
+
+        ;; mv.visitLabel(lBeginHandler);
+        // stack >> target allParamsArr null
         // CAUTION: we bypass 'mv' and directly talk to the AnalyzerAdapter!
         aaAfter.visitFrame(F_NEW, localsInFrame.length, localsInFrame, 
                                    stackContent.length, stackContent);
-        ;; checkNotNullStack();
-        mv.visitInsn(NOP); //just a debugging marker...
-        // stack >>  exception  // TODO check that: ... or target allParamsArr ??
-        mv.visitInsn(POP); // we don't need the exception object
-        // stack >>  
-        mv.visitVarInsn(ALOAD, targetVar);
-        mv.visitTypeInsn(CHECKCAST, targetType); //targetType
-        // stack >> target 
-        mv.visitVarInsn(ALOAD, paramArrayVar);
+        checkNotNullStack();  //TODO: remove
+        mv.visitInsn(POP); // we drop the null (no-method) slot
         // stack >> target allParamsArr
-        mv.visitInsn(NOP); mv.visitInsn(NOP);
+//        mv.visitVarInsn(ALOAD, targetVar);
+//        mv.visitTypeInsn(CHECKCAST, targetType);
+//        mv.visitVarInsn(ALOAD, paramArrayVar);
+//        mv.visitInsn(NOP); mv.visitInsn(NOP);
         // stack >> target allParamsArr
         maybeConvertTarget(mv, cc.opcode, cc.owner);
         // stack >> newTarget allParamsArr
@@ -230,14 +256,19 @@ public class FloatProxyMethod {
         // stack >> [possibleResult]
         convertReturnType(mv, desc);
         // stack >> [newPossibleResult]
-        mv.visitLabel(lEndHandler);
+        ;; mv.visitLabel(lEndHandler);
         mv.visitInsn(NOP); 
-        stackContent=removeTargetAndParams(stackEInFrame, cc.outArgs.length);
+        scl.remove(scl.size()-1); // remove 3 slots: target allParamsArr nullOrMeth
+        scl.remove(scl.size()-1); 
+        scl.remove(scl.size()-1); 
+        stackContent=scl.toArray();
         stackContent=addReturnTypeTo(stackContent, returnType);
 //        if(crtClassName.contains("RunWindow")) System.out.println("E: "+aaAfter.stack);
 //        if(crtClassName.contains("RunWindow")) System.out.println("F: "+java.util.Arrays.toString(stackContent));
         aaAfter.visitFrame(F_NEW, localsInFrame.length, localsInFrame, 
-                              stackContent.length, stackContent);
+                                   stackContent.length, stackContent);
+        System.out.println("A5: "+aaAfter.stack);
+
         mv.visitInsn(NOP); 
     }
 
@@ -397,71 +428,6 @@ public class FloatProxyMethod {
 		}
 	}
 	
-    private void createConvertMethod00(String convertDesc, ConversionContext cc) {
-//        for (int i=0 ; i < cc.outArgs.length; i++) {
-//            if(cc.inArgs[i].getSort() == Type.ARRAY) { // If it is an array, keep the two arrays references (cojac & original)
-//                cc.convertedArrays.put(i, cc.inArgs[i]);
-//            }
-//        }
-        if(ccv.isProxyMethod(COJAC_TYPE_CONVERT_NAME, convertDesc))
-            return; // the method already exists
-        MethodVisitor newMv = ccv.addProxyMethod(ACC_STATIC, COJAC_TYPE_CONVERT_NAME, convertDesc, null, null);
-        int varIndex = 0;
-        newMv.visitLdcInsn(cc.outArgs.length);
-        newMv.visitTypeInsn(ANEWARRAY, OBJ_TYPE.getInternalName());
-        // stack >> prmsArr
-        for (int i=0 ; i < cc.outArgs.length; i++) {
-            Type ia = cc.inArgs[i];
-            newMv.visitInsn(DUP);
-            newMv.visitLdcInsn(i);
-            // stack >> prmsArr prmsArr i
-            newMv.visitVarInsn(getLoadOpcode(ia), varIndex);
-            // stack >> prmsArr prmsArr i pi
-            varIndex += cc.inArgs[i].getSize();
-            // stack >> prmsArr prmsArr i pi
-            boolean keepBothVersions = (ia.getSort() == Type.ARRAY); // || cc.needsConversion(i)
-            if(keepBothVersions){ // keep the old reference (the Cojac one)
-                newMv.visitLdcInsn(2);
-                newMv.visitTypeInsn(ANEWARRAY, OBJ_TYPE.getInternalName());
-                newMv.visitInsn(DUP_X1);
-                newMv.visitInsn(SWAP);
-                newMv.visitInsn(DUP_X1);
-                newMv.visitLdcInsn(0);
-                newMv.visitInsn(SWAP);
-                newMv.visitInsn(AASTORE);
-            }
-
-            if(cc.needsConversion(i)) {
-                convertCojacToRealType(cc.asOriginalJavaType(i), newMv);
-            } 
-            /* Note: Mr Monnard decided to convert also Object and Object[] parameters;
-                         Except for .equals() that is now explicitly detected, I can't see
-                         where such a pattern is used (a library method with Object parameters
-                         that will really expect a Float/Double object...). 
-                         Maybe more tests will show he had good reasons!
-                } else if(ia.equals(OBJ_TYPE)) { 
-                    convertObjectToReal(newMv, ia);
-                } else if(ia.getSort() == Type.ARRAY && ia.getElementType().equals(OBJ_TYPE)) {
-                    convertObjectToReal(newMv, ia);  // should be only for primitive multi-dim arrays (?)
-                }
-             */
-            convertPrimitiveToObject(newMv, cc.outArgs[i]);
-
-            if(keepBothVersions) { // keep the new reference (the java one)
-                newMv.visitInsn(SWAP);
-                newMv.visitInsn(DUP_X1);
-                newMv.visitInsn(SWAP);
-                newMv.visitLdcInsn(1);
-                newMv.visitInsn(SWAP);
-                newMv.visitInsn(AASTORE);
-            }
-            // stack >> prmsArr prmsArr i pi
-            newMv.visitInsn(AASTORE);
-        }
-        newMv.visitInsn(ARETURN);
-        newMv.visitMaxs(0, 0);
-    }
-
     private void createConvertMethod(String convertDesc, ConversionContext cc) {
         if(ccv.isProxyMethod(COJAC_TYPE_CONVERT_NAME, convertDesc))
             return; // the method already exists
@@ -785,6 +751,12 @@ public class FloatProxyMethod {
         
         public boolean hasReturn() {
             return !Type.getReturnType(desc).equals(Type.VOID_TYPE);
+        }
+        
+        public boolean hasPrimitiveResult() {
+            return hasReturn() && 
+                    Type.getReturnType(desc).getSort() != Type.ARRAY && 
+                    Type.getReturnType(desc).getSort() != Type.OBJECT;
         }
     }
     //========================================================================

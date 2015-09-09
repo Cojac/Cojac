@@ -367,7 +367,10 @@ public class DoubleNumbers {
 	    for(Method m:mt) {
 	        if (!m.getName().equals(methodName)) continue;
 	        String d=Type.getMethodDescriptor(m);
-	        if (d.equals(desc)) return m;
+	        if (d.equals(desc)) { 
+	            System.out.println("-- Found! -- "+methodName+" "+desc+" "+target);
+	            return m;
+	        }
 	    }
 	    return null;
 	}
