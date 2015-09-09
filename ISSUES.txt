@@ -2,7 +2,9 @@
 
 - renommer certaines options
 - choisir quelques cas d'utilisation en guise de démo
-- concevoir et réaliser une vidéo de démonstration
+- concevoir et réaliser 1-2 vidéo de démonstration :
+  * Nnumeric sniffing with Cojac
+  * Richer numbers with Cojac 
 - revoir la doc (wiki, user-guide) et github
 - poster la vidéo, puis diffuser le lien, faire relayer l'information
   canaux possibles : Heinz Kabutz (java specialists), JavaWorld,

@@ -95,8 +95,9 @@ public final class Agent implements ClassFileTransformer {
             return instrumented;
             
         } catch (Throwable e) {
-			System.out.println("COJAC-AGENT EXCEPTION FOR CLASS "+className);
+			System.err.println("COJAC-AGENT EXCEPTION FOR CLASS "+className);
             e.printStackTrace();  // Otherwise it'll be hidden!
+            System.err.flush();
             throw e;
         }
     }

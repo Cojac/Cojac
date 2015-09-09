@@ -152,16 +152,14 @@ public class FloatProxyMethod {
         int targetVar=-1;
         //checkNotNullStack();
         Object[] stackEInFrame = aaAfter.stack.toArray();
-        System.out.println("AA: "+owner+" "+name+desc);
         paramArrayVar = mla.paramArrayVar();
         targetVar = mla.targetVar();
         //Label lEndTry = new Label(); 
         Label lBeginHandler = new Label(), lEndHandler = new Label();
         String descAfter=replaceFloatMethodDescription(desc);
-        Type returnType=Type.getReturnType(descAfter);
+        Type cojReturnType=Type.getReturnType(descAfter);
         ConversionContext cc=new ConversionContext(opcode, owner, name, desc);
         // stack >> target prm0 prm1 prm2...
-        System.out.println("A0: "+aaAfter.stack);
         convertArgumentsToReal(mv, cc);
         // stack >> target allParamsArr target allParamsArr
         mv.visitVarInsn(ASTORE, paramArrayVar);
@@ -182,7 +180,6 @@ public class FloatProxyMethod {
         // stack >> target allParamsArr nullOrMeth
         mv.visitInsn(DUP);
         // stack >> target allParamsArr nullOrMeth nullOrMeth
-        System.out.println("A1: "+aaAfter.stack);
         
         ArrayList<Object> scl=new ArrayList<Object>(aaAfter.stack);
         scl.remove(scl.size()-1); // remove the last nullOrMeth
@@ -191,30 +188,21 @@ public class FloatProxyMethod {
         mv.visitJumpInsn(IFNULL, lBeginHandler);
         aaAfter.visitFrame(F_NEW, localsInFrame.length, localsInFrame, 
                                   stackContent.length, stackContent);
-        System.out.println("A2a: "+aaAfter.stack);
         // stack >> target allParamsArr meth
         mv.visitInsn(DUP_X2);
-        System.out.println("A2b: "+aaAfter.stack);
         // stack >> meth target allParamsArr meth
         mv.visitInsn(POP);
         // stack >> meth target allParamsArr
         mv.visitLdcInsn(cc.inArgs.length);
-        System.out.println("A2z: "+cc.inArgs.length+" "+Arrays.toString(cc.inArgs)+" "+Arrays.toString(cc.outArgs));
-        System.out.println("A2c: "+aaAfter.stack);
         // stack >> meth target allParamsArr n
         mv.visitInsn(AALOAD);
-        System.out.println("A2d: "+aaAfter.stack);
         // stack >> meth target asObjPrm
         mv.visitTypeInsn(CHECKCAST, "["+OBJ_TYPE.getDescriptor());
         // stack >> meth target appropriatePrmArr 
-        System.out.println("A3: "+aaAfter.stack);
         mv.visitMethodInsn(INVOKESTATIC, DN_NAME, myInvoke, myInvokeDesc, false);
-        System.out.println("A3a: "+aaAfter.stack);
         // stack >> [ResultOrNull]
         if (cc.hasReturn()) {
-            Type cojReturnType=Type.getReturnType(desc);
-            if (cc.hasPrimitiveResult()) {
-                System.out.println("A3bb: "+aaAfter.stack);
+            if (cc.hasPrimitiveResultInCojacVersion()) {
                 String jWrapperName=getJWrapper(cojReturnType).getInternalName();
                 mv.visitTypeInsn(CHECKCAST, jWrapperName);
                 mv.visitMethodInsn(INVOKEVIRTUAL, jWrapperName, getWrapperToPrimitiveMethod(cojReturnType), "()"+cojReturnType.getDescriptor(), false);
@@ -222,13 +210,10 @@ public class FloatProxyMethod {
                 mv.visitTypeInsn(CHECKCAST, cojReturnType.getInternalName());
             }
         } else {
-            System.out.println("A3b1: "+aaAfter.stack);
             mv.visitInsn(POP); // discard the dummy null result
-            System.out.println("A3b2: "+aaAfter.stack);
         }
         // stack >> [possibleResult]
         //;; mv.visitLabel(lEndTry);
-        System.out.println("A4: "+aaAfter.stack);
         mv.visitJumpInsn(GOTO, lEndHandler);  // and we're done !
 
         ;; mv.visitLabel(lBeginHandler);
@@ -238,12 +223,6 @@ public class FloatProxyMethod {
                                    stackContent.length, stackContent);
         checkNotNullStack();  //TODO: remove
         mv.visitInsn(POP); // we drop the null (no-method) slot
-        // stack >> target allParamsArr
-//        mv.visitVarInsn(ALOAD, targetVar);
-//        mv.visitTypeInsn(CHECKCAST, targetType);
-//        mv.visitVarInsn(ALOAD, paramArrayVar);
-//        mv.visitInsn(NOP); mv.visitInsn(NOP);
-        // stack >> target allParamsArr
         maybeConvertTarget(mv, cc.opcode, cc.owner);
         // stack >> newTarget allParamsArr
         mv.visitInsn(DUP_X1);
@@ -257,20 +236,16 @@ public class FloatProxyMethod {
         convertReturnType(mv, desc);
         // stack >> [newPossibleResult]
         ;; mv.visitLabel(lEndHandler);
-        mv.visitInsn(NOP); 
         scl.remove(scl.size()-1); // remove 3 slots: target allParamsArr nullOrMeth
         scl.remove(scl.size()-1); 
         scl.remove(scl.size()-1); 
         stackContent=scl.toArray();
-        stackContent=addReturnTypeTo(stackContent, returnType);
-//        if(crtClassName.contains("RunWindow")) System.out.println("E: "+aaAfter.stack);
-//        if(crtClassName.contains("RunWindow")) System.out.println("F: "+java.util.Arrays.toString(stackContent));
+        stackContent=addReturnTypeTo(stackContent, cojReturnType);
         aaAfter.visitFrame(F_NEW, localsInFrame.length, localsInFrame, 
                                    stackContent.length, stackContent);
-        System.out.println("A5: "+aaAfter.stack);
-
-        mv.visitInsn(NOP); 
     }
+// if(crtClassName.contains("RunWindow")) System.out.println("E: "+aaAfter.stack);
+// if(crtClassName.contains("RunWindow")) System.out.println("F: "+java.util.Arrays.toString(stackContent));
 
     // CAUTION/WRONG: according to ASM User Guide, "...the stack is cleared,
     // the exception is pushed on this empty stack, and execution continues at catch"
@@ -703,7 +678,7 @@ public class FloatProxyMethod {
     //========================================================================
     static class ConversionContext {
         private final int opcode; 
-        private final String owner, name, desc;
+        private final String owner, name, jDesc, cDesc;
         /** with double, Float etc... */
         private final Type[] outArgs;
         /** with DW, FW etc... */
@@ -715,7 +690,8 @@ public class FloatProxyMethod {
             this.opcode=opcode;
             this.owner=owner;
             this.name=name;
-            this.desc=desc;
+            this.jDesc=desc;
+            this.cDesc=replaceFloatMethodDescription(desc);
             outArgs = Type.getArgumentTypes(desc);
             inArgs = typesAfterReplacement(outArgs);
             rememberArrays();
@@ -750,13 +726,13 @@ public class FloatProxyMethod {
         }
         
         public boolean hasReturn() {
-            return !Type.getReturnType(desc).equals(Type.VOID_TYPE);
+            return !Type.getReturnType(jDesc).equals(Type.VOID_TYPE);
         }
         
-        public boolean hasPrimitiveResult() {
+        public boolean hasPrimitiveResultInCojacVersion() {
             return hasReturn() && 
-                    Type.getReturnType(desc).getSort() != Type.ARRAY && 
-                    Type.getReturnType(desc).getSort() != Type.OBJECT;
+                    Type.getReturnType(cDesc).getSort() != Type.ARRAY && 
+                    Type.getReturnType(cDesc).getSort() != Type.OBJECT;
         }
     }
     //========================================================================
