@@ -95,7 +95,7 @@ public class FloatProxyMethod {
     
     public void proxyCall(MethodVisitor mv, int opcode, String owner, 
             String name, String desc, boolean tryUnproxied){
-        if (tryUnproxied && opcode==INVOKEVIRTUAL ) { //|| opcode==INVOKEINTERFACE  false && 
+        if (false && tryUnproxied && opcode==INVOKEVIRTUAL ) { //|| opcode==INVOKEINTERFACE  false && 
             //proxyCallAndStupidVars(mv, opcode, owner, name, desc);
             proxyCallBetterWithVars(mv, opcode, owner, name, desc);
             return;
@@ -143,16 +143,14 @@ public class FloatProxyMethod {
     // that will check that via reflection... Well, we'll have to invoke the method
     // by reflection (the target cannot be cast to something known at runtime!
    public void proxyCallBetterWithVars(MethodVisitor mv, int opcode, String owner, String name, String desc){
-        String pm = "possibleMethod";
-        String pmDesc = "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/reflect/Method;";
-        String myInvoke = "myInvoke";
-        String myInvokeDesc = "(Ljava/lang/reflect/Method;Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;";
+        final String pm = "possibleMethod";
+        final String pmDesc = "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/reflect/Method;";
+        final String myInvoke = "myInvoke";
+        final String myInvokeDesc = "(Ljava/lang/reflect/Method;Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;";
         int paramArrayVar=-1;
         int targetVar=-1;
         ;; checkNotNullStack();
         Object[] stackEInFrame = aaAfter.stack.toArray();
-        if(crtClassName.contains("RunWindow")) System.out.println("A: "+java.util.Arrays.toString(stackEInFrame));
-        if(crtClassName.contains("RunWindow")) System.out.println(desc + owner);
 
         paramArrayVar = mla.paramArrayVar();
         targetVar = mla.targetVar();
@@ -243,9 +241,9 @@ public class FloatProxyMethod {
         mv.visitInsn(NOP); 
     }
 
-    // CAUTION: according to ASM User Guide, "...the stack is cleared,
-    // the exception is pushed on this empty stack, and executions continues at catch"
-//    public void proxyCallBetterWithoutVars(MethodVisitor mv, int opcode, String owner, String name, String desc){
+    // CAUTION/WRONG: according to ASM User Guide, "...the stack is cleared,
+    // the exception is pushed on this empty stack, and execution continues at catch"
+    // public void proxyCallBetterWithoutVars(...){
 
     private Object[] removeTargetAndParams(Object[] stackEInFrame, int nParam) {
         Object[] res=new Object[stackEInFrame.length-nParam-1]; // -1 for the target
@@ -335,8 +333,7 @@ public class FloatProxyMethod {
             mv.visitInsn(DUP);
             mv.visitLdcInsn(i);
             mv.visitInsn(AALOAD);
-            boolean keepBothVersions = (oa.getSort() == Type.ARRAY ||
-                                        cc.needsConversion(i));
+            boolean keepBothVersions = (oa.getSort() == Type.ARRAY);
             if(keepBothVersions){
                 mv.visitTypeInsn(CHECKCAST, "["+OBJ_TYPE.getDescriptor());
                 mv.visitLdcInsn(wantTheConversion?1:0);
@@ -400,26 +397,29 @@ public class FloatProxyMethod {
 		}
 	}
 	
-    private void createConvertMethod(String convertDesc, ConversionContext cc) {
-        for (int i=0 ; i < cc.outArgs.length; i++) {
-            if(cc.inArgs[i].getSort() == Type.ARRAY) { // If it is an array, keep the two arrays references (cojac & original)
-                cc.convertedArrays.put(i, cc.inArgs[i]);
-            }
-        }
+    private void createConvertMethod00(String convertDesc, ConversionContext cc) {
+//        for (int i=0 ; i < cc.outArgs.length; i++) {
+//            if(cc.inArgs[i].getSort() == Type.ARRAY) { // If it is an array, keep the two arrays references (cojac & original)
+//                cc.convertedArrays.put(i, cc.inArgs[i]);
+//            }
+//        }
         if(ccv.isProxyMethod(COJAC_TYPE_CONVERT_NAME, convertDesc))
             return; // the method already exists
         MethodVisitor newMv = ccv.addProxyMethod(ACC_STATIC, COJAC_TYPE_CONVERT_NAME, convertDesc, null, null);
         int varIndex = 0;
         newMv.visitLdcInsn(cc.outArgs.length);
         newMv.visitTypeInsn(ANEWARRAY, OBJ_TYPE.getInternalName());
-
+        // stack >> prmsArr
         for (int i=0 ; i < cc.outArgs.length; i++) {
             Type ia = cc.inArgs[i];
             newMv.visitInsn(DUP);
             newMv.visitLdcInsn(i);
+            // stack >> prmsArr prmsArr i
             newMv.visitVarInsn(getLoadOpcode(ia), varIndex);
+            // stack >> prmsArr prmsArr i pi
             varIndex += cc.inArgs[i].getSize();
-            boolean keepBothVersions = (ia.getSort() == Type.ARRAY || cc.needsConversion(i));
+            // stack >> prmsArr prmsArr i pi
+            boolean keepBothVersions = (ia.getSort() == Type.ARRAY); // || cc.needsConversion(i)
             if(keepBothVersions){ // keep the old reference (the Cojac one)
                 newMv.visitLdcInsn(2);
                 newMv.visitTypeInsn(ANEWARRAY, OBJ_TYPE.getInternalName());
@@ -455,13 +455,89 @@ public class FloatProxyMethod {
                 newMv.visitInsn(SWAP);
                 newMv.visitInsn(AASTORE);
             }
-
+            // stack >> prmsArr prmsArr i pi
             newMv.visitInsn(AASTORE);
         }
         newMv.visitInsn(ARETURN);
         newMv.visitMaxs(0, 0);
     }
-	
+
+    private void createConvertMethod(String convertDesc, ConversionContext cc) {
+        if(ccv.isProxyMethod(COJAC_TYPE_CONVERT_NAME, convertDesc))
+            return; // the method already exists
+        MethodVisitor newMv = ccv.addProxyMethod(ACC_STATIC, COJAC_TYPE_CONVERT_NAME, convertDesc, null, null);
+        int varIndex = 0;
+        newMv.visitLdcInsn(cc.outArgs.length+1); // additional cell for the AllAsObjects array
+        newMv.visitTypeInsn(ANEWARRAY, OBJ_TYPE.getInternalName());
+        // stack >> prmsArr
+        newMv.visitInsn(DUP);
+        newMv.visitLdcInsn(cc.outArgs.length);
+        newMv.visitInsn(DUP);
+        newMv.visitTypeInsn(ANEWARRAY, OBJ_TYPE.getInternalName());
+        // stack >> prmsArr prmsArr n asObjArr
+        newMv.visitInsn(AASTORE);
+        // stack >> prmsArr
+        
+        for (int i=0 ; i < cc.outArgs.length; i++) {
+            Type ia = cc.inArgs[i];
+            newMv.visitInsn(DUP);
+            newMv.visitInsn(DUP);
+            newMv.visitLdcInsn(cc.outArgs.length);
+            // stack >> prmsArr prmsArr prmsArr n
+            newMv.visitInsn(AALOAD);
+            newMv.visitTypeInsn(CHECKCAST, "["+OBJ_TYPE.getDescriptor());
+            // stack >> prmsArr prmsArr asObjArr
+            newMv.visitLdcInsn(i);
+            // stack >> prmsArr prmsArr asObjArr i
+            newMv.visitVarInsn(getLoadOpcode(ia), varIndex);
+            convertPrimitiveToObject(newMv, cc.inArgs[i]);
+            // stack >> prmsArr prmsArr asObjArr i pi
+            newMv.visitInsn(AASTORE);
+            // stack >> prmsArr prmsArr
+            newMv.visitLdcInsn(i);
+            // stack >> prmsArr prmsArr i
+            newMv.visitVarInsn(getLoadOpcode(ia), varIndex);
+            varIndex += cc.inArgs[i].getSize();
+            // stack >> prmsArr prmsArr i pi
+            boolean keepBothVersions = (ia.getSort() == Type.ARRAY);
+            if(keepBothVersions){ // keep the old reference (the Cojac one)
+                newMv.visitLdcInsn(2);
+                newMv.visitTypeInsn(ANEWARRAY, OBJ_TYPE.getInternalName());
+                // stack >> prmsArr prmsArr i pi piArr
+                newMv.visitInsn(DUP_X1);
+                // stack >> prmsArr prmsArr i piArr pi piArr
+                newMv.visitInsn(SWAP);
+                // stack >> prmsArr prmsArr i piArr piArr pi
+                newMv.visitInsn(DUP_X1);
+                newMv.visitLdcInsn(0);
+                newMv.visitInsn(SWAP);
+                // stack >> prmsArr prmsArr i piArr pi piArr pi 0
+                newMv.visitInsn(AASTORE);
+                // stack >> prmsArr prmsArr i piArr
+            }
+            // stack >> prmsArr prmsArr i pi
+            if(cc.needsConversion(i)) {
+                convertCojacToRealType(cc.asOriginalJavaType(i), newMv);
+            } 
+            convertPrimitiveToObject(newMv, cc.outArgs[i]);
+            // stack >> prmsArr prmsArr i pi
+            if(keepBothVersions) { // keep the new reference (the java one)
+                newMv.visitInsn(SWAP);
+                newMv.visitInsn(DUP_X1);
+                newMv.visitInsn(SWAP);
+                newMv.visitLdcInsn(1);
+                newMv.visitInsn(SWAP);
+                newMv.visitInsn(AASTORE);
+            }
+            // stack >> prmsArr prmsArr i pi
+            newMv.visitInsn(AASTORE);
+            // stack >> prmsArr
+        }
+        newMv.visitInsn(ARETURN);
+        newMv.visitMaxs(0, 0);
+    }
+
+    
 	/* just an idea - useless for the moment...
 	private static boolean isPrimitiveFloatOrDoubleMultiArray(Type ia) {
 	    if(ia.getSort() != Type.ARRAY) return false;
@@ -676,6 +752,7 @@ public class FloatProxyMethod {
             this.desc=desc;
             outArgs = Type.getArgumentTypes(desc);
             inArgs = typesAfterReplacement(outArgs);
+            rememberArrays();
         }
         
         public boolean needsConversion(int i) {
@@ -697,10 +774,18 @@ public class FloatProxyMethod {
             return cojArgs;
         }
         
+        private void rememberArrays() {
+            // If it is an array, keep both arrays references (cojac & original)
+            for (int i=0 ; i < inArgs.length; i++) {
+                if(inArgs[i].getSort() == Type.ARRAY) { 
+                    convertedArrays.put(i, inArgs[i]);
+                }
+            }
+        }
+        
         public boolean hasReturn() {
             return !Type.getReturnType(desc).equals(Type.VOID_TYPE);
         }
-        
     }
     //========================================================================
 }
