@@ -26,7 +26,6 @@ import static ch.eiafr.cojac.instrumenters.ReplaceFloatsMethods.FL_DESCR;
 import static ch.eiafr.cojac.instrumenters.ReplaceFloatsMethods.DL_DESCR;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,7 +51,7 @@ public class FloatProxyMethod {
     
     private final FloatReplaceClassVisitor ccv;
     private AnalyzerAdapter aaAfter;
-    private MyLocalAdder mla;
+    // private MyLocalAdder mla;
     private final String crtClassName;
     
     public FloatProxyMethod(FloatReplaceClassVisitor ccv, String classPath){
@@ -96,7 +95,7 @@ public class FloatProxyMethod {
     
     public void proxyCall(MethodVisitor mv, int opcode, String owner, 
             String name, String desc, boolean tryUnproxied){
-        if (tryUnproxied && opcode==INVOKEVIRTUAL ) { //|| opcode==INVOKEINTERFACE  false && 
+        if (tryUnproxied && opcode==INVOKEVIRTUAL || opcode==INVOKEINTERFACE) { //|| opcode==INVOKEINTERFACE  false && 
             //proxyCallAndStupidVars(mv, opcode, owner, name, desc);
             proxyCallBetterWithVars(mv, opcode, owner, name, desc);
             return;
@@ -135,25 +134,21 @@ public class FloatProxyMethod {
     }
 
     
-    // it does not work at all...  GOSH !
-    // OK, try-catch was not the right way to detect if the call will be reasonable
-    // it's the bytecode verifier that can't accept bad parameters...
-    // AND above all, the stack is emptied when jumping to the catch() section,
+    // A "try{call unProxied} catch {proceed proxied}" approach is flawed,
+    // above all because the stack is emptied when jumping to the catch() section,
     // so all the slots before <target> are lost!!
-    // Maybe try to call a util function isCallable(obj, owner, name, descAfter)
-    // that will check that via reflection... Well, we'll have to invoke the method
-    // by reflection (the target cannot be cast to something known at runtime!
+    // Here the approach uses reflection (the target cannot be cast to
+    // something known at runtime!)
+    // We don't need to define new variables, but it was so tedious to do that 
+    // I prefer to keep that in comment ;)
    public void proxyCallBetterWithVars(MethodVisitor mv, int opcode, String owner, String name, String desc){
         final String pm = "possibleMethod";
         final String pmDesc = "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/reflect/Method;";
         final String myInvoke = "myInvoke";
         final String myInvokeDesc = "(Ljava/lang/reflect/Method;Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;";
-        int paramArrayVar=-1;
-        int targetVar=-1;
         //checkNotNullStack();
-        Object[] stackEInFrame = aaAfter.stack.toArray();
-        paramArrayVar = mla.paramArrayVar();
-        targetVar = mla.targetVar();
+//        int paramArrayVar = mla.paramArrayVar();
+//        int targetVar = mla.targetVar();
         //Label lEndTry = new Label(); 
         Label lBeginHandler = new Label(), lEndHandler = new Label();
         String descAfter=replaceFloatMethodDescription(desc);
@@ -162,10 +157,14 @@ public class FloatProxyMethod {
         // stack >> target prm0 prm1 prm2...
         convertArgumentsToReal(mv, cc);
         // stack >> target allParamsArr target allParamsArr
-        mv.visitVarInsn(ASTORE, paramArrayVar);
-        // stack >> target allParamsArr target
-        String targetType=stackTopClass();
-        mv.visitVarInsn(ASTORE, targetVar);
+        {
+//            mv.visitVarInsn(ASTORE, paramArrayVar);
+//            // stack >> target allParamsArr target
+//            //--------- String targetType=stackTopClass();
+//            mv.visitVarInsn(ASTORE, targetVar);
+        }
+        mv.visitInsn(POP);
+        mv.visitInsn(POP);
         // stack >> target allParamsArr
         Object[] localsInFrame = aaAfter.locals.toArray();
         mv.visitInsn(SWAP);
@@ -244,19 +243,12 @@ public class FloatProxyMethod {
         aaAfter.visitFrame(F_NEW, localsInFrame.length, localsInFrame, 
                                    stackContent.length, stackContent);
     }
+   
 // if(crtClassName.contains("RunWindow")) System.out.println("E: "+aaAfter.stack);
 // if(crtClassName.contains("RunWindow")) System.out.println("F: "+java.util.Arrays.toString(stackContent));
 
-    // CAUTION/WRONG: according to ASM User Guide, "...the stack is cleared,
+    // REMEMBER tryCatch: according to ASM User Guide, "...the stack is cleared,
     // the exception is pushed on this empty stack, and execution continues at catch"
-    // public void proxyCallBetterWithoutVars(...){
-
-    private Object[] removeTargetAndParams(Object[] stackEInFrame, int nParam) {
-        Object[] res=new Object[stackEInFrame.length-nParam-1]; // -1 for the target
-        for(int i=0; i<res.length; i++)
-            res[i]=stackEInFrame[i];
-        return res;
-    }
 
     private Object[] addReturnTypeTo(Object[] stackContent, Type returnType) {
         int sort=returnType.getSort();
@@ -285,11 +277,11 @@ public class FloatProxyMethod {
         return t;
     }
 
-    private String stackTopClass() {
-        Object o = this.stackTop(); // that's taken from aaAfter indeed...
-        if (o instanceof String) return (String) o;
-        return null;
-    }
+//    private String stackTopClass() {
+//        Object o = this.stackTop(); // that's taken from aaAfter indeed...
+//        if (o instanceof String) return (String) o;
+//        return null;
+//    }
     
     private void checkNotNullStack() {
         if (aaAfter.stack != null) return; 
@@ -662,17 +654,15 @@ public class FloatProxyMethod {
 	
     public void setUsefulPartners(AnalyzerAdapter aaAfter, MyLocalAdder mla) {
         this.aaAfter=aaAfter;
-        this.mla=mla;
+        // this.mla=mla;
     }
 
-    private Object stackTop(){
-        AnalyzerAdapter aa = aaAfter;
-        if(aa.stack == null)
-            return null;
-        if(aa.stack.isEmpty())
-            return null;
-        return aa.stack.get(aa.stack.size()-1);
-    }
+//    private Object stackTop(){
+//        AnalyzerAdapter aa = aaAfter;
+//        if(aa.stack == null)   return null;
+//        if(aa.stack.isEmpty()) return null;
+//        return aa.stack.get(aa.stack.size()-1);
+//    }
 
 
     //========================================================================
@@ -771,7 +761,7 @@ class MyClass { // after instrumentation
 }
 
 -----------------------------------------------
-(1) Idea of a new mechanism, for invokevirtual/invokeinterface 
+(1) Idea of the new mechanism, for invokevirtual/invokeinterface 
     of a possibly overridden instrumented method
 -----------------------------------------------
 
@@ -779,11 +769,12 @@ class MyClass { // after instrumentation
   public static void instrumentedCaller(){
     FloatWrapper f; int i; DoubleWrapper d;
     Object[] obj = COJAC_TYPE_CONVERT(f, i, d);
-    try {
-      ref.possiblyUninstrumentedCallee((FloatWrapper)obj[0], (int)obj[2], (DoubleWrapper)obj[4]); // signature 
-    } catch (NoSuchMethodError e) {
+    Method method = findCorrespondingInstrumentedMethod()
+    if (method != null) {
+      method.invoke(ref, obj[3])
+    } else {
       ref.possiblyUninstrumentedCallee((float)obj[1], (int)obj[3], (double)obj[5]);
-      // and convert back return value and maybe post-process arrays
+      convert back return value and maybe post-process arrays, as in proxyCall
     } 
   }
  
@@ -794,8 +785,7 @@ class MyClass { // after instrumentation
     obj[1] = i;
     obj[2] = i;
     obj[2] = DoubleWrapper.toDouble(d);
-    obj[3] = d;
-    // if needed add a first parameter for 'ref' and put it in the array
+    obj[3] = anArrayOfEveryParamPackedInJavaWrapperIfNecessary;
     return obj;
   }
 }

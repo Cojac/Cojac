@@ -36,7 +36,7 @@ import org.objectweb.asm.util.ASMifier;
 import org.objectweb.asm.util.TraceMethodVisitor;
 
 final class FloatReplaceClassVisitor extends CojacClassVisitor {
-    private static final String DUMP_CLASS = ""; // "Dump"
+    private static final String DUMP_CLASS = null; // "" or "Dump"
     private static final String DUMP_METHOD = "instanceMethod"; // "Dump"
 
     private final ArrayList<String> proxyMethods;

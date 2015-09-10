@@ -145,7 +145,7 @@ public class DoubleNumbers {
     
     public static Object convertJWrapperArrayToCojac(Object array, int dimensions) throws Exception {
         Object a;
-        if(dimensions == 1){
+        if(dimensions == 1) {
             a = cojacFromJWrapper1D((Double[])array);
         } else {
             Object[] input = (Object[])array;
@@ -264,35 +264,32 @@ public class DoubleNumbers {
 	}
 	
 	public static void mergeOriginalArrayIntoCojac(Object cojac, Object original) throws Exception{
-		if(cojac == null){
+		if(cojac == null) {
 			return;
 		}
 		if(cojac.getClass().isArray()){
 			Class<?> type = getArrayElementType(cojac);
-			if(type.equals(COJAC_FLOAT_WRAPPER_CLASS)){
+			if(type.equals(COJAC_FLOAT_WRAPPER_CLASS)) {
 				int dim = getArrayDimension(cojac);
 				mergeFloatArray(original, cojac, dim);
-			}
-			if(type.equals(COJAC_DOUBLE_WRAPPER_CLASS)){
+			} else if(type.equals(COJAC_DOUBLE_WRAPPER_CLASS)) {
 				int dim = getArrayDimension(cojac);
 				mergeDoubleArray(original, cojac, dim);
 			}
-			
 		}
 	}
 	
 	private static void mergeFloatArray(Object original, Object cojac, int dimension) throws Exception{
-        if(dimension == 1){
-            if(original instanceof float[])
+        if(dimension == 1) {
+            if(original instanceof float[]) {
                 mergeFloatArray((float[])original, (Object[]) cojac);
-            else if(original instanceof Float[]) {
+            } else if(original instanceof Float[]) {
                 Float[] t=(Float[])original;
                 float[] t1=new float[t.length];
                 for(int i=0; i<t.length; i++) t1[i]=t[i];
                 mergeFloatArray(t1, (Object[]) cojac);
             }
-        }
-        else{
+        } else {
 			Object[] originalArray = (Object[])original;
 			Object[] cojacArray = (Object[])cojac;
             for (int i = 0; i < originalArray.length; i++) {
@@ -347,22 +344,21 @@ public class DoubleNumbers {
 	
     public static Object myInvoke(Method m, Object target, Object[] prms) {
         try {
+            m.setAccessible(true);
             return m.invoke(target,  prms);
         } catch (IllegalAccessException | 
                 IllegalArgumentException | 
-                InvocationTargetException e) {
+                InvocationTargetException |
+                SecurityException e) {
             throw new RuntimeException(e);
         }
     }
 
+    /** returns null if such a method does not exist */
     public static Method possibleMethod(Object target, String methodName, String desc) {
 	    if (target==null) return null;
 	    Class<?> clazz=target.getClass();
-//	    boolean found=false;
-//	    if (Type.getInternalName(clazz).equals(owner)) found=true;
-//	    for(Class<?> itf: clazz.getInterfaces()) {
-//	        if (Type.getInternalName(itf).equals(owner)) found=true;
-//	    }
+	    if(methodName.contains("apply")) System.out.println(clazz+" "+methodName+desc);
 	    Method[] mt=clazz.getMethods();
 	    for(Method m:mt) {
 	        if (!m.getName().equals(methodName)) continue;

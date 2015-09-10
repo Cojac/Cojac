@@ -1,21 +1,24 @@
----------------- A faire (24.08.15) ------------------------------------
+---------------- A faire (10.09.15) ------------------------------------
 
 - renommer certaines options
 - choisir quelques cas d'utilisation en guise de démo
 - concevoir et réaliser 1-2 vidéo de démonstration :
-  * Nnumeric sniffing with Cojac
-  * Richer numbers with Cojac 
+  * Nnumeric sniffing with Cojac : overflow, bad cast, smearing, NaN result
+  * Richer numbers with Cojac : BigDecimal, Interval/Stochastic, Automatic differentiation
 - revoir la doc (wiki, user-guide) et github
 - poster la vidéo, puis diffuser le lien, faire relayer l'information
-  canaux possibles : Heinz Kabutz (java specialists), JavaWorld,
-                     contacts personnels...
+  canaux possibles : Heinz Kabutz (java specialists)
+                     JavaWorld
+                     autres ? contacts personnels ?...
+                     écrire un article ? Pour quel revue/conférence ?
 
 - traiter correctement les lambdas (instrumenter invokeDynamic)
-- Attaquer le vrai gros problème : invokevirtual/invokeinterface vers des
+- Méditer le gros problème : invokevirtual/invokeinterface vers des
   méthodes qui auront été instrumentées. Si l'invocation est dans du code
-  non instrumenté, on parlait de "callback". Mais peut-on faire mieux quand on
-  peut instrumenter l'invocation ? Comment savoir si la méthode-cible est 
-  instrumentée ou non ? cf. FloatProxyMethod pour une ébauche d'idée
+  non instrumenté, on parlait de "callback". Mais on a cherché (réussi ?) mieux si on
+  peut instrumenter l'invocation. Nous tentons de savoir si la méthode-cible est 
+  instrumentée ou non (cf. FloatProxyMethod), c'est assez compliqué (moche ?)
+- ajouter un TestCase pour ce nouveau feature ci-dessus
 - reconsidérer le problème des "callbacks"; peut-on dupliquer toutes les méthodes
   instrumentées avec une méthode passerelle ? D'après [Monnard14, p. 19], 
   "This idea is not implemented but it is not hard to implement it"
@@ -24,17 +27,18 @@
 - tests automatiques : compléter certains tests unitaires, 
                        ajouter des tests "crash-or-not" comme Java2Demo
 - avoir au moins un test de performance pour ReplaceFloat
-- envisager le wrapper "new generation" : implémenter les 4 modèles, et voir...
+- envisager le wrapper "new generation" : implémenter les 4 modèles, et juger...
+  un truc un peu moche, c'est autour des méthodes magiques (indirection nécessaire)
 - mesurer le code coverage de nos tests
-- valider l'approche de collections "riches" (plus de conversions
+- valider l'approche de collections "riches" (on ne fait plus de conversions
   DoubleWrapper->Double pour des invocations qui demandent des Object) 
-
+- Réappliquer correctement la licence sur tous les fichiers
 
 
 ----------------- Issues for enriched numbers (option -R) --------------
 
 - Verbose mode & interface: interfaces risk to be loaded by the verifier class
-and to don't get instrumented.
+  and to not get instrumented.
 
 - Array reference through proxy: The proxy breaks the references with float &
   double arrays. A fix has been done but it does not cover all cases. A test 

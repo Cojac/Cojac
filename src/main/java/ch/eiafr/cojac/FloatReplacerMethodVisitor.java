@@ -61,7 +61,6 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
 	
     private final IOpcodeInstrumenterFactory factory;
     private final InstrumentationStats stats;
-    public static final boolean DONT_INSTRUMENTn = false;
    
     private final AnalyzerAdapter aa;
     private final ReplaceFloatsMethods rfm;
@@ -86,14 +85,6 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
         this.factory = factory;
     }
 	
-//    protected int paramArrayVar() {
-//        return lvs.paramArrayVar;
-//    }
-//
-//    protected int targetVar() {
-//        return lvs.targetVar;
-//    }
-
     @Override
     public void visitInsn(int opCode) {
         // TODO - make a junit test to check the DUP_X2 instruction...

@@ -27,7 +27,6 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AnalyzerAdapter;
-import org.objectweb.asm.commons.LocalVariablesSorter;
 
 /**
  * Remap the local variables indices for load & store instructions
@@ -36,8 +35,6 @@ import org.objectweb.asm.commons.LocalVariablesSorter;
  * It transforms: visitFrame(), visitVarInsn(), visitIinc(), visitLocalVariable()
  */
 public class FloatVariablesSorter extends MethodVisitor {
-    private static final Type OBJECT_TYPE = Type .getObjectType("java/lang/Object");
-
     private final int[] firstFrameMapping;
     private final int maxRenumber;
     
@@ -70,29 +67,6 @@ public class FloatVariablesSorter extends MethodVisitor {
 
     @Override
     public void visitVarInsn(final int opcode, final int var) {
-        Type type;
-        switch (opcode) {
-        case Opcodes.LLOAD:
-        case Opcodes.LSTORE:
-            type = Type.LONG_TYPE;
-            break;
-        case Opcodes.DLOAD:
-        case Opcodes.DSTORE:
-            type = Type.DOUBLE_TYPE;
-            break;
-        case Opcodes.FLOAD:
-        case Opcodes.FSTORE:
-            type = Type.FLOAT_TYPE;
-            break;
-        case Opcodes.ILOAD:
-        case Opcodes.ISTORE:
-            type = Type.INT_TYPE;
-            break;
-        default:
-            // case Opcodes.ALOAD: case Opcodes.ASTORE: case RET:
-            type = OBJECT_TYPE;
-            break;
-        }
         mv.visitVarInsn(opcode, remapFirstFrame(var));
     }
 

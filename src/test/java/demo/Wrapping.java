@@ -164,12 +164,13 @@ public class Wrapping {
   private static double twiceDouble(double d) { return 2*d;  }
 
   public static void playWithCollection() {  //TODO: rewrite
-    MyCojacDebugDump.f(3);
     //myCojacDebugDump.f(new ArrayList<Double>());
     double a=1.0;
     double b= a/3.0;
     System.out.println("oneThird orig: "+b);
     System.out.println("oneThird: "+COJAC_MAGIC_DOUBLE_toStr(b));
+    b=MyCojacDebugDump.f(b);
+    System.out.println("applyAsDouble "+COJAC_MAGIC_DOUBLE_toStr(b));
     ArrayList<MyWrapper> l1=new ArrayList<>();
 //    l1.add(new MyWrapper(b));
 //    double c=l1.get(0).dValue;
@@ -216,7 +217,7 @@ public class Wrapping {
 //         return 2*operand;
 //      }
 
-      public static int f(int a) {
+      public static double f(double a) {
 //          double[][] t1={{2.0}};
 //          double[][] t2=(double[][])t1.clone(); 
 //          double[] t11={2.0};
@@ -228,7 +229,7 @@ public class Wrapping {
 //          return 9;
           DoubleUnaryOperator op;
           op=new MyCojacDebugDump(0);
-          return (int) op.applyAsDouble(2.1);
+          return op.applyAsDouble(a);
       }
  
       public static void f(ArrayList<Double> c) {

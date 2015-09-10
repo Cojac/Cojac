@@ -120,7 +120,7 @@ public final class Agent implements ClassFileTransformer {
         if (!className.contains("CojacDebugDump")) return;
         System.out.println("being dumped: "+className);
         dumpIt(instrumented);
-        // and then: e:\_apps\java\jdk1.8.0_5\bin\javap -p -c -l D*.class
+        // and then: e:\_apps\java\jdk1.8.0_5\bin\javap -p -c -l -v D*.class
         // TODO: disable that debugging dump, once we have a perfect Cojac ;)
     }
 

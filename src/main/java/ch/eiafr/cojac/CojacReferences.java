@@ -202,7 +202,10 @@ public final class CojacReferences {
         private static final String STANDARD_PACKAGES = "com.sun.;java.;javax.;sun.;sunw.;"
                 + "org.xml.sax.;org.w3c.dom.;org.omg.;org.ietf.jgss.;"
                 + "com.apple.;apple.;"
-                //+ "java2d.demos.Fonts.AttributedStr$ScalableImageGraphicAttribute;" // BAPST: trick to avoid a "callback" issue
+                   // BAPST: trick to avoid a "callback" issue. Note that it is
+                   // not need to fix that here, we can use the bypass option:
+                   //  -b java2d.demos.Fonts.AttributedStr$ScalableImageGraphicAttribute
+                + "java2d.demos.Fonts.AttributedStr$ScalableImageGraphicAttribute;" 
                 + "ch.eiafr.cojac.models;"
                 + "ch.eiafr.cojac.interval;" + "jdk.internal;" + "org.slf4j";
 
