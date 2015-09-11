@@ -220,10 +220,11 @@ public class Wrapping implements DoubleUnaryOperator {
         double b=1.0;
         b= b/3.0;
         Wrapping w = new Wrapping(b, (float)b);
-        b=w.applyAsDouble(b);
+        b=w.applyAsDouble(b);  // This is easy!
         ok(keepsEnrichment(b));
         DoubleUnaryOperator o=w;
-        //b=o.applyAsDouble(b);  // this does not work... "Wrapping.applyAsDouble(D)D is abstract"
+        b=o.applyAsDouble(b);  // this much much harder!"
+        ok(keepsEnrichment(b));
     }
 
     

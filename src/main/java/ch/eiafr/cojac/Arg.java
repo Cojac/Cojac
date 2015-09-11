@@ -46,10 +46,10 @@ public enum Arg {
     FLOAT_WRAPPER("FW"),
     DOUBLE_WRAPPER("DW"),
     
-    BIG_DECIMAL_PRECISION("BDP"),
-    INTERVAL("I"),
-    STOCHASTIC("STO"),
-    AUTOMATIC_DERIVATION("AD"),
+    BIG_DECIMAL_PRECISION("BDP"),  // -RbigDecimal nbOfDigits
+    INTERVAL("I"),                 // -Rinterval
+    STOCHASTIC("STO"),             // -RstochasticArithmetic
+    AUTOMATIC_DERIVATION("AD"),    // -Rautodiff
     DISABLE_UNSTABLE_COMPARISONS_CHECK("noUnstableComparisons"),
     STABILITY_THRESHOLD("unstableUnder"),
 
@@ -63,6 +63,7 @@ public enum Arg {
     CASTS("casts"),
     MATHS("maths"),
 
+    // Those below are used internally, but no more appear in the usage.
     IADD("iadd", Opcodes.IADD, INTS),
     IDIV("idiv", Opcodes.IDIV, INTS),
     IINC("iinc", Opcodes.IINC, INTS),
