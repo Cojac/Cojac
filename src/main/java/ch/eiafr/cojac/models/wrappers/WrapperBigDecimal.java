@@ -7,7 +7,6 @@ import java.math.MathContext;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
 
-//TODO: add unstability checking
 public class WrapperBigDecimal extends ACompactWrapper {
     private static MathContext mathContext = null;
 
@@ -23,6 +22,7 @@ public class WrapperBigDecimal extends ACompactWrapper {
     private WrapperBigDecimal(double v) {
         this(new BigDecimal(v, mathContext));
     }
+    
     private WrapperBigDecimal(BigDecimal v) {
         if (mathContext==null)
             mathContext = new MathContext(COJAC_BIGDECIMAL_PRECISION);
@@ -47,19 +47,37 @@ public class WrapperBigDecimal extends ACompactWrapper {
         return new WrapperBigDecimal(op.applyAsDouble(value.doubleValue(), bb.value.doubleValue()));
     }
 
-    public ACojacWrapper dadd(ACojacWrapper b) { return new WrapperBigDecimal(value.add(big(b), mathContext)); }
-    public ACojacWrapper dsub(ACojacWrapper b) { return new WrapperBigDecimal(value.subtract(big(b), mathContext)); }
-    public ACojacWrapper dmul(ACojacWrapper b) { return new WrapperBigDecimal(value.multiply(big(b), mathContext)); }
-    public ACojacWrapper ddiv(ACojacWrapper b) { return new WrapperBigDecimal(value.divide(big(b), mathContext)); }
-    public ACojacWrapper dneg()                { return new WrapperBigDecimal(value.negate(mathContext)); }
-    public ACojacWrapper drem(ACojacWrapper b) {
+    public ACojacWrapper math_sqrt() {
+        return new WrapperBigDecimal(sqrtHeron(value));
+    }
+    
+    @Override public ACojacWrapper dadd(ACojacWrapper b) {
+        return new WrapperBigDecimal(value.add(big(b), mathContext)); 
+    }
+    
+    @Override public ACojacWrapper dsub(ACojacWrapper b) { 
+        return new WrapperBigDecimal(value.subtract(big(b), mathContext));
+    }
+    
+    @Override public ACojacWrapper dmul(ACojacWrapper b) { 
+        return new WrapperBigDecimal(value.multiply(big(b), mathContext)); 
+    }
+    
+    @Override public ACojacWrapper ddiv(ACojacWrapper b) { 
+        return new WrapperBigDecimal(value.divide(big(b), mathContext));
+    }
+    
+    @Override public ACojacWrapper dneg()                {
+        return new WrapperBigDecimal(value.negate(mathContext));
+    }
+    
+    @Override public ACojacWrapper drem(ACojacWrapper b) {
         BigDecimal rem=value.remainder(big(b), mathContext);
         if(this.value.compareTo(BigDecimal.ZERO)<0) rem=rem.negate();
         return new WrapperBigDecimal(rem); 
     }
     
-    @Override
-    public double toDouble() {
+    @Override public double toDouble() {
         return value.doubleValue();
     }
 
@@ -68,19 +86,28 @@ public class WrapperBigDecimal extends ACompactWrapper {
         return new WrapperBigDecimal(a);
     }
 
-    @Override
-    public String asInternalString() {
+    @Override public String asInternalString() {
         return value.toString();
     }
 
-    @Override
-    public String COJAC_MAGIC_wrapper() {
+    @Override public String COJAC_MAGIC_wrapper() {
         return "BigDecimal";
     }
     
     //-------------------------------------------------------------------------
     private BigDecimal big(ACojacWrapper a) {
         return ((WrapperBigDecimal) a).value;
+    }
+
+    private static BigDecimal sqrtHeron(BigDecimal x) {
+        BigDecimal epsilon = new BigDecimal(10.0).pow(-COJAC_BIGDECIMAL_PRECISION, mathContext); // precision
+        BigDecimal root = new BigDecimal(1.0, mathContext);
+        BigDecimal lroot = x.abs(mathContext);
+        while (root.subtract(lroot, mathContext).abs(mathContext).compareTo(epsilon) == 1) {
+            lroot = root.abs(mathContext);
+            root = root.add(x.divide(root, mathContext)).divide(new BigDecimal(2.0, mathContext), mathContext);
+        }
+        return root;
     }
 
 

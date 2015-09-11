@@ -398,7 +398,6 @@ public class BigDecimalDouble extends Number implements
         BigDecimal epsilon = new BigDecimal(10.0).pow(-COJAC_BIGDECIMAL_PRECISION, mathContext); // precision
         BigDecimal root = new BigDecimal(1.0, mathContext);
         BigDecimal lroot = x.abs(mathContext);
-
         while (root.subtract(lroot, mathContext).abs(mathContext).compareTo(epsilon) == 1) {
             lroot = root.abs(mathContext);
             root = root.add(x.divide(root, mathContext)).divide(new BigDecimal(2.0, mathContext), mathContext);

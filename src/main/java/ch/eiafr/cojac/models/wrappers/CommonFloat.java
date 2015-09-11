@@ -36,7 +36,7 @@ public class CommonFloat extends Number implements Comparable<CommonFloat> {
     //----------------- Necessary constructors  -------------------------------
     //-------------------------------------------------------------------------
 
-    private CommonFloat(float v) {
+    public CommonFloat(float v) {
         val = newInstance(null).fromDouble(v, true);
     }
     
