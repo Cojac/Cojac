@@ -64,6 +64,8 @@ public class WrapperBigDecimal extends ACompactWrapper {
     }
     
     @Override public ACojacWrapper ddiv(ACojacWrapper b) { 
+        if (big(b).equals(BigDecimal.ZERO))
+            return new WrapperBigDecimal(BigDecimal.ZERO); // maybe reconsider...
         return new WrapperBigDecimal(value.divide(big(b), mathContext));
     }
     
