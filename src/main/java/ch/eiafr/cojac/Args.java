@@ -41,7 +41,7 @@ public final class Args {
 
     private static String USAGE =
              "java -javaagent:cojac.jar=\"[OPTIONS]\" YourApp [appArgs]\n"
-           + "(version 1.4 - 2015 Aug 16)";
+           + "(version 1.4 - 2015 Sep 22)";
 
     public Args() {
         super();
@@ -167,7 +167,9 @@ public final class Args {
     }
 
     public void printHelpAndExit() {
-        new HelpFormatter().printHelp(USAGE, options);
+        HelpFormatter f=new HelpFormatter();
+        f.setWidth(80);
+        f.printHelp(USAGE, options);
         System.exit(0);
     }
 

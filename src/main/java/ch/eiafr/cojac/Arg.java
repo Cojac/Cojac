@@ -42,7 +42,7 @@ public enum Arg {
     JMX_PORT("jmxport"),
     JMX_NAME("jmxname"),
     
-    REPLACE_FLOATS("R"),
+    REPLACE_FLOATS("R"), // used internally, but no more appears in the usage
     FLOAT_WRAPPER("FW"),
     DOUBLE_WRAPPER("DW"),
     
@@ -56,7 +56,7 @@ public enum Arg {
     ALL("a"),
     NONE("n"),
     OPCODES("opcodes"),
-    INTS("ints"),  // warning: its ordinal value is used (opcodes must be below)
+    INTS("ints"),  // warning: its ordinal value is used (individual opcodes must be below)
     FLOATS("floats"),
     DOUBLES("doubles"),
     LONGS("longs"),
@@ -105,6 +105,14 @@ public enum Arg {
     private final String name;
     private final Arg parent;
 
+    static String allOpcodes="";
+
+    static {
+        for (Arg arg : Arg.values())
+            if (arg.isOperator()) allOpcodes+=arg.name+",";
+        // options.addOption(arg.shortOpt(), false, "Instrument the " + arg.shortOpt() + " operation");
+        allOpcodes=allOpcodes.substring(0, allOpcodes.length()-1);
+    }
     Arg(String name) {
         this.name = name;
         opCode = -1;
@@ -165,16 +173,16 @@ public enum Arg {
         options.addOption(Arg.HELP.shortOpt(),
                 "help", false, "Print the help of the program");
         options.addOption(Arg.VERBOSE.shortOpt(),
-                "verbose", false, "display some internal traces");
+                "verbose", false, "Display some internal traces");
         options.addOption(Arg.PRINT.shortOpt(),
-                "console", false, "Signal overflows with console messages to stderr (default signaling policy)");
+                "console", false, "Signal problems with console messages to stderr (default signaling policy)");
         options.addOption(Arg.EXCEPTION.shortOpt(),
-                "exception", false, "Signal overflows by throwing an ArithmeticException");
+                "exception", false, "Signal problems by throwing an ArithmeticException");
         options.addOption(OptionBuilder.
                 withLongOpt("callback").
                 withArgName("meth").
                 hasArg().
-                withDescription("Signal overflows by calling " +
+                withDescription("Signal problems by calling " +
                     "a particular user-defined method whose definition " +
                     "matches the following:\n public static void f(String msg) \n" +
                     "Give the fully qualified method identifier, in the form: \n" +
@@ -184,11 +192,11 @@ public enum Arg {
                 withLongOpt("logfile").
                 withArgName("path").
                 hasOptionalArg().
-                withDescription("Signal overflows by writing to a log file. " +
+                withDescription("Signal problems by writing to a log file. " +
                     "Default filename is: " + Args.DEFAULT_LOG_FILE_NAME + '.').
                 create(Arg.LOG_FILE.shortOpt()));
         options.addOption(Arg.DETAILED_LOG.shortOpt(),
-                "detailed", false, "logs the full stack trace (combined with -c or -l)");
+                "detailed", false, "Log the full stack trace (combined with -c or -l)");
         options.addOption(Arg.BYPASS.shortOpt(),
                 "bypass", true, "Bypass classes starting with one of these prefixes (semi-colon separated list). " +
                 "Example: -b foo;bar.util skips classes with name foo* or bar.util*");
@@ -216,25 +224,25 @@ public enum Arg {
             withDescription("Set the name of the remote MBean (Default is COJAC).").
             create(JMX_NAME.shortOpt()));
         
-        options.addOption(Arg.REPLACE_FLOATS.shortOpt(),
-            "replacefloats", false, "Replaces floats by CojacFloat objects ");
+//        options.addOption(Arg.REPLACE_FLOATS.shortOpt(),
+//            "replacefloats", false, "Replace floats by Cojac-wrapper objects ");
 		options.addOption(Arg.FLOAT_WRAPPER.shortOpt(),
-            "floatwrapper", true, "Select the FloatWrapper wanted (Must be in COJAC or in classpath)" +
-            "Example: -FW cojac.BigDecimalFloat use the class as floats replacement object");
+            "fwrapper", true, "Select the FloatWrapper wanted (Must be in COJAC or in classpath)" +
+            "Example: -FW cojac.BigDecimalFloat will use ch.eiafr.cojac.models.wrappers.BigDecimalFloat");
 		options.addOption(Arg.DOUBLE_WRAPPER.shortOpt(),
-            "doublewrapper", true, "Select the DoubleWrapper wanted (Must be in COJAC or in classpath)" +
-            "Example: -DW cojac.BigDecimalDouble use the class as doubles replacement object");
+            "dwrapper", true, "Select the DoubleWrapper wanted (Must be in COJAC or in classpath)" +
+            "Example: -DW cojac.BigDecimalDouble will use ch.eiafr.cojac.models.wrappers.BigDecimalDouble");
 		options.addOption(Arg.BIG_DECIMAL_PRECISION.shortOpt(),
-            "BDPrecision", true, "Select the BigDecimal wrapper precision (number of decimal)" +
-            "Example: -BDP 100 set 100 decimals for BigDecimal wrapper");
+            "BDPrecision", true, "Use BigDecimal wrapping with a certain precision (number of digits)" +
+            "Example: -BDP 100 will replace double/floats with 100-significant-digit BigDecimals");
         options.addOption(Arg.INTERVAL.shortOpt(),
-                "interval",false,"Use Interval computation float/double wrapper");
+                "interval",false,"Use interval computation float/double wrapping");
         options.addOption(Arg.STOCHASTIC.shortOpt(),
-                "stochastic",false,"Use discrete stochastic arithmetic float/double wrapper");
+                "stochastic",false,"Use discrete stochastic arithmetic float/double wrapping");
         options.addOption(Arg.AUTOMATIC_DERIVATION.shortOpt(),
-                "autodiff",false,"procede automatic differentiation");
+                "autodiff",false,"Use automatic differentiation float/double wrapping");
         options.addOption(Arg.DISABLE_UNSTABLE_COMPARISONS_CHECK.shortOpt(),
-                false,"disable unstability checks in comparisons, for the Interval or Stochastic wrappers");
+                false,"Disable unstability checks in comparisons, for the Interval or Stochastic wrappers");
         options.addOption(Arg.STABILITY_THRESHOLD.shortOpt(),
                 true,"Relative precision considered unstable, for the Interval or Stochastic wrappers (eg 0.0001)");
 
@@ -242,13 +250,8 @@ public enum Arg {
                 "all", false, "Instrument every operation (int, long, cast, floats, doubles)");
         options.addOption(Arg.NONE.shortOpt(),
                 "none", false, "Don't instrument any instruction");
-        String allOpcodes="";
-        for (Arg arg : Arg.values())
-            if (arg.isOperator()) allOpcodes+=arg.name+",";
-              // options.addOption(arg.shortOpt(), false, "Instrument the " + arg.shortOpt() + " operation");
-        allOpcodes=allOpcodes.substring(0, allOpcodes.length()-1);
         options.addOption(Arg.OPCODES.shortOpt(),
-                true, "instruments those opcodes; comma separated list, the longest being "+allOpcodes);
+                true, "Instrument those opcodes; comma separated list, the longest being: "+allOpcodes);
         options.addOption(Arg.MATHS.shortOpt(),
             false, "Detect problems in (Strict)Math.XXX() methods");
         options.addOption(Arg.INTS.shortOpt(),
