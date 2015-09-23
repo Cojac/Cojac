@@ -26,16 +26,16 @@ public enum Arg {
     HELP("h"),
     VERBOSE("v"),
 
-    PRINT("c"),
-    EXCEPTION("e"),
-    CALL_BACK("k"),
-    LOG_FILE("l"),
-    DETAILED_LOG("d"),
+    PRINT("Sc"),
+    EXCEPTION("Se"),
+    CALL_BACK("Sk"),
+    LOG_FILE("Sl"),
+    DETAILED_LOG("Sd"),
     
-    BYPASS("b"),
-    FILTER("f"),
-    RUNTIME_STATS("s"),
-    INSTRUMENTATION_STATS("t"),
+    BYPASS("Xb"),
+    FILTER("Xf"),
+    RUNTIME_STATS("Xs"),
+    INSTRUMENTATION_STATS("Xt"),
     
     JMX_ENABLE("jmxenable"),
     JMX_HOST("jmxhost"),
@@ -43,25 +43,25 @@ public enum Arg {
     JMX_NAME("jmxname"),
     
     REPLACE_FLOATS("R"), // used internally, but no more appears in the usage
-    FLOAT_WRAPPER("FW"),
-    DOUBLE_WRAPPER("DW"),
+    FLOAT_WRAPPER("Wf"),
+    DOUBLE_WRAPPER("Wd"),
     
-    BIG_DECIMAL_PRECISION("BDP"),  // -RbigDecimal nbOfDigits
-    INTERVAL("I"),                 // -Rinterval
-    STOCHASTIC("STO"),             // -RstochasticArithmetic
-    AUTOMATIC_DERIVATION("AD"),    // -Rautodiff
-    DISABLE_UNSTABLE_COMPARISONS_CHECK("noUnstableComparisons"),
-    STABILITY_THRESHOLD("unstableUnder"),
+    BIG_DECIMAL_PRECISION("Rb"),  // -RbigDecimal nbOfDigits
+    INTERVAL("Ri"),                 // -Rinterval
+    STOCHASTIC("Rs"),             // -RstochasticArithmetic
+    AUTOMATIC_DERIVATION("Ra"),    // -Rautodiff
+    DISABLE_UNSTABLE_COMPARISONS_CHECK("R_noUnstableComparisons"),
+    STABILITY_THRESHOLD("R_unstableAt"),
 
-    ALL("a"),
-    NONE("n"),
-    OPCODES("opcodes"),
-    INTS("ints"),  // warning: its ordinal value is used (individual opcodes must be below)
-    FLOATS("floats"),
-    DOUBLES("doubles"),
-    LONGS("longs"),
-    CASTS("casts"),
-    MATHS("maths"),
+    ALL("Ca"),
+    NONE("Cn"),
+    OPCODES("Copcodes"),
+    INTS("Cints"),  // warning: its ordinal value is used (individual opcodes must be below)
+    FLOATS("Cfloats"),
+    DOUBLES("Cdoubles"),
+    LONGS("Clongs"),
+    CASTS("Ccasts"),
+    MATHS("Cmath"),
 
     // Those below are used internally, but no more appear in the usage.
     IADD("iadd", Opcodes.IADD, INTS),
@@ -171,7 +171,7 @@ public enum Arg {
         Options options = new Options();
 
         options.addOption(Arg.HELP.shortOpt(),
-                "help", false, "Print the help of the program");
+                "help", false, "Print the help of the program and exit");
         options.addOption(Arg.VERBOSE.shortOpt(),
                 "verbose", false, "Display some internal traces");
         options.addOption(Arg.PRINT.shortOpt(),
@@ -183,23 +183,27 @@ public enum Arg {
                 withArgName("meth").
                 hasArg().
                 withDescription("Signal problems by calling " +
-                    "a particular user-defined method whose definition " +
-                    "matches the following:\n public static void f(String msg) \n" +
-                    "Give the fully qualified method identifier, in the form: \n" +
-                    "pkgA/myPkg/myClass/myMethod").
+                    "a user-supplied method matching this signature:" +
+                    "\n...public static void f(String msg) \n" +
+                    "(Give a fully qualified identifier in the form: \n" +
+                    "pkgA/myPkg/myClass/myMethod)").
                 create(Arg.CALL_BACK.shortOpt()));
         options.addOption(OptionBuilder.
                 withLongOpt("logfile").
                 withArgName("path").
                 hasOptionalArg().
-                withDescription("Signal problems by writing to a log file. " +
+                withDescription("Signal problems by writing to a log file.\n" +
                     "Default filename is: " + Args.DEFAULT_LOG_FILE_NAME + '.').
                 create(Arg.LOG_FILE.shortOpt()));
         options.addOption(Arg.DETAILED_LOG.shortOpt(),
-                "detailed", false, "Log the full stack trace (combined with -c or -l)");
-        options.addOption(Arg.BYPASS.shortOpt(),
-                "bypass", true, "Bypass classes starting with one of these prefixes (semi-colon separated list). " +
-                "Example: -b foo;bar.util skips classes with name foo* or bar.util*");
+                "detailed", false, "Log the full stack trace (combined with -Cc or -Cl)");
+        options.addOption(OptionBuilder.
+                withLongOpt("bypass").
+                withArgName("prefixes").
+                hasOptionalArg().
+                withDescription("Bypass classes starting with one of these prefixes (semi-colon separated list). " +
+                        "\nExample: -Xb foo;bar.util\n will skip classes with name foo* or bar.util*").
+                create(Arg.BYPASS.shortOpt()));
         options.addOption(Arg.FILTER.shortOpt(),
                 "filter", false, "Report each problem only once per faulty line");
         options.addOption(Arg.RUNTIME_STATS.shortOpt(),
@@ -207,63 +211,79 @@ public enum Arg {
         options.addOption(Arg.INSTRUMENTATION_STATS.shortOpt(),
                 "stats", false, "Print instrumentation statistics");
         
-        options.addOption(Arg.JMX_ENABLE.shortOpt(), false, "Enable JMX feature.");
+        options.addOption(Arg.JMX_ENABLE.shortOpt(), false, "Enable JMX feature");
         options.addOption(OptionBuilder.
             withArgName("host").
             hasArg().
-            withDescription("Set the host for remote JMX connection (Default is localhost).").
+            withDescription("Set remote JMX connection host (default: localhost)").
             create(JMX_HOST.shortOpt()));
         options.addOption(OptionBuilder.
             withArgName("port").
             hasArg().
-            withDescription("Set the port for remote JMX connection (Default is 5017).").
+            withDescription("Set remote JMX connection port (default: 5017)").
             create(JMX_PORT.shortOpt()));
         options.addOption(OptionBuilder.
             withArgName("MBean-id").
             hasArg().
-            withDescription("Set the name of the remote MBean (Default is COJAC).").
+            withDescription("Set remote MBean name (default: COJAC)").
             create(JMX_NAME.shortOpt()));
         
 //        options.addOption(Arg.REPLACE_FLOATS.shortOpt(),
 //            "replacefloats", false, "Replace floats by Cojac-wrapper objects ");
-		options.addOption(Arg.FLOAT_WRAPPER.shortOpt(),
-            "fwrapper", true, "Select the FloatWrapper wanted (Must be in COJAC or in classpath)" +
-            "Example: -FW cojac.BigDecimalFloat will use ch.eiafr.cojac.models.wrappers.BigDecimalFloat");
-		options.addOption(Arg.DOUBLE_WRAPPER.shortOpt(),
-            "dwrapper", true, "Select the DoubleWrapper wanted (Must be in COJAC or in classpath)" +
-            "Example: -DW cojac.BigDecimalDouble will use ch.eiafr.cojac.models.wrappers.BigDecimalDouble");
-		options.addOption(Arg.BIG_DECIMAL_PRECISION.shortOpt(),
-            "BDPrecision", true, "Use BigDecimal wrapping with a certain precision (number of digits)" +
-            "Example: -BDP 100 will replace double/floats with 100-significant-digit BigDecimals");
+        
+        options.addOption(OptionBuilder.
+                withArgName("class").
+                hasArg().
+                withDescription("Select the double wrapper (better use -R?).\n" +
+                        "Example: -Wd cojac.BigDecimalDouble will use ch.eiafr.cojac.models.wrappers.BigDecimalDouble").
+                create(DOUBLE_WRAPPER.shortOpt()));
+        options.addOption(OptionBuilder.
+                withArgName("class").
+                hasArg().
+                withDescription("Select the float wrapper. See -Wd.").
+                create(FLOAT_WRAPPER.shortOpt()));
+		
+        options.addOption(OptionBuilder.
+                withLongOpt("bigdecimal").
+                withArgName("digits").
+                hasArg().
+                withDescription("Use BigDecimal wrapping with a certain precision (number of digits).\n" +
+                        "Example: -Rb 100 will wrap with 100-significant-digit BigDecimals").
+                create(BIG_DECIMAL_PRECISION.shortOpt()));
+		
         options.addOption(Arg.INTERVAL.shortOpt(),
-                "interval",false,"Use interval computation float/double wrapping");
+                "interval",false,"Use interval computation wrapping");
         options.addOption(Arg.STOCHASTIC.shortOpt(),
-                "stochastic",false,"Use discrete stochastic arithmetic float/double wrapping");
+                "stochastic",false,"Use discrete stochastic arithmetic wrapping");
         options.addOption(Arg.AUTOMATIC_DERIVATION.shortOpt(),
-                "autodiff",false,"Use automatic differentiation float/double wrapping");
+                "autodiff",false,"Use automatic differentiation wrapping");
+        
         options.addOption(Arg.DISABLE_UNSTABLE_COMPARISONS_CHECK.shortOpt(),
                 false,"Disable unstability checks in comparisons, for the Interval or Stochastic wrappers");
-        options.addOption(Arg.STABILITY_THRESHOLD.shortOpt(),
-                true,"Relative precision considered unstable, for the Interval or Stochastic wrappers (eg 0.0001)");
+        options.addOption(OptionBuilder.
+                withArgName("epsilon").
+                hasArg().
+                withDescription("Relative precision considered unstable, for Interval/Stochastic wrappers (default 0.00001)").
+                create(STABILITY_THRESHOLD.shortOpt()));
 
         options.addOption(Arg.ALL.shortOpt(),
-                "all", false, "Instrument every operation (int, long, cast, floats, doubles)");
+                "all", false, "Sniff everywhere (this is the default behavior)");
         options.addOption(Arg.NONE.shortOpt(),
-                "none", false, "Don't instrument any instruction");
+                "none", false, "Don't sniff at all");
         options.addOption(Arg.OPCODES.shortOpt(),
-                true, "Instrument those opcodes; comma separated list, the longest being: "+allOpcodes);
+                true, "Sniff in those (comma separated) opcodes; eg: "+allOpcodes);
         options.addOption(Arg.MATHS.shortOpt(),
-            false, "Detect problems in (Strict)Math.XXX() methods");
+            false, "Sniff in (Strict)Math.xyz() methods");
         options.addOption(Arg.INTS.shortOpt(),
-            false, "Activate all the ints opcodes");
+            false, "Sniff in ints opcodes");
         options.addOption(Arg.LONGS.shortOpt(),
-            false, "Activate all the longs opcodes");
+            false, "Sniff in longs opcodes");
         options.addOption(Arg.CASTS.shortOpt(),
-            false, "Activate all the casts opcodes");
+            false, "Sniff in casts opcodes");
         options.addOption(Arg.DOUBLES.shortOpt(),
-            false, "Activate all the doubles opcodes");
+            false, "Sniff in doubles opcodes");
         options.addOption(Arg.FLOATS.shortOpt(),
-            false, "Activate all the floats opcodes");
+            false, "Sniff in floats opcodes");
 
         return options;
     }

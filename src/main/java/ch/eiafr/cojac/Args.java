@@ -42,6 +42,16 @@ public final class Args {
     private static String USAGE =
              "java -javaagent:cojac.jar=\"[OPTIONS]\" YourApp [appArgs]\n"
            + "(version 1.4 - 2015 Sep 22)";
+    private static String HEADER =
+            "\nTwo nice tools to enrich Java arithmetic capabilities, on-the-fly:"
+            +"\n - Numeric Problem Sniffer: detects and signals arithmetic poisons like "
+            +"integer overflows, smearing and catastrophic cancellation, NaN or infinite results."
+            +"\n - Wrapper for float/double: wraps every double/float in richer objects. Current "
+            +"models include BigDecimal (you choose the precision), "
+            +"interval computation, discrete stochastic arithmetic, and even automatic differentiation."
+            +"\n----------------- OPTIONS -----------------\n";
+    private static String FOOTER =
+            "\n------> https://github.com/frederic-bapst/Cojac <------";
 
     public Args() {
         super();
@@ -125,6 +135,10 @@ public final class Args {
             }
         }
         values.get(Arg.STABILITY_THRESHOLD).setValue(DEFAULT_STABILITY_THRESHOLD);
+        
+        if (isSpecified(Arg.FLOAT_WRAPPER)) {
+            specify(Arg.REPLACE_FLOATS);
+        }
     }
 
     private void disableAll() {
@@ -169,7 +183,7 @@ public final class Args {
     public void printHelpAndExit() {
         HelpFormatter f=new HelpFormatter();
         f.setWidth(80);
-        f.printHelp(USAGE, options);
+        f.printHelp(USAGE, HEADER, options, FOOTER);
         System.exit(0);
     }
 
