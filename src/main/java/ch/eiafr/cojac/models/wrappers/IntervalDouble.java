@@ -409,12 +409,26 @@ public class IntervalDouble extends Number implements
     }
 
     private double relativeError() {
-        double threshold=1E-100; // arbitrarily
-        double denominator = Math.min(Math.abs(this.interval.inf), Math.abs(this.interval.sup));
-        if (denominator < threshold) {
-            denominator = Math.max(Math.abs(this.interval.inf), Math.abs(this.interval.sup));
-            if (denominator < threshold) denominator=1.0;  // arbitrarily too
+        return relativeError(interval.inf, interval.sup);
+    }
+    
+    
+    // We don't see a clean way to define the relative error when the value is 
+    // (very close to) zero, which is yet quite common. Here we use a very
+    // dirty trick to handle that. 
+    protected static double relativeError(double inf, double sup) {
+        boolean containsZero = (inf<=0 && sup >= 0);
+        double numerator=sup-inf;
+        inf=Math.abs(inf);
+        sup=Math.abs(sup);
+        double denominator = Math.min(inf, sup);
+        if(containsZero && Math.max(inf, sup) < COJAC_STABILITY_THRESHOLD)
+            return numerator;  // here we "bet" that the true value is zero...
+        if (denominator * COJAC_STABILITY_THRESHOLD < Double.MIN_NORMAL) {
+            denominator = Math.max(inf,  sup);
+            if (denominator * COJAC_STABILITY_THRESHOLD < Double.MIN_NORMAL)
+                denominator = 1.0;  // severe decision...
         }
-        return DoubleInterval.width(this.interval) / denominator;
+        return numerator / denominator;
     }
 }

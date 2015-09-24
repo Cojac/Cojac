@@ -18,7 +18,6 @@ public class StochasticFloat extends Number implements
     //private static float threshold = 0.1F;
     //private static boolean checkComparisons = false; 
 
-    private final static double Tb = 4.303; // see chenaux 1988
     private final static Random random = new Random();
     
     protected final float value;
@@ -258,8 +257,8 @@ public class StochasticFloat extends Number implements
         return n.toString();
     }
 
-    public static StochasticFloat COJAC_MAGIC_FLOAT_relativeError(StochasticFloat n) {
-        return new StochasticFloat(n.relativeError());
+    public static StochasticDouble COJAC_MAGIC_FLOAT_relativeError(StochasticFloat n) {
+        return new StochasticDouble(n.relativeError());
     }
 
     //-------------------------------------------------------------------------
@@ -311,23 +310,30 @@ public class StochasticFloat extends Number implements
         return false;
     }
 
-    private boolean overlaps(StochasticFloat o) {
-        float min=value, max=value, omin=o.value, omax=o.value;
-        for(float f:stochasticValue) {
+    private float min() {
+        float min=value;
+        for(float f:stochasticValue)
             if(f<min) min=f;
+        return min;
+    }
+    
+    private float max() {
+        float max=value;
+        for(float f:stochasticValue)
             if(f>max) max=f;
-        }
-        for(float f:o.stochasticValue) {
-            if(f<omin) omin=f;
-            if(f>omax) omax=f;
-        }
+        return max;
+    }
+
+    private boolean overlaps(StochasticFloat o) {
+        float min=min(), max=max(), omin=o.min(), omax=o.max();
         return Math.max(min, omin) <= Math.min(max, omax);
     }
 
-
-    // compute the relative error as the value divide by the mean of all the
-    // distance from value to the stochasticValue's values
-    private float relativeError() {
+    private double relativeError() {
+        return IntervalDouble.relativeError(min(), max());
+    }
+    
+    private double relativeErrorAsInLitterature() {
         /*
          * if (this.isNan) { return Float.NaN; } float numerator = 0.0F; float
          * tmp; for (int i = 0; i < nbrParallelNumber; i++) { tmp = value -
@@ -335,6 +341,7 @@ public class StochasticFloat extends Number implements
          * numerator = numerator / (float) nbrParallelNumber; return numerator /
          * value;
          */
+        final double Tb = 4.303; // see chenaux 1988
 
         float mean = 0.0F;
         for (int i = 0; i < nbrParallelNumber; i++) {

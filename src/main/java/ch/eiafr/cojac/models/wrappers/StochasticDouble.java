@@ -20,8 +20,6 @@ public class StochasticDouble extends Number implements
 
     private final static Random random = new Random();
     
-    private final static double Tb = 4.303; // see chenaux 1988
-
     protected final double value;
     protected final double[] stochasticValue;
     protected final boolean isUnStable;
@@ -443,7 +441,12 @@ public class StochasticDouble extends Number implements
 
 
     private double relativeError() {
-        double mean = 0.0F;
+        return IntervalDouble.relativeError(min(), max());
+    }
+    
+    private double relativeErrorAsInLitterature() {
+        final double Tb = 4.303; // see chenaux 1988
+        double mean = 0.0;
         for (int i = 0; i < nbrParallelNumber; i++) {
             mean += this.stochasticValue[i];
         }
