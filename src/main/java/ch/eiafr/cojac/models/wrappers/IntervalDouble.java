@@ -381,16 +381,6 @@ public class IntervalDouble extends Number implements
 
     //TODO consider the number of significant digits instead of the relative error
     
-    // used by reflection (from cmd line option)
-    public static void setThreshold(double value) {
-        COJAC_STABILITY_THRESHOLD = value;
-    }
-
-    // used by reflection (from cmd line option)
-    public static void setCheckComp(boolean value) {
-        COJAC_CHECK_UNSTABLE_COMPARISONS = value;
-    }
-
     public String asInternalString() {
         return String.format("%s:%s", value, interval);
     }
@@ -398,14 +388,14 @@ public class IntervalDouble extends Number implements
     private boolean checkedStability(boolean wasUnstable) {
         if (wasUnstable) return wasUnstable;
         if (COJAC_STABILITY_THRESHOLD < relativeError()) {
-            Reactions.react("BigDecimal wrapper detects unstability... "+asInternalString()+" ");
+            Reactions.react("Interval wrapper detects unstability... "+asInternalString()+" ");
             return true;
         }
         return false;
     }
 
     private void reportBadComparison() {
-        Reactions.react("BigDecimal wrapper detects dangerous comparison (overlap)... ");
+        Reactions.react("Interval wrapper detects dangerous comparison (overlap)... ");
     }
 
     private double relativeError() {
@@ -427,7 +417,7 @@ public class IntervalDouble extends Number implements
         if (denominator * COJAC_STABILITY_THRESHOLD < Double.MIN_NORMAL) {
             denominator = Math.max(inf,  sup);
             if (denominator * COJAC_STABILITY_THRESHOLD < Double.MIN_NORMAL)
-                denominator = 1.0;  // severe decision...
+                return numerator;  // here we "bet" that the true value is zero...
         }
         return numerator / denominator;
     }

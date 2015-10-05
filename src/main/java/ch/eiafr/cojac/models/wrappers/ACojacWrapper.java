@@ -63,8 +63,16 @@ public abstract class ACojacWrapper implements Comparable<ACojacWrapper>{
     public abstract ACojacWrapper math_toRadians();
     public abstract ACojacWrapper math_toDegrees();
 
-    public abstract ACojacWrapper math_min(ACojacWrapper b);
-    public abstract ACojacWrapper math_max(ACojacWrapper b);
+    public ACojacWrapper math_min(ACojacWrapper b) {
+        if (this.compareTo(b)<0) return this;
+        return b;
+    }
+    
+    public ACojacWrapper math_max(ACojacWrapper b) {
+        if (this.compareTo(b)>0) return this;
+        return b;
+    }
+    
     public abstract ACojacWrapper math_pow(ACojacWrapper b);
     
     public boolean isNaN() {

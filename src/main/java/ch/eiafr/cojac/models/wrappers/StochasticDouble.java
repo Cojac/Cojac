@@ -15,8 +15,6 @@ public class StochasticDouble extends Number implements
     //-------------------------------------------------------------------------
 
     private static final int nbrParallelNumber = 3;
-//    private static double threshold = 0.1;
-//    private static boolean checkComparisons = false; 
 
     private final static Random random = new Random();
     
@@ -407,16 +405,6 @@ public class StochasticDouble extends Number implements
             return value;
         }
     }
-
-//    // used by reflection (from cmd line option)
-//    public static void setThreshold(double value) {
-//        threshold = value;
-//    }
-//
-//    // used by reflection (from cmd line option)
-//    public static void setNbrParallelNumber(int value) {
-//        nbrParallelNumber = value;
-//    }
 
     public String asInternalString() {
         String res = "" + value + " : [%s]";

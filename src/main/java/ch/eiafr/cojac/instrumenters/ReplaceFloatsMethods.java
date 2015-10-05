@@ -190,6 +190,9 @@ public class ReplaceFloatsMethods {
     public boolean instrumentCall(MethodVisitor mv, int opcode, String owner, String name, String desc, Object stackTop){
         MethodSignature ms = new MethodSignature(owner, name, desc);
         
+        // When we upgrade to the "NewGeneration" wrappers, maybe define only
+        // one prefix...
+
 		if(name.startsWith(COJAC_MAGIC_CALL_DOUBLE_PREFIX)) {
 			cojacMagicCall(mv, name, desc, CDW_N);
 			return true;
@@ -229,6 +232,11 @@ public class ReplaceFloatsMethods {
 	
 	private void cojacMagicCall(MethodVisitor mv, String name, String desc, String wrapper){
 		String newDesc = replaceFloatMethodDescription(desc);
+		// when we upgrade to the "NewGeneration" wrappers, maybe handle the
+		// two "general" magic methods somewhat differently:
+		// if(name.equals("COJAC_MAGIC_wrapper") || name.equals("COJAC_MAGIC_toString") 
+		//   wrapper="ch.eiafr.cojac.models.wrapper.CommonDouble"
+		//
 		InvokableMethod im = new InvokableMethod(wrapper, name, newDesc);
 		im.invokeStatic(mv);
 	}

@@ -7,6 +7,7 @@ import java.math.MathContext;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
 
+//TODO: decide whether we want a field enum {NORMAL, NAN, POS_INF, NEG_INF}
 public class WrapperBigDecimal extends ACompactWrapper {
     private static MathContext mathContext = null;
 
@@ -97,7 +98,7 @@ public class WrapperBigDecimal extends ACompactWrapper {
     }
     
     //-------------------------------------------------------------------------
-    private BigDecimal big(ACojacWrapper a) {
+    private static BigDecimal big(ACojacWrapper a) {
         return ((WrapperBigDecimal) a).value;
     }
 
