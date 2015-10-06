@@ -48,10 +48,6 @@ public class WrapperBigDecimal extends ACompactWrapper {
         return new WrapperBigDecimal(op.applyAsDouble(value.doubleValue(), bb.value.doubleValue()));
     }
 
-    public ACojacWrapper math_sqrt() {
-        return new WrapperBigDecimal(sqrtHeron(value));
-    }
-    
     @Override public ACojacWrapper dadd(ACojacWrapper b) {
         return new WrapperBigDecimal(value.add(big(b), mathContext)); 
     }
@@ -80,6 +76,14 @@ public class WrapperBigDecimal extends ACompactWrapper {
         return new WrapperBigDecimal(rem); 
     }
     
+    public ACojacWrapper math_sqrt() {
+        return new WrapperBigDecimal(sqrtHeron(value));
+    }
+
+    // TODO : make better functions for all math function (sin/cos/log/...) !
+    //        A library has been tried (24.08.15), but it was not really convincing; 
+    //        maybe look deeper inside (http://arxiv.org/src/0908.3030v2/anc)...
+    
     @Override public double toDouble() {
         return value.doubleValue();
     }
@@ -93,7 +97,7 @@ public class WrapperBigDecimal extends ACompactWrapper {
         return value.toString();
     }
 
-    @Override public String COJAC_MAGIC_wrapper() {
+    @Override public String wrapperName() {
         return "BigDecimal";
     }
     

@@ -44,7 +44,7 @@ public class WrapperInterval extends ACojacWrapper {
         return String.format("%s:%s", value, interval);
     }
 
-    @Override public String COJAC_MAGIC_wrapper() {
+    @Override public String wrapperName() {
         return "Interval";
     }
 

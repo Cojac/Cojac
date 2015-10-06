@@ -177,7 +177,7 @@ public class WrapperDerivation extends ACompactWrapper {
         return value+" (deriv="+deriv+")";
     }
 
-    @Override public String COJAC_MAGIC_wrapper() {
+    @Override public String wrapperName() {
         return "Derivation";
     }
     

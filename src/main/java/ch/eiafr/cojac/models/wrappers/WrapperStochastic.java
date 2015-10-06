@@ -80,7 +80,7 @@ public class WrapperStochastic extends ACompactWrapper {
         return String.format(res, tmp);
     }
 
-    @Override public String COJAC_MAGIC_wrapper() {
+    @Override public String wrapperName() {
         return "Stochastic";
     }
     
@@ -122,7 +122,7 @@ public class WrapperStochastic extends ACompactWrapper {
     }
     
     /*
-    private double relativeErrorAsInLitterature() {
+    private double relativeErrorAsInLiterature() {
         final double Tb = 4.303; // see chenaux 1988
         double mean = 0.0;
         for (int i = 0; i < nbrParallelNumber; i++)
@@ -166,15 +166,10 @@ public class WrapperStochastic extends ACompactWrapper {
 
     private static double rndRound(double value) {
         switch (random.nextInt(3)) {
-        case 0:
-            // round to negative infinity
-            return value - Math.ulp(value);
-        case 1:
-            // round to positive infinity
-            return value + Math.ulp(value);
-        default:
-            // default rounding mode in Java
-            return value;
+        case 0: return value - Math.ulp(value); // round to negative infinity
+        case 1: return value + Math.ulp(value); // round to positive infinity
+        default:return value;                   // default rounding mode in Java
+            
         }
     }
 

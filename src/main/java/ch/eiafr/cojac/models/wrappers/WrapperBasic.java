@@ -42,7 +42,7 @@ public class WrapperBasic extends ACompactWrapper {
         return Double.toString(value);
     }
 
-    @Override public String COJAC_MAGIC_wrapper() {
+    @Override public String wrapperName() {
         return "Basic";
     }
     

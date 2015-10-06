@@ -195,12 +195,14 @@ public class CommonFloat extends Number implements Comparable<CommonFloat> {
         return this.val.toDouble();
 	}
 
-    public static String COJAC_MAGIC_FLOAT_wrapper() {
-        return newInstance(null).COJAC_MAGIC_wrapper();
-    }
+	// TODO: remove once we switch to the NG wrapper
+	public static String COJAC_MAGIC_FLOAT_wrapper() {
+        return newInstance(null).wrapperName();
+    } 
 
+    // TODO: remove once we switch to the NG wrapper
     public static String COJAC_MAGIC_FLOAT_toStr(CommonFloat n) {
-        return n.val.COJAC_MAGIC_toStr();
+        return n.val.asInternalString();
     }
     //-------------------------------------------------------------------------
     //--------------------- Auxiliary methods ---------------------------------

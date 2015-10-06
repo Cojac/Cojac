@@ -44,11 +44,19 @@ public class FloatReplacerClasses {
 	
 	// NOT READY YET...
 	
-	public static Class<?>  COJAC_WRAPPER_NG_CLASS=WrapperBigDecimal.class;
+	public static Class<?> COJAC_WRAPPER_NG_CLASS=WrapperBigDecimal.class;
 
-	public static void setDoubleWrapper(String className){
+	public static void setWrapper(String className) {
+	    try {
+	        COJAC_WRAPPER_NG_CLASS = Class.forName(className);
+	    } catch (ClassNotFoundException ex) {
+	        Logger.getLogger(FloatReplacerClasses.class.getName()).log(Level.SEVERE, null, ex);
+	    }
+	}
+	
+	public static void setDoubleWrapper(String className) {
 		try {
-			// Class can be checked with reflexion (ensure that all needed methods are awailable and that the class implements Comparable and extends Numbers)
+			// Class can be checked with reflexion (ensure that all needed methods are available and that the class implements Comparable and extends Numbers)
 			COJAC_DOUBLE_WRAPPER_CLASS = Class.forName(className);
 			COJAC_DOUBLE_WRAPPER_TYPE = Type.getType(COJAC_DOUBLE_WRAPPER_CLASS);
 			COJAC_DOUBLE_WRAPPER_INTERNAL_NAME = COJAC_DOUBLE_WRAPPER_TYPE.getInternalName();
@@ -58,7 +66,7 @@ public class FloatReplacerClasses {
 		}
 	}
 	
-	public static void setFloatWrapper(String className){
+	public static void setFloatWrapper(String className) {
 		try {
 			// Class can be checked with reflexion (ensure that all needed methods are available and that the class implements Comparable and extends Numbers)
 			COJAC_FLOAT_WRAPPER_CLASS = Class.forName(className);
@@ -70,7 +78,7 @@ public class FloatReplacerClasses {
 		}
 	}
 	
-	public static void setBigDecimalPrecision(int precision){
+	public static void setBigDecimalPrecision(int precision) {
 		COJAC_BIGDECIMAL_PRECISION = precision;
 	}
 	
