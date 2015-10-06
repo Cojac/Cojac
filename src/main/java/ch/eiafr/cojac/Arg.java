@@ -45,6 +45,7 @@ public enum Arg {
     REPLACE_FLOATS("R"), // used internally, but no more appears in the usage
     FLOAT_WRAPPER("Wf"),
     DOUBLE_WRAPPER("Wd"),
+    NG_WRAPPER("W"),
     
     BIG_DECIMAL_PRECISION("Rb"),  // -RbigDecimal nbOfDigits
     INTERVAL("Ri"),                 // -Rinterval
@@ -242,6 +243,12 @@ public enum Arg {
                 hasArg().
                 withDescription("Select the float wrapper. See -Wd.").
                 create(FLOAT_WRAPPER.shortOpt()));
+        options.addOption(OptionBuilder.
+                withArgName("class").
+                hasArg().
+                withDescription("Select the wrapper (better use -R?).\n" +
+                        "Example: -W cojac.WrapperBasic will use ch.eiafr.cojac.models.wrappers.WrapperBasic").
+                create(NG_WRAPPER.shortOpt()));
 		
         options.addOption(OptionBuilder.
                 withLongOpt("bigdecimal").

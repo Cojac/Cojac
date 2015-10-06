@@ -45,10 +45,12 @@ public class FloatReplacerClasses {
 	// NOT READY YET...
 	
 	public static Class<?> COJAC_WRAPPER_NG_CLASS=WrapperBigDecimal.class;
+    public static String COJAC_WRAPPER_NG_INTERNAL_NAME;
 
-	public static void setWrapper(String className) {
+	public static void setNgWrapper(String className) {
 	    try {
 	        COJAC_WRAPPER_NG_CLASS = Class.forName(className);
+	        COJAC_WRAPPER_NG_INTERNAL_NAME = Type.getType(COJAC_WRAPPER_NG_CLASS).getInternalName();
 	    } catch (ClassNotFoundException ex) {
 	        Logger.getLogger(FloatReplacerClasses.class.getName()).log(Level.SEVERE, null, ex);
 	    }

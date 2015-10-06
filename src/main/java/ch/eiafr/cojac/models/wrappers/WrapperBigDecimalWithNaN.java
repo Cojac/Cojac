@@ -30,7 +30,7 @@ public class WrapperBigDecimalWithNaN extends ACompactWrapper {
     private final NumberKind kind;
     
     private WrapperBigDecimalWithNaN(double v) {
-        this(new BigDecimal(v, mathContext), NumberKind.fromDouble(v));
+        this(new BigDecimal(asNormal(v), mathContext), NumberKind.fromDouble(v));
     }
     
     private WrapperBigDecimalWithNaN(BigDecimal v, NumberKind k) {
@@ -156,4 +156,8 @@ public class WrapperBigDecimalWithNaN extends ACompactWrapper {
         return root;
     }
 
+    private static double asNormal(double v) {
+        if (NumberKind.fromDouble(v) == NumberKind.NORMAL) return v;
+        return 0.0;
+    }
 }

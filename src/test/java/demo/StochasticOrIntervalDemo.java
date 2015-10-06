@@ -26,10 +26,10 @@ public class StochasticOrIntervalDemo {
         res += tmp;
         tmp = 11.0 * Math.pow(y, 8.0);
         tmp /= 2.0;
-        System.out.println("res = " + COJAC_MAGIC_DOUBLE_toStr(res));
-        System.out.println("tmp = " + COJAC_MAGIC_DOUBLE_toStr(tmp));
+        System.out.println("res = " + COJAC_MAGIC_toString(res));
+        System.out.println("tmp = " + COJAC_MAGIC_toString(tmp));
         res += tmp;
-        System.out.println("res = " + COJAC_MAGIC_DOUBLE_toStr(res));
+        System.out.println("res = " + COJAC_MAGIC_toString(res));
         res += x / 2.0 * y;
         return res;
     }
@@ -56,7 +56,7 @@ public class StochasticOrIntervalDemo {
         System.out.println("\n--- Test rump Polynom");
         double a = rumpPolynom(77617.0, 33096.0);
         System.out.println("Relative error rump : " +
-                COJAC_MAGIC_DOUBLE_relativeError(a));
+                COJAC_MAGIC_relativeError(a));
         System.out.println();
     }
 
@@ -64,9 +64,9 @@ public class StochasticOrIntervalDemo {
         System.out.println("\n--- Test PI");
         double pi;
         System.out.println(pi = computePiD());
-        System.out.println(COJAC_MAGIC_DOUBLE_toStr(pi));
+        System.out.println(COJAC_MAGIC_toString(pi));
         System.out.println("Pi relative error : " +
-                COJAC_MAGIC_DOUBLE_relativeError(pi));
+                COJAC_MAGIC_relativeError(pi));
     }
 
     public static void runFloatTest() {
@@ -79,7 +79,7 @@ public class StochasticOrIntervalDemo {
         System.out.println("\n--- Test rump Polynom");
         float a = rumpPolynom(77617.0F, 33096.0F);
         System.out.println("Relative error rump : " +
-                COJAC_MAGIC_FLOAT_relativeError(a));
+                COJAC_MAGIC_relativeError(a));
         System.out.println();
     }
 
@@ -87,9 +87,9 @@ public class StochasticOrIntervalDemo {
         System.out.println("\n--- Test PI");
         float pi;
         System.out.println(pi = computePiF());
-        System.out.println(COJAC_MAGIC_FLOAT_toStr(pi));
+        System.out.println(COJAC_MAGIC_toString(pi));
         System.out.println("Pi relative error : " +
-                COJAC_MAGIC_FLOAT_relativeError(pi));
+                COJAC_MAGIC_relativeError(pi));
     }
 
     public static double computePiD() {
@@ -143,19 +143,19 @@ public class StochasticOrIntervalDemo {
         return new double[]{x1, x2};
     }
 
-    public static String COJAC_MAGIC_DOUBLE_toStr(double a) {
+    public static String COJAC_MAGIC_toString(double a) {
         return Double.toString(a);
     }
 
-    public static double COJAC_MAGIC_DOUBLE_relativeError(double n) {
+    public static double COJAC_MAGIC_relativeError(double n) {
         return 1.0;
     }
 
-    public static double COJAC_MAGIC_FLOAT_relativeError(float n) {
+    public static double COJAC_MAGIC_relativeError(float n) {
         return 1.0F;
     }
 
-    public static String COJAC_MAGIC_FLOAT_toStr(float n) {
+    public static String COJAC_MAGIC_toString(float n) {
         return "";
     }
 }

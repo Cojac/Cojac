@@ -23,6 +23,7 @@ import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenterFactory;
 import ch.eiafr.cojac.models.Reactions;
 import ch.eiafr.cojac.models.wrappers.BigDecimalDouble;
 import ch.eiafr.cojac.models.wrappers.BigDecimalFloat;
+import ch.eiafr.cojac.models.wrappers.WrapperBigDecimalWithNaN;
 import ch.eiafr.cojac.utils.ReflectionUtils;
 
 import org.objectweb.asm.ClassWriter;
@@ -53,6 +54,7 @@ public final class CojacReferences {
 
     private final String floatWrapper;
     private final String doubleWrapper;
+    private final String ngWrapper;
     private final int bigDecimalPrecision;
     private final double stabilityThreshold;
     private final boolean checkUnstableComparisons;
@@ -68,9 +70,14 @@ public final class CojacReferences {
         this.loadedClasses = builder.loadedClasses;
         this.floatWrapper = builder.floatWrapper;
         this.doubleWrapper = builder.doubleWrapper;
+        this.ngWrapper = builder.ngWrapper;
         this.bigDecimalPrecision = builder.bigDecimalPrecision;
         this.stabilityThreshold = builder.stabilityThreshold;
         this.checkUnstableComparisons = builder.checkUnstableComparisons;
+    }
+
+    public String getNgWrapper() {
+        return ngWrapper;
     }
 
     public String getFloatWrapper() {
@@ -193,7 +200,8 @@ public final class CojacReferences {
         private Splitter splitter;
         private String floatWrapper;
         private String doubleWrapper;
-        private int bigDecimalPrecision;
+        private String ngWrapper;
+       private int bigDecimalPrecision;
         private double stabilityThreshold;
         private boolean checkUnstableComparisons=true;
         
@@ -223,30 +231,41 @@ public final class CojacReferences {
         public CojacReferences build() {
             this.stats = new InstrumentationStats();
             this.sbBypassList = new StringBuilder(STANDARD_PACKAGES);
+            args.setValue(Arg.FLOAT_WRAPPER, "ch.eiafr.cojac.models.wrappers.CommonFloat");
+            args.setValue(Arg.DOUBLE_WRAPPER, "ch.eiafr.cojac.models.wrappers.CommonDouble");
 
+            if (args.isSpecified(Arg.NG_WRAPPER)) {
+                args.specify(Arg.REPLACE_FLOATS);
+            }
+            
             if (args.isSpecified(Arg.BIG_DECIMAL_PRECISION)) {
                 args.specify(Arg.REPLACE_FLOATS);
-                args.setValue(Arg.FLOAT_WRAPPER, "ch.eiafr.cojac.models.wrappers.BigDecimalFloat");
-                args.setValue(Arg.DOUBLE_WRAPPER, "ch.eiafr.cojac.models.wrappers.BigDecimalDouble");
+//                args.setValue(Arg.FLOAT_WRAPPER, "ch.eiafr.cojac.models.wrappers.BigDecimalFloat");
+//                args.setValue(Arg.DOUBLE_WRAPPER, "ch.eiafr.cojac.models.wrappers.BigDecimalDouble");
+                args.setValue(Arg.NG_WRAPPER, "ch.eiafr.cojac.models.wrappers.WrapperBigDecimalWithNaN");
+
             }
 
             if (args.isSpecified(Arg.INTERVAL)) {
                 args.specify(Arg.REPLACE_FLOATS);
-                args.setValue(Arg.FLOAT_WRAPPER, "ch.eiafr.cojac.models.wrappers.IntervalFloat");
-                args.setValue(Arg.DOUBLE_WRAPPER, "ch.eiafr.cojac.models.wrappers.IntervalDouble");
+//                args.setValue(Arg.FLOAT_WRAPPER, "ch.eiafr.cojac.models.wrappers.IntervalFloat");
+//                args.setValue(Arg.DOUBLE_WRAPPER, "ch.eiafr.cojac.models.wrappers.IntervalDouble");
+                args.setValue(Arg.NG_WRAPPER, "ch.eiafr.cojac.models.wrappers.WrapperInterval");
             }
 
             if (args.isSpecified(Arg.STOCHASTIC)) {
                 args.specify(Arg.REPLACE_FLOATS);
-                args.setValue(Arg.FLOAT_WRAPPER, "ch.eiafr.cojac.models.wrappers.StochasticFloat");
-                args.setValue(Arg.DOUBLE_WRAPPER, "ch.eiafr.cojac.models.wrappers.StochasticDouble");
-            }
+//                args.setValue(Arg.FLOAT_WRAPPER, "ch.eiafr.cojac.models.wrappers.StochasticFloat");
+//                args.setValue(Arg.DOUBLE_WRAPPER, "ch.eiafr.cojac.models.wrappers.StochasticDouble");
+                args.setValue(Arg.NG_WRAPPER, "ch.eiafr.cojac.models.wrappers.WrapperStochastic");
+   }
 
             if (args.isSpecified(Arg.AUTOMATIC_DERIVATION)) {
                 args.specify(Arg.REPLACE_FLOATS);
-                args.setValue(Arg.FLOAT_WRAPPER, "ch.eiafr.cojac.models.wrappers.DerivationFloat");
-                args.setValue(Arg.DOUBLE_WRAPPER, "ch.eiafr.cojac.models.wrappers.DerivationDouble");
-            }
+//                args.setValue(Arg.FLOAT_WRAPPER, "ch.eiafr.cojac.models.wrappers.DerivationFloat");
+//                args.setValue(Arg.DOUBLE_WRAPPER, "ch.eiafr.cojac.models.wrappers.DerivationDouble");
+                args.setValue(Arg.NG_WRAPPER, "ch.eiafr.cojac.models.wrappers.WrapperDerivation");
+   }
 
             if (args.isSpecified(Arg.REPLACE_FLOATS)) { 
                 sbBypassList.append(BYPASS_SEPARATOR);  // Only for proxy tests
@@ -319,13 +338,21 @@ public final class CojacReferences {
             } else { // default double wrapper
                 doubleWrapper = BigDecimalDouble.class.getCanonicalName();
             }
-
+            
+            if (args.isSpecified(Arg.NG_WRAPPER) &&
+                    args.getValue(Arg.NG_WRAPPER).length() > 0) {
+                ngWrapper = args.getValue(Arg.NG_WRAPPER);
+                ngWrapper = afterStandardPrefixExpansion(ngWrapper);
+            } else { // default wrapper
+                ngWrapper = WrapperBigDecimalWithNaN.class.getCanonicalName();
+            }
             /* Get the class used to store global variables. WARNING: This
              * is not the only place to set the values, see method
              * "setGlobalFields" in class "Agent" ! */
             Class<?> clazz =  loader.loadClass("ch.eiafr.cojac.models.FloatReplacerClasses");
             clazz.getMethod("setFloatWrapper", String.class).invoke(clazz, floatWrapper);
             clazz.getMethod("setDoubleWrapper", String.class).invoke(clazz, doubleWrapper);
+            clazz.getMethod("setNgWrapper", String.class).invoke(clazz, ngWrapper);
 
             if (args.isSpecified(Arg.BIG_DECIMAL_PRECISION)) {
                 bigDecimalPrecision = Integer.valueOf(args.getValue(Arg.BIG_DECIMAL_PRECISION));
@@ -345,8 +372,9 @@ public final class CojacReferences {
         }
 
         private static String afterStandardPrefixExpansion(String className) {
-            if (className.startsWith("cojac."))
-                className = className.replace("cojac.", "ch.eiafr.cojac.models.wrappers.");
+            String prefix="cojac.";
+            if (className.startsWith(prefix))
+                className = className.replace(prefix, "ch.eiafr.cojac.models.wrappers.");
             try {
                 Class.forName(className);
             } catch(ClassNotFoundException e) {

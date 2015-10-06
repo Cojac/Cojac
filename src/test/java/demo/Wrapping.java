@@ -13,22 +13,20 @@ import javax.swing.JFrame;
 To be run without Cojac, or with cojac with those options:
     -javaagent:D:\Git-MyRepository\cojac\target\cojac.jar=
 
-"-R -FW cojac.BasicFloat -DW cojac.BasicDouble"
-"-BDP 3"
-... soon:
-"-STO"
-"-I"
-"-AD"
+"-Bb 3"
+"-Rs"
+"-Ri"
+"-Ra"
 
  ------------------------------------------ */
 
 public class Wrapping {  
 
-  public static String COJAC_MAGIC_DOUBLE_wrapper() { return ""; }
-  public static String COJAC_MAGIC_DOUBLE_toStr(double n) { return ""; }
-  public static String COJAC_MAGIC_FLOAT_toStr(float  n) { return ""; }
+  public static String COJAC_MAGIC_wrapperName() { return ""; }
+  public static String COJAC_MAGIC_toString(double n) { return ""; }
+  public static String COJAC_MAGIC_toString(float  n) { return ""; }
 
-  private static final String WRAPPER=COJAC_MAGIC_DOUBLE_wrapper();
+  private static final String WRAPPER=COJAC_MAGIC_wrapperName();
     
   public static void main(String[] args) {
       new MyCojacDebugDump(8);
@@ -51,7 +49,7 @@ public class Wrapping {
     f=twiceFloat(f)/2; ok(f==a);
     f=f*2; f=f/2; ok(f==a);
     f=f-1; f=f+1; ok(f==a);
-    System.out.println(" A "+COJAC_MAGIC_FLOAT_toStr(f));
+    System.out.println(" A "+COJAC_MAGIC_toString(f));
     f=f%(f+1); ok(f==a);
     f=-(-f); ok(f==a);
     f=Math.abs(f); ok(f==a);
@@ -64,7 +62,7 @@ public class Wrapping {
     f=((float)i)/2; ok(f==a);
     long l=(long)(2*f);
     f=((float)l/2); ok(f==a);
-    String s=COJAC_MAGIC_FLOAT_toStr(f);
+    String s=COJAC_MAGIC_toString(f);
     ok((WRAPPER.length()>0) == (s.length()>0));
   }
   
@@ -84,13 +82,13 @@ public class Wrapping {
     d=((float)i)/2; ok(d==a);
     long l=(long)(2*d);
     d=((float)l/2); ok(d==a);
-    String s=COJAC_MAGIC_DOUBLE_toStr(d);
+    String s=COJAC_MAGIC_toString(d);
     ok((WRAPPER.length()>0) == (s.length()>0));
     if (WRAPPER.equals("BigDecimal")) {
         double x=1.0;
         x = x/3.0;
         String s1=""+x;
-        String s2=COJAC_MAGIC_DOUBLE_toStr(x);
+        String s2=COJAC_MAGIC_toString(x);
         ok(s2.length()>s1.length());
     }
     
@@ -118,7 +116,7 @@ public class Wrapping {
   static boolean keepsEnrichment(double d) {
       if (!WRAPPER.equals("BigDecimal")) return true;
       String s1=""+d;
-      String s2=COJAC_MAGIC_DOUBLE_toStr(d);
+      String s2=COJAC_MAGIC_toString(d);
       return s2.length()>s1.length();
   }
 
@@ -168,22 +166,22 @@ public class Wrapping {
     double a=1.0;
     double b= a/3.0;
     System.out.println("oneThird orig: "+b);
-    System.out.println("oneThird: "+COJAC_MAGIC_DOUBLE_toStr(b));
+    System.out.println("oneThird: "+COJAC_MAGIC_toString(b));
     b=MyCojacDebugDump.f(b);
-    System.out.println("applyAsDouble "+COJAC_MAGIC_DOUBLE_toStr(b));
+    System.out.println("applyAsDouble "+COJAC_MAGIC_toString(b));
     ArrayList<MyWrapper> l1=new ArrayList<>();
 //    l1.add(new MyWrapper(b));
 //    double c=l1.get(0).dValue;
     ArrayList<Double> l2=new ArrayList<>();
     l2.add(b); l2.add(b/2);
     Collections.sort(l2);
-    System.out.println("oneThird in sorted list: "+COJAC_MAGIC_DOUBLE_toStr(l2.get(0)));
+    System.out.println("oneThird in sorted list: "+COJAC_MAGIC_toString(l2.get(0)));
     ok(keepsEnrichment(l2.get(0)));
 
 //    System.out.println("oneThird in list: "+COJAC_MAGIC_DOUBLE_toStr(c));
     Double d=b;
     System.out.println("oneThird origWrapper: "+b);
-    System.out.println("oneThird wrapper magic: "+COJAC_MAGIC_DOUBLE_toStr(d));
+    System.out.println("oneThird wrapper magic: "+COJAC_MAGIC_toString(d));
   }
 
   public static void playWithArrays() { //TODO: rewrite
@@ -191,7 +189,7 @@ public class Wrapping {
     double b= a/3.0;
     double[]t=new double[]{b, b/2};
     Arrays.sort(t);
-    System.out.println("oneThird in sorted primitive array: "+COJAC_MAGIC_DOUBLE_toStr(t[0]));   
+    System.out.println("oneThird in sorted primitive array: "+COJAC_MAGIC_toString(t[0]));   
     ok(keepsEnrichment(t[0]));
   }
   

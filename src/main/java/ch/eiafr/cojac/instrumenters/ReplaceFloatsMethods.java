@@ -53,7 +53,8 @@ public class ReplaceFloatsMethods {
     private final FloatProxyMethod fpm;
 	private static final String COJAC_MAGIC_CALL_DOUBLE_PREFIX = "COJAC_MAGIC_DOUBLE_";
 	private static final String COJAC_MAGIC_CALL_FLOAT_PREFIX = "COJAC_MAGIC_FLOAT_";
-    
+    private static final String COJAC_MAGIC_CALL_NG_PREFIX = "COJAC_MAGIC_";
+
     public ReplaceFloatsMethods(FloatProxyMethod fpm, String crtClassName, CojacReferences references) {
 		CFW_N = COJAC_FLOAT_WRAPPER_INTERNAL_NAME;
 		CFW = COJAC_FLOAT_WRAPPER_TYPE_DESCR;
@@ -201,6 +202,14 @@ public class ReplaceFloatsMethods {
 			cojacMagicCall(mv, name, desc, CFW_N);
 			return true;
 		}
+        if(name.startsWith(COJAC_MAGIC_CALL_NG_PREFIX)) {
+            String magicLocation=COJAC_WRAPPER_NG_INTERNAL_NAME;
+            if (name.equals("COJAC_MAGIC_toString") || 
+                name.equals("COJAC_MAGIC_wrapperName") )
+                magicLocation=CDW_N;
+            cojacMagicCall(mv, name, desc, magicLocation);
+            return true;
+        }
 		
         if(suppressions.containsKey(ms)) {
             Object supressionMethod = suppressions.get(ms);

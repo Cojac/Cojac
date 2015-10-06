@@ -16,7 +16,8 @@ public class WrapperDerivation extends ACompactWrapper {
     //----------------- Necessary constructor  -------------------------------
     //-------------------------------------------------------------------------
     public WrapperDerivation(ACojacWrapper w) {
-        this(w==null ? 0.0 : ((WrapperDerivation) w).value, ((WrapperDerivation) w).deriv);
+        this(w==null ? 0.0 : der(w).value, 
+             w==null ? 0.0 : der(w).deriv);
     }
     
     //-------------------------------------------------------------------------
@@ -49,7 +50,7 @@ public class WrapperDerivation extends ACompactWrapper {
         double d=this.deriv;
         if (der(b).deriv != 0.0) // this seems hard to consider "general" dividers
             d=Double.NaN;
-        return new WrapperDerivation(this.value*der(b).value, d);
+        return new WrapperDerivation(this.value%der(b).value, d);
     }
 
     public ACojacWrapper math_sqrt() {
@@ -192,12 +193,12 @@ public class WrapperDerivation extends ACompactWrapper {
         return new CommonFloat(res);
     }
     
-    public static CommonDouble COJAC_MAGIC_DOUBLE_asDerivationTarget(CommonDouble d) {
+    public static CommonDouble COJAC_MAGIC_asDerivationTarget(CommonDouble d) {
         WrapperDerivation res=new WrapperDerivation(der(d.val).value, 1.0);
         return new CommonDouble(res);
     }
     
-    public static CommonFloat COJAC_MAGIC_DOUBLE_asDerivationTarget(CommonFloat d) {
+    public static CommonFloat COJAC_MAGIC_asDerivationTarget(CommonFloat d) {
         WrapperDerivation res=new WrapperDerivation(der(d.val).value, 1.0);
         return new CommonFloat(res);
     }

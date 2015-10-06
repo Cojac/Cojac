@@ -358,13 +358,13 @@ public class DoubleNumbers {
     public static Method possibleMethod(Object target, String methodName, String desc) {
 	    if (target==null) return null;
 	    Class<?> clazz=target.getClass();
-	    if(methodName.contains("apply")) System.out.println(clazz+" "+methodName+desc);
+	    //if(methodName.contains("apply")) System.out.println(clazz+" "+methodName+desc);
 	    Method[] mt=clazz.getMethods();
 	    for(Method m:mt) {
 	        if (!m.getName().equals(methodName)) continue;
 	        String d=Type.getMethodDescriptor(m);
 	        if (d.equals(desc)) { 
-	            System.out.println("-- Found! -- "+methodName+" "+desc+" "+target);
+	            //System.out.println("-- Found! -- "+methodName+" "+desc+" "+target);
 	            return m;
 	        }
 	    }

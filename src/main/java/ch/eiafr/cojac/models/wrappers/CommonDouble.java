@@ -246,15 +246,15 @@ public class CommonDouble extends Number implements Comparable<CommonDouble>{
 	//       to the new generation wrapping (the indirection is annoying...). 
 	//       see cojac.instrumenters.ReplaceFloatsMethods.instrument()
 	
-    public static String COJAC_MAGIC_wrapper() {
+    public static String COJAC_MAGIC_wrapperName() {
         return newInstance(null).wrapperName();
     }
 
-    public static String COJAC_MAGIC_toStr(CommonDouble n) {
+    public static String COJAC_MAGIC_toString(CommonDouble n) {
         return n.val.asInternalString();
     }
 
-    public static String COJAC_MAGIC_toStr(CommonFloat n) {
+    public static String COJAC_MAGIC_toString(CommonFloat n) {
         return n.val.asInternalString();
     }
 

@@ -142,6 +142,8 @@ public final class Agent implements ClassFileTransformer {
 				super.visit(version, access, name, signature, superName, interfaces);
 				MethodVisitor mv = cv.visitMethod(Opcodes.ACC_STATIC, "<clinit>", "()V", null, null);
 				mv.visitLdcInsn(references.getDoubleWrapper());
+                mv.visitMethodInsn(Opcodes.INVOKESTATIC, name, "setNgWrapper", "(Ljava/lang/String;)V", false);
+                mv.visitLdcInsn(references.getNgWrapper());
 				mv.visitMethodInsn(Opcodes.INVOKESTATIC, name, "setDoubleWrapper", "(Ljava/lang/String;)V", false);
 				mv.visitLdcInsn(references.getFloatWrapper());
 				mv.visitMethodInsn(Opcodes.INVOKESTATIC, name, "setFloatWrapper", "(Ljava/lang/String;)V", false);
