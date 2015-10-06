@@ -17,6 +17,7 @@ To be run without Cojac, or with cojac with those options:
 "-Rs"
 "-Ri"
 "-Ra"
+"-W cojac.WrapperBasic"
 
  ------------------------------------------ */
 
@@ -221,8 +222,8 @@ public class Wrapping {
 //          double[] t11={2.0};
 //          double[] t21=(double[])t11.clone(); 
           
-//          Double[] t3={2.0};
-//          Double[] t4=(Double[])t3.clone(); // TODO: does not work...
+          Double[] t3={2.0};
+          Double[] t4=(Double[])t3.clone();
 //          return 2*a;
 //          return 9;
           DoubleUnaryOperator op;

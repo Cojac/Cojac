@@ -12,7 +12,7 @@ Machine. This tool is provided as a new JVM option, allowing you to launch
 any Java application with COJAC. 
 
 With COJAC you don't have to modify your source code or even recompile it. All 
-the work is done at runtime and your application is not altered. 
+the work is done at runtime, when your application gets instrumented on-the-fly. 
 
 COJAC is highly configurable, you can specify which operations are to be 
 watched and how you want COJAC to warn you about the problems. 
@@ -40,21 +40,6 @@ Agent mechanism, via the mere insertion of the following JVM option:
 {{{
 -javaagent:cojac.jar[=cojac_options] 
 }}}
-
-We still offer an old way of invoking COJAC, with this general usage:
-{{{
-java [vm_args] -jar Cojac.jar [cojac_options] (program.jar | class) [application_args]
-                 vm_args: Arguments of the Java Virtual Machine
-           cojac_options: Define the options of COJAC
-        application_args: Pass arguments to your main class
-}}}
-
-COJAC supports the two traditional ways of specifying the Java application to 
-launch: either with a fully qualified class name, or via an executable JAR. 
-In this mode, COJAC itself is an executable JAR, but you essentially use it 
-as if it were a new JVM option. 
-
-== 2.1 Launching as a Java Agent ==
 
 The -javaagent JVM option lets you seamlessly activate COJAC at runtime. 
 For instance:
@@ -107,7 +92,7 @@ See [CojacUserGuide#10._Known_issues].
 
 COJAC offers a fine-grained configuration of what must be instrumented in the application; the options let you select which category (or even which bytecode instructions) to watch:
 
- * *`-a`* Activates all possible detectors 
+ * *`-a`* Activates all possible detectors (this is the default behaviour)
  * *`-ints`* Watches the "int" operations: `-IADD -IDIV -IINC -ISUB -IMUL -INEG`
  * *`-longs`* Watches the "long" operations: `-LADD -LDIV -LSUB -LMUL -LNEG`
  * *`-doubles`* Watches the "double" operations: `-DADD -DDIV -DSUB -DMUL -DREM`
@@ -178,20 +163,10 @@ be finally synthesized (with occurrences count).
 --------------------------------------------------
 = 6. Instrumenting without executing =
 
-COJAC is designed to apply on-the-fly instrumentation, and we advocate to use 
-it as a diagnostic-enabled java launching means. 
-
-But we still provide a "batch" mode, where you can create an instrumented 
-version of your application, in order to run it later: 
-
-{{{
-     java -jar cojac.jar -i Foo.class Bar.class 
-or:  java -jar cojac.jar -i FooBar.jar
-}}}
-
-By default, this will create a new version of the application in the 
-COJAC_Output folder. You can specify the folder where the application will be 
-written with the `-p` option. 
+Early versions of COJAC were able to create "offline" an instrumented version of the 
+application code (that can later be executed). We no longer provide this feature: 
+COJAC is designed to apply on-the-fly instrumentation, we advocate its use
+as a diagnostic-enabled java launching means. 
 
 --------------------------------------------------
 = 7. Example  =
