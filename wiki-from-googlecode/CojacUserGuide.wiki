@@ -1,3 +1,9 @@
+
+!!!! 07.10.2015: the User Guide is being rewritten, see 
+     https://forge.tic.eia-fr.ch/git/frederic.bapst/cojac/wikis/home
+!!!
+
+
 #summary COJAC User Guide
 #labels Featured
 *Contents*
