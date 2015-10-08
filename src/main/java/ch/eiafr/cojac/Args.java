@@ -44,9 +44,9 @@ public final class Args {
            + "(version 1.4 - 2015 Sep 22)";
     private static String HEADER =
             "\nTwo nice tools to enrich Java arithmetic capabilities, on-the-fly:"
-            +"\n - Numeric Problem Sniffer: detects and signals arithmetic poisons like "
+            +"\n - Numerical Problem Sniffer: detects and signals arithmetic poisons like "
             +"integer overflows, smearing and catastrophic cancellation, NaN or infinite results."
-            +"\n - Wrapper for float/double: wraps every double/float in richer objects. Current "
+            +"\n - Enriching Wrapper for float/double: wraps every double/float in richer objects. Current "
             +"models include BigDecimal (you choose the precision), "
             +"interval computation, discrete stochastic arithmetic, and even automatic differentiation."
             +"\n----------------- OPTIONS -----------------\n";
