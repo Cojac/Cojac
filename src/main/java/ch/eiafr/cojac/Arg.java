@@ -235,18 +235,18 @@ public enum Arg {
         options.addOption(OptionBuilder.
                 withArgName("class").
                 hasArg().
-                withDescription("Select the double wrapper (better use -R?).\n" +
+                withDescription("Select the double container (don't use it!).\n" +
                         "Example: -Wd cojac.BigDecimalDouble will use ch.eiafr.cojac.models.wrappers.BigDecimalDouble").
                 create(DOUBLE_WRAPPER.shortOpt()));
         options.addOption(OptionBuilder.
                 withArgName("class").
                 hasArg().
-                withDescription("Select the float wrapper. See -Wd.").
+                withDescription("Select the float container. See -Wd.").
                 create(FLOAT_WRAPPER.shortOpt()));
         options.addOption(OptionBuilder.
                 withArgName("class").
                 hasArg().
-                withDescription("Select the wrapper (better use -R?).\n" +
+                withDescription("Select the wrapper (don't use it!).\n" +
                         "Example: -W cojac.WrapperBasic will use ch.eiafr.cojac.models.wrappers.WrapperBasic").
                 create(NG_WRAPPER.shortOpt()));
 		

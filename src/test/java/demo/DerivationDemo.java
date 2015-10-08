@@ -10,6 +10,7 @@ public class DerivationDemo {
     private static final double epsilon = 0.1;
 
     public static void main(String[] args) {
+        main1(args);
         runDerivationTest();
     }
 
@@ -342,4 +343,21 @@ public class DerivationDemo {
             System.out.println("All test passed successfully !");
         }
     }
+    
+    static double someFunction(double x, double a, double b) {
+        double res=a*x*x;
+        res = res + b*x;
+        res = res + 1;
+        return res;
+    }
+    
+    public static void main1(String[] args) {
+        double x=2;
+        x=COJAC_MAGIC_asDerivationTarget(x);
+        double y=someFunction(x, 3, 4);
+        System.out.println("f(2):  "+y);
+        System.out.println("f'(2): "+COJAC_MAGIC_getDerivation(y));
+    }
+
+    
 }
