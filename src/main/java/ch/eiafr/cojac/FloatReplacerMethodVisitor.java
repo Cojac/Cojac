@@ -135,7 +135,36 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
     public void visitInvokeDynamicInsn(String name, String desc,
                                        Handle bsm, Object... bsmArgs) {
         //TODO: pretty sure we have to somehow instrument invokeDynamic... maybe ask Lucy?
-        super.visitInvokeDynamicInsn(name, desc, bsm, bsmArgs);
+        
+        if(!bsm.getOwner().equals("java/lang/invoke/LambdaMetafactory")) {
+            mv.visitInvokeDynamicInsn(name, desc, bsm, bsmArgs);
+            return; // TODO: handle any bootstrap method in invokedynamic
+        }
+        if (!(bsmArgs[0] instanceof Type) ||
+                !(bsmArgs[1] instanceof Handle) || 
+                !(bsmArgs[2] instanceof Type)) {
+            mv.visitInvokeDynamicInsn(name, desc, bsm, bsmArgs);
+            return;
+        }
+        Type a0=(Type)(bsmArgs[0]);
+        Type a2=(Type)(bsmArgs[2]);
+        Handle target=(Handle)(bsmArgs[1]);
+        String handleOwner=target.getOwner();
+        if (!references.hasToBeInstrumented(handleOwner)) {
+            mv.visitInvokeDynamicInsn(name, desc, bsm, bsmArgs);
+            return;
+        }
+        Object[] bsmArgsAfter=new Object[bsmArgs.length];
+        for(int i=0; i<bsmArgs.length; i++) {
+            bsmArgsAfter[i]=bsmArgs[i];
+        }
+        String a0Before=a0.getInternalName(), a2Before=a2.getInternalName();
+        String a0After=replaceFloatMethodDescription(a0Before), a2After=replaceFloatMethodDescription(a2Before);
+        bsmArgsAfter[0]=Type.getType(a0After);
+        bsmArgsAfter[2]=Type.getType(a2After);
+        bsmArgsAfter[1]=new Handle(target.getTag(), target.getOwner(), target.getName(),
+                replaceFloatMethodDescription(target.getDesc()));
+        mv.visitInvokeDynamicInsn(name, desc, bsm, bsmArgsAfter);
     }
     
     @Override

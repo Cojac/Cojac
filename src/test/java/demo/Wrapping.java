@@ -40,7 +40,8 @@ public class Wrapping {
     playWithJavaDoubleWrapper();
     playWithArrays();
     playWithCollection();
-    playWithGUI();
+//    playWithGUI();
+    playWithLambdas();
     System.out.println("The end.");    
   }
   
@@ -92,26 +93,61 @@ public class Wrapping {
         String s2=COJAC_MAGIC_toString(x);
         ok(s2.length()>s1.length());
     }
-    
-    //DoubleUnaryOperator[] mathDoubleUnaryOps= {Math::sqrt};
-
-    // java.lang.NoSuchMethodError: demo.Wrapping.lambda$0(D)D
-    //DoubleUnaryOperator[] mathDoubleUnaryOps= {(x->x+2)};
-    
-    //java.lang.AbstractMethodError: Method demo/Wrapping$$Lambda$6.applyAsDouble(D)D is abstract
-    //  at demo.Wrapping$$Lambda$6/1826771953.applyAsDouble(Unknown Source)
-
-    //for(DoubleUnaryOperator op:mathDoubleUnaryOps) d=op.applyAsDouble(a);
-    
-    // TODO: this does not work with our wrapping mechanism... :-(
-    // DoubleUnaryOperator[] mathDoubleUnaryOps= {Math::sqrt, Math::sin, Math::cos, Math::tan};
-    // for(DoubleUnaryOperator op:mathDoubleUnaryOps) d=op.applyAsDouble(a);
-    // Although this works:
-    //   IntUnaryOperator[] muo= {Math::abs};
-    //   int u=-9;
-    //   for(IntUnaryOperator op:muo) u=op.applyAsInt(u);
   }
 
+  private static void playWithLambdas() {  // JAVA8 HOT TODO
+      double a = 1.0;
+      a = a/3.0;
+      double d = a;
+      DoubleUnaryOperator unOp;
+      unOp = Math::sqrt;
+      /* mv.visitInvokeDynamicInsn(
+           "applyAsDouble", 
+           "()Ljava/util/function/DoubleUnaryOperator;",
+           new Handle(Opcodes.H_INVOKESTATIC, 
+                      "java/lang/invoke/LambdaMetafactory", 
+                      "metafactory", 
+                      "(Ljava/lang/invoke/MethodHandles$Lookup;
+                        Ljava/lang/String;Ljava/lang/invoke/MethodType;
+                        Ljava/lang/invoke/MethodType;
+                        Ljava/lang/invoke/MethodHandle;
+                        Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;"
+                     ),
+          new Object[]{Type.getType("(D)D"), 
+                       new Handle(Opcodes.H_INVOKESTATIC, 
+                                             "java/lang/Math", 
+                                             "sqrt", 
+                                             "(D)D"), 
+                       Type.getType("(D)D") 
+                      }
+        );
+      */
+      d=unOp.applyAsDouble(a*a);   // works (but the "enrichment" is lost...)
+
+      // TODO: this does not work for the moment...
+      unOp = (x->(x+2)-2);
+      /* mv.visitInvokeDynamicInsn(... 
+           new Handle(Opcodes.H_INVOKESTATIC, 
+                       "ch/eiafr/cojac/unit/replace/Wrapping", 
+                       "lambda$0", "(D)D"), Type.getType("(D)D")});
+      */
+      unOp.applyAsDouble(a); ok(d==a);
+      
+      unOp = Wrapping::mySqrt;
+      /* mv.visitInvokeDynamicInsn(...
+           new Handle(Opcodes.H_INVOKESTATIC, 
+                        "ch/eiafr/cojac/unit/replace/Wrapping", 
+                        "mySqrt", "(D)D"), 
+                        Type.getType("(D)D")});
+       
+       */
+      unOp.applyAsDouble(a*a);
+  }
+  
+  private static double mySqrt(double x) {
+      return Math.sqrt(x);
+  }
+  
   /** works only if d has a chance to have a long development, and only 
    * for BigDecimal wrapping (with a number of digits > 16) */
   static boolean keepsEnrichment(double d) {
@@ -254,12 +290,12 @@ public class Wrapping {
 
       
       public static void playLambdas() {
-//          double a = 1.0;
-//          a = a/3.0;
-//          double d = a;
-//          DoubleUnaryOperator unOp;
-//          unOp = Math::sqrt;
-//          d=unOp.applyAsDouble(a*a);   // but the "enrichment" is lost...
+          double a = 1.0;
+          a = a/3.0;
+          double d = a;
+          DoubleUnaryOperator unOp;
+          unOp = Math::sqrt;
+          d=unOp.applyAsDouble(a*a);   // but the "enrichment" is lost...
       }
 
     @Override
