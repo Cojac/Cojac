@@ -133,9 +133,7 @@ final class FloatReplacerMethodVisitor extends MethodVisitor {
 
     @Override
     public void visitInvokeDynamicInsn(String name, String desc,
-                                       Handle bsm, Object... bsmArgs) {
-        //TODO: pretty sure we have to somehow instrument invokeDynamic... maybe ask Lucy?
-        
+                                       Handle bsm, Object... bsmArgs) {        
         if(!bsm.getOwner().equals("java/lang/invoke/LambdaMetafactory")) {
             mv.visitInvokeDynamicInsn(name, desc, bsm, bsmArgs);
             return; // TODO: handle any bootstrap method in invokedynamic
