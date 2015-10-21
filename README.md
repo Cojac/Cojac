@@ -20,6 +20,6 @@
 - No recompilation needed, easy to use (you want 100 significant digits? `java -javaagent:cojac.jar="-Rb 100" ...`)
 
 
-### Don't miss the opportunity to look at Java numbers with a fresh eye...
+### Java numbers with a fresh eye and a cool tool...
 
-...Read the [User Guide](https://github.com/frederic-bapst/Cojac/wiki)!
+... Don't miss the opportunity: read the [User Guide](https://github.com/frederic-bapst/Cojac/wiki)!
