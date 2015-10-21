@@ -41,7 +41,7 @@ public final class Args {
 
     private static String USAGE =
              "java -javaagent:cojac.jar=\"[OPTIONS]\" YourApp [appArgs]\n"
-           + "(version 1.4 - 2015 Sep 22)";
+           + "(version 1.4 - 2015 Oct 21)";
     private static String HEADER =
             "\nTwo nice tools to enrich Java arithmetic capabilities, on-the-fly:"
             +"\n - Numerical Problem Sniffer: detects and signals arithmetic poisons like "
