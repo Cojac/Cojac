@@ -23,3 +23,5 @@
 ### Java numbers with a fresh eye and a cool tool...
 
 ... Don't miss the opportunity: read the [User Guide](https://github.com/frederic-bapst/Cojac/wiki)!
+
+Distributed under the "Apache License, v2.0".
