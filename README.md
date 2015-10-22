@@ -14,7 +14,7 @@
 
 - Automatic replacement of every float/double with more powerful number types, such as:
   - high precision numbers (*you* choose the number of significant digits!)
-  - interval computation (or discrete stochastic arithmetic), to keep the rounding error under control
+  - interval computation, to keep rounding errors under control
   - automatic differentiation, to bring you for free the derivative of any encoded function
   
 - No recompilation needed, easy to use (you want 100 significant digits? `java -javaagent:cojac.jar="-Rb 100" ...`)
