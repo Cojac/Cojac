@@ -24,6 +24,13 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.Objects;
 
+/* This class belongs to the "old generation" wrapping mechanism, which
+ * might be deprecated in later releases. The Cojac front-end now relies
+ * on CommonFloat/CommonDouble, along with the number models named
+ * WrapperXYZ: WrapperBigDecimal, WrapperInterval, WrapperStochastic, 
+ * WrapperDerivation...
+ */
+
 public class BigDecimalFloat extends Number implements
         Comparable<BigDecimalFloat> {
     //-------------------------------------------------------------------------

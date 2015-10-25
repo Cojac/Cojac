@@ -25,6 +25,13 @@ import java.util.Objects;
 //import ch.eiafr.cojac.utils.rjm.BigDecimalMath;
 import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_BIGDECIMAL_PRECISION;
 
+/* This class belongs to the "old generation" wrapping mechanism, which
+ * might be deprecated in later releases. The Cojac front-end now relies
+ * on CommonFloat/CommonDouble, along with the number models named
+ * WrapperXYZ: WrapperBigDecimal, WrapperInterval, WrapperStochastic, 
+ * WrapperDerivation...
+ */
+
 public class BigDecimalDouble extends Number implements
         Comparable<BigDecimalDouble> {
     //-------------------------------------------------------------------------

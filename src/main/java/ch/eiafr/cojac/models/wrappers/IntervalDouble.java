@@ -23,6 +23,13 @@ import ch.eiafr.cojac.models.Reactions;
 import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_STABILITY_THRESHOLD;
 import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_CHECK_UNSTABLE_COMPARISONS;
 
+/* This class belongs to the "old generation" wrapping mechanism, which
+ * might be deprecated in later releases. The Cojac front-end now relies
+ * on CommonFloat/CommonDouble, along with the number models named
+ * WrapperXYZ: WrapperBigDecimal, WrapperInterval, WrapperStochastic, 
+ * WrapperDerivation...
+ */
+
 public class IntervalDouble extends Number implements
         Comparable<IntervalDouble> {
     //-------------------------------------------------------------------------

@@ -20,6 +20,11 @@ package ch.eiafr.cojac.models.wrappers;
 
 import static ch.eiafr.cojac.models.wrappers.CommonDouble.newInstance;
 
+/* CommonDouble/CommonFloat is the "new generation" wrapping mechanism, where
+ * we isolate the behavior of numbers in a ACojacWrapper abstract class.
+ * We consider that cleaner than our first attempt.
+ */
+
 public class CommonFloat extends Number implements Comparable<CommonFloat> {
     //-------------------------------------------------------------------------
     //----------------- Fields and auxiliary constructors ---------------------

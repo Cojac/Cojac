@@ -25,6 +25,13 @@ import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_CHECK_UNSTABLE_CO
 
 import ch.eiafr.cojac.models.Reactions;
 
+/* This class belongs to the "old generation" wrapping mechanism, which
+ * might be deprecated in later releases. The Cojac front-end now relies
+ * on CommonFloat/CommonDouble, along with the number models named
+ * WrapperXYZ: WrapperBigDecimal, WrapperInterval, WrapperStochastic, 
+ * WrapperDerivation...
+ */
+
 public class StochasticDouble extends Number implements
         Comparable<StochasticDouble> {
     //-------------------------------------------------------------------------

@@ -23,6 +23,13 @@ package ch.eiafr.cojac.models.wrappers;
 //      "Creating Other Juicy Arithmetic Capabilities"
 //       Creator Of jaunty|jolly|jovial|joyful|joyous|jubilant|judicious|jumbo
 
+/* This class belongs to the "old generation" wrapping mechanism, which
+ * might be deprecated in later releases. The Cojac front-end now relies
+ * on CommonFloat/CommonDouble, along with the number models named
+ * WrapperXYZ: WrapperBigDecimal, WrapperInterval, WrapperStochastic, 
+ * WrapperDerivation...
+ */
+
 public class DerivationDouble extends Number implements
         Comparable<DerivationDouble> {
 

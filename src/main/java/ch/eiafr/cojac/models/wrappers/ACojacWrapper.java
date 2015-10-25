@@ -18,7 +18,6 @@
 
 package ch.eiafr.cojac.models.wrappers;
 
-// WARNING: this class is not used... for the moment. Towards refactoring the wrapping mechanism
 public abstract class ACojacWrapper implements Comparable<ACojacWrapper>{
     //-------------------------------------------------------------------------
     //----------------- Necessary constructor  -------------------------------

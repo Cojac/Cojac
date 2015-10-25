@@ -18,6 +18,13 @@
 
 package ch.eiafr.cojac.models.wrappers;
 
+/* This class belongs to the "old generation" wrapping mechanism, which
+ * might be deprecated in later releases. The Cojac front-end now relies
+ * on CommonFloat/CommonDouble, along with the number models named
+ * WrapperXYZ: WrapperBigDecimal, WrapperInterval, WrapperStochastic, 
+ * WrapperDerivation...
+ */
+
 public class BasicFloat extends Number implements Comparable<BasicFloat> {
     //-------------------------------------------------------------------------
     //----------------- Fields and auxiliary constructors ---------------------

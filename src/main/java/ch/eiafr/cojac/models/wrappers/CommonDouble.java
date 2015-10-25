@@ -22,6 +22,11 @@ import java.lang.reflect.Constructor;
 
 import static ch.eiafr.cojac.models.FloatReplacerClasses.COJAC_WRAPPER_NG_CLASS;
 
+/* CommonDouble/CommonFloat is the "new generation" wrapping mechanism, where
+ * we isolate the behavior of numbers in a ACojacWrapper abstract class.
+ * We consider that cleaner than our first attempt.
+ */
+
 public class CommonDouble extends Number implements Comparable<CommonDouble>{
     //-------------------------------------------------------------------------
     //----------------- Fields and auxiliary constructors ---------------------

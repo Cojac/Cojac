@@ -21,7 +21,6 @@ package ch.eiafr.cojac.models.wrappers;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
 
-// WARNING: this class is not used... for the moment. Towards refactoring the wrapping mechanism
 public abstract class ACompactWrapper extends ACojacWrapper {
     //-------------------------------------------------------------------------
     //----------------- Necessary constructor  -------------------------------
