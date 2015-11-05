@@ -452,6 +452,14 @@ public class FloatProxyMethod {
             if(cc.needsConversion(i)) {
                 convertCojacToRealType(cc.asOriginalJavaType(i), newMv);
             } 
+            /* This is where we could decide to convert back to JavaWrapper
+             * when the argument is declared as Object
+             * We don't do that to keep "enriched numbers" in collections
+             * but sometimes we would like to convert, eg printf, format...
+             * Maybe add a boolean parameter to createConvertMethod() ?
+             * 
+              else if(ia.equals(OBJ_TYPE)) { convertObjectToReal(newMv, ia); }
+            */
             convertPrimitiveToObject(newMv, cc.outArgs[i]);
             // stack >> prmsArr prmsArr i pi
             if(keepBothVersions) { // keep the new reference (the java one)
@@ -639,8 +647,8 @@ public class FloatProxyMethod {
 	}
 	
 	/*
-	 private void convertObjectToReal(MethodVisitor mv, Type aType){
-		mv.visitTypeInsn(CHECKCAST, OBJ_TYPE.getInternalName());
+	private void convertObjectToReal(MethodVisitor mv, Type aType){
+	    mv.visitTypeInsn(CHECKCAST, OBJ_TYPE.getInternalName());
 		mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "convertFromObjectToReal", "("+OBJ_DESC+")"+OBJ_DESC, false);
 		mv.visitTypeInsn(CHECKCAST, aType.getInternalName());
 	}
