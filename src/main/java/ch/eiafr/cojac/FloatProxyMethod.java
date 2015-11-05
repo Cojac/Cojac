@@ -288,13 +288,15 @@ public class FloatProxyMethod {
         throw new RuntimeException("STUPID NULL stack!!!");
     }
     
-    public boolean needsConversion(String owner, String name, String desc) {
+    public boolean needsConversion(int opcode, String owner, String name, String desc) {
         if(owner.equals(JWRAPPER_FLOAT_TYPE .getInternalName())) return true;
         if(owner.equals(JWRAPPER_DOUBLE_TYPE.getInternalName())) return true;
         if(name.equals("clone") && desc.equals("()Ljava/lang/Object;")) return true;
         for (Type t:Type.getArgumentTypes(desc))
             if (needsConversion(t)) return true;
-        return needsConversion(Type.getReturnType(desc));
+        if (needsConversion(Type.getReturnType(desc))) return true;
+        if (new ConversionContext(opcode, owner, name, desc).shouldObjParamBeConverted) return true;
+        return false;
     }
     
     private static boolean needsConversion(Type t) {
@@ -451,15 +453,15 @@ public class FloatProxyMethod {
             // stack >> prmsArr prmsArr i pi
             if(cc.needsConversion(i)) {
                 convertCojacToRealType(cc.asOriginalJavaType(i), newMv);
-            } 
+            } else if(cc.shouldObjParamBeConverted && 
+                    (ia.equals(OBJ_TYPE) || ia.equals(OBJ_ARRAY_TYPE) )) {
+                convertObjectToReal(newMv, ia);
+            }
             /* This is where we could decide to convert back to JavaWrapper
              * when the argument is declared as Object
              * We don't do that to keep "enriched numbers" in collections
              * but sometimes we would like to convert, eg printf, format...
-             * Maybe add a boolean parameter to createConvertMethod() ?
-             * 
-              else if(ia.equals(OBJ_TYPE)) { convertObjectToReal(newMv, ia); }
-            */
+             */
             convertPrimitiveToObject(newMv, cc.outArgs[i]);
             // stack >> prmsArr prmsArr i pi
             if(keepBothVersions) { // keep the new reference (the java one)
@@ -646,13 +648,11 @@ public class FloatProxyMethod {
 		return null;
 	}
 	
-	/*
 	private void convertObjectToReal(MethodVisitor mv, Type aType){
 	    mv.visitTypeInsn(CHECKCAST, OBJ_TYPE.getInternalName());
 		mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "convertFromObjectToReal", "("+OBJ_DESC+")"+OBJ_DESC, false);
 		mv.visitTypeInsn(CHECKCAST, aType.getInternalName());
 	}
-	*/
 	
 	private static void convertObjectToCojac(MethodVisitor mv, Type aType) {
 		mv.visitTypeInsn(CHECKCAST, OBJ_TYPE.getInternalName());
@@ -683,6 +683,7 @@ public class FloatProxyMethod {
         private final Type[] inArgs;
         private final Map<Integer, Type> typeConversions = new HashMap<>();
         private final Map<Integer, Type> convertedArrays = new HashMap<>();   
+        private final boolean shouldObjParamBeConverted;
         
         public ConversionContext(int opcode, String owner, String name, String desc) {
             this.opcode=opcode;
@@ -693,6 +694,8 @@ public class FloatProxyMethod {
             outArgs = Type.getArgumentTypes(desc);
             inArgs = typesAfterReplacement(outArgs);
             rememberArrays();
+            shouldObjParamBeConverted= (name.equals("printf") &&
+                                       owner.equals("java/io/PrintStream"));
         }
         
         public boolean needsConversion(int i) {

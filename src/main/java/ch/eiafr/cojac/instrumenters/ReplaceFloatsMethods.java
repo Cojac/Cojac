@@ -187,6 +187,7 @@ public class ReplaceFloatsMethods {
         // (the general case is to keep our enriched numbers, especially
         // needed for collections)
         // TODO: handle every printf-like methods (format,...), in an elegant way...
+        /*
         invocations.put(new MethodSignature("java/io/PrintWriter","printf",
                 "(Ljava/lang/String;[Ljava/lang/Object;)V"),
                 new InvokableMethod(DN_NAME, "myPrintWriterPrintf",
@@ -196,7 +197,7 @@ public class ReplaceFloatsMethods {
                 "(Ljava/lang/String;[Ljava/lang/Object;)Ljava/io/PrintStream;"),
                 new InvokableMethod(DN_NAME, "myPrintStreamPrintf",
                         "(Ljava/io/PrintStream;Ljava/lang/String;[Ljava/lang/Object;)Ljava/io/PrintStream;", INVOKESTATIC));
-
+         */
     }
     
     /** method call instrumentation; returns true if it was instrumented 
@@ -239,13 +240,13 @@ public class ReplaceFloatsMethods {
             return true;
         }
         if(allMethodsConversions.contains(owner)) {
-            if (!fpm.needsConversion(owner, name, desc)) return false;
+            if (!fpm.needsConversion(opcode, owner, name, desc)) return false;
             fpm.proxyCall(mv, opcode, owner, name, desc, false);
             return true;
         }
 		
 		if(references.hasToBeInstrumented(owner) == false) {
-            if (!fpm.needsConversion(owner, name, desc)) return false;
+            if (!fpm.needsConversion(opcode, owner, name, desc)) return false;
 			fpm.proxyCall(mv, opcode, owner, name, desc, true);
 			return true;
 		}

@@ -400,6 +400,7 @@ public class DoubleNumbers {
     // Special cases where we force conversion of parameters declared as Object
     // TODO: handle every printf-like methods (format,...), in an elegant way...
     // TODO: reconsider that "printf" fix, or the location of those methods
+    // TODO: choose the approach to "printf": redirect or "selective proxy"...
 
     public static PrintStream myPrintStreamPrintf(PrintStream ps, String format, Object... args) {
         return ps.printf(format, unwrapped(args));
