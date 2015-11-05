@@ -135,7 +135,7 @@ public class Wrapping implements DoubleUnaryOperator {
         
         d=unOp.applyAsDouble(a*a);   // but the "enrichment" is lost...
 
-        // TODO: this does not work for the moment...
+        // this should work but... see todo above!
         //  unOp = (x->(x+2)-2);
 //mv.visitInvokeDynamicInsn(... new Handle(Opcodes.H_INVOKESTATIC, "ch/eiafr/cojac/unit/replace/Wrapping", "lambda$0", "(D)D"), Type.getType("(D)D")});
               //      unOp.applyAsDouble(a); ok(d==a);

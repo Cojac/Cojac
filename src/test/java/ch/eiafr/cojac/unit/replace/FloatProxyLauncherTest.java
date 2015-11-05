@@ -163,7 +163,7 @@ public class FloatProxyLauncherTest {
 
 */
 
-	// TODO - Fix array references & proxy limitation
+	// TODO - (hard/impossible...)Fix array references & proxy limitation
 	/*
 	 This test fails, this is a known limitation,
 	 When an array is passed to the not-instrumented side, and the array is modified

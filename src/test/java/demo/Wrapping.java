@@ -113,7 +113,7 @@ public class Wrapping {
     }
   }
 
-  private static void playWithLambdas() {  // JAVA8 HOT TODO
+  private static void playWithLambdas() { 
       double a = 1.0;
       a = a/3.0;
       double d = a;
@@ -142,7 +142,6 @@ public class Wrapping {
       */
       d=unOp.applyAsDouble(a*a);   // works (but the "enrichment" is lost...)
 
-      // TODO: this does not work for the moment...
       unOp = (x->(x+2)-2);
       /* mv.visitInvokeDynamicInsn(... 
            new Handle(Opcodes.H_INVOKESTATIC, 

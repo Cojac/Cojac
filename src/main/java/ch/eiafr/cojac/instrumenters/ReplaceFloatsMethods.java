@@ -76,7 +76,8 @@ public class ReplaceFloatsMethods {
 
         // TODO: strengthen tests for "new Float/Double(...)"
         // (I just suppressed these public constructors in wrappers, and the test still passes...)
-
+        // TODO: in general, measure test coverage
+        
         // WRAPPER SPEC: FW(FW), FW(String), FW(DW)
         invocations.put(new MethodSignature(FL_NAME, "<init>", "(F)V"), new InvokableMethod(CFW_N, "<init>", "("+CFW+")V", INVOKESPECIAL));
         invocations.put(new MethodSignature(FL_NAME, "<init>", "(Ljava/lang/String;)V"), new InvokableMethod(CFW_N, "<init>", "(Ljava/lang/String;)V", INVOKESPECIAL));
@@ -119,8 +120,6 @@ public class ReplaceFloatsMethods {
         
         allMethodsConversions.add(DL_NAME); // use proxy to call every other methods from Double
 
-        // TODO: redesign so that it is easier to maintain (and ensure every method gets implemented)
-        //       maybe define only two methods math_unary/math_binary, and add a parameter 
         // Math Library
         // WRAPPER SPEC: DW.min/max/pow(DW,DW) -> DW
         // WRAPPER SPEC: DW.sqrt/sin/sinh/asin/cos/cosh/acos/tan/atan/tanh(DW) -> DW
@@ -191,8 +190,8 @@ public class ReplaceFloatsMethods {
     public boolean instrumentCall(MethodVisitor mv, int opcode, String owner, String name, String desc, Object stackTop){
         MethodSignature ms = new MethodSignature(owner, name, desc);
         
-        // When we upgrade to the "NewGeneration" wrappers, maybe define only
-        // one prefix...
+        // When we upgrade for sure to the "NewGeneration" wrappers, 
+        // maybe define only one prefix...
 
 		if(name.startsWith(COJAC_MAGIC_CALL_DOUBLE_PREFIX)) {
 			cojacMagicCall(mv, name, desc, CDW_N);
@@ -241,11 +240,6 @@ public class ReplaceFloatsMethods {
 	
 	private void cojacMagicCall(MethodVisitor mv, String name, String desc, String wrapper){
 		String newDesc = replaceFloatMethodDescription(desc);
-		// when we upgrade to the "NewGeneration" wrappers, maybe handle the
-		// two "general" magic methods somewhat differently:
-		// if(name.equals("COJAC_MAGIC_wrapper") || name.equals("COJAC_MAGIC_toString") 
-		//   wrapper="ch.eiafr.cojac.models.wrapper.CommonDouble"
-		//
 		InvokableMethod im = new InvokableMethod(wrapper, name, newDesc);
 		im.invokeStatic(mv);
 	}

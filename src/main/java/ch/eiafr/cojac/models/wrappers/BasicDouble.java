@@ -115,7 +115,6 @@ public class BasicDouble extends Number implements Comparable<BasicDouble>{
     }
     
 
-    // TODO: consider using lambdas (eg return a.afterUnaryOp(Math::sqrt))
 //    private BasicDouble afterUnaryOp(DoubleUnaryOperator op) {
 //        return new BasicDouble(op.applyAsDouble(this.val));
 //    }

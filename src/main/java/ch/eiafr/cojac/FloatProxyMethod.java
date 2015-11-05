@@ -220,7 +220,7 @@ public class FloatProxyMethod {
         // CAUTION: we bypass 'mv' and directly talk to the AnalyzerAdapter!
         aaAfter.visitFrame(F_NEW, localsInFrame.length, localsInFrame, 
                                    stackContent.length, stackContent);
-        checkNotNullStack();  //TODO: remove
+        //checkNotNullStack();  //was during debugging - removed
         mv.visitInsn(POP); // we drop the null (no-method) slot
         maybeConvertTarget(mv, cc.opcode, cc.owner);
         // stack >> newTarget allParamsArr
