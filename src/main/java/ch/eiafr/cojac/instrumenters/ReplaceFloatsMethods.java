@@ -22,6 +22,7 @@ import ch.eiafr.cojac.CojacReferences;
 import ch.eiafr.cojac.FloatProxyMethod;
 import static ch.eiafr.cojac.models.FloatReplacerClasses.*;
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
+import static ch.eiafr.cojac.instrumenters.ReplaceFloatsInstrumenter.DN_NAME;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -181,6 +182,21 @@ public class ReplaceFloatsMethods {
                 new InvokableMethod(CFW_N, "math_max","(" + CFW + CFW +")" + CFW, INVOKESTATIC));
 
         allMethodsConversions.add(MATH_NAME);
+        
+        // Special cases, where a parameter declared as Object should be unwrapped
+        // (the general case is to keep our enriched numbers, especially
+        // needed for collections)
+        // TODO: handle every printf-like methods (format,...), in an elegant way...
+        invocations.put(new MethodSignature("java/io/PrintWriter","printf",
+                "(Ljava/lang/String;[Ljava/lang/Object;)V"),
+                new InvokableMethod(DN_NAME, "myPrintWriterPrintf",
+                        "(Ljava/io/PrintWriter;Ljava/lang/String;[Ljava/lang/Object;)V", INVOKESTATIC));
+
+        invocations.put(new MethodSignature("java/io/PrintStream","printf",
+                "(Ljava/lang/String;[Ljava/lang/Object;)Ljava/io/PrintStream;"),
+                new InvokableMethod(DN_NAME, "myPrintStreamPrintf",
+                        "(Ljava/io/PrintStream;Ljava/lang/String;[Ljava/lang/Object;)Ljava/io/PrintStream;", INVOKESTATIC));
+
     }
     
     /** method call instrumentation; returns true if it was instrumented 
@@ -217,7 +233,6 @@ public class ReplaceFloatsMethods {
             if(stackTop != null && stackTop.equals(supressionMethod))
                 return true;
         }
-        
         InvokableMethod replacementMethod = invocations.get(ms);
         if(replacementMethod != null) {
             replacementMethod.invoke(mv);

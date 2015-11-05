@@ -19,6 +19,9 @@
 package ch.eiafr.cojac.models;
 
 import static ch.eiafr.cojac.models.FloatReplacerClasses.*;
+
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -173,7 +176,7 @@ public class DoubleNumbers {
 		return obj;
 	}
 	
-	public static Object convertFromObjectToReal(Object obj) throws Exception{
+	public static Object convertFromObjectToReal(Object obj) throws Exception {
 		if(obj == null)
 			return obj;
 		if(obj.getClass().isArray()){
@@ -370,4 +373,41 @@ public class DoubleNumbers {
 	    }
 	    return null;
 	}
+    
+    private static Object[] unwrapped(Object[] args) {
+        try {
+            int n=args.length;
+            Object[] nArgs=new Object[n];
+            System.arraycopy(args, 0, nArgs, 0, n);
+            for(int i=0; i<n; i++) {
+                Object a=nArgs[i];
+                if (isCojacWrapper(a))
+                    nArgs[i]=convertFromObjectToReal(a);                
+            }
+            return nArgs;
+        } catch(Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    private static boolean isCojacWrapper(Object a) {
+        if (a==null) return false;
+        String prefix="ch.eiafr.cojac.models.wrappers";
+        String className=a.getClass().getName();
+        return className.startsWith(prefix);
+    }
+    
+    // Special cases where we force conversion of parameters declared as Object
+    // TODO: handle every printf-like methods (format,...), in an elegant way...
+    // TODO: reconsider that "printf" fix, or the location of those methods
+
+    public static PrintStream myPrintStreamPrintf(PrintStream ps, String format, Object... args) {
+        return ps.printf(format, unwrapped(args));
+    }
+
+    public static void myPrintWriterPrintf(PrintWriter pw, String format, Object... args) {
+        pw.printf(format, unwrapped(args));
+    }
+
+
 }

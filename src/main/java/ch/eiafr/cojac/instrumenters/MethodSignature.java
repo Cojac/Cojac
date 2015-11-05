@@ -51,5 +51,8 @@ public class MethodSignature {
         return hash;
     }
 
-    
+    @Override
+    public String toString() {
+        return owner + name + desc;
+    }
 }

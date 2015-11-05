@@ -60,7 +60,14 @@ public class Wrapping {
     playWithCollection();
 //    playWithGUI();
     playWithLambdas();
+    playWithPrintf();
     System.out.println("The end.");    
+  }
+  
+  private static void playWithPrintf() {
+    double a=1.0, b=3.0;
+    double c=a/b;
+    System.out.printf("with printf %4.4f\n", c);
   }
   
   public static void playWithPrimitiveFloats() {
