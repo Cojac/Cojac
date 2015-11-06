@@ -35,6 +35,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AnalyzerAdapter;
 
+import ch.eiafr.cojac.instrumenters.FloatProxyMethod;
 import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenter;
 import ch.eiafr.cojac.instrumenters.IOpcodeInstrumenterFactory;
 import ch.eiafr.cojac.instrumenters.ReplaceFloatsMethods;
@@ -55,7 +56,7 @@ import ch.eiafr.cojac.models.FloatNumbers;
  * The load and store operation indices (for the slot of each local variable) are
  * remapped in the FloatVariableSorter.
  */
-final class FloatReplacerMethodVisitor extends MethodVisitor {
+public final class FloatReplacerMethodVisitor extends MethodVisitor {
 	
 	private final CojacReferences references;
 	

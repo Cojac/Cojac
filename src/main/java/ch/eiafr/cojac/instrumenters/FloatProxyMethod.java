@@ -16,7 +16,7 @@
  *
  */
 
-package ch.eiafr.cojac;
+package ch.eiafr.cojac.instrumenters;
 
 import static ch.eiafr.cojac.models.FloatReplacerClasses.*;
 import static ch.eiafr.cojac.FloatReplacerMethodVisitor.DN_NAME;
@@ -37,6 +37,8 @@ import static org.objectweb.asm.Opcodes.*;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AnalyzerAdapter;
 
+import ch.eiafr.cojac.ConversionContext;
+import ch.eiafr.cojac.FloatReplaceClassVisitor;
 import ch.eiafr.cojac.FloatReplaceClassVisitor.MyLocalAdder;
 
 public class FloatProxyMethod {

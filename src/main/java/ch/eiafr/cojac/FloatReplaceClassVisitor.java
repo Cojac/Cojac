@@ -20,6 +20,8 @@ package ch.eiafr.cojac;
 
 import static ch.eiafr.cojac.models.FloatReplacerClasses.*;
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.replaceFloatMethodDescription;
+
+import ch.eiafr.cojac.instrumenters.FloatProxyMethod;
 import ch.eiafr.cojac.instrumenters.ReplaceFloatsMethods;
 
 import java.io.PrintWriter;
@@ -35,7 +37,7 @@ import org.objectweb.asm.util.Printer;
 import org.objectweb.asm.util.ASMifier;
 import org.objectweb.asm.util.TraceMethodVisitor;
 
-final class FloatReplaceClassVisitor extends CojacClassVisitor {
+public final class FloatReplaceClassVisitor extends CojacClassVisitor {
     private static final String DUMP_CLASS = null; // "" or "Dump"
     private static final String DUMP_METHOD = "instanceMethod"; // "Dump"
 
@@ -174,7 +176,7 @@ final class FloatReplaceClassVisitor extends CojacClassVisitor {
 //    }
 
     //========================================================================
-    static class MyLocalAdder extends LocalVariablesSorter {
+    public static class MyLocalAdder extends LocalVariablesSorter {
         private static final Type OBJ_ARRAY_TYPE=Type.getType("[Ljava/lang/Object;");
         private static final Type     OBJ_TYPE = Type.getType(Object.class);
 

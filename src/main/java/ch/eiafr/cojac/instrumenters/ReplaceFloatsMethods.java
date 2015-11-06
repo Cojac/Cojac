@@ -20,7 +20,6 @@ package ch.eiafr.cojac.instrumenters;
 
 import ch.eiafr.cojac.CojacReferences;
 import ch.eiafr.cojac.ConversionContext;
-import ch.eiafr.cojac.FloatProxyMethod;
 
 import static ch.eiafr.cojac.models.FloatReplacerClasses.*;
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
