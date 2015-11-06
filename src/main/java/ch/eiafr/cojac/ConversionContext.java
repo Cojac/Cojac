@@ -26,6 +26,8 @@ public class ConversionContext {
     static {
         /* Those methods declare Object/Object[] parameters while relying
          * strongly on some instances being Float/Double
+         * Maybe consider adding the description (parameter types) to the string
+         * if needed (here we take overloaded methods as a group)
          */
         
         methodsWithDisguisedObjPrm.add("java/io/PrintStream/printf");
