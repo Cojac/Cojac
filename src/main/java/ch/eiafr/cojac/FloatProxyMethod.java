@@ -26,7 +26,6 @@ import static ch.eiafr.cojac.instrumenters.ReplaceFloatsMethods.FL_DESCR;
 import static ch.eiafr.cojac.instrumenters.ReplaceFloatsMethods.DL_DESCR;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.objectweb.asm.Label;
@@ -93,14 +92,13 @@ public class FloatProxyMethod {
         newMv.visitMaxs(0, 0);
     }
     
-    public void proxyCall(MethodVisitor mv, int opcode, String owner, 
-            String name, String desc, boolean tryUnproxied){
-        if (tryUnproxied && opcode==INVOKEVIRTUAL || opcode==INVOKEINTERFACE) { //|| opcode==INVOKEINTERFACE  false && 
+    public void proxyCall(MethodVisitor mv, ConversionContext cc,
+            boolean tryUnproxied){
+        if (tryUnproxied && cc.opcode==INVOKEVIRTUAL || cc.opcode==INVOKEINTERFACE) { //|| opcode==INVOKEINTERFACE  false && 
             //proxyCallAndStupidVars(mv, opcode, owner, name, desc);
-            proxyCallBetterWithVars(mv, opcode, owner, name, desc);
+            proxyCallBetterWithVars(mv, cc);
             return;
         }
-        ConversionContext cc=new ConversionContext(opcode, owner, name, desc);
         // stack >> [target] nprm0 nprm1 nprm2...
         convertArgumentsToReal(mv, cc);           
         // stack >> [target] allParamsArr [target] allParamsArr
@@ -108,12 +106,12 @@ public class FloatProxyMethod {
         // stack >> [target] allParamsArr [newTarget] allParamsArr
         explodeOnStack(mv, cc, true); 
         // stack >> [target] allParamsArr [newTarget] nprm0 nprm1 nprm2...
-        mv.visitMethodInsn(opcode, owner, name, desc, (opcode == INVOKEINTERFACE));
+        mv.visitMethodInsn(cc.opcode, cc.owner, cc.name, cc.jDesc, (cc.opcode == INVOKEINTERFACE));
         // stack >> [target] allParamsArr [possibleResult]
-        checkArraysAfterCall(mv, cc.convertedArrays, desc);
+        checkArraysAfterCall(mv, cc.convertedArrays, cc.jDesc);
         // stack >> [target] [possibleResult]
-        int resultWidth=Type.getReturnType(desc).getSize();
-        if(hasTarget(opcode)) {
+        int resultWidth=Type.getReturnType(cc.jDesc).getSize();
+        if(hasTarget(cc.opcode)) {
             if(resultWidth==0) {
                 mv.visitInsn(POP);
             } else if (resultWidth==1) {
@@ -129,7 +127,7 @@ public class FloatProxyMethod {
             }
         }
         // stack >> [possibleResult]
-        convertReturnType(mv, desc);
+        convertReturnType(mv, cc.jDesc);
         // stack >> [newPossibleResult]
     }
 
@@ -139,30 +137,28 @@ public class FloatProxyMethod {
     // so all the slots before <target> are lost!!
     // Here the approach uses reflection (the target cannot be cast to
     // something known at runtime!)
-    // We don't need to define new variables, but it was so tedious to do that 
-    // I prefer to keep that in comment ;)
-   public void proxyCallBetterWithVars(MethodVisitor mv, int opcode, String owner, String name, String desc){
+    // We don't need to define new variables, but it was so tedious to do  
+    // that I prefer to keep it in comment ;)
+   public void proxyCallBetterWithVars(MethodVisitor mv, ConversionContext cc) {
         final String pm = "possibleMethod";
         final String pmDesc = "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/reflect/Method;";
         final String myInvoke = "myInvoke";
         final String myInvokeDesc = "(Ljava/lang/reflect/Method;Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;";
-        //checkNotNullStack();
-//        int paramArrayVar = mla.paramArrayVar();
-//        int targetVar = mla.targetVar();
-        //Label lEndTry = new Label(); 
+        // checkNotNullStack();
+        // int paramArrayVar = mla.paramArrayVar();
+        // int targetVar = mla.targetVar();
+        // Label lEndTry = new Label(); 
         Label lBeginHandler = new Label(), lEndHandler = new Label();
-        String descAfter=replaceFloatMethodDescription(desc);
-        Type cojReturnType=Type.getReturnType(descAfter);
-        ConversionContext cc=new ConversionContext(opcode, owner, name, desc);
+        Type cojReturnType=Type.getReturnType(cc.cDesc);
         // stack >> target prm0 prm1 prm2...
         convertArgumentsToReal(mv, cc);
         // stack >> target allParamsArr target allParamsArr
-        {
-//            mv.visitVarInsn(ASTORE, paramArrayVar);
-//            // stack >> target allParamsArr target
-//            //--------- String targetType=stackTopClass();
-//            mv.visitVarInsn(ASTORE, targetVar);
-        }
+        // {
+        //            mv.visitVarInsn(ASTORE, paramArrayVar);
+        //            // stack >> target allParamsArr target
+        //            //--------- String targetType=stackTopClass();
+        //            mv.visitVarInsn(ASTORE, targetVar);
+        // }
         mv.visitInsn(POP);
         mv.visitInsn(POP);
         // stack >> target allParamsArr
@@ -171,9 +167,9 @@ public class FloatProxyMethod {
         // stack >> allParamsArr target
         mv.visitInsn(DUP_X1);
         // stack >> target allParamsArr target
-        mv.visitLdcInsn(name);
+        mv.visitLdcInsn(cc.name);
         // stack >> target allParamsArr target methName
-        mv.visitLdcInsn(descAfter);
+        mv.visitLdcInsn(cc.cDesc);
         // stack >> target allParamsArr target methName methDesc
         mv.visitMethodInsn(INVOKESTATIC, DN_NAME, pm, pmDesc, false);
         // stack >> target allParamsArr nullOrMeth
@@ -228,11 +224,11 @@ public class FloatProxyMethod {
         // stack >> allParamsArr newTarget allParamsArr
         explodeOnStack(mv, cc, true); 
         // stack >> allParamsArr newTarget nprm0 nprm1 nprm2...
-        mv.visitMethodInsn(opcode, owner, name, desc, (opcode == INVOKEINTERFACE));
+        mv.visitMethodInsn(cc.opcode, cc.owner, cc.name, cc.jDesc, (cc.opcode == INVOKEINTERFACE));
         // stack >> allParamsArr [possibleResult]
-        checkArraysAfterCall(mv, cc.convertedArrays, desc);
+        checkArraysAfterCall(mv, cc.convertedArrays, cc.jDesc);
         // stack >> [possibleResult]
-        convertReturnType(mv, desc);
+        convertReturnType(mv, cc.jDesc);
         // stack >> [newPossibleResult]
         ;; mv.visitLabel(lEndHandler);
         scl.remove(scl.size()-1); // remove 3 slots: target allParamsArr nullOrMeth
@@ -244,8 +240,8 @@ public class FloatProxyMethod {
                                    stackContent.length, stackContent);
     }
    
-// if(crtClassName.contains("RunWindow")) System.out.println("E: "+aaAfter.stack);
-// if(crtClassName.contains("RunWindow")) System.out.println("F: "+java.util.Arrays.toString(stackContent));
+    // if(crtClassName.contains("RunWindow")) System.out.println("E: "+aaAfter.stack);
+    // if(crtClassName.contains("RunWindow")) System.out.println("F: "+java.util.Arrays.toString(stackContent));
 
     // REMEMBER tryCatch: according to ASM User Guide, "...the stack is cleared,
     // the exception is pushed on this empty stack, and execution continues at catch"
@@ -277,25 +273,19 @@ public class FloatProxyMethod {
         return t;
     }
 
-//    private String stackTopClass() {
-//        Object o = this.stackTop(); // that's taken from aaAfter indeed...
-//        if (o instanceof String) return (String) o;
-//        return null;
-//    }
-    
     private void checkNotNullStack() {
         if (aaAfter.stack != null) return; 
         throw new RuntimeException("STUPID NULL stack!!!");
     }
     
-    public boolean needsConversion(int opcode, String owner, String name, String desc) {
-        if(owner.equals(JWRAPPER_FLOAT_TYPE .getInternalName())) return true;
-        if(owner.equals(JWRAPPER_DOUBLE_TYPE.getInternalName())) return true;
-        if(name.equals("clone") && desc.equals("()Ljava/lang/Object;")) return true;
-        for (Type t:Type.getArgumentTypes(desc))
+    public boolean needsConversion(ConversionContext cc) {
+        if(cc.owner.equals(JWRAPPER_FLOAT_TYPE .getInternalName())) return true;
+        if(cc.owner.equals(JWRAPPER_DOUBLE_TYPE.getInternalName())) return true;
+        if(cc.name.equals("clone") && cc.jDesc.equals("()Ljava/lang/Object;")) return true;
+        for (Type t:Type.getArgumentTypes(cc.jDesc))
             if (needsConversion(t)) return true;
-        if (needsConversion(Type.getReturnType(desc))) return true;
-        if (new ConversionContext(opcode, owner, name, desc).shouldObjParamBeConverted) return true;
+        if (needsConversion(Type.getReturnType(cc.jDesc))) return true;
+        if (cc.shouldObjParamBeConverted) return true;
         return false;
     }
     
@@ -665,78 +655,18 @@ public class FloatProxyMethod {
         // this.mla=mla;
     }
 
-//    private Object stackTop(){
-//        AnalyzerAdapter aa = aaAfter;
-//        if(aa.stack == null)   return null;
-//        if(aa.stack.isEmpty()) return null;
-//        return aa.stack.get(aa.stack.size()-1);
-//    }
+//  private String stackTopClass() {
+//    Object o = this.stackTop(); // that's taken from aaAfter indeed...
+//    if (o instanceof String) return (String) o;
+//    return null;
+//  }
+//  private Object stackTop(){
+//      AnalyzerAdapter aa = aaAfter;
+//      if(aa.stack == null)   return null;
+//      if(aa.stack.isEmpty()) return null;
+//      return aa.stack.get(aa.stack.size()-1);
+//  }
 
-
-    //========================================================================
-    static class ConversionContext {
-        private final int opcode; 
-        private final String owner, name, jDesc, cDesc;
-        /** with double, Float etc... */
-        private final Type[] outArgs;
-        /** with DW, FW etc... */
-        private final Type[] inArgs;
-        private final Map<Integer, Type> typeConversions = new HashMap<>();
-        private final Map<Integer, Type> convertedArrays = new HashMap<>();   
-        private final boolean shouldObjParamBeConverted;
-        
-        public ConversionContext(int opcode, String owner, String name, String desc) {
-            this.opcode=opcode;
-            this.owner=owner;
-            this.name=name;
-            this.jDesc=desc;
-            this.cDesc=replaceFloatMethodDescription(desc);
-            outArgs = Type.getArgumentTypes(desc);
-            inArgs = typesAfterReplacement(outArgs);
-            rememberArrays();
-            shouldObjParamBeConverted= (name.equals("printf") &&
-                                       owner.equals("java/io/PrintStream"));
-        }
-        
-        public boolean needsConversion(int i) {
-            return typeConversions.containsKey(i);
-        }
-        
-        public Type asOriginalJavaType(int i) {
-            return outArgs[i];
-        }
-
-        private Type[] typesAfterReplacement(Type[] javArgs) {
-            Type cojArgs[] = new Type[javArgs.length];
-            for (int i = 0; i < javArgs.length; i++) {
-                cojArgs[i] = afterFloatReplacement(javArgs[i]);
-                if(cojArgs[i].equals(javArgs[i]) == false){
-                    typeConversions.put(i, javArgs[i]);
-                }
-            }
-            return cojArgs;
-        }
-        
-        private void rememberArrays() {
-            // If it is an array, keep both arrays references (cojac & original)
-            for (int i=0 ; i < inArgs.length; i++) {
-                if(inArgs[i].getSort() == Type.ARRAY) { 
-                    convertedArrays.put(i, inArgs[i]);
-                }
-            }
-        }
-        
-        public boolean hasReturn() {
-            return !Type.getReturnType(jDesc).equals(Type.VOID_TYPE);
-        }
-        
-        public boolean hasPrimitiveResultInCojacVersion() {
-            return hasReturn() && 
-                    Type.getReturnType(cDesc).getSort() != Type.ARRAY && 
-                    Type.getReturnType(cDesc).getSort() != Type.OBJECT;
-        }
-    }
-    //========================================================================
 }
 
 /*============================================================================

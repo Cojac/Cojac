@@ -397,10 +397,9 @@ public class DoubleNumbers {
         return className.startsWith(prefix);
     }
     
-    // Special cases where we force conversion of parameters declared as Object
-    // TODO: handle every printf-like methods (format,...), in an elegant way...
-    // TODO: reconsider that "printf" fix, or the location of those methods
-    // TODO: choose the approach to "printf": redirect or "selective proxy"...
+    /* Methods that get redirected. See ReplaceFloatMethods. 
+     * Here is just an example with printf() - commented because we now 
+     * handle that in the proxy (createConvertMethod).
 
     public static PrintStream myPrintStreamPrintf(PrintStream ps, String format, Object... args) {
         return ps.printf(format, unwrapped(args));
@@ -409,6 +408,6 @@ public class DoubleNumbers {
     public static void myPrintWriterPrintf(PrintWriter pw, String format, Object... args) {
         pw.printf(format, unwrapped(args));
     }
-
+    */
 
 }

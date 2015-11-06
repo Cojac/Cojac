@@ -19,7 +19,9 @@
 package ch.eiafr.cojac.instrumenters;
 
 import ch.eiafr.cojac.CojacReferences;
+import ch.eiafr.cojac.ConversionContext;
 import ch.eiafr.cojac.FloatProxyMethod;
+
 import static ch.eiafr.cojac.models.FloatReplacerClasses.*;
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.*;
 import static ch.eiafr.cojac.instrumenters.ReplaceFloatsInstrumenter.DN_NAME;
@@ -183,11 +185,13 @@ public class ReplaceFloatsMethods {
 
         allMethodsConversions.add(MATH_NAME);
         
-        // Special cases, where a parameter declared as Object should be unwrapped
-        // (the general case is to keep our enriched numbers, especially
-        // needed for collections)
-        // TODO: handle every printf-like methods (format,...), in an elegant way...
-        /*
+        /* Special cases, where a method should be redirected. It would be 
+         * another means to cope with parameters declared as Object should 
+         * be unwrapped (the general case is to keep our enriched numbers,
+         * especially needed for collections). 
+         * Here is just an example with printf() - commented because we now 
+         * handle that in the proxy (createConvertMethod).
+         * 
         invocations.put(new MethodSignature("java/io/PrintWriter","printf",
                 "(Ljava/lang/String;[Ljava/lang/Object;)V"),
                 new InvokableMethod(DN_NAME, "myPrintWriterPrintf",
@@ -240,14 +244,16 @@ public class ReplaceFloatsMethods {
             return true;
         }
         if(allMethodsConversions.contains(owner)) {
-            if (!fpm.needsConversion(opcode, owner, name, desc)) return false;
-            fpm.proxyCall(mv, opcode, owner, name, desc, false);
+            ConversionContext cc=new ConversionContext(opcode, owner, name, desc);
+            if (!fpm.needsConversion(cc)) return false;
+            fpm.proxyCall(mv, cc, false);
             return true;
         }
 		
 		if(references.hasToBeInstrumented(owner) == false) {
-            if (!fpm.needsConversion(opcode, owner, name, desc)) return false;
-			fpm.proxyCall(mv, opcode, owner, name, desc, true);
+            ConversionContext cc=new ConversionContext(opcode, owner, name, desc);
+            if (!fpm.needsConversion(cc)) return false;
+			fpm.proxyCall(mv, cc, true);
 			return true;
 		}
 		
