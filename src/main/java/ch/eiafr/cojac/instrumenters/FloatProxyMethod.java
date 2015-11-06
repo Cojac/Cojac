@@ -37,7 +37,6 @@ import static org.objectweb.asm.Opcodes.*;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AnalyzerAdapter;
 
-import ch.eiafr.cojac.ConversionContext;
 import ch.eiafr.cojac.FloatReplaceClassVisitor;
 import ch.eiafr.cojac.FloatReplaceClassVisitor.MyLocalAdder;
 

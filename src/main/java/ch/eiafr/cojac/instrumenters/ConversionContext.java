@@ -1,4 +1,4 @@
-package ch.eiafr.cojac;
+package ch.eiafr.cojac.instrumenters;
 
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.afterFloatReplacement;
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.replaceFloatMethodDescription;
