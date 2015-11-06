@@ -1,4 +1,4 @@
-/* 
+/* For simplicity, we don't use JUnit here (only the idea)...
  * To be run: 
  * - without Cojac:        java demo.HelloCojac
  * - with Cojac:           java -javaagent:cojac.jar demo.HelloCojac
