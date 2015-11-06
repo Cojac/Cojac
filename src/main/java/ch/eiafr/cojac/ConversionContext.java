@@ -4,12 +4,15 @@ import static ch.eiafr.cojac.instrumenters.InvokableMethod.afterFloatReplacement
 import static ch.eiafr.cojac.instrumenters.InvokableMethod.replaceFloatMethodDescription;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.objectweb.asm.Type;
 
 //========================================================================
 public class ConversionContext {
+    private static final Set<String> methodsWithDisguisedObjPrm= new HashSet<>();
     public final int opcode; 
     public final String owner, name, jDesc, cDesc;
     /** with double, Float etc... */
@@ -20,6 +23,21 @@ public class ConversionContext {
     public final Map<Integer, Type> convertedArrays = new HashMap<>();   
     public final boolean shouldObjParamBeConverted;
     
+    static {
+        /* Those methods declare Object/Object[] parameters while relying
+         * strongly on some instances being Float/Double
+         */
+        
+        methodsWithDisguisedObjPrm.add("java/io/PrintStream/printf");
+        methodsWithDisguisedObjPrm.add("java/io/PrintWriter/printf");
+        methodsWithDisguisedObjPrm.add("java/io/Console/printf");
+        methodsWithDisguisedObjPrm.add("java/lang/String/format");
+        methodsWithDisguisedObjPrm.add("java/util/Formatter/format");
+        methodsWithDisguisedObjPrm.add("java/text/Format/format");
+        methodsWithDisguisedObjPrm.add("java/text/MessageFormat/format");
+        methodsWithDisguisedObjPrm.add("java/text/NumberFormat/format");
+    }
+    
     public ConversionContext(int opcode, String owner, String name, String desc) {
         this.opcode=opcode;
         this.owner=owner;
@@ -29,8 +47,8 @@ public class ConversionContext {
         outArgs = Type.getArgumentTypes(desc);
         inArgs = typesAfterReplacement(outArgs);
         rememberArrays();
-        shouldObjParamBeConverted= (name.equals("printf") &&
-                                   owner.equals("java/io/PrintStream"));
+        String m=owner+"/"+name;
+        shouldObjParamBeConverted = methodsWithDisguisedObjPrm.contains(m);
     }
     
     public boolean needsConversion(int i) {

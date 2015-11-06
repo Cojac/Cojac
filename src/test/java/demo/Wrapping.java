@@ -68,6 +68,7 @@ public class Wrapping {
     double a=1.0, b=3.0;
     double c=a/b;
     System.out.printf("with printf %4.4f\n", c);
+    System.out.println(String.format("with printf %4.4f\n", c));
   }
   
   public static void playWithPrimitiveFloats() {
