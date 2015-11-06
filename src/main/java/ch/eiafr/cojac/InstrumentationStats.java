@@ -196,7 +196,7 @@ public final class InstrumentationStats extends NotificationBroadcasterSupport i
     }
 
     public static void writeToConsole(StringBuilder builder) {
-        System.out.println(builder.toString());
+        System.err.println(builder.toString());
     }
 
     protected static final class Counter {
