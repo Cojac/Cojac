@@ -26,6 +26,16 @@
 	<artifactId>cojac</artifactId>
 	<version>1.4</version>
 	<name>COJAC</name>
+    <description>a tool that leverages in new ways the arithmetic capabilities of the Java programming language.</description>
+    <url>https://github.com/Cojac/</url>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
 	<build>
 		<plugins>
