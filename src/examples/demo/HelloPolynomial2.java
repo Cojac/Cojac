@@ -1,6 +1,6 @@
 /* 
  * To be run: 
- * - without Cojac:           java demo.HelloPolynomial2
+ * - without Cojac:             java demo.HelloPolynomial2
  * - with Derivation wrapper:   java -javaagent:cojac.jar="-Ra" demo.HelloPolynomial1
  */
 
