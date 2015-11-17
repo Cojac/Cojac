@@ -41,7 +41,7 @@ public final class Args {
 
     private static String USAGE =
              "java -javaagent:cojac.jar=\"[OPTIONS]\" YourApp [appArgs]\n"
-           + "(version 1.4 - 2015 Oct 21)";
+           + "(version 1.4 - 2015 Nov 17)";
     private static String HEADER =
             "\nTwo nice tools to enrich Java arithmetic capabilities, on-the-fly:"
             +"\n - Numerical Problem Sniffer: detects and signals arithmetic poisons like "
@@ -51,7 +51,7 @@ public final class Args {
             +"interval computation, discrete stochastic arithmetic, and even automatic differentiation."
             +"\n----------------- OPTIONS -----------------\n";
     private static String FOOTER =
-            "\n------> https://github.com/frederic-bapst/Cojac <------";
+            "\n------> https://github.com/Cojac/Cojac <------";
 
     public Args() {
         super();
