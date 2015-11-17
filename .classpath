@@ -9,5 +9,6 @@
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER"/>
 	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
 	<classpathentry kind="lib" path="src/test/resources/Java2Demo.jar"/>
+	<classpathentry kind="lib" path="src/test/resources/cojac-agent-test.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

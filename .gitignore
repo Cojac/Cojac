@@ -1,5 +1,5 @@
 .idea
-ch.eiafr.cojac.iml
+com.github.cojac.iml
 target
 cojac.iml
 test.log

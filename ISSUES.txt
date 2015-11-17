@@ -39,7 +39,7 @@
 
 - Array reference through proxy: The proxy breaks the references with float &
   double arrays. A fix has been done but it does not cover all cases. A test 
-  shows the problem in ch.eiafr.cojac.unit.replace. The name of the test:
+  shows the problem in com.github.cojac.unit.replace. The name of the test:
   arrayPassedInNotInstrumentedSideModifiedWithAnOtherMethod
 
 - Native methods: The native methods can be called but they cannot call methods 

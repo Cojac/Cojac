@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: ch.eiafr.cojac.Cojac
+Main-Class: com.github.cojac.Cojac
 

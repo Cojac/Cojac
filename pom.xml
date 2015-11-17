@@ -47,11 +47,11 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>ch.eiafr.cojac.Cojac</mainClass>
+							<mainClass>com.github.cojac.Cojac</mainClass>
 						</manifest>
 						<manifestEntries>
 							<addClasspath>true</addClasspath>
-							<Premain-Class>ch.eiafr.cojac.CojacAgent</Premain-Class>
+							<Premain-Class>com.github.cojac.CojacAgent</Premain-Class>
 						</manifestEntries>
 					</archive>
 				</configuration>
@@ -70,11 +70,11 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>ch.eiafr.cojac.Cojac</mainClass>
+							<mainClass>com.github.cojac.Cojac</mainClass>
 						</manifest>
 						<manifestEntries>
 							<addClasspath>true</addClasspath>
-							<Premain-Class>ch.eiafr.cojac.CojacAgent</Premain-Class>
+							<Premain-Class>com.github.cojac.CojacAgent</Premain-Class>
                             <Boot-Class-Path>cojac.jar</Boot-Class-Path>
 							<Class-Path>cojac.jar</Class-Path>
 						</manifestEntries>
@@ -96,8 +96,8 @@
 				<!--                 <version>1.0</version> -->
 				<configuration>
 					<excludes>
-						<exclude>ch/eiafr/cojac/unit/Tests.java</exclude>
-						<exclude>ch/eiafr/cojac/poly/PolyTest.java</exclude>
+						<exclude>com/github/cojac/unit/Tests.java</exclude>
+						<exclude>com/github/cojac/poly/PolyTest.java</exclude>
 					</excludes>
 					<argLine>-javaagent:${basedir}/src/test/resources/cojac-agent-test.jar</argLine>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
