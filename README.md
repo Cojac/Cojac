@@ -28,4 +28,5 @@
 
 Developed at the [School of Engineering of Fribourg](https://www.heia-fr.ch), 
 Switzerland.
+
 Distributed under the "Apache License, v2.0".
