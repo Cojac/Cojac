@@ -26,6 +26,6 @@
 - watch our small demos on [YouTube](https://www.youtube.com/channel/UC7_QBUBV9slZ5SbS9bhOVWA/videos)
 - read the [User Guide](https://github.com/Cojac/Cojac/wiki)!
 
-Developed at the [School of Engineering of Fribourg](www.heia-fr.ch), 
+Developed at the [School of Engineering of Fribourg](https://www.heia-fr.ch), 
 Switzerland.
 Distributed under the "Apache License, v2.0".
