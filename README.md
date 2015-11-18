@@ -1,4 +1,4 @@
-# COJAC - Numerical Sniffer and Enriching Wrapper for Java
+## COJAC - Numerical Sniffer and Enriching Wrapper for Java
 
 ### Numerical Sniffer
 
@@ -22,6 +22,8 @@
 
 ### Java numbers with a fresh eye and a cool tool...
 
-... Don't miss the opportunity: read the [User Guide](https://github.com/Cojac/Cojac/wiki)!
+... Don't miss the opportunity: 
+- watch our small demos on [YouTube](https://www.youtube.com/channel/UC7_QBUBV9slZ5SbS9bhOVWA/videos)
+- read the [User Guide](https://github.com/Cojac/Cojac/wiki)!
 
 Distributed under the "Apache License, v2.0".
