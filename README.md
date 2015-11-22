@@ -23,7 +23,7 @@
 ### Java numbers with a fresh eye and a cool tool...
 
 ... Don't miss the opportunity: 
-- watch our small demos on [YouTube](https://www.youtube.com/channel/UC7_QBUBV9slZ5SbS9bhOVWA/videos)
+- watch our small demos on [YouTube](https://youtu.be/DqAFQfbWZOU?list=PLHLKWUtT0B7kNos1e48vKhFlGAXR1AAkF)
 - read the [User Guide](https://github.com/Cojac/Cojac/wiki)!
 
 Developed at the [School of Engineering of Fribourg](https://www.heia-fr.ch), 
