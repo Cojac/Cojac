@@ -100,7 +100,9 @@ public enum Arg {
     D2I("d2i", Opcodes.D2I, CASTS),
     D2L("d2l", Opcodes.D2L, CASTS),
     F2I("f2i", Opcodes.F2I, CASTS),
-    F2L("f2l", Opcodes.F2L, CASTS);
+    F2L("f2l", Opcodes.F2L, CASTS),
+    I2F("i2f", Opcodes.I2F, CASTS),
+    L2D("l2d", Opcodes.L2D, CASTS);
 
     private final int opCode;
     private final String name;

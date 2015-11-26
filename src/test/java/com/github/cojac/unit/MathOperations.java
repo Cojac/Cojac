@@ -18,6 +18,9 @@
 
 package com.github.cojac.unit;
 
+import com.github.cojac.models.CheckedCasts;
+import com.github.cojac.models.ReactionType;
+
 public interface MathOperations {
     int iadd(int a, int b) throws Exception;
 
@@ -86,6 +89,10 @@ public interface MathOperations {
     long f2l(float a) throws Exception;
 
     float d2f(double a) throws Exception;
+    
+    float i2f(int a) throws Exception;
+
+    double l2d(long a) throws Exception;
 
     double pow(double a, double b) throws Exception;
 

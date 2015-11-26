@@ -223,6 +223,18 @@ public class Tests implements MathOperations {
     }
 
     @Override
+    public float i2f(int a) throws Exception {
+        Method m = object.getClass().getMethod("i2f", Integer.TYPE);
+        return this.<Float>exec(m, new Object[]{a});
+    }
+
+    @Override
+    public double l2d(long a) throws Exception {
+        Method m = object.getClass().getMethod("l2d", Long.TYPE);
+        return this.<Double>exec(m, new Object[]{a});
+    }
+
+    @Override
     public double pow(double a, double b) throws Exception {
         Method m = object.getClass().getMethod("pow", Double.TYPE, Double.TYPE);
 

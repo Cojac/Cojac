@@ -162,6 +162,16 @@ public class CheckedOperations implements MathOperations {
     }
 
     @Override
+    public float i2f(int a) throws Exception {
+        return CheckedCasts.checkedI2F(a, ReactionType.EXCEPTION.value(), "");
+    }
+
+    @Override
+    public double l2d(long a) throws Exception {
+        return CheckedCasts.checkedL2D(a, ReactionType.EXCEPTION.value(), "");
+    }
+
+    @Override
     public double pow(double a, double b) throws Exception {
         return CheckedMaths.checkedPow(a, b, ReactionType.EXCEPTION.value(), "");
     }

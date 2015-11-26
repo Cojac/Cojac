@@ -94,4 +94,24 @@ public final class CheckedCasts {
 
         return (float) a;
     }
+    
+    public static float checkedI2F(int a, int reaction, String logFileName) {
+        if ((int)((float)a) != a) {
+            Reactions.react(reaction, "Loss of precision : I2F", logFileName);
+        }
+
+        return (float) a;
+    }
+    
+    public static double checkedL2D(long a, int reaction, String logFileName) {
+        if ((long)((double)a) != a) {
+            Reactions.react(reaction, "Loss of precision : L2D", logFileName);
+        }
+
+        return (double) a;
+    }
+
+
+
+    
 }

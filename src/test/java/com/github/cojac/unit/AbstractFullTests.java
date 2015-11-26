@@ -972,6 +972,35 @@ public abstract class AbstractFullTests {
     public void d2f6() throws Exception {
         getTests().d2f(Double.NEGATIVE_INFINITY);
     }
+    
+    @Test
+    public void i2f1() throws Exception {
+        getTests().i2f(-123);
+        getTests().i2f(+123);
+        getTests().i2f(-123_456);
+        getTests().i2f(+123_456);
+    }
+    
+    @Test(expected = ArithmeticException.class)
+    public void i2f2() throws Exception {
+        getTests().i2f(Integer.MAX_VALUE-10);
+    }
+
+    @Test
+    public void l2d1() throws Exception {
+        getTests().l2d(-123L);
+        getTests().l2d(+123L);
+        getTests().l2d(-123_456L);
+        getTests().l2d(+123_456L);
+        getTests().l2d(-123_456_789_123_456L);
+        getTests().l2d(+123_456_789_123_456L);
+    }
+
+    @Test(expected = ArithmeticException.class)
+    public void l2d2() throws Exception {
+        getTests().l2d(Long.MAX_VALUE-10);
+    }
+
 
     @Test
     public void pow() throws Exception {

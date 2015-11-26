@@ -102,6 +102,8 @@ final class DirectInstrumenter implements IOpcodeInstrumenter {
         invocations.put(D2L, new InvokableMethod(CHECKED_CASTS, "checkedD2L", Signatures.RAW_D2L));
         invocations.put(F2I, new InvokableMethod(CHECKED_CASTS, "checkedF2I", Signatures.RAW_F2I));
         invocations.put(F2L, new InvokableMethod(CHECKED_CASTS, "checkedF2L", Signatures.RAW_F2L));
+        invocations.put(I2F, new InvokableMethod(CHECKED_CASTS, "checkedI2F", Signatures.RAW_I2F));
+        invocations.put(L2D, new InvokableMethod(CHECKED_CASTS, "checkedL2D", Signatures.RAW_L2D));
     }
 
     @Override

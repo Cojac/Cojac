@@ -24,7 +24,8 @@
 
 ... Don't miss the opportunity: 
 - watch our small demos on [YouTube](https://youtu.be/DqAFQfbWZOU?list=PLHLKWUtT0B7kNos1e48vKhFlGAXR1AAkF)
-- read the [User Guide](https://github.com/Cojac/Cojac/wiki)!
+- read the [User Guide](https://github.com/Cojac/Cojac/wiki)
+- download [cojac.jar](https://github.com/Cojac/Cojac/releases/download/v1.4/cojac.jar)
 
 Developed at the [School of Engineering of Fribourg](https://www.heia-fr.ch), 
 Switzerland.

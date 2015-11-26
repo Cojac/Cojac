@@ -63,6 +63,8 @@ public final class Signatures {
         SIGNATURES.put(Arg.D2L, Signatures.CHECK_D2L);
         SIGNATURES.put(Arg.F2I, Signatures.CHECK_F2I);
         SIGNATURES.put(Arg.F2L, Signatures.CHECK_F2L);
+        SIGNATURES.put(Arg.I2F, Signatures.CHECK_I2F);
+        SIGNATURES.put(Arg.L2D, Signatures.CHECK_L2D);
     }
 
     //Injected methods
@@ -88,6 +90,8 @@ public final class Signatures {
     public static final String CHECK_D2L = "(D)J";
     public static final String CHECK_F2I = "(F)I";
     public static final String CHECK_F2L = "(F)J";
+    public static final String CHECK_I2F = "(I)F";
+    public static final String CHECK_L2D = "(J)D";
 
     public static final String CHECK_MATH_RESULT = "(DILjava/lang/String;Ljava/lang/String;)V";
     //Raw methods
@@ -113,6 +117,8 @@ public final class Signatures {
     public static final String RAW_D2L = "(DILjava/lang/String;)J";
     public static final String RAW_F2I = "(FILjava/lang/String;)I";
     public static final String RAW_F2L = "(FILjava/lang/String;)J";
+    public static final String RAW_I2F = "(IILjava/lang/String;)F";
+    public static final String RAW_L2D = "(JILjava/lang/String;)D";
 
     //React methods
 

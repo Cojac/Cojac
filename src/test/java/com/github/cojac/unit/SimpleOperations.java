@@ -160,6 +160,16 @@ public class SimpleOperations implements MathOperations {
     }
 
     @Override
+    public float i2f(int a) throws Exception {
+        return (float) a;
+    }
+
+    @Override
+    public double l2d(long a) throws Exception {
+        return (double) a;
+    }
+
+    @Override
     public double pow(double a, double b) throws Exception {
         return Math.pow(a, b);
     }
