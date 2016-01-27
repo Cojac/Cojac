@@ -347,7 +347,10 @@ public class DoubleNumbers {
 	
     public static Object myInvoke(Method m, Object target, Object[] prms) {
         try {
-            m.setAccessible(true);
+            if (!m.isAccessible()) {
+//                System.out.println("ACH, not accessible: "+m);
+                m.setAccessible(true);
+            }
             return m.invoke(target,  prms);
         } catch (IllegalAccessException | 
                 IllegalArgumentException | 
@@ -361,9 +364,10 @@ public class DoubleNumbers {
     public static Method possibleMethod(Object target, String methodName, String desc) {
 	    if (target==null) return null;
 	    Class<?> clazz=target.getClass();
-	    //if(methodName.contains("apply")) System.out.println(clazz+" "+methodName+desc);
+        //if(methodName.contains("apply")) System.out.println(clazz+" "+methodName+desc);
 	    Method[] mt=clazz.getMethods();
 	    for(Method m:mt) {
+	        // m.getDeclaringClass()
 	        if (!m.getName().equals(methodName)) continue;
 	        String d=Type.getMethodDescriptor(m);
 	        if (d.equals(desc)) { 

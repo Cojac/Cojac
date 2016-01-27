@@ -61,7 +61,14 @@ public class Wrapping {
 //    playWithGUI();
     playWithLambdas();
     playWithPrintf();
+    playWithPrivateOverride();
     System.out.println("The end.");    
+  }
+  
+  private static void playWithPrivateOverride() {
+      DoubleUnaryOperator g=GizmoFactory.gizmo();
+      double r=g.applyAsDouble(3.4);
+      System.out.println("Gizmo gives: "+r);
   }
   
   private static void playWithPrintf() {
@@ -436,6 +443,10 @@ public class Wrapping {
 //    public final float fValue;
 //    MyWrapper(double d) {dValue=d; fValue=(float)d;}
 //  }
+  
+  static interface IGizmo {
+      double gizgiz(double x);
+  }
   //======================================================================
   static class SimpleGUI extends JFrame {
       public SimpleGUI() {
@@ -450,4 +461,15 @@ public class Wrapping {
           Wrapping.playWithJavaDoubleWrapper();
       }
   }
+}
+
+class GizmoFactory {
+    static private class MyGizmo implements DoubleUnaryOperator {
+        @Override public double applyAsDouble(double x) {
+            return 3*x;
+        }
+    }
+    public static DoubleUnaryOperator gizmo() {
+        return new MyGizmo();
+    }
 }
