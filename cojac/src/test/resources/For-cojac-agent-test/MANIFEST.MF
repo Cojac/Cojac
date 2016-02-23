@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Premain-Class: com.github.cojac.models.ReflexionAgent
+Can-Retransform-Classes: True
+Can-Redefine-Classes: True
