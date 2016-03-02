@@ -22,12 +22,13 @@ import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
 
 public class WrapperSymbolic extends ACompactWrapper {
+    
     private final double value;
-    private final double deriv;
+    private final boolean isUnknown;
 
-    private WrapperSymbolic(double value, double dValue) {
+    private WrapperSymbolic(double value, boolean isUnknown) {
         this.value = value;
-        this.deriv = dValue;
+        this.isUnknown = isUnknown;
     }
    
     //-------------------------------------------------------------------------
@@ -35,31 +36,38 @@ public class WrapperSymbolic extends ACompactWrapper {
     //-------------------------------------------------------------------------
     public WrapperSymbolic(ACojacWrapper w) {
         this(w==null ? 0.0 : der(w).value, 
-             w==null ? 0.0 : der(w).deriv);
+             w==null ? false : der(w).isUnknown);
+        System.out.println("WrapperSymbolic");
     }
+    
+    
+    // ATTENTION redefinire toutes les opérations pour garder une trace
     
     //-------------------------------------------------------------------------
     // Most of the operations do not follow those "operator" rules, 
     // and are thus fully redefined
     @Override
     public ACojacWrapper applyUnaryOp(DoubleUnaryOperator op) {
-        return new WrapperSymbolic(op.applyAsDouble(value), op.applyAsDouble(deriv));
+        System.out.println("applyUnaryOp");
+        return new WrapperSymbolic(op.applyAsDouble(value), false);
     }
 
     @Override
     public ACojacWrapper applyBinaryOp(DoubleBinaryOperator op, ACojacWrapper b) {
+        System.out.println("applyBinaryOp");
         WrapperSymbolic bb=(WrapperSymbolic)b;
         return new WrapperSymbolic(op.applyAsDouble(value, bb.value),
-                                     op.applyAsDouble(deriv, bb.deriv));
+                                     false);
     }
     //-------------------------------------------------------------------------
-
+    
     public ACojacWrapper dmul(ACojacWrapper b) {
-        double d=this.value*der(b).deriv + this.deriv*der(b).value;
-        return new WrapperSymbolic(this.value*der(b).value, d);
+        System.out.println("("+this.value+"*"+der(b).value+")");
+        //double d=this.value*der(b).deriv + this.deriv*der(b).value;
+        return new WrapperSymbolic(this.value*der(b).value, false);
     }
     
-    public ACojacWrapper ddiv(ACojacWrapper b) {
+   /* public ACojacWrapper ddiv(ACojacWrapper b) {
         double d=this.deriv*der(b).value - this.value*der(b).deriv;
         return new WrapperSymbolic(this.value/der(b).value, d);
     }
@@ -181,7 +189,7 @@ public class WrapperSymbolic extends ACompactWrapper {
                 (((der(b).value * this.deriv) / this.value) + 
                         Math.log(this.value) * der(b).deriv);
         return new WrapperSymbolic(value, dValue); 
-    }
+    }*/
     
     @Override public double toDouble() {
         return value;
@@ -189,11 +197,11 @@ public class WrapperSymbolic extends ACompactWrapper {
 
     @Override
     public ACojacWrapper fromDouble(double a, boolean wasFromFloat) {
-        return new WrapperSymbolic(a, 0.0);
+        return new WrapperSymbolic(a, false);
     }
 
     @Override public String asInternalString() {
-        return value+" (deriv="+deriv+")";
+        return value+" (isUnknown="+isUnknown+")";
     }
 
     @Override public String wrapperName() {
@@ -201,23 +209,21 @@ public class WrapperSymbolic extends ACompactWrapper {
     }
     
     // ------------------------------------------------------------------------
-    public static CommonDouble COJAC_MAGIC_getSymbolic(CommonDouble d) {
-        WrapperSymbolic res=new WrapperSymbolic(der(d.val).deriv, 0);
+    public static boolean COJAC_MAGIC_isSymbolicUnknown(CommonDouble d) {
+        return der(d.val).isUnknown;
+    }
+    
+    public static boolean COJAC_MAGIC_isSymbolicUnknown(CommonFloat d) {
+        return der(d.val).isUnknown;
+    }
+    
+    public static CommonDouble COJAC_MAGIC_asSymbolicUnknown(CommonDouble d) {
+        WrapperSymbolic res=new WrapperSymbolic(der(d.val).value, true);
         return new CommonDouble(res);
     }
     
-    public static CommonFloat COJAC_MAGIC_getSymbolic(CommonFloat d) {
-        WrapperSymbolic res=new WrapperSymbolic(der(d.val).deriv, 0);
-        return new CommonFloat(res);
-    }
-    
-    public static CommonDouble COJAC_MAGIC_asSymbolicTarget(CommonDouble d) {
-        WrapperSymbolic res=new WrapperSymbolic(der(d.val).value, 1.0);
-        return new CommonDouble(res);
-    }
-    
-    public static CommonFloat COJAC_MAGIC_asSymbolicTarget(CommonFloat d) {
-        WrapperSymbolic res=new WrapperSymbolic(der(d.val).value, 1.0);
+    public static CommonFloat COJAC_MAGIC_asSymbolicUnknown(CommonFloat d) {
+        WrapperSymbolic res=new WrapperSymbolic(der(d.val).value, true);
         return new CommonFloat(res);
     }
 
