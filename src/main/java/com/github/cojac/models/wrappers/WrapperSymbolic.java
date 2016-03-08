@@ -18,25 +18,30 @@
 
 package com.github.cojac.models.wrappers;
 
-import java.util.function.DoubleBinaryOperator;
-import java.util.function.DoubleUnaryOperator;
 
-public class WrapperSymbolic extends ACompactWrapper {
+public class WrapperSymbolic extends ACojacWrapper {
     
-    private final double value;
-    private final boolean isUnknown;
+    //private final double value;
+    //private final boolean isUnknown;
+    private final SymbolicExpression expr;
 
-    private WrapperSymbolic(double value, boolean isUnknown) {
-        this.value = value;
-        this.isUnknown = isUnknown;
+    private WrapperSymbolic() {
+        this.expr = new SymbolicExpression();
+    }
+    
+    private WrapperSymbolic(double value) {
+        this.expr = new SymbolicExpression(value);
+    }
+    
+    private WrapperSymbolic(SymbolicExpression expr) {
+        this.expr = expr;
     }
    
     //-------------------------------------------------------------------------
     //----------------- Necessary constructor  -------------------------------
     //-------------------------------------------------------------------------
-    public WrapperSymbolic(ACojacWrapper w) {
-        this(w==null ? 0.0 : der(w).value, 
-             w==null ? false : der(w).isUnknown);
+    public WrapperSymbolic(ACojacWrapper w) {//????
+        this(w==null ? null : symb(w).expr);
         System.out.println("WrapperSymbolic");
     }
     
@@ -46,7 +51,7 @@ public class WrapperSymbolic extends ACompactWrapper {
     //-------------------------------------------------------------------------
     // Most of the operations do not follow those "operator" rules, 
     // and are thus fully redefined
-    @Override
+   /* @Override
     public ACojacWrapper applyUnaryOp(DoubleUnaryOperator op) {
         System.out.println("applyUnaryOp");
         return new WrapperSymbolic(op.applyAsDouble(value), false);
@@ -58,150 +63,161 @@ public class WrapperSymbolic extends ACompactWrapper {
         WrapperSymbolic bb=(WrapperSymbolic)b;
         return new WrapperSymbolic(op.applyAsDouble(value, bb.value),
                                      false);
-    }
-    //-------------------------------------------------------------------------
-    
-    public ACojacWrapper dmul(ACojacWrapper b) {
-        System.out.println("("+this.value+"*"+der(b).value+")");
-        //double d=this.value*der(b).deriv + this.deriv*der(b).value;
-        return new WrapperSymbolic(this.value*der(b).value, false);
-    }
-    
-   /* public ACojacWrapper ddiv(ACojacWrapper b) {
-        double d=this.deriv*der(b).value - this.value*der(b).deriv;
-        return new WrapperSymbolic(this.value/der(b).value, d);
-    }
-    
-    public ACojacWrapper drem(ACojacWrapper b) {
-        double d=this.deriv;
-        if (der(b).deriv != 0.0) // this seems hard to consider "general" dividers
-            d=Double.NaN;
-        return new WrapperSymbolic(this.value%der(b).value, d);
-    }
-
-    public ACojacWrapper math_sqrt() {
-        double value = Math.sqrt(this.value);
-        double dValue = this.deriv / (2.0 * Math.sqrt(this.value));
-        return new WrapperSymbolic(value, dValue); 
-    }
-    
-    public ACojacWrapper math_abs(){
-        double value = Math.abs(this.value);
-        double dValue = this.value < 0.0 ? -this.deriv : this.deriv;
-        return new WrapperSymbolic(value, dValue); 
-    }
-    
-    public ACojacWrapper math_sin() {
-        double value = Math.sin(this.value);
-        double dValue = Math.cos(this.value) * this.deriv;
-        return new WrapperSymbolic(value, dValue); 
-    }
-    
-    public ACojacWrapper math_cos() {
-        double value = Math.cos(this.value);
-        double dValue = -Math.sin(this.value) * this.deriv;
-        return new WrapperSymbolic(value, dValue); 
-    }
-    
-    public ACojacWrapper math_tan() {
-        double value = Math.tan(this.value);
-        double dValue = this.deriv / (Math.cos(this.value) * Math.cos(this.value));
-        return new WrapperSymbolic(value, dValue); 
-    }
-    
-    public ACojacWrapper math_asin() {
-        double value = Math.asin(this.value);
-        double dValue = this.deriv / (Math.sqrt(1.0 - this.value * this.value));
-        return new WrapperSymbolic(value, dValue); 
-    }
-    
-    public ACojacWrapper math_acos() {
-        double value = Math.acos(this.value);
-        double dValue = -this.deriv / (Math.sqrt(1.0 - this.value * this.value));
-        return new WrapperSymbolic(value, dValue); 
-    }
-    
-    public ACojacWrapper math_atan() {
-        double value = Math.atan(this.value);
-        double dValue = this.deriv / (1.0 + this.value * this.value);
-        return new WrapperSymbolic(value, dValue); 
-    }
-    
-    public ACojacWrapper math_sinh() {
-        double value = Math.sinh(this.value);
-        double dValue = this.deriv * Math.cosh(this.value);
-        return new WrapperSymbolic(value, dValue); 
-    }
-    
-    public ACojacWrapper math_cosh() {
-        double value = Math.cosh(this.value);
-        double dValue = this.deriv * Math.sinh(this.value);
-        return new WrapperSymbolic(value, dValue); 
-    }
-    
-    public ACojacWrapper math_tanh() {
-        double value = Math.tanh(this.value);
-        double dValue = this.deriv / (Math.cosh(this.value) * Math.cosh(this.value));
-        return new WrapperSymbolic(value, dValue); 
-    }
-    
-    public ACojacWrapper math_exp() {
-        double value = Math.exp(this.value);
-        double dValue = this.deriv * Math.exp(this.value);
-        return new WrapperSymbolic(value, dValue); 
-    }
-    
-    public ACojacWrapper math_log() {
-        double value = Math.log(this.value);
-        double dValue = this.deriv / this.value;
-        return new WrapperSymbolic(value, dValue); 
-    }
-    
-    public ACojacWrapper math_log10() {
-        double value = Math.log10(this.value);
-        double dValue = this.deriv / (this.value * Math.log(10.0));
-        return new WrapperSymbolic(value, dValue); 
-    }
-    
-    public ACojacWrapper math_toRadians() {
-        double value = Math.toRadians(this.value);
-        double dValue = this.deriv;
-        return new WrapperSymbolic(value, dValue); 
-    }
-    
-    public ACojacWrapper math_toDegrees() {
-        double value = Math.toDegrees(this.value);
-        double dValue = this.deriv;
-        return new WrapperSymbolic(value, dValue); 
-    }
-
-    public ACojacWrapper math_min(ACojacWrapper b) {
-        return (this.value < der(b).value) ? this : b;
-    }
-    
-    public ACojacWrapper math_max(ACojacWrapper b) {
-        return (this.value > der(b).value) ? this : b;
-    }
-    
-    public ACojacWrapper math_pow(ACojacWrapper b) {
-        double value = Math.pow(this.value, der(b).value);
-        double dValue = Math.pow(this.value, der(b).value) *
-                (((der(b).value * this.deriv) / this.value) + 
-                        Math.log(this.value) * der(b).deriv);
-        return new WrapperSymbolic(value, dValue); 
     }*/
     
+    //-------------------------------------------------------------------------
+
+    @Override
+    public ACojacWrapper dadd(ACojacWrapper b) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ACojacWrapper dsub(ACojacWrapper b) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ACojacWrapper dmul(ACojacWrapper b) {
+        System.out.println("("+this.expr.value+"*"+symb(b).expr.value+")");
+        //double d=this.value*der(b).deriv + this.deriv*der(b).value;
+        return new WrapperSymbolic(new SymbolicExpression(this.expr,OP.MUL,symb(b).expr));
+    }
+
+    @Override
+    public ACojacWrapper ddiv(ACojacWrapper b) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ACojacWrapper drem(ACojacWrapper b) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ACojacWrapper dneg() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ACojacWrapper math_sqrt() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ACojacWrapper math_abs() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ACojacWrapper math_sin() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ACojacWrapper math_cos() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ACojacWrapper math_tan() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ACojacWrapper math_asin() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ACojacWrapper math_acos() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ACojacWrapper math_atan() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ACojacWrapper math_sinh() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ACojacWrapper math_cosh() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ACojacWrapper math_tanh() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ACojacWrapper math_exp() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ACojacWrapper math_log() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ACojacWrapper math_log10() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ACojacWrapper math_toRadians() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ACojacWrapper math_toDegrees() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ACojacWrapper math_pow(ACojacWrapper b) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+   
+    //-------------------------------------------------------------------------
     @Override public double toDouble() {
-        return value;
+        return expr.value;
     }
 
     @Override
     public ACojacWrapper fromDouble(double a, boolean wasFromFloat) {
-        return new WrapperSymbolic(a, false);
+        return new WrapperSymbolic(new SymbolicExpression(a));
     }
 
     @Override public String asInternalString() {
-        return value+" (isUnknown="+isUnknown+")";
+        return expr.value+" (isUnknown="+expr.isUnknown+")";
     }
 
     @Override public String wrapperName() {
@@ -210,25 +226,85 @@ public class WrapperSymbolic extends ACompactWrapper {
     
     // ------------------------------------------------------------------------
     public static boolean COJAC_MAGIC_isSymbolicUnknown(CommonDouble d) {
-        return der(d.val).isUnknown;
+        return symb(d.val).expr.isUnknown;
     }
     
     public static boolean COJAC_MAGIC_isSymbolicUnknown(CommonFloat d) {
-        return der(d.val).isUnknown;
+        return symb(d.val).expr.isUnknown;
     }
     
     public static CommonDouble COJAC_MAGIC_asSymbolicUnknown(CommonDouble d) {
-        WrapperSymbolic res=new WrapperSymbolic(der(d.val).value, true);
+        WrapperSymbolic res=new WrapperSymbolic();
         return new CommonDouble(res);
     }
     
     public static CommonFloat COJAC_MAGIC_asSymbolicUnknown(CommonFloat d) {
-        WrapperSymbolic res=new WrapperSymbolic(der(d.val).value, true);
+        WrapperSymbolic res = new WrapperSymbolic();
         return new CommonFloat(res);
+    }
+    
+    public static CommonDouble COJAC_MAGIC_evaluateSymbolicAt(CommonDouble d, CommonDouble x) {
+        double result= symb(d.val).expr.evaluate(symb(x.val).expr.value);
+        WrapperSymbolic res = new WrapperSymbolic(result);
+        return new CommonDouble(res);
+    }
+    
+    public static CommonFloat COJAC_MAGIC_evaluateSymbolicAt(CommonFloat d, CommonFloat x) {
+        double result= symb(d.val).expr.evaluate(symb(x.val).expr.value);
+        WrapperSymbolic res = new WrapperSymbolic(result);
+        return new CommonFloat(res);
+    }
+    
+
+    //-------------------------------------------------------------------------
+    private static WrapperSymbolic symb(ACojacWrapper w) {
+        return (WrapperSymbolic)w;
     }
 
     //-------------------------------------------------------------------------
-    private static WrapperSymbolic der(ACojacWrapper w) {
-        return (WrapperSymbolic)w;
+    private class SymbolicExpression {
+        
+        private double value;
+        private boolean isUnknown;
+        private OP oper;
+        private SymbolicExpression left;
+        private SymbolicExpression right;
+        
+        public SymbolicExpression () {
+            this.value = Double.NaN;
+            this.isUnknown = true;
+            this.oper = OP.NOP;
+            this.right = null;
+            this.left = null;
+        }
+        
+        public SymbolicExpression (double value) {
+            this.value = value;
+            this.isUnknown = false;
+            this.oper = OP.NOP;
+            this.left = null;
+            this.right = null;
+        }
+        
+        public SymbolicExpression (SymbolicExpression left, OP oper,SymbolicExpression right) {
+            this.value = Double.NaN;
+            this.isUnknown = false;
+            this.oper = oper;
+            this.left = left;
+            this.right = right;
+        }
+        
+        public double evaluate (double x) {
+            if(isUnknown) return x;
+            if(oper == OP.NOP) return value;
+            return left.evaluate(x) * right.evaluate(x);
+        }
+        
     }
+    
+    //-------------------------------------------------------------------------
+    public static enum OP {
+        NOP, ADD, SUB, MUL, DIV; //...
+    } 
+   
 }

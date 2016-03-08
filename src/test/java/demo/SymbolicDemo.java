@@ -27,6 +27,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.github.cojac.models.wrappers.CommonDouble;
 import com.github.cojac.models.wrappers.WrapperSymbolic;
 
 public class SymbolicDemo{
@@ -63,10 +64,10 @@ public class SymbolicDemo{
     static double someFunction( double x, double a, double b ){
         System.out.println("double res = a * x * x;");
         double res = a * x * x;
-        System.out.println("res = res + b * x;");
-        res = res + b * x;
-        System.out.println("res = res + 1;");
-        res = res + 1;
+        System.out.println("res = res * b * x;");
+        res = res * b * x;
+        System.out.println("res = res * 1;");
+        res = res * 1;
         System.out.println("return res;");
         return res;
     }
@@ -80,7 +81,9 @@ public class SymbolicDemo{
         System.out.println("double y = someFunction( x, 3, 4 );");
         double y = someFunction( x, 3, 4 );
         System.out.println( "f(2):  " + y );
-        System.out.println( "f'(2): " + COJAC_MAGIC_isSymbolicUnknown( x ) );
+        System.out.println( "x : " + COJAC_MAGIC_isSymbolicUnknown( x ) );
+        System.out.println( "f(10): " + COJAC_MAGIC_evaluateSymbolicAt( y, 10 ) );
+        
     }
 
 
@@ -146,6 +149,10 @@ public class SymbolicDemo{
     }
     public static double COJAC_MAGIC_asSymbolicUnknown( double a ){
         return a;
+    }
+    
+    public static double COJAC_MAGIC_evaluateSymbolicAt(double d, double x) {
+        return d;
     }
 
 
