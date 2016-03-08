@@ -168,7 +168,7 @@ public final class Args {
 
     private boolean areSomeCategoriesSelected() {
         return isSpecified(Arg.INTS) || isSpecified(Arg.DOUBLES) || isSpecified(Arg.FLOATS) ||
-            isSpecified(Arg.LONGS) || isSpecified(Arg.MATHS) || isSpecified(Arg.CASTS);
+            isSpecified(Arg.LONGS) || isSpecified(Arg.MATHS) || isSpecified(Arg.CASTS) || isSpecified(Arg.DOUBLE2FLOAT);
     }
 
     private boolean areSomeOpcodesSelected() {
@@ -208,7 +208,7 @@ public final class Args {
 
         values.get(arg).setValue(value);
     }
-
+    
     public boolean isOperationEnabled(Arg arg) {
         boolean res=isSpecified(arg) || arg.getParent() != null && isSpecified(arg.getParent());
         if (arg.ordinal() >= Arg.INTS.ordinal()) {

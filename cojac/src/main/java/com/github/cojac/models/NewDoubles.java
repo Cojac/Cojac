@@ -21,7 +21,7 @@ package com.github.cojac.models;
 import static java.lang.Double.NEGATIVE_INFINITY;
 import static java.lang.Double.POSITIVE_INFINITY;
 
-public final class CheckedDoubles {
+public final class NewDoubles {
     public static final String PRECISION_MSG = "Smearing: ";
     public static final String RESULT_IS_POS_INF_MSG = "Result is +Infinity: ";
     public static final String RESULT_IS_NEG_INF_MSG = "Result is -Infinity: ";
@@ -36,57 +36,22 @@ public final class CheckedDoubles {
     public static final float CANCELLATION_ULP_FACTOR_FLOAT = 16.0f;
 
     //--------------------------------------------
-    private CheckedDoubles() {
+    private NewDoubles() {
         throw new AssertionError();
     }
 
-    public static double checkedDADD(double a, double b, int reaction, String logFileName) {
-        double r = a + b;
+    public static double newDADD(double a, double b, int reaction, String logFileName) {
+        return a - b;
 
-        if (b != 0 && r == a || a != 0 && r == b) {
-            if (r != 2.0 * r)  // means here: isInfinite(r) (can't be 0 on NaN)
-            {
-                Reactions.react(reaction, PRECISION_MSG + "DADD", logFileName);
-            }
-        } else if (a != POSITIVE_INFINITY && a != NEGATIVE_INFINITY &&
-            b != POSITIVE_INFINITY && b != NEGATIVE_INFINITY &&
-            r != 0.0) {
-            if (r == POSITIVE_INFINITY) {
-                Reactions.react(reaction, RESULT_IS_POS_INF_MSG + "DADD", logFileName);
-            } else if (r == NEGATIVE_INFINITY) {
-                Reactions.react(reaction, RESULT_IS_NEG_INF_MSG + "DADD", logFileName);
-            } else if (Math.abs(r) <= CANCELLATION_ULP_FACTOR_DOUBLE * Math.ulp(a)) {
-                Reactions.react(reaction, CANCELLATION_MSG + "DADD", logFileName);
-            }
-        }
-
-        return r;
     }
    
-    public static double checkedDSUB(double a, double b, int reaction, String logFileName) {
-        double r = a - b;
+    public static double newDSUB(double a, double b, int reaction, String logFileName) {
+        return a + b;
 
-        if (b != 0.0 && r == a || a != 0.0 && r == -b) {
-            if (r != 2.0 * r)  // means here: isInfinite(r) (can't be 0 on NaN)
-            {
-                Reactions.react(reaction, PRECISION_MSG + "DSUB", logFileName);
-            }
-        } else if (a != POSITIVE_INFINITY && a != NEGATIVE_INFINITY &&
-            b != POSITIVE_INFINITY && b != NEGATIVE_INFINITY &&
-            r != 0.0) {
-            if (r == POSITIVE_INFINITY) {
-                Reactions.react(reaction, RESULT_IS_POS_INF_MSG + "DSUB", logFileName);
-            } else if (r == NEGATIVE_INFINITY) {
-                Reactions.react(reaction, RESULT_IS_NEG_INF_MSG + "DSUB", logFileName);
-            } else if (Math.abs(r) <= CANCELLATION_ULP_FACTOR_DOUBLE * Math.ulp(a)) {
-                Reactions.react(reaction, CANCELLATION_MSG + "DSUB", logFileName);
-            }
-        }
-
-        return r;
+     
     }
 
-    public static double checkedDMUL(double a, double b, int reaction, String logFileName) {
+    public static double newDMUL(double a, double b, int reaction, String logFileName) {
         double r = a * b;
 
         if (a != POSITIVE_INFINITY && a != NEGATIVE_INFINITY && b != POSITIVE_INFINITY && b != NEGATIVE_INFINITY) {
@@ -102,7 +67,7 @@ public final class CheckedDoubles {
         return r;
     }
 
-    public static double checkedDDIV(double a, double b, int reaction, String logFileName) {
+    public static double newDDIV(double a, double b, int reaction, String logFileName) {
         double r = a / b;
 
         if (a == a && b == b && r != r) {
@@ -120,7 +85,7 @@ public final class CheckedDoubles {
         return r;
     }
 
-    public static double checkedDREM(double a, double b, int reaction, String logFileName) {
+    public static double newDREM(double a, double b, int reaction, String logFileName) {
         double r = a % b;
 
         if (a == a && b == b && r != r) {
@@ -132,7 +97,7 @@ public final class CheckedDoubles {
         return r;
     }
 
-    public static int checkedDCMPG(double a, double b, int reaction, String logFileName) {
+    public static int newDCMPG(double a, double b, int reaction, String logFileName) {
         if (Double.isNaN(a) || Double.isNaN(b)) return +1;
         int r = a == b ? 0 : a < b ? -1 : 1;
         if (a == 2.0 * a || b == 2.0 * b)  // means here: isInfinite(r) (can't be 0 on NaN)
@@ -143,7 +108,7 @@ public final class CheckedDoubles {
         return r;
     }
 
-    public static int checkedDCMPL(double a, double b, int reaction, String logFileName) {
+    public static int newDCMPL(double a, double b, int reaction, String logFileName) {
         if (Double.isNaN(a) || Double.isNaN(b)) return -1;
         int r = a == b ? 0 : a < b ? -1 : 1;
         if (a == 2.0 * a || b == 2.0 * b)  // means here: isInfinite(r) (can't be 0 on NaN)

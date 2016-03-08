@@ -63,6 +63,10 @@ public enum Arg {
     LONGS("Clongs"),
     CASTS("Ccasts"),
     MATHS("Cmath"),
+    
+    /*V.Gazzola*/
+    
+    DOUBLE2FLOAT("D2F"),
 
     // Those below are used internally, but no more appear in the usage.
     IADD("iadd", Opcodes.IADD, INTS),

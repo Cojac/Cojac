@@ -26,6 +26,7 @@ public class HelloPolynomial1 {
     public static void main(String[] args) {
         double r, x, y;
         x=2.0; y=3.0;
+        
         r=somePolynomial(x, y);
         System.out.println("f("+x+" , "+y+") = " + r);
         x=77617; y=33096;

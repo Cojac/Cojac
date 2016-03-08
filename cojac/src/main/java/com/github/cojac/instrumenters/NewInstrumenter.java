@@ -24,6 +24,8 @@ import com.github.cojac.Arg;
 import com.github.cojac.Args;
 import com.github.cojac.InstrumentationStats;
 import com.github.cojac.Signatures;
+import com.github.cojac.models.CheckedInts;
+import com.github.cojac.models.NewDoubles;
 import com.github.cojac.models.ReactionType;
 
 import java.util.HashMap;
@@ -31,7 +33,7 @@ import java.util.Map;
 
 import static org.objectweb.asm.Opcodes.*;
 
-final class DirectInstrumenter implements IOpcodeInstrumenter {
+final class NewInstrumenter implements IOpcodeInstrumenter {
     private final ReactionType reaction;
     private final InstrumentationStats stats;
     private final String logFileName;
@@ -39,13 +41,10 @@ final class DirectInstrumenter implements IOpcodeInstrumenter {
 
     private final Map<Integer, InvokableMethod> invocations = new HashMap<Integer, InvokableMethod>(50);
 
-    private static final String CHECKED_INTS = "com/github/cojac/models/CheckedInts";
-    private static final String CHECKED_CASTS = "com/github/cojac/models/CheckedCasts";
-    private static final String CHECKED_LONGS = "com/github/cojac/models/CheckedLongs";
-    private static final String CHECKED_FLOATS = "com/github/cojac/models/CheckedFloats";
-    private static final String CHECKED_DOUBLES = "com/github/cojac/models/CheckedDoubles";
+    
+    private static final String NEW_DOUBLES = "com/github/cojac/models/NewDoubles";
 
-    DirectInstrumenter(Args args, InstrumentationStats stats) {
+    NewInstrumenter(Args args, InstrumentationStats stats) {
         super();
         this.args=args;
         this.stats = stats;
@@ -60,12 +59,28 @@ final class DirectInstrumenter implements IOpcodeInstrumenter {
 
         fillMethods();
     }
-    
+    String comportement = "new";
+    String[] opcodes = {"DADD", "DSUB"};
+    int[] num = {DADD, DSUB};
     private void fillMethods() {
-        invocations.put(IADD, new InvokableMethod(CHECKED_INTS, "checkedIADD", Signatures.RAW_INTEGER_BINARY));
-        invocations.put(ISUB, new InvokableMethod(CHECKED_INTS, "checkedISUB", Signatures.RAW_INTEGER_BINARY));
+       // Class param = CheckedInts;
+        for(int i = 0; i< opcodes.length;i++){
+           
+            String opcode =opcodes[i];
+            System.out.println("new behaviour for "+comportement+opcode);
+            Class<?>[] params = {double.class,double.class,int.class,String.class};
+            try {
+                NewDoubles.class.getMethod(comportement+opcode, params);
+                invocations.put(num[i], new InvokableMethod(NEW_DOUBLES, comportement+opcode, Signatures.RAW_DOUBLE_BINARY));
+            } catch (Exception e) {
+                
+            }
+        }//*/
         
-        invocations.put(IMUL, new InvokableMethod(CHECKED_INTS, "checkedIMUL", Signatures.RAW_INTEGER_BINARY));
+        //invocations.put(IADD, new InvokableMethod(CHECKED_INTS, "checkedIADD", Signatures.RAW_INTEGER_BINARY));
+        //invocations.put(ISUB, new InvokableMethod(CHECKED_INTS, "checkedISUB", Signatures.RAW_INTEGER_BINARY));
+        
+        /*invocations.put(IMUL, new InvokableMethod(CHECKED_INTS, "checkedIMUL", Signatures.RAW_INTEGER_BINARY));
         invocations.put(IDIV, new InvokableMethod(CHECKED_INTS, "checkedIDIV", Signatures.RAW_INTEGER_BINARY));
 
         invocations.put(INEG, new InvokableMethod(CHECKED_INTS, "checkedINEG", Signatures.RAW_INTEGER_UNARY));
@@ -104,7 +119,7 @@ final class DirectInstrumenter implements IOpcodeInstrumenter {
         invocations.put(F2I, new InvokableMethod(CHECKED_CASTS, "checkedF2I", Signatures.RAW_F2I));
         invocations.put(F2L, new InvokableMethod(CHECKED_CASTS, "checkedF2L", Signatures.RAW_F2L));
         invocations.put(I2F, new InvokableMethod(CHECKED_CASTS, "checkedI2F", Signatures.RAW_I2F));
-        invocations.put(L2D, new InvokableMethod(CHECKED_CASTS, "checkedL2D", Signatures.RAW_L2D));
+        invocations.put(L2D, new InvokableMethod(CHECKED_CASTS, "checkedL2D", Signatures.RAW_L2D));*/
     }
 
     @Override
