@@ -297,7 +297,10 @@ public enum Arg {
             false, "Sniff in doubles opcodes");
         options.addOption(Arg.FLOATS.shortOpt(),
             false, "Sniff in floats opcodes");
-
+        /*V.Gazzola*/
+        options.addOption(Arg.DOUBLE2FLOAT.shortOpt(),
+                false, "Cast Doubles into Floats");
+        
         return options;
     }
 

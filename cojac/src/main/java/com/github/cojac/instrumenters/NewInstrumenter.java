@@ -71,9 +71,10 @@ final class NewInstrumenter implements IOpcodeInstrumenter {
             Class<?>[] params = {double.class,double.class,int.class,String.class};
             try {
                 NewDoubles.class.getMethod(comportement+opcode, params);
+                System.out.println("method \""+comportement+opcode+"\" added.");
                 invocations.put(num[i], new InvokableMethod(NEW_DOUBLES, comportement+opcode, Signatures.RAW_DOUBLE_BINARY));
             } catch (Exception e) {
-                
+                e.printStackTrace();
             }
         }//*/
         
@@ -126,9 +127,9 @@ final class NewInstrumenter implements IOpcodeInstrumenter {
     public void instrument(MethodVisitor mv, int opCode) { 
         mv.visitLdcInsn(reaction.value());
         mv.visitLdcInsn(logFileName);
-
+        
         Arg arg = Arg.fromOpCode(opCode);
-
+        System.out.println("instrument: "+opCode);
         if (arg != null) {
             stats.incrementCounterValue(opCode);// arg
             invocations.get(opCode).invokeStatic(mv);
@@ -137,9 +138,10 @@ final class NewInstrumenter implements IOpcodeInstrumenter {
     
     @Override
     public boolean wantsToInstrument(int opcode) {
-        Arg arg = Arg.fromOpCode(opcode);
+        return(opcode == DADD || opcode == DSUB);
+        /*Arg arg = Arg.fromOpCode(opcode);
         if(arg==null) return false;
-        return args.isOperationEnabled(arg);
+        return args.isOperationEnabled(arg);*/
     }
 
 }

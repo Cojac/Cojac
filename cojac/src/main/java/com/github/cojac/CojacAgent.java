@@ -37,7 +37,6 @@ public final class CojacAgent {
         if (!args.parse(parsedArgs) || args.isSpecified(Arg.HELP)) {
             args.printHelpAndExit();
         }
-
         Class<?>[] loadedClasses = inst.getAllLoadedClasses();
 		String[] strLoadedClasses = new String[loadedClasses.length];
 		for (int i = 0; i < strLoadedClasses.length; i++)
