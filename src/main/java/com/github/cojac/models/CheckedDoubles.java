@@ -62,7 +62,7 @@ public final class CheckedDoubles {
 
         return r;
     }
-
+   
     public static double checkedDSUB(double a, double b, int reaction, String logFileName) {
         double r = a - b;
 

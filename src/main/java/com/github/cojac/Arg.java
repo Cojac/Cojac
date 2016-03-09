@@ -63,6 +63,10 @@ public enum Arg {
     LONGS("Clongs"),
     CASTS("Ccasts"),
     MATHS("Cmath"),
+    
+    /*V.Gazzola*/
+    
+    DOUBLE2FLOAT("D2F"),
 
     // Those below are used internally, but no more appear in the usage.
     IADD("iadd", Opcodes.IADD, INTS),
@@ -293,7 +297,10 @@ public enum Arg {
             false, "Sniff in doubles opcodes");
         options.addOption(Arg.FLOATS.shortOpt(),
             false, "Sniff in floats opcodes");
-
+        /*V.Gazzola*/
+        options.addOption(Arg.DOUBLE2FLOAT.shortOpt(),
+                false, "Cast Doubles into Floats");
+        
         return options;
     }
 
