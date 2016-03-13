@@ -18,196 +18,157 @@
 
 package com.github.cojac.models.wrappers;
 
-
 public class WrapperSymbolic extends ACojacWrapper {
-    
-    //private final double value;
-    //private final boolean isUnknown;
+
     private final SymbolicExpression expr;
 
+    // -------------------------------------------------------------------------
     private WrapperSymbolic() {
         this.expr = new SymbolicExpression();
     }
-    
+
     private WrapperSymbolic(double value) {
         this.expr = new SymbolicExpression(value);
     }
-    
+
     private WrapperSymbolic(SymbolicExpression expr) {
         this.expr = expr;
     }
-   
-    //-------------------------------------------------------------------------
-    //----------------- Necessary constructor  -------------------------------
-    //-------------------------------------------------------------------------
-    public WrapperSymbolic(ACojacWrapper w) {//????
-        this(w==null ? null : symb(w).expr);
-        System.out.println("WrapperSymbolic");
-    }
-    
-    
-    // ATTENTION redefinire toutes les opérations pour garder une trace
-    
-    //-------------------------------------------------------------------------
-    // Most of the operations do not follow those "operator" rules, 
-    // and are thus fully redefined
-   /* @Override
-    public ACojacWrapper applyUnaryOp(DoubleUnaryOperator op) {
-        System.out.println("applyUnaryOp");
-        return new WrapperSymbolic(op.applyAsDouble(value), false);
+
+    private WrapperSymbolic(OP oper, SymbolicExpression left) {
+        this.expr = new SymbolicExpression(oper, left);
     }
 
-    @Override
-    public ACojacWrapper applyBinaryOp(DoubleBinaryOperator op, ACojacWrapper b) {
-        System.out.println("applyBinaryOp");
-        WrapperSymbolic bb=(WrapperSymbolic)b;
-        return new WrapperSymbolic(op.applyAsDouble(value, bb.value),
-                                     false);
-    }*/
-    
-    //-------------------------------------------------------------------------
+    private WrapperSymbolic(OP oper, SymbolicExpression left, SymbolicExpression right) {
+        this.expr = new SymbolicExpression(oper, left, right);
+    }
+
+    // -------------------------------------------------------------------------
+    // ----------------- Necessary constructor ---------------------------------
+    // -------------------------------------------------------------------------
+    public WrapperSymbolic(ACojacWrapper w) {
+        this(w == null ? null : symb(w).expr);
+    }
+    // -------------------------------------------------------------------------
 
     @Override
-    public ACojacWrapper dadd(ACojacWrapper b) {
-        // TODO Auto-generated method stub
-        return null;
+    public ACojacWrapper dadd(ACojacWrapper w) {
+        return new WrapperSymbolic(OP.ADD, this.expr, symb(w).expr);
     }
 
     @Override
-    public ACojacWrapper dsub(ACojacWrapper b) {
-        // TODO Auto-generated method stub
-        return null;
+    public ACojacWrapper dsub(ACojacWrapper w) {
+        return new WrapperSymbolic(OP.SUB, this.expr, symb(w).expr);
     }
 
     @Override
-    public ACojacWrapper dmul(ACojacWrapper b) {
-        System.out.println("("+this.expr.value+"*"+symb(b).expr.value+")");
-        //double d=this.value*der(b).deriv + this.deriv*der(b).value;
-        return new WrapperSymbolic(new SymbolicExpression(this.expr,OP.MUL,symb(b).expr));
+    public ACojacWrapper dmul(ACojacWrapper w) {
+        return new WrapperSymbolic(OP.MUL, this.expr, symb(w).expr);
     }
 
     @Override
-    public ACojacWrapper ddiv(ACojacWrapper b) {
-        // TODO Auto-generated method stub
-        return null;
+    public ACojacWrapper ddiv(ACojacWrapper w) {
+        return new WrapperSymbolic(OP.DIV, this.expr, symb(w).expr);
     }
 
     @Override
-    public ACojacWrapper drem(ACojacWrapper b) {
-        // TODO Auto-generated method stub
-        return null;
+    public ACojacWrapper drem(ACojacWrapper w) {
+        return new WrapperSymbolic(OP.REM, this.expr, symb(w).expr);
     }
 
     @Override
     public ACojacWrapper dneg() {
-        // TODO Auto-generated method stub
-        return null;
+        return new WrapperSymbolic(OP.NEG, this.expr);
     }
 
     @Override
     public ACojacWrapper math_sqrt() {
-        // TODO Auto-generated method stub
-        return null;
+        return new WrapperSymbolic(OP.SQRT, this.expr);
     }
 
     @Override
     public ACojacWrapper math_abs() {
-        // TODO Auto-generated method stub
-        return null;
+        return new WrapperSymbolic(OP.ABS, this.expr);
     }
 
     @Override
     public ACojacWrapper math_sin() {
-        // TODO Auto-generated method stub
-        return null;
+        return new WrapperSymbolic(OP.SIN, this.expr);
     }
 
     @Override
     public ACojacWrapper math_cos() {
-        // TODO Auto-generated method stub
-        return null;
+        return new WrapperSymbolic(OP.COS, this.expr);
     }
 
     @Override
     public ACojacWrapper math_tan() {
-        // TODO Auto-generated method stub
-        return null;
+        return new WrapperSymbolic(OP.TAN, this.expr);
     }
 
     @Override
     public ACojacWrapper math_asin() {
-        // TODO Auto-generated method stub
-        return null;
+        return new WrapperSymbolic(OP.ASIN, this.expr);
     }
 
     @Override
     public ACojacWrapper math_acos() {
-        // TODO Auto-generated method stub
-        return null;
+        return new WrapperSymbolic(OP.ACOS, this.expr);
     }
 
     @Override
     public ACojacWrapper math_atan() {
-        // TODO Auto-generated method stub
-        return null;
+        return new WrapperSymbolic(OP.ATAN, this.expr);
     }
 
     @Override
     public ACojacWrapper math_sinh() {
-        // TODO Auto-generated method stub
-        return null;
+        return new WrapperSymbolic(OP.SINH, this.expr);
     }
 
     @Override
     public ACojacWrapper math_cosh() {
-        // TODO Auto-generated method stub
-        return null;
+        return new WrapperSymbolic(OP.COSH, this.expr);
     }
 
     @Override
     public ACojacWrapper math_tanh() {
-        // TODO Auto-generated method stub
-        return null;
+        return new WrapperSymbolic(OP.TANH, this.expr);
     }
 
     @Override
     public ACojacWrapper math_exp() {
-        // TODO Auto-generated method stub
-        return null;
+        return new WrapperSymbolic(OP.EXP, this.expr);
     }
 
     @Override
     public ACojacWrapper math_log() {
-        // TODO Auto-generated method stub
-        return null;
+        return new WrapperSymbolic(OP.LOG, this.expr);
     }
 
     @Override
     public ACojacWrapper math_log10() {
-        // TODO Auto-generated method stub
-        return null;
+        return new WrapperSymbolic(OP.LOG10, this.expr);
     }
 
     @Override
     public ACojacWrapper math_toRadians() {
-        // TODO Auto-generated method stub
-        return null;
+        return new WrapperSymbolic(OP.RAD, this.expr);
     }
 
     @Override
     public ACojacWrapper math_toDegrees() {
-        // TODO Auto-generated method stub
-        return null;
+        return new WrapperSymbolic(OP.DEG, this.expr);
     }
 
     @Override
-    public ACojacWrapper math_pow(ACojacWrapper b) {
-        // TODO Auto-generated method stub
-        return null;
+    public ACojacWrapper math_pow(ACojacWrapper w) {
+        return new WrapperSymbolic(OP.POW, this.expr, symb(w).expr);
     }
-   
-    //-------------------------------------------------------------------------
-    @Override public double toDouble() {
+
+    // -------------------------------------------------------------------------
+    @Override
+    public double toDouble() {
         return expr.value;
     }
 
@@ -216,95 +177,256 @@ public class WrapperSymbolic extends ACojacWrapper {
         return new WrapperSymbolic(new SymbolicExpression(a));
     }
 
-    @Override public String asInternalString() {
-        return expr.value+" (isUnknown="+expr.isUnknown+")";
+    @Override
+    public String asInternalString() {
+        return expr + "";
     }
 
-    @Override public String wrapperName() {
+    @Override
+    public String wrapperName() {
         return "Symbolic";
     }
-    
+
     // ------------------------------------------------------------------------
     public static boolean COJAC_MAGIC_isSymbolicUnknown(CommonDouble d) {
         return symb(d.val).expr.isUnknown;
     }
-    
+
     public static boolean COJAC_MAGIC_isSymbolicUnknown(CommonFloat d) {
         return symb(d.val).expr.isUnknown;
     }
-    
+
     public static CommonDouble COJAC_MAGIC_asSymbolicUnknown(CommonDouble d) {
-        WrapperSymbolic res=new WrapperSymbolic();
+        WrapperSymbolic res = new WrapperSymbolic();
         return new CommonDouble(res);
     }
-    
+
     public static CommonFloat COJAC_MAGIC_asSymbolicUnknown(CommonFloat d) {
         WrapperSymbolic res = new WrapperSymbolic();
         return new CommonFloat(res);
     }
-    
+
     public static CommonDouble COJAC_MAGIC_evaluateSymbolicAt(CommonDouble d, CommonDouble x) {
-        double result= symb(d.val).expr.evaluate(symb(x.val).expr.value);
+        double result = symb(d.val).expr.evaluate(symb(x.val).expr.value);
         WrapperSymbolic res = new WrapperSymbolic(result);
         return new CommonDouble(res);
     }
-    
+
     public static CommonFloat COJAC_MAGIC_evaluateSymbolicAt(CommonFloat d, CommonFloat x) {
-        double result= symb(d.val).expr.evaluate(symb(x.val).expr.value);
+        double result = symb(d.val).expr.evaluate(symb(x.val).expr.value);
         WrapperSymbolic res = new WrapperSymbolic(result);
         return new CommonFloat(res);
     }
-    
 
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     private static WrapperSymbolic symb(ACojacWrapper w) {
-        return (WrapperSymbolic)w;
+        return (WrapperSymbolic) w;
     }
 
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     private class SymbolicExpression {
-        
+
         private double value;
         private boolean isUnknown;
         private OP oper;
         private SymbolicExpression left;
         private SymbolicExpression right;
-        
-        public SymbolicExpression () {
+
+        public SymbolicExpression() {
             this.value = Double.NaN;
             this.isUnknown = true;
             this.oper = OP.NOP;
             this.right = null;
             this.left = null;
         }
-        
-        public SymbolicExpression (double value) {
+
+        public SymbolicExpression(double value) {
             this.value = value;
             this.isUnknown = false;
             this.oper = OP.NOP;
             this.left = null;
             this.right = null;
         }
-        
-        public SymbolicExpression (SymbolicExpression left, OP oper,SymbolicExpression right) {
+
+        public SymbolicExpression(OP oper, SymbolicExpression left, SymbolicExpression right) {
             this.value = Double.NaN;
             this.isUnknown = false;
             this.oper = oper;
             this.left = left;
             this.right = right;
         }
-        
-        public double evaluate (double x) {
-            if(isUnknown) return x;
-            if(oper == OP.NOP) return value;
-            return left.evaluate(x) * right.evaluate(x);
+
+        public SymbolicExpression(OP oper, SymbolicExpression left) {
+            this.value = Double.NaN;
+            this.isUnknown = false;
+            this.oper = oper;
+            this.left = left;
+            this.right = null;
         }
-        
+
+        public double evaluate(double x) {
+            if (isUnknown)
+                return x;
+            if (oper == OP.NOP)
+                return value;
+            if (oper.isBinaryOp)
+                return oper.apply(left.evaluate(x), right.evaluate(x));
+            return oper.apply(left.evaluate(x), Double.NaN);
+        }
+
+        public String toString() {
+            if (isUnknown)
+                return "x";
+            if (oper == OP.NOP)
+                return value + "";
+            if (oper.isBinaryOp)
+                return oper + "(" + left + "," + right + ")";
+            return oper + "(" + left + ")";
+        }
+
     }
-    
-    //-------------------------------------------------------------------------
+
+    // -------------------------------------------------------------------------
     public static enum OP {
-        NOP, ADD, SUB, MUL, DIV; //...
-    } 
-   
+        NOP("NOP", false) {
+            public double apply(double left, double right) {
+                return Double.NaN;
+            }
+        },
+        ADD("ADD", true) {
+            public double apply(double left, double right) {
+                return left + right;
+            }
+        },
+        SUB("SUB", true) {
+            public double apply(double left, double right) {
+                return left - right;
+            }
+        },
+        MUL("MUL", true) {
+            public double apply(double left, double right) {
+                return left * right;
+            }
+        },
+        DIV("DIV", true) {
+            public double apply(double left, double right) {
+                return left / right;
+            }
+        },
+        REM("REM", true) {
+            public double apply(double left, double right) {
+                return left % right;
+            }
+        },
+        NEG("NEG", false) {
+            public double apply(double left, double right) {
+                return -left;
+            }
+        },
+        SQRT("SQRT", false) {
+            public double apply(double left, double right) {
+                return Math.sqrt(left);
+            }
+        },
+        ABS("ABS", false) {
+            public double apply(double left, double right) {
+                return Math.abs(left);
+            }
+        },
+        SIN("SIN", false) {
+            public double apply(double left, double right) {
+                return Math.sin(left);
+            }
+        },
+        COS("COS", false) {
+            public double apply(double left, double right) {
+                return Math.cos(left);
+            }
+        },
+        TAN("TAN", false) {
+            public double apply(double left, double right) {
+                return Math.tan(left);
+            }
+        },
+        ASIN("ASIN", false) {
+            public double apply(double left, double right) {
+                return Math.asin(left);
+            }
+        },
+        ACOS("ACOS", false) {
+            public double apply(double left, double right) {
+                return Math.acos(left);
+            }
+        },
+        ATAN("ATAN", false) {
+            public double apply(double left, double right) {
+                return Math.atan(left);
+            }
+        },
+        SINH("SINH", false) {
+            public double apply(double left, double right) {
+                return Math.sinh(left);
+            }
+        },
+        COSH("COSH", false) {
+            public double apply(double left, double right) {
+                return Math.cosh(left);
+            }
+        },
+        TANH("TANH", false) {
+            public double apply(double left, double right) {
+                return Math.tanh(left);
+            }
+        },
+        EXP("EXP", false) {
+            public double apply(double left, double right) {
+                return Math.exp(left);
+            }
+        },
+        LOG("LOG", false) {
+            public double apply(double left, double right) {
+                return Math.log(left);
+            }
+        },
+        LOG10("LOG10", false) {
+            public double apply(double left, double right) {
+                return Math.log10(left);
+            }
+        },
+        RAD("RAD", false) {
+            public double apply(double left, double right) {
+                return Math.toRadians(left);
+            }
+        },
+        DEG("DEG", false) {
+            public double apply(double left, double right) {
+                return Math.toDegrees(left);
+            }
+        },
+        POW("POW", true) {
+            public double apply(double left, double right) {
+                return Math.pow(left, right);
+            }
+        };
+
+        private final boolean isBinaryOp;
+
+        private final String asString;
+
+        OP(String asString, boolean isBinaryOp) {
+            this.asString = asString;
+            this.isBinaryOp = isBinaryOp;
+        }
+
+        public boolean isBinaryOp() {
+            return isBinaryOp;
+        }
+
+        public abstract double apply(double left, double right);
+
+        public String toString() {
+            return this.asString;
+        }
+    }
+
 }
