@@ -32,13 +32,16 @@ import java.util.Map;
 public final class Args {
     private final Options options = Arg.createOptions();
     private final Map<Arg, ArgValue> values = new EnumMap<>(Arg.class);
-
+    
     static final String DEFAULT_LOG_FILE_NAME = "COJAC_Report.log";
     static final String DEFAULT_JMX_HOST = "localhost";
     static final String DEFAULT_JMX_PORT = "5217";
     static final String DEFAULT_JMX_NAME = "COJAC";
     static final String DEFAULT_STABILITY_THRESHOLD = "0.0001";
-
+    private static Map<Arg, String> behaviours = new EnumMap<>(Arg.class);
+    static{
+        behaviours.put(Arg.DOUBLE2FLOAT, "com/github/cojac/models/NewDoubles");
+    }
     private static String USAGE =
              "java -javaagent:cojac.jar=\"[OPTIONS]\" YourApp [appArgs]\n"
            + "(version 1.4 - 2015 Nov 17)";
@@ -52,7 +55,7 @@ public final class Args {
             +"\n----------------- OPTIONS -----------------\n";
     private static String FOOTER =
             "\n------> https://github.com/Cojac/Cojac <------";
-
+    private String behaviour = null;
     public Args() {
         super();
 
@@ -188,6 +191,9 @@ public final class Args {
     }
 
     public boolean isSpecified(Arg arg) {
+        if(behaviours.containsKey(arg)){
+            behaviour = behaviours.get(arg);
+        }
         return values.get(arg).isSpecified();
     }
 
@@ -196,6 +202,9 @@ public final class Args {
     }
 
     public boolean unspecify(Arg arg) {
+        if(behaviours.containsKey(arg)){
+            behaviour = null;
+        }
         return values.get(arg).setSpecified(false);
     }
 
@@ -229,6 +238,9 @@ public final class Args {
         }
 
         throw new RuntimeException("no reaction is defined!");
+    }
+    public String getBehaviour(){
+        return behaviour;
     }
 
     //========================================================================

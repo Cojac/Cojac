@@ -40,11 +40,11 @@ final class NewInstrumenter implements IOpcodeInstrumenter {
     private final Map<Integer, InvokableMethod> invocations = new HashMap<Integer, InvokableMethod>(50);
 
     
-    private static final String NEW_DOUBLES = "com/github/cojac/models/NewDoubles";
+    private final String behaviour;
 
     NewInstrumenter(Args args, InstrumentationStats stats) {
         super();
-
+        behaviour = args.getBehaviour();
         this.stats = stats;
 
 
@@ -55,8 +55,8 @@ final class NewInstrumenter implements IOpcodeInstrumenter {
             
             try {
                 NewDoubles.class.getMethod(op.opCodeName, op.parameters);
-                //System.out.println("method \""+op.opCodeName+"\" modified.");
-                invocations.put(op.opCodeVal, new InvokableMethod(NEW_DOUBLES, op.opCodeName, op.signature));
+                //System.out.println("method \""+behaviour+op.opCodeName+"\" modified.");
+                invocations.put(op.opCodeVal, new InvokableMethod(behaviour, op.opCodeName, op.signature));
                 implementedMethods.set(op.opCodeVal);
             } catch (NoSuchMethodException e) {
                 //Method not implemented, no problem.

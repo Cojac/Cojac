@@ -66,7 +66,7 @@ public enum Arg {
     
     /*V.Gazzola*/
     
-    DOUBLE2FLOAT("D2F"),
+    DOUBLE2FLOAT("BD2F"),
 
     // Those below are used internally, but no more appear in the usage.
     IADD("iadd", Opcodes.IADD, INTS),
