@@ -23,24 +23,21 @@ import org.objectweb.asm.MethodVisitor;
 import com.github.cojac.Arg;
 import com.github.cojac.Args;
 import com.github.cojac.InstrumentationStats;
-import com.github.cojac.Signatures;
-import com.github.cojac.models.CheckedInts;
 import com.github.cojac.models.NewDoubles;
 import com.github.cojac.models.Operation;
 import com.github.cojac.models.Operations;
 import com.github.cojac.models.ReactionType;
 
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.objectweb.asm.Opcodes.*;
 
 final class NewInstrumenter implements IOpcodeInstrumenter {
     private final ReactionType reaction;
     private final InstrumentationStats stats;
     private final String logFileName;
-    private final Args args;
-
+    private final BitSet implementedMethods = new BitSet(256);
     private final Map<Integer, InvokableMethod> invocations = new HashMap<Integer, InvokableMethod>(50);
 
     
@@ -48,7 +45,7 @@ final class NewInstrumenter implements IOpcodeInstrumenter {
 
     NewInstrumenter(Args args, InstrumentationStats stats) {
         super();
-        this.args=args;
+
         this.stats = stats;
 
         reaction = args.getReactionType();
@@ -62,14 +59,16 @@ final class NewInstrumenter implements IOpcodeInstrumenter {
         fillMethods();
     }
     private void fillMethods() {
-       // Class param = CheckedInts;
         for(Operation op: Operations.OPERATIONS){
-            Class<?>[] params = {double.class,double.class,int.class,String.class};
+            
             try {
-                NewDoubles.class.getMethod(comportement+opcode, params);
-                System.out.println("method \""+comportement+opcode+"\" added.");
-                invocations.put(num[i], new InvokableMethod(NEW_DOUBLES, comportement+opcode, Signatures.RAW_DOUBLE_BINARY));
-            } catch (Exception e) {
+                NewDoubles.class.getMethod(op.opCodeName, op.parameters);
+                System.out.println("method \""+op.opCodeName+"\" modified.");
+                invocations.put(op.opCodeVal, new InvokableMethod(NEW_DOUBLES, op.opCodeName, op.signature));
+                implementedMethods.set(op.opCodeVal);
+            } catch (NoSuchMethodException e) {
+                //Method not implemented, no problem.
+            }catch(Exception e){
                 e.printStackTrace();
             }
         }//*/
@@ -121,8 +120,8 @@ final class NewInstrumenter implements IOpcodeInstrumenter {
 
     @Override
     public void instrument(MethodVisitor mv, int opCode) { 
-        mv.visitLdcInsn(reaction.value());
-        mv.visitLdcInsn(logFileName);
+       /* mv.visitLdcInsn(reaction.value());
+        mv.visitLdcInsn(logFileName);*/
         
         Arg arg = Arg.fromOpCode(opCode);
         System.out.println("instrument: "+opCode);
@@ -134,10 +133,7 @@ final class NewInstrumenter implements IOpcodeInstrumenter {
     
     @Override
     public boolean wantsToInstrument(int opcode) {
-        return(opcode == DADD || opcode == DSUB);
-        /*Arg arg = Arg.fromOpCode(opcode);
-        if(arg==null) return false;
-        return args.isOperationEnabled(arg);*/
+        return implementedMethods.get(opcode);
     }
 
 }
