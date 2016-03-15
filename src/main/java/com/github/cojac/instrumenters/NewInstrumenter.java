@@ -26,6 +26,8 @@ import com.github.cojac.InstrumentationStats;
 import com.github.cojac.Signatures;
 import com.github.cojac.models.CheckedInts;
 import com.github.cojac.models.NewDoubles;
+import com.github.cojac.models.Operation;
+import com.github.cojac.models.Operations;
 import com.github.cojac.models.ReactionType;
 
 import java.util.HashMap;
@@ -59,15 +61,9 @@ final class NewInstrumenter implements IOpcodeInstrumenter {
 
         fillMethods();
     }
-    String comportement = "new";
-    String[] opcodes = {"DADD", "DSUB"};
-    int[] num = {DADD, DSUB};
     private void fillMethods() {
        // Class param = CheckedInts;
-        for(int i = 0; i< opcodes.length;i++){
-           
-            String opcode =opcodes[i];
-            System.out.println("new behaviour for "+comportement+opcode);
+        for(Operation op: Operations.OPERATIONS){
             Class<?>[] params = {double.class,double.class,int.class,String.class};
             try {
                 NewDoubles.class.getMethod(comportement+opcode, params);
