@@ -89,9 +89,9 @@ final class NewMethodVisitor extends LocalVariablesSorter {
 
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-        if (opcode == INVOKESTATIC && args.isOperationEnabled(Arg.MATHS) &&
+        if (opcode == INVOKESTATIC /*&& args.isOperationEnabled(Arg.MATHS)*/ &&
             ("java/lang/Math".equals(owner) || "java/lang/StrictMath".equals(owner))) {
-            if ("(D)D".equals(desc) && UNARY_METHODS.contains(name) || "(DD)D".equals(desc) && BINARY_METHODS.contains(name)) {
+            /*if ("(D)D".equals(desc) && UNARY_METHODS.contains(name) || "(DD)D".equals(desc) && BINARY_METHODS.contains(name)) {
                 String msg= owner + '.' + name + desc;
                 String logFileName=""; 
                 if (args.isSpecified(Arg.CALL_BACK)) {
@@ -104,7 +104,8 @@ final class NewMethodVisitor extends LocalVariablesSorter {
                 protectMethodInvocation(reactionType, logFileName, msg);
             } else {
                 mv.visitMethodInsn(INVOKESTATIC, owner, name, desc, itf);
-            }
+            }*/
+            
         } else {
             super.visitMethodInsn(opcode, owner, name, desc, itf);
         }

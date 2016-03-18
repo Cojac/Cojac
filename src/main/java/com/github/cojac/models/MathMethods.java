@@ -6,6 +6,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.objectweb.asm.Opcodes;
 public class MathMethods {
     private static Map<Class<?>, String> types = new HashMap<Class<?>, String>();
     static{
@@ -29,7 +31,7 @@ public class MathMethods {
                 }
                 signature += ")";
                 signature += types.get(method.getReturnType());
-                operations.add(new Operation(0,method.getName(), signature, method.getParameterTypes()));
+                operations.add(new Operation(Opcodes.INVOKESTATIC,method.getName(), signature, method.getParameterTypes()));
             }
         }
     }
