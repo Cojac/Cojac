@@ -26,9 +26,7 @@ import com.github.cojac.InstrumentationStats;
 import com.github.cojac.models.NewDoubles;
 import com.github.cojac.models.Operation;
 import com.github.cojac.models.Operations;
-import com.github.cojac.models.ReactionType;
 
-import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,9 +34,8 @@ import java.util.Map;
 final class NewInstrumenter implements IOpcodeInstrumenter {
 
     private final InstrumentationStats stats;
-    private final BitSet implementedMethods = new BitSet(256);
     private final Map<Integer, InvokableMethod> invocations = new HashMap<Integer, InvokableMethod>(50);
-
+    
     
     private final String behaviour;
 
@@ -57,7 +54,6 @@ final class NewInstrumenter implements IOpcodeInstrumenter {
                 NewDoubles.class.getMethod(op.opCodeName, op.parameters);
                 //System.out.println("method \""+behaviour+op.opCodeName+"\" modified.");
                 invocations.put(op.opCodeVal, new InvokableMethod(behaviour, op.opCodeName, op.signature));
-                implementedMethods.set(op.opCodeVal);
             } catch (NoSuchMethodException e) {
                 //Method not implemented, no problem.
             }catch(Exception e){
@@ -81,7 +77,7 @@ final class NewInstrumenter implements IOpcodeInstrumenter {
     
     @Override
     public boolean wantsToInstrument(int opcode) {
-        return implementedMethods.get(opcode);
+        return invocations.containsKey(opcode);
     }
 
 }

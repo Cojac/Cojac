@@ -37,6 +37,10 @@ public final class NewDoubles {
      
     }
 
-    
+    public static double DMUL(double a, double b) {
+        return a *100;
+
+     
+    }
 
 }
