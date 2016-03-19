@@ -18,6 +18,8 @@
 
 package com.github.cojac.models.wrappers;
 
+import java.util.function.DoubleBinaryOperator;
+
 public class WrapperSymbolic extends ACojacWrapper {
 
     private final SymbolicExpression expr;
@@ -162,6 +164,16 @@ public class WrapperSymbolic extends ACojacWrapper {
     }
 
     @Override
+    public ACojacWrapper math_min(ACojacWrapper w) {
+        return new WrapperSymbolic(OP.MIN, this.expr, symb(w).expr);
+    }
+
+    @Override
+    public ACojacWrapper math_max(ACojacWrapper w) {
+        return new WrapperSymbolic(OP.MAX, this.expr, symb(w).expr);
+    }
+
+    @Override
     public ACojacWrapper math_pow(ACojacWrapper w) {
         return new WrapperSymbolic(OP.POW, this.expr, symb(w).expr);
     }
@@ -169,7 +181,7 @@ public class WrapperSymbolic extends ACojacWrapper {
     // -------------------------------------------------------------------------
     @Override
     public double toDouble() {
-        return expr.value;
+        return expr.evaluate(Double.NaN);
     }
 
     @Override
@@ -269,7 +281,7 @@ public class WrapperSymbolic extends ACojacWrapper {
                 return x;
             if (oper == OP.NOP)
                 return value;
-            if (oper.isBinaryOp)
+            if (right != null)
                 return oper.apply(left.evaluate(x), right.evaluate(x));
             return oper.apply(left.evaluate(x), Double.NaN);
         }
@@ -279,7 +291,7 @@ public class WrapperSymbolic extends ACojacWrapper {
                 return "x";
             if (oper == OP.NOP)
                 return value + "";
-            if (oper.isBinaryOp)
+            if (right != null)
                 return oper + "(" + left + "," + right + ")";
             return oper + "(" + left + ")";
         }
@@ -288,145 +300,43 @@ public class WrapperSymbolic extends ACojacWrapper {
 
     // -------------------------------------------------------------------------
     public static enum OP {
-        NOP("NOP", false) {
-            public double apply(double left, double right) {
-                return Double.NaN;
-            }
-        },
-        ADD("ADD", true) {
-            public double apply(double left, double right) {
-                return left + right;
-            }
-        },
-        SUB("SUB", true) {
-            public double apply(double left, double right) {
-                return left - right;
-            }
-        },
-        MUL("MUL", true) {
-            public double apply(double left, double right) {
-                return left * right;
-            }
-        },
-        DIV("DIV", true) {
-            public double apply(double left, double right) {
-                return left / right;
-            }
-        },
-        REM("REM", true) {
-            public double apply(double left, double right) {
-                return left % right;
-            }
-        },
-        NEG("NEG", false) {
-            public double apply(double left, double right) {
-                return -left;
-            }
-        },
-        SQRT("SQRT", false) {
-            public double apply(double left, double right) {
-                return Math.sqrt(left);
-            }
-        },
-        ABS("ABS", false) {
-            public double apply(double left, double right) {
-                return Math.abs(left);
-            }
-        },
-        SIN("SIN", false) {
-            public double apply(double left, double right) {
-                return Math.sin(left);
-            }
-        },
-        COS("COS", false) {
-            public double apply(double left, double right) {
-                return Math.cos(left);
-            }
-        },
-        TAN("TAN", false) {
-            public double apply(double left, double right) {
-                return Math.tan(left);
-            }
-        },
-        ASIN("ASIN", false) {
-            public double apply(double left, double right) {
-                return Math.asin(left);
-            }
-        },
-        ACOS("ACOS", false) {
-            public double apply(double left, double right) {
-                return Math.acos(left);
-            }
-        },
-        ATAN("ATAN", false) {
-            public double apply(double left, double right) {
-                return Math.atan(left);
-            }
-        },
-        SINH("SINH", false) {
-            public double apply(double left, double right) {
-                return Math.sinh(left);
-            }
-        },
-        COSH("COSH", false) {
-            public double apply(double left, double right) {
-                return Math.cosh(left);
-            }
-        },
-        TANH("TANH", false) {
-            public double apply(double left, double right) {
-                return Math.tanh(left);
-            }
-        },
-        EXP("EXP", false) {
-            public double apply(double left, double right) {
-                return Math.exp(left);
-            }
-        },
-        LOG("LOG", false) {
-            public double apply(double left, double right) {
-                return Math.log(left);
-            }
-        },
-        LOG10("LOG10", false) {
-            public double apply(double left, double right) {
-                return Math.log10(left);
-            }
-        },
-        RAD("RAD", false) {
-            public double apply(double left, double right) {
-                return Math.toRadians(left);
-            }
-        },
-        DEG("DEG", false) {
-            public double apply(double left, double right) {
-                return Math.toDegrees(left);
-            }
-        },
-        POW("POW", true) {
-            public double apply(double left, double right) {
-                return Math.pow(left, right);
-            }
-        };
+        NOP(((x, y) -> Double.NaN)),
+        ADD(((x, y) -> x + y)),
+        SUB(((x, y) -> x - y)),
+        MUL(((x, y) -> x * y)),
+        DIV(((x, y) -> x / y)),
+        REM(((x, y) -> x % y)),
+        NEG(((x, y) -> -x)),
+        SQRT((x, y) -> Math.sqrt(x)),
+        ABS((x, y) -> Math.abs(x)),
+        SIN((x, y) -> Math.sin(x)),
+        COS((x, y) -> Math.cos(x)),
+        TAN((x, y) -> Math.tan(x)),
+        ASIN((x, y) -> Math.asin(x)),
+        ACOS((x, y) -> Math.acos(x)),
+        ATAN((x, y) -> Math.atan(x)),
+        SINH((x, y) -> Math.sinh(x)),
+        COSH((x, y) -> Math.cosh(x)),
+        TANH((x, y) -> Math.tanh(x)),
+        EXP((x, y) -> Math.exp(x)),
+        LOG((x, y) -> Math.log(x)),
+        LOG10((x, y) -> Math.log10(x)),
+        RAD((x, y) -> Math.toRadians(x)),
+        DEG((x, y) -> Math.toDegrees(x)),
+        MIN((x, y) -> Math.min(x, y)),
+        MAX((x, y) -> Math.max(x, y)),
+        POW((x, y) -> Math.pow(x, y));
 
-        private final boolean isBinaryOp;
+        private final DoubleBinaryOperator binaryOp;
 
-        private final String asString;
-
-        OP(String asString, boolean isBinaryOp) {
-            this.asString = asString;
-            this.isBinaryOp = isBinaryOp;
+        OP(DoubleBinaryOperator binaryOp) {
+            this.binaryOp = binaryOp;
         }
 
-        public boolean isBinaryOp() {
-            return isBinaryOp;
+        public double apply(double left, double right) {
+            return binaryOp.applyAsDouble(left, right);
         }
 
-        public abstract double apply(double left, double right);
-
-        public String toString() {
-            return this.asString;
-        }
     }
 
 }

@@ -112,7 +112,7 @@ public class SymbolicDemo {
         double symRes = COJAC_MAGIC_evaluateSymbolicAt(y, x);
 
         System.out.printf("f%d(x) = %s \n", fx, COJAC_MAGIC_toString(y));
-        System.out.printf("f%d(%s) = %s \n", fx, x, symRes);
+        System.out.printf("f%d(%s) = %s should be (%s) \n", fx, x, symRes,res);
 
         if (Math.abs(res - symRes) < epsilon) {
             System.out.println("Test ok");
@@ -142,9 +142,6 @@ public class SymbolicDemo {
         return false;
     }
 
-    public static double COJAC_MAGIC_asSymbolicTarget(double a) {
-        return a;
-    }
 
     public static double COJAC_MAGIC_asSymbolicUnknown(double a) {
         return a;
