@@ -40,6 +40,7 @@ public class NewClassVisitor extends CojacClassVisitor {
     }
 
     private MethodVisitor instrumentMethod(MethodVisitor parentMv, int access, String desc) {
+        System.out.println("in NewClassVisitor.instrumentMethod");
         MethodVisitor mv=null;
         mv = new NewMethodVisitor(access, desc, parentMv, stats, args, crtClassName, factory);
         return mv;

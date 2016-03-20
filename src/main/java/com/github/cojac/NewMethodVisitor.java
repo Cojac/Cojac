@@ -23,6 +23,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.LocalVariablesSorter;
 
 import com.github.cojac.instrumenters.IOpcodeInstrumenter;
+import com.github.cojac.instrumenters.NewInstrumenter;
 import com.github.cojac.instrumenters.IOpcodeInstrumenterFactory;
 import com.github.cojac.models.CheckedMaths;
 
@@ -89,6 +90,7 @@ final class NewMethodVisitor extends LocalVariablesSorter {
 
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
+        System.out.println("visitMethodInsn: "+name);
         if (opcode == INVOKESTATIC /*&& args.isOperationEnabled(Arg.MATHS)*/ &&
             ("java/lang/Math".equals(owner) || "java/lang/StrictMath".equals(owner))) {
             /*if ("(D)D".equals(desc) && UNARY_METHODS.contains(name) || "(DD)D".equals(desc) && BINARY_METHODS.contains(name)) {
@@ -105,7 +107,12 @@ final class NewMethodVisitor extends LocalVariablesSorter {
             } else {
                 mv.visitMethodInsn(INVOKESTATIC, owner, name, desc, itf);
             }*/
-            
+            NewInstrumenter instrumenter = new NewInstrumenter(args, stats);;
+            if (instrumenter.wantsToInstrumentMethod(opcode, name)){
+                instrumenter.instrumentMethod(mv, name);
+            }else{
+                super.visitMethodInsn(opcode, owner, name, desc, itf);
+            }
         } else {
             super.visitMethodInsn(opcode, owner, name, desc, itf);
         }

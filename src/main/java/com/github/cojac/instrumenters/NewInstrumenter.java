@@ -19,12 +19,12 @@
 package com.github.cojac.instrumenters;
 
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 
 import com.github.cojac.Arg;
 import com.github.cojac.Args;
 import com.github.cojac.InstrumentationStats;
 import com.github.cojac.models.MathMethods;
-import com.github.cojac.models.NewDoubles;
 import com.github.cojac.models.Operation;
 import com.github.cojac.models.Operations;
 
@@ -32,26 +32,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-final class NewInstrumenter implements IOpcodeInstrumenter {
+public final class NewInstrumenter implements IOpcodeInstrumenter {
 
     private final InstrumentationStats stats;
     private final Map<Integer, InvokableMethod> invocations = new HashMap<Integer, InvokableMethod>(50);
     private final Map<String, InvokableMethod> methods = new HashMap<String, InvokableMethod>(50);
     
-    private final String behaviour;
-    private Object behaviourClass;
-    NewInstrumenter(Args args, InstrumentationStats stats) {
+    private final String BEHAVIOUR;
+    private final String FULLY_QUALIFIED_BEHAVIOUR;
+    public NewInstrumenter(Args args, InstrumentationStats stats) {
         super();
-        behaviour = args.getBehaviour();
-        System.out.println(behaviour);
-        try {
-            behaviourClass = Class.forName(behaviour.replace('/', '.'));
-        } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        BEHAVIOUR = args.getBehaviour();
+        System.out.println(BEHAVIOUR);
+
+        FULLY_QUALIFIED_BEHAVIOUR = BEHAVIOUR.replace('/', '.');
+        
         this.stats = stats;
-        System.out.println(behaviour);
+        System.out.println(BEHAVIOUR);
 
         fillMethods();
     }
@@ -60,10 +57,11 @@ final class NewInstrumenter implements IOpcodeInstrumenter {
         for(Operation op: Operations.OPERATIONS){
             
             try {
-                behaviourClass.getClass().getMethod(op.opCodeName, op.parameters);
+                //behaviourClass.getClass().getMethod(op.opCodeName, op.parameters);
+                Class.forName(FULLY_QUALIFIED_BEHAVIOUR).getMethod(op.opCodeName, op.parameters);
                 //NewDoubles.class.getMethod(op.opCodeName, op.parameters);
                 //System.out.println("method \""+behaviour+op.opCodeName+"\" modified.");
-                invocations.put(op.opCodeVal, new InvokableMethod(behaviour, op.opCodeName, op.signature));
+                invocations.put(op.opCodeVal, new InvokableMethod(BEHAVIOUR, op.opCodeName, op.signature));
             } catch (NoSuchMethodException e) {
                 //Method not implemented, no problem.
             }catch(Exception e){
@@ -72,7 +70,17 @@ final class NewInstrumenter implements IOpcodeInstrumenter {
         }
         /*Populate methods*/
         for(Operation op: MathMethods.operations){
-            
+            try {
+                //behaviourClass.getClass().getMethod(op.opCodeName, op.parameters);
+                Class.forName(FULLY_QUALIFIED_BEHAVIOUR).getMethod(op.opCodeName, op.parameters);
+                //NewDoubles.class.getMethod(op.opCodeName, op.parameters);
+                //System.out.println("method \""+behaviour+op.opCodeName+"\" modified.");
+                methods.put(op.opCodeName, new InvokableMethod(BEHAVIOUR, op.opCodeName, op.signature));
+            } catch (NoSuchMethodException e) {
+                //Method not implemented, no problem.
+            }catch(Exception e){
+                e.printStackTrace();
+            }
             
         }
     }
@@ -92,14 +100,16 @@ final class NewInstrumenter implements IOpcodeInstrumenter {
     
     @Override
     public boolean wantsToInstrument(int opcode) {
+        System.out.println("Wants to instrument: "+opcode+"   "+invocations.containsKey(opcode));
         return invocations.containsKey(opcode);
     }
-    public void instrumentMethod(MethodVisitor mv, int opCode) { 
-        
-             invocations.get(opCode).invokeStatic(mv);
-        
-     }
+    
+    public void instrumentMethod(MethodVisitor mv, String name) { 
+        methods.get(name).invokeStatic(mv);
+    }
     public boolean wantsToInstrumentMethod(int opcode, String name) {
-        return methods.containsKey(name);
+        System.out.println("Wants to instrument method: "+name+"  "+invocations.containsKey(opcode));
+        return (opcode == Opcodes.INVOKESTATIC) && methods.containsKey(name);
+        
     }
 }

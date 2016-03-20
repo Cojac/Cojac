@@ -39,8 +39,10 @@ public final class NewDoubles {
 
     public static double DMUL(double a, double b) {
         return a *100;
-
-     
     }
+    public static double sqrt(double a){
+        return Math.PI;
+    }
+    
 
 }
