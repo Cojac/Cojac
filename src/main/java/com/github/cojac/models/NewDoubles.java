@@ -27,22 +27,22 @@ public final class NewDoubles {
     }
 
     public static double DADD(double a, double b) {
-        return a - b;
-
+        return (float)a + (float)b;
     }
-   
     public static double DSUB(double a, double b) {
-        return a + b;
-
-     
+        return (float)a - (float)b;
     }
-
     public static double DMUL(double a, double b) {
-        return a *100;
+        return (float)a * (float)b;
     }
-    public static double sqrt(double a){
-        return Math.PI;
+    public static double DDIV(double a, double b){
+        return (float)a / (float)b;
+    }
+    public static double DREM(double a, double b){
+        return (float)a %(float)b;
     }
     
-
+    public static double sqrt(double a){
+        return (float) Math.sqrt(a);
+    }
 }
