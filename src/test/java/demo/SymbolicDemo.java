@@ -73,6 +73,7 @@ public class SymbolicDemo {
         x = COJAC_MAGIC_asSymbolicUnknown(x);
         System.out.println("double y = someFunction( x, 3, 4 );");
         double y = someFunction(x, 3, 4);
+
         System.out.println("f(2):  " + y);
         System.out.println("x : " + COJAC_MAGIC_isSymbolicUnknown(x));
         System.out.println("f(10): " + COJAC_MAGIC_evaluateSymbolicAt(y, 10));
@@ -108,11 +109,72 @@ public class SymbolicDemo {
         System.out.printf("Function %d\n", fx);
         double res = (double) f.invoke(SymbolicDemo.class, x);
         double u = COJAC_MAGIC_asSymbolicUnknown(0);
-        double y = (double) f.invoke(SymbolicDemo.class, u);
+        Double y = (double) f.invoke(SymbolicDemo.class, u);
+        double z = 2;
+        System.out.println("y=" + y + " z = " + z);
+        Double yy = y;
+
+        double j = Double.NaN;
+        System.out.println(y.compareTo(y));
+        System.out.println(Double.compare(y, y));
+
+        // y=1d;
+        if (y > 2)
+            System.out.println(y + ">" + 2);
+        if (y >= 2)
+            System.out.println(y + ">=" + 2);
+        if (y == 2)
+            System.out.println(y + "==" + 2);
+        if (y != 2)
+            System.out.println(y + "!=" + 2);
+        if (y < 2)
+            System.out.println(y + "<" + 2);
+        if (y <= 2)
+            System.out.println(y + "<=" + 2);
+
+        if (y > 2)
+            System.out.println(y + ">" + 2);
+        if (y >= 2)
+            System.out.println(y + ">=" + 2);
+        if (y == 2)
+            System.out.println(y + "==" + 2);
+        if (y != 2)
+            System.out.println(y + "!=" + 2);
+        if (y < 2)
+            System.out.println(y + "<" + 2);
+        if (y <= 2)
+            System.out.println(y + "<=" + 2);
+
+        if (2 > y)
+            System.out.println(y + ">" + 2);
+        if (2 >= y)
+            System.out.println(y + ">=" + 2);
+        if (2 == y)
+            System.out.println(y + "==" + 2);
+        if (2 != y)
+            System.out.println(y + "!=" + 2);
+        if (2 < y)
+            System.out.println(y + "<" + 2);
+        if (2 <= y)
+            System.out.println(y + "<=" + 2);
+
+        if (y > y)
+            System.out.println(y + ">" + y);
+        if (y >= y)
+            System.out.println(y + ">=" + y);
+        if (y == j)
+            System.out.println(y + "==" + j);
+        if (y != j)
+            System.out.println(y + "!=" + j);
+        if (y < y)
+            System.out.println(y + "<" + y);
+        if (y <= y)
+            System.out.println(y + "<=" + y);
+
         double symRes = COJAC_MAGIC_evaluateSymbolicAt(y, x);
 
         System.out.printf("f%d(x) = %s \n", fx, COJAC_MAGIC_toString(y));
-        System.out.printf("f%d(%s) = %s should be (%s) \n", fx, x, symRes,res);
+        System.out.printf("f%d(%s) = %s should be (%s) \n", fx, x, symRes, res);
 
         if (Math.abs(res - symRes) < epsilon) {
             System.out.println("Test ok");
@@ -142,7 +204,6 @@ public class SymbolicDemo {
         return false;
     }
 
-
     public static double COJAC_MAGIC_asSymbolicUnknown(double a) {
         return a;
     }
@@ -152,7 +213,8 @@ public class SymbolicDemo {
     }
 
     public static double f1(double x) {
-        return 4.0 * Math.pow(x, 3.0);
+        double i =100+100;
+        return 4.0 * Math.pow(x, 3.0)+i;
     }
 
     public static double df1(double x) {

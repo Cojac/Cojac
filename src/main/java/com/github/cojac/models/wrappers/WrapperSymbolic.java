@@ -19,9 +19,12 @@
 package com.github.cojac.models.wrappers;
 
 import java.util.function.DoubleBinaryOperator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class WrapperSymbolic extends ACojacWrapper {
 
+    private static final boolean compr = true;
     private final SymbolicExpression expr;
 
     // -------------------------------------------------------------------------
@@ -181,12 +184,36 @@ public class WrapperSymbolic extends ACojacWrapper {
     // -------------------------------------------------------------------------
     @Override
     public double toDouble() {
-        return expr.evaluate(Double.NaN);
+        return expr.value;
     }
 
     @Override
     public ACojacWrapper fromDouble(double a, boolean wasFromFloat) {
+
         return new WrapperSymbolic(new SymbolicExpression(a));
+    }
+
+    @Override
+    public int dcmpl(ACojacWrapper w) {
+        if (this.expr.containsUnknown || symb(w).expr.containsUnknown)
+            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "Can not compare symbolic expressions containing unknowns");
+        if (this.isNaN() || w.isNaN())
+            return -1;
+        return this.compareTo(w);
+    }
+
+    @Override
+    public int dcmpg(ACojacWrapper w) {
+        if (this.expr.containsUnknown || symb(w).expr.containsUnknown)
+            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "Can not compare symbolic expressions containing unknowns");
+        if (this.isNaN() || w.isNaN())
+            return 1;
+        return this.compareTo(w);
+    }
+
+    @Override
+    public int compareTo(ACojacWrapper w) {
+        return Double.compare(toDouble(), w.toDouble());
     }
 
     @Override
@@ -201,11 +228,11 @@ public class WrapperSymbolic extends ACojacWrapper {
 
     // ------------------------------------------------------------------------
     public static boolean COJAC_MAGIC_isSymbolicUnknown(CommonDouble d) {
-        return symb(d.val).expr.isUnknown;
+        return symb(d.val).expr.containsUnknown;
     }
 
     public static boolean COJAC_MAGIC_isSymbolicUnknown(CommonFloat d) {
-        return symb(d.val).expr.isUnknown;
+        return symb(d.val).expr.containsUnknown;
     }
 
     public static CommonDouble COJAC_MAGIC_asSymbolicUnknown(CommonDouble d) {
@@ -238,15 +265,15 @@ public class WrapperSymbolic extends ACojacWrapper {
     // -------------------------------------------------------------------------
     private class SymbolicExpression {
 
-        private double value;
-        private boolean isUnknown;
-        private OP oper;
-        private SymbolicExpression left;
-        private SymbolicExpression right;
+        private final double value;
+        private final boolean containsUnknown;
+        private final OP oper;
+        private final SymbolicExpression left;
+        private final SymbolicExpression right;
 
         public SymbolicExpression() {
             this.value = Double.NaN;
-            this.isUnknown = true;
+            this.containsUnknown = true;
             this.oper = OP.NOP;
             this.right = null;
             this.left = null;
@@ -254,30 +281,43 @@ public class WrapperSymbolic extends ACojacWrapper {
 
         public SymbolicExpression(double value) {
             this.value = value;
-            this.isUnknown = false;
+            this.containsUnknown = false;
             this.oper = OP.NOP;
             this.left = null;
             this.right = null;
         }
 
         public SymbolicExpression(OP oper, SymbolicExpression left, SymbolicExpression right) {
-            this.value = Double.NaN;
-            this.isUnknown = false;
-            this.oper = oper;
-            this.left = left;
-            this.right = right;
+            this.value = oper.apply(left.value, right.value);
+            this.containsUnknown = left.containsUnknown ||
+                    right.containsUnknown;
+            if (this.containsUnknown && compr) {
+                this.oper = oper;
+                this.left = left;
+                this.right = right;
+            } else {
+                this.oper = OP.NOP;
+                this.left = null;
+                this.right = null;
+            }
         }
 
         public SymbolicExpression(OP oper, SymbolicExpression left) {
-            this.value = Double.NaN;
-            this.isUnknown = false;
-            this.oper = oper;
-            this.left = left;
-            this.right = null;
+            this.value = oper.apply(left.value, Double.NaN);
+            this.containsUnknown = left.containsUnknown;
+            if (this.containsUnknown && compr) {
+                this.oper = oper;
+                this.left = left;
+                this.right = null;
+            } else {
+                this.oper = OP.NOP;
+                this.left = null;
+                this.right = null;
+            }
         }
 
         public double evaluate(double x) {
-            if (isUnknown)
+            if (containsUnknown && oper == OP.NOP)
                 return x;
             if (oper == OP.NOP)
                 return value;
@@ -287,7 +327,7 @@ public class WrapperSymbolic extends ACojacWrapper {
         }
 
         public String toString() {
-            if (isUnknown)
+            if (containsUnknown && oper == OP.NOP)
                 return "x";
             if (oper == OP.NOP)
                 return value + "";
