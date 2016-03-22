@@ -41,8 +41,103 @@ public final class NewDoubles {
     public static double DREM(double a, double b){
         return (float)a %(float)b;
     }
-    
+    public static double abs(double a){
+        return (float) Math.abs(a);
+    }
+    public static double acos(double a){
+        return (float) Math.acos((float)a);
+    }
+    public static double asin(double a){
+        return (float) Math.asin((float)a);
+    }
+    public static double atan(double a){
+        return (float) Math.atan((float)a);
+    }
+    public static double atan2(double x,double y){
+        return (float) Math.atan2((float)x,(float)y);
+    }
+    public static double cbrt(double a){
+        return (float) Math.cbrt((float)a);
+    }
+    public static double copySign(double a,double b){
+        return (float) Math.copySign((float)a,(float)b);
+    }
+    public static double cos(double a){
+        return (float) Math.cos((float)a);
+    }
+    public static double cosh(double a){
+        return (float) Math.cosh((float)a);
+    }
+    public static double exp(double a){
+        return (float) Math.exp((float)a);
+    }
+    public static double expm1(double a){
+        return (float) Math.expm1((float)a);
+    }
+    public static double getExponent(double a){
+        return Math.getExponent((float)a);
+    }
+    public static double hypot(double a,double b){
+        return (float) Math.hypot((float)a,(float)b);
+    }
+    public static double IEEEremainder(double a,double b){
+        return (float) Math.IEEEremainder((float)a,(float)b);
+    }
+    public static double log(double a){
+        return (float) Math.log((float)a);
+    }
+    public static double log10(double a){
+        return (float) Math.log10((float)a);
+    }
+    public static double log1p(double a){
+        return (float) Math.log1p((float)a);
+    }
+    public static double max(double a, double b){
+        return Math.max((float)a, (float)b);
+    }
+    public static double min(double a, double b){
+        return Math.min((float)a, (float)b);
+    }
+    public static double nextAfter(double a, double b){
+        return Math.nextAfter((float)a, (float)b);
+    }
+    public static double nextDown(double a){
+        return  Math.nextDown((float)a);
+    }
+    public static double nextUp(double a){
+        return  Math.nextUp((float)a);
+    }
+    public static double pow(double a, double b){
+        return (float) Math.pow((float)a, (float)b);
+    }
+    public static double random(){
+        return (float) Math.random();
+    }
+    public static double scalb(double a, int b){
+        return Math.scalb((float) a,b);
+    }
+    public static double sin(double a){
+        return (float) Math.sin((float)a);
+    }
+    public static double sinh(double a){
+        return (float) Math.sinh((float)a);
+    }
     public static double sqrt(double a){
-        return (float) Math.sqrt(a);
+        return (float) Math.sqrt((float)a);
+    }
+    public static double tan(double a){
+        return (float) Math.tan((float)a);
+    }
+    public static double tanh(double a){
+        return (float) Math.tanh((float)a);
+    }
+    public static double toDegree(double a){
+        return (float) Math.toDegrees((float)a);
+    }
+    public static double toRadian(double a){
+        return (float) Math.toRadians((float)a);
+    }
+    public static double ulp(double a){
+        return Math.ulp((float)a);
     }
 }
