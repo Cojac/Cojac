@@ -40,7 +40,7 @@ public abstract class ACojacWrapper implements Comparable<ACojacWrapper>{
         return this.compareTo(b);
     }
     public int dcmpg(ACojacWrapper b) {
-        if (this.isNaN() || b.isNaN()) return -1;
+        if (this.isNaN() || b.isNaN()) return +1;
         return this.compareTo(b);
     }
     public int  d2i() { return (int)  toDouble();}
