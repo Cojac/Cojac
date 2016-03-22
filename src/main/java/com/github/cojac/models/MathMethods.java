@@ -33,7 +33,6 @@ public class MathMethods {
         types.put(float.class, "F");
         types.put(double.class, "D");
         types.put(long.class, "J");
-        types.put(int.class, "I");
     }
     public static ArrayList<Operation> operations = new ArrayList<Operation>();
     static{
@@ -42,13 +41,14 @@ public class MathMethods {
             int modifiers = method.getModifiers();
             if(Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers)){
                 String signature ="";
-                //System.out.print("Name: "+method.getName()+" return: "++ "  types: {");
+                
                 signature += "(";
                 for (Type c: method.getParameterTypes()) {
                     signature += types.get(c);
                 }
                 signature += ")";
                 signature += types.get(method.getReturnType());
+                //System.out.println("Name: "+method.getName()+" signature: " + signature);
                 operations.add(new Operation(Opcodes.INVOKESTATIC,method.getName(), signature, method.getParameterTypes()));
             }
         }

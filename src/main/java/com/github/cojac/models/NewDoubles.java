@@ -49,7 +49,7 @@ public final class NewDoubles {
             return 1;
         return DCMPL(a,b);
     }
-    /*public static double abs(double a){
+    public static double abs(double a){
         return (float) Math.abs(a);
     }
     public static double acos(double a){
