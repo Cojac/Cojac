@@ -37,20 +37,7 @@ final class NewMethodVisitor extends LocalVariablesSorter {
     private final InstrumentationStats stats;
     private final Args args;
     private final String classPath;
-
-    private static final List<String> UNARY_METHODS = Arrays.asList(
-        "ceil", "round", "floor",
-        "cos", "sin", "tan",
-        "acos", "asin", "atan",
-        "cosh", "sinh", "tanh",
-        "exp", "expm1",
-        "log", "log10", "log1p",
-        "sqrt", "cbrt",
-        "rint", "nextUp");
-
-    private static final List<String> BINARY_METHODS =
-        Arrays.asList("atan2", "pow", "hypot", "copySign", "nextAfter", "scalb");
-
+    NewInstrumenter instrumenter ;
     NewMethodVisitor(int access, String desc, MethodVisitor mv, InstrumentationStats stats, Args args, String classPath, IOpcodeInstrumenterFactory factory) {
         super(Opcodes.ASM5, access, desc, mv);
 
@@ -59,6 +46,7 @@ final class NewMethodVisitor extends LocalVariablesSorter {
         this.factory = factory;
 
         this.classPath = classPath;
+        instrumenter = new NewInstrumenter(args, stats);
     }
 
     @Override
@@ -73,7 +61,7 @@ final class NewMethodVisitor extends LocalVariablesSorter {
         }
     }
 
-    @Override
+   /* @Override
     public void visitIincInsn(int index, int value) {
         int opCode=Opcodes.IINC;
         IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opCode);
@@ -87,10 +75,10 @@ final class NewMethodVisitor extends LocalVariablesSorter {
             super.visitIincInsn(index, value);
         }
     }
-
+*/
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-        System.out.println("visitMethodInsn: "+name);
+       // System.out.println("visitMethodInsn: "+name);
         if (opcode == INVOKESTATIC /*&& args.isOperationEnabled(Arg.MATHS)*/ &&
             ("java/lang/Math".equals(owner) || "java/lang/StrictMath".equals(owner))) {
             /*if ("(D)D".equals(desc) && UNARY_METHODS.contains(name) || "(DD)D".equals(desc) && BINARY_METHODS.contains(name)) {
@@ -107,7 +95,7 @@ final class NewMethodVisitor extends LocalVariablesSorter {
             } else {
                 mv.visitMethodInsn(INVOKESTATIC, owner, name, desc, itf);
             }*/
-            NewInstrumenter instrumenter = new NewInstrumenter(args, stats);;
+            
             if (instrumenter.wantsToInstrumentMethod(opcode, name)){
                 instrumenter.instrumentMethod(mv, name);
             }else{

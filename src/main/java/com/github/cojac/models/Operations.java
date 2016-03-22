@@ -15,9 +15,9 @@ public class Operations {
     private static final String FLOAT_UNARY = "(F)F";
     private static final String FLOAT_CMP = "(FF)I";
     
-    private static final String I2S_CAST = "(I)S";
-    private static final String I2C_CAST = "(I)C";
-    private static final String I2B_CAST = "(I)B";
+    private static final String I2S_CAST = "(I)I";
+    private static final String I2C_CAST = "(I)I";
+    private static final String I2B_CAST = "(I)I";
     private static final String I2F_CAST = "(I)F";
     private static final String I2L_CAST = "(I)L";
     private static final String I2D_CAST = "(I)D";
@@ -52,7 +52,7 @@ public class Operations {
             new Operation(IDIV, "IDIV",INTEGER_BINARY, INTEGER_BINARY_PARAMS),
             
             new Operation(INEG, "INEG",INTEGER_UNARY, INTEGER_UNARY_PARAMS),
-            new Operation(IINC, "IINC",INTEGER_UNARY, INTEGER_UNARY_PARAMS),
+            //new Operation(IINC, "IINC",INTEGER_UNARY, INTEGER_UNARY_PARAMS),
             
             /*LONGS*/
             new Operation(LADD, "LADD",LONG_BINARY, LONG_BINARY_PARAMS),

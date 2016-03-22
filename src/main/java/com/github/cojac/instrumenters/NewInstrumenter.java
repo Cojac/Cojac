@@ -43,12 +43,11 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
     public NewInstrumenter(Args args, InstrumentationStats stats) {
         super();
         BEHAVIOUR = args.getBehaviour();
-        System.out.println(BEHAVIOUR);
+        //System.out.println(BEHAVIOUR);
 
         FULLY_QUALIFIED_BEHAVIOUR = BEHAVIOUR.replace('/', '.');
         
         this.stats = stats;
-        System.out.println(BEHAVIOUR);
 
         fillMethods();
     }
@@ -90,25 +89,27 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
        /* mv.visitLdcInsn(reaction.value());
         mv.visitLdcInsn(logFileName);*/
         
-        Arg arg = Arg.fromOpCode(opCode);
+       /* Arg arg = Arg.fromOpCode(opCode);
         //System.out.println("instrument: "+opCode);
         if (arg != null) {
-            stats.incrementCounterValue(opCode);// arg
+            stats.incrementCounterValue(opCode);// arg*/
+       // System.out.println("instrumenting opcode: "+opCode);
             invocations.get(opCode).invokeStatic(mv);
-        }
+       // }
     }
     
     @Override
     public boolean wantsToInstrument(int opcode) {
-        System.out.println("Wants to instrument: "+opcode+"   "+invocations.containsKey(opcode));
+       // System.out.println("Wants to instrument: "+opcode+"   "+invocations.containsKey(opcode));
         return invocations.containsKey(opcode);
     }
     
     public void instrumentMethod(MethodVisitor mv, String name) { 
+       // System.out.println("instrumenting method: "+name);
         methods.get(name).invokeStatic(mv);
     }
     public boolean wantsToInstrumentMethod(int opcode, String name) {
-        System.out.println("Wants to instrument method: "+name+"  "+invocations.containsKey(opcode));
+       // System.out.println("Wants to instrument method: "+name+"  "+invocations.containsKey(opcode));
         return (opcode == Opcodes.INVOKESTATIC) && methods.containsKey(name);
         
     }

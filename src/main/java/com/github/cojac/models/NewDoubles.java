@@ -41,7 +41,15 @@ public final class NewDoubles {
     public static double DREM(double a, double b){
         return (float)a %(float)b;
     }
-    public static double abs(double a){
+    public static double DCMPL(double a, double b){
+        return Double.compare((float)a ,(float)b);
+    }
+    public static double DCMPG(double a, double b){
+        if(Double.isNaN(a)||Double.isNaN(b))
+            return 1;
+        return DCMPL(a,b);
+    }
+    /*public static double abs(double a){
         return (float) Math.abs(a);
     }
     public static double acos(double a){
@@ -60,7 +68,7 @@ public final class NewDoubles {
         return (float) Math.cbrt((float)a);
     }
     public static double copySign(double a,double b){
-        return (float) Math.copySign((float)a,(float)b);
+        return Math.copySign((float)a,(float)b);
     }
     public static double cos(double a){
         return (float) Math.cos((float)a);
@@ -123,7 +131,7 @@ public final class NewDoubles {
         return (float) Math.sinh((float)a);
     }
     public static double sqrt(double a){
-        return (float) Math.sqrt((float)a);
+        return (float) Math.sqrt(a);
     }
     public static double tan(double a){
         return (float) Math.tan((float)a);
@@ -139,5 +147,5 @@ public final class NewDoubles {
     }
     public static double ulp(double a){
         return Math.ulp((float)a);
-    }
+    }//*/
 }
