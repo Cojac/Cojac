@@ -74,7 +74,7 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
                 Class.forName(FULLY_QUALIFIED_BEHAVIOUR).getMethod(op.opCodeName, op.parameters);
                 //NewDoubles.class.getMethod(op.opCodeName, op.parameters);
                 //System.out.println("method \""+behaviour+op.opCodeName+"\" modified.");
-                methods.put(op.opCodeName, new InvokableMethod(BEHAVIOUR, op.opCodeName, op.signature));
+                methods.put(op.opCodeName+op.signature, new InvokableMethod(BEHAVIOUR, op.opCodeName, op.signature));
             } catch (NoSuchMethodException e) {
                 //Method not implemented, no problem.
             }catch(Exception e){
@@ -104,13 +104,13 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
         return invocations.containsKey(opcode);
     }
     
-    public void instrumentMethod(MethodVisitor mv, String name) { 
+    public void instrumentMethod(MethodVisitor mv, String name, String signature) { 
        // System.out.println("instrumenting method: "+name);
-        methods.get(name).invokeStatic(mv);
+        methods.get(name+signature).invokeStatic(mv);
     }
-    public boolean wantsToInstrumentMethod(int opcode, String name) {
+    public boolean wantsToInstrumentMethod(int opcode, String name, String signature) {
        // System.out.println("Wants to instrument method: "+name+"  "+invocations.containsKey(opcode));
-        return (opcode == Opcodes.INVOKESTATIC) && methods.containsKey(name);
+        return (opcode == Opcodes.INVOKESTATIC) && methods.containsKey(name+signature);
         
     }
 }
