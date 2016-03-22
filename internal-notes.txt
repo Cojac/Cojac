@@ -1,10 +1,8 @@
+- TODO: maybe prefer maven-shade-plugin to maven-assembly-plugin
+
 ---------------- A faire (15.10.15) ------------------------------------
 
 - rassembler quelques cas d'utilisation dans src/examples
-- réaliser 1-2 vidéo de démonstration :
-  * Numeric sniffing with Cojac : overflow, bad cast, smearing, NaN result
-  * Richer numbers with Cojac : BigDecimal, Interval/Stochastic, Automatic differentiation
-- finaliser sur github, notamment la "release" 
 - poster la vidéo, puis diffuser le lien, faire relayer l'information
   canaux possibles : Heinz Kabutz (java specialists) ?
                      JavaWorld ?
