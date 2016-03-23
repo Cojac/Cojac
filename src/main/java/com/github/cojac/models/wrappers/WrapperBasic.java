@@ -64,5 +64,10 @@ public class WrapperBasic extends ACompactWrapper {
         return "Basic";
     }
     
+//    @Override public int compareTo(ACojacWrapper o) {
+//        System.out.println("@@@ WrapperBasic.compareTo");
+//        return Double.compare(toDouble(), o.toDouble());
+//    }
+
     //-------------------------------------------------------------------------
 }
