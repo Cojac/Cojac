@@ -121,7 +121,7 @@ public class ReplaceFloatsMethods {
         invocations.put(new MethodSignature(DL_NAME, "compareTo", "(Ljava/lang/Double;)I"), new InvokableMethod(CDW_N, "compareTo", "("+CDW+")I", INVOKEVIRTUAL));
         invocations.put(new MethodSignature("java/util/Arrays", "sort", "([D)V"), new InvokableMethod("java/util/Arrays", "sort", "([Ljava/lang/Object;)V", INVOKESTATIC));
         // TODO: consider handling other Arrays.xyz methods (binarySearch, fill...)
-        
+        // TODO: consider handling other Double/Float.compare(), maybe some others...
         allMethodsConversions.add(DL_NAME); // use proxy to call every other methods from Double
 
         // Math Library
