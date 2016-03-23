@@ -1,9 +1,11 @@
+- TODO: fix invokedynamic with captured data (cf defects.Buggy01)
 - TODO: maybe prefer maven-shade-plugin to maven-assembly-plugin
+- TODO: propose a fix for invokevirtual (cf defects.Buggy02)
 
 ---------------- A faire (15.10.15) ------------------------------------
 
 - rassembler quelques cas d'utilisation dans src/examples
-- poster la vidéo, puis diffuser le lien, faire relayer l'information
+- publication/promotion... faire relayer l'information
   canaux possibles : Heinz Kabutz (java specialists) ?
                      JavaWorld ?
                      autres ? contacts personnels ?...
@@ -22,7 +24,7 @@
 - tests automatiques : compléter certains tests unitaires
                        ajouter des tests "crash-or-not" comme Java2Demo
                        mesurer le code coverage de nos tests
-- avoir au moins un test de performance pour ReplaceFloat
+- avoir au moins un test de performance (JMH) pour ReplaceFloat
 - valider l'approche de collections "riches" (on ne fait plus de conversions
   DoubleWrapper->Double pour des invocations qui demandent des Object. 
   MAIS il y a pourtant des cas spéciaux, p. ex. printf & Cie...) 
