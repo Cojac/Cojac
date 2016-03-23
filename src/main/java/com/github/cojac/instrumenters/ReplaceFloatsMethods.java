@@ -93,6 +93,7 @@ public class ReplaceFloatsMethods {
         invocations.put(new MethodSignature(FL_NAME, "parseFloat", "(Ljava/lang/String;)F"), new InvokableMethod(CFW_N, "fromString", "(Ljava/lang/String;)"+CFW, INVOKESTATIC));
         
         invocations.put(new MethodSignature(FL_NAME, "equals", "(Ljava/lang/Object;)Z"), new InvokableMethod(CFW_N, "equals", "(Ljava/lang/Object;)Z", INVOKEVIRTUAL));
+        invocations.put(new MethodSignature(FL_NAME, "compareTo", "(Ljava/lang/Float;)I"), new InvokableMethod(CFW_N, "compareTo", "("+CFW+")I", INVOKEVIRTUAL));
         invocations.put(new MethodSignature("java/util/Arrays", "sort", "([F)V"), new InvokableMethod("java/util/Arrays", "sort", "([Ljava/lang/Object;)V", INVOKESTATIC));
 
         allMethodsConversions.add(FL_NAME); // use proxy to call every other methods from Float
@@ -117,6 +118,7 @@ public class ReplaceFloatsMethods {
         invocations.put(new MethodSignature(DL_NAME, "parseDouble", "(Ljava/lang/String;)D"), new InvokableMethod(CDW_N, "fromString", "(Ljava/lang/String;)"+CDW, INVOKESTATIC));
         
         invocations.put(new MethodSignature(DL_NAME, "equals", "(Ljava/lang/Object;)Z"), new InvokableMethod(CDW_N, "equals", "(Ljava/lang/Object;)Z", INVOKEVIRTUAL));
+        invocations.put(new MethodSignature(DL_NAME, "compareTo", "(Ljava/lang/Double;)I"), new InvokableMethod(CDW_N, "compareTo", "("+CDW+")I", INVOKEVIRTUAL));
         invocations.put(new MethodSignature("java/util/Arrays", "sort", "([D)V"), new InvokableMethod("java/util/Arrays", "sort", "([Ljava/lang/Object;)V", INVOKESTATIC));
         // TODO: consider handling other Arrays.xyz methods (binarySearch, fill...)
         
