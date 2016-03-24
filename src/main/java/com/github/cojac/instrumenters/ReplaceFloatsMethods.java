@@ -257,6 +257,14 @@ public class ReplaceFloatsMethods {
 			fpm.proxyCall(mv, cc, true);
 			return true;
 		}
+		// fix for invokevirtual-of-javalib-inherited-but-not-redefined bug
+		// TODO: suspected strong performance penalty... verify/add an option
+		if(opcode==INVOKEVIRTUAL) {
+            ConversionContext cc=new ConversionContext(opcode, owner, name, desc);
+            if (!fpm.needsConversion(cc)) return false;
+            fpm.proxyCall(mv, cc, true);
+            return true;
+		}
 		
         return false;
     }
