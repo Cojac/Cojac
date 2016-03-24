@@ -1,7 +1,5 @@
 package defects;
 
-import javax.management.RuntimeErrorException;
-
 import javafx.concurrent.Task;
 
 // doesn't work with Wrapping

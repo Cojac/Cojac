@@ -1,7 +1,7 @@
 package defects;
 
-// doesn't work with Wrapping... 
-// Maybe because of the "captured data" of the closure...
+// didn't work with Wrapping...
+// Fixed 24.03.16
 
 public class Buggy01 {
 
@@ -20,3 +20,17 @@ public class Buggy01 {
       fffff(5.0);
     }
 }
+
+/*
+    DLOAD 0: x
+    INVOKEDYNAMIC run(double) : Runnable [
+      // handle kind 0x6 : INVOKESTATIC
+      LambdaMetafactory.metafactory(MethodHandles$Lookup, String, MethodType, MethodType, MethodHandle, MethodType) : CallSite
+      // arguments:
+        () : void, 
+        // handle kind 0x6 : INVOKESTATIC
+        Buggy01.lambda$0(double) : void, 
+        () : void
+    ]
+
+*/
