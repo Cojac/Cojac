@@ -1,6 +1,6 @@
 - TODO: maybe prefer maven-shade-plugin to maven-assembly-plugin
-- TODO: propose a fix for invokevirtual-of-javalib-inherited (cf defects.Buggy02)
-        seems difficult...
+- TODO: propose a fix for invokevirtual-of-javalib-inherited-but-not-redefined
+        (cf defects.Buggy02). Seems very difficult...
 
 ---------------- A faire (15.10.15) ------------------------------------
 
