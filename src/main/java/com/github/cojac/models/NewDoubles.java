@@ -41,10 +41,12 @@ public final class NewDoubles {
     public static double DREM(double a, double b){
         return (float)a %(float)b;
     }
-    public static double DCMPL(double a, double b){
+    public static int DCMPL(double a, double b){
+        System.out.println("here i am");
         return Double.compare((float)a ,(float)b);
     }
-    public static double DCMPG(double a, double b){
+    public static int DCMPG(double a, double b){
+        System.out.println("here i am");
         if(Double.isNaN(a)||Double.isNaN(b))
             return 1;
         return DCMPL(a,b);
@@ -82,7 +84,7 @@ public final class NewDoubles {
     public static double expm1(double a){
         return (float) Math.expm1((float)a);
     }
-    public static double getExponent(double a){
+    public static int getExponent(double a){
         return Math.getExponent((float)a);
     }
     public static double hypot(double a,double b){

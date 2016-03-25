@@ -34,8 +34,8 @@ public final class ClassLoaderInstrumenterFactory implements IOpcodeInstrumenter
             //System.out.println("d2f specked");
             opCodeInstrumenter = new NewInstrumenter(args, stats);
         }else{
-            System.out.println("default Behaviour(checker)");
-            opCodeInstrumenter = new DirectInstrumenter(args, stats);
+            //System.out.println("default Behaviour(checker)");
+            opCodeInstrumenter = new NewInstrumenter(args, stats);
         }
             
     }

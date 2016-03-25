@@ -36,7 +36,7 @@ public class MathMethods {
     }
     public static ArrayList<Operation> operations = new ArrayList<Operation>();
     static{
-        Method[] methods = Math.class.getMethods();
+        Method[] methods = Math.class.getMethods();//could be a generic class
         for(Method method:methods){
             int modifiers = method.getModifiers();
             if(Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers)){

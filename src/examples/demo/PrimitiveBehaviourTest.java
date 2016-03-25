@@ -10,7 +10,8 @@ public class PrimitiveBehaviourTest {
         System.out.println("a - b = "+(a-b));
         System.out.println("a * b = "+(a*b));
         System.out.println("a / b = "+(a/b));
-        System.out.println("sqrt(10) = "+Math.sqrt(10)+"in double: 3.1622776601683795");
+        System.out.println("a < b = "+(a<b));
+        System.out.println("sqrt(10) = "+Math.sqrt(10)+"\nin double: 3.1622776601683795");
         System.out.println("pow(4,2) = "+Math.pow(4,2));
     }
 

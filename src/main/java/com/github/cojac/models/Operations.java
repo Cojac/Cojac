@@ -1,6 +1,7 @@
 package com.github.cojac.models;
 import static org.objectweb.asm.Opcodes.*;
 public class Operations {
+    //TODO : enumerate
     private static final String INTEGER_BINARY = "(II)I";
     private static final String INTEGER_UNARY = "(I)I";
    
@@ -68,10 +69,10 @@ public class Operations {
             new Operation(FMUL, "FMUL",FLOAT_BINARY, FLOAT_BINARY_PARAMS),
             new Operation(FDIV, "FDIV",FLOAT_BINARY, FLOAT_BINARY_PARAMS),
             new Operation(FREM, "FREM",FLOAT_BINARY, FLOAT_BINARY_PARAMS),
-            new Operation(FCMPL, "FCMPL",FLOAT_CMP, FLOAT_UNARY_PARAMS),//  -1 If NaN
-            new Operation(FCMPG, "FCMPG",FLOAT_CMP, FLOAT_UNARY_PARAMS),//  1 if NaN
+            new Operation(FCMPL, "FCMPL",FLOAT_CMP, FLOAT_BINARY_PARAMS),//  -1 If NaN
+            new Operation(FCMPG, "FCMPG",FLOAT_CMP, FLOAT_BINARY_PARAMS),//  1 if NaN
             
-            new Operation(FNEG, "FNEG",FLOAT_UNARY, FLOAT_BINARY_PARAMS),
+            new Operation(FNEG, "FNEG",FLOAT_UNARY, FLOAT_UNARY_PARAMS),
             
             /*DOUBLES*/
             new Operation(DADD, "DADD",DOUBLE_BINARY, DOUBLE_BINARY_PARAMS),
@@ -79,8 +80,8 @@ public class Operations {
             new Operation(DMUL, "DMUL",DOUBLE_BINARY, DOUBLE_BINARY_PARAMS),
             new Operation(DDIV, "DDIV",DOUBLE_BINARY, DOUBLE_BINARY_PARAMS),
             new Operation(DREM, "DREM",DOUBLE_BINARY, DOUBLE_BINARY_PARAMS),
-            new Operation(DCMPL, "DCMPL",DOUBLE_CMP, DOUBLE_UNARY_PARAMS),//  -1 If NaN
-            new Operation(DCMPG, "DCMPG",DOUBLE_CMP, DOUBLE_UNARY_PARAMS),//  1 if NaN
+            new Operation(DCMPL, "DCMPL",DOUBLE_CMP, DOUBLE_BINARY_PARAMS),//  -1 If NaN
+            new Operation(DCMPG, "DCMPG",DOUBLE_CMP, DOUBLE_BINARY_PARAMS),//  1 if NaN
             
             new Operation(DNEG, "DNEG",DOUBLE_UNARY, DOUBLE_UNARY_PARAMS),
             

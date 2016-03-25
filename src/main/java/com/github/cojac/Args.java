@@ -41,6 +41,7 @@ public final class Args {
     private static Map<Arg, String> behaviours = new EnumMap<>(Arg.class);
     static{
         behaviours.put(Arg.DOUBLE2FLOAT, "com/github/cojac/models/NewDoubles");
+        behaviours.put(Arg.ALL, "com/github/cojac/models/CheckedBehaviour");
     }
     private static String USAGE =
              "java -javaagent:cojac.jar=\"[OPTIONS]\" YourApp [appArgs]\n"
