@@ -51,7 +51,7 @@ public final class NewDoubles {
             return 1;
         return DCMPL(a,b);
     }
-    public static double abs(double a){
+    /*public static double abs(double a){
         return (float) Math.abs(a);
     }
     public static double acos(double a){
@@ -131,11 +131,12 @@ public final class NewDoubles {
     }
     public static double sinh(double a){
         return (float) Math.sinh((float)a);
-    }
+    }*/
     public static double sqrt(double a){
-        return (float) Math.sqrt(a);
+        //return (float) Math.sqrt(a);
+        return Math.PI;
     }
-    public static double tan(double a){
+   /* public static double tan(double a){
         return (float) Math.tan((float)a);
     }
     public static double tanh(double a){

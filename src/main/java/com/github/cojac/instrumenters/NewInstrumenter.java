@@ -28,6 +28,9 @@ import com.github.cojac.models.MathMethods;
 import com.github.cojac.models.Operation;
 import com.github.cojac.models.Operations;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,6 +53,56 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
         this.stats = stats;
 
         fillMethods();
+        checkMethods();
+    }
+    private void checkMethods() {
+        try {
+            for(Method m:Class.forName(FULLY_QUALIFIED_BEHAVIOUR).getMethods()){
+                //Operation op = MathMethods.toStaticOperation(m);
+                int modifiers = m.getModifiers();
+                if(!Modifier.isPublic(modifiers) || !Modifier.isStatic(modifiers)){
+                    continue;
+                }
+                boolean matches = false;
+                for(Method mathm : Math.class.getMethods()){
+                    modifiers = mathm.getModifiers();
+                    if(!Modifier.isPublic(modifiers) || !Modifier.isStatic(modifiers)){
+                        continue;
+                    }
+                    if(mathm.getName().equals(m.getName()) && matchingParameters(mathm.getParameters(), m.getParameters())
+                            &&mathm.getReturnType().equals(m.getReturnType())){
+                        matches = true;
+                        break;
+                    }
+                }
+                for(Operations op: Operations.values()){
+                    
+                }
+                
+                if(!matches)
+                    System.out.println(m.getName()+" doesn't matches any math method.");
+            }
+            
+        } catch (SecurityException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        
+    }
+    private boolean matchingParameters(Parameter[]a, Parameter[]b){
+        if(a.length != b.length)
+            return false;
+        for(int i = 0; i < a.length; ++i){
+            if(!a[i].getType().equals(b[i].getType()))
+                return false;
+        }
+        return true;
+        
+        
     }
     private void fillMethods() {
         /*Populate operations*/
