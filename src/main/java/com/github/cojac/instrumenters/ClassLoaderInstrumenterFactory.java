@@ -35,7 +35,7 @@ public final class ClassLoaderInstrumenterFactory implements IOpcodeInstrumenter
             opCodeInstrumenter = new NewInstrumenter(args, stats);
         }else{
             //System.out.println("default Behaviour(checker)");
-            opCodeInstrumenter = new NewInstrumenter(args, stats);
+            opCodeInstrumenter = new DirectInstrumenter(args, stats);
         }
             
     }

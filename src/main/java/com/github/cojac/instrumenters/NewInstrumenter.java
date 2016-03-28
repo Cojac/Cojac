@@ -53,14 +53,14 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
     }
     private void fillMethods() {
         /*Populate operations*/
-        for(Operation op: Operations.OPERATIONS){
+        for(Operations op: Operations.values()){
             
             try {
                 //behaviourClass.getClass().getMethod(op.opCodeName, op.parameters);
-                Class.forName(FULLY_QUALIFIED_BEHAVIOUR).getMethod(op.opCodeName, op.parameters);
+                Class.forName(FULLY_QUALIFIED_BEHAVIOUR).getMethod(op.name(), op.parameters);
                 //NewDoubles.class.getMethod(op.opCodeName, op.parameters);
                 //System.out.println("method \""+behaviour+op.opCodeName+"\" modified.");
-                invocations.put(op.opCodeVal, new InvokableMethod(BEHAVIOUR, op.opCodeName, op.signature));
+                invocations.put(op.opCodeVal, new InvokableMethod(BEHAVIOUR, op.name(), op.signature));
             } catch (NoSuchMethodException e) {
                 //Method not implemented, no problem.
             }catch(Exception e){

@@ -227,5 +227,10 @@ public final class Reactions {
     public static void react(String message) {
         react(theReactionType.ordinal(), message, theLogFilename);
     }
+    public static void reactWithException(String message) {
+        react(theReactionType.ordinal(), message, theLogFilename);
+        throw new ArithmeticException("COJAC: " );
+    }
+    
 
 }
