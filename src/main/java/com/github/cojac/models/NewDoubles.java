@@ -51,7 +51,7 @@ public final class NewDoubles {
             return 1;
         return DCMPL(a,b);
     }
-    /*public static double abs(double a){
+    public static double abs(double a){
         return (float) Math.abs(a);
     }
     public static double acos(double a){
@@ -131,21 +131,20 @@ public final class NewDoubles {
     }
     public static double sinh(double a){
         return (float) Math.sinh((float)a);
-    }*/
-    public static double sqrt(double a){
-        //return (float) Math.sqrt(a);
-        return Math.PI;
     }
-   /* public static double tan(double a){
+    public static double sqrt(double a){
+        return (float) Math.sqrt(a);
+    }
+    public static double tan(double a){
         return (float) Math.tan((float)a);
     }
     public static double tanh(double a){
         return (float) Math.tanh((float)a);
     }
-    public static double toDegree(double a){
+    public static double toDegrees(double a){
         return (float) Math.toDegrees((float)a);
     }
-    public static double toRadian(double a){
+    public static double toRadians(double a){
         return (float) Math.toRadians((float)a);
     }
     public static double ulp(double a){

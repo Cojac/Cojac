@@ -51,15 +51,17 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
         FULLY_QUALIFIED_BEHAVIOUR = BEHAVIOUR.replace('/', '.');
         
         this.stats = stats;
-
-        fillMethods();
+        //TODO: fix the 3 times called issue.
+        System.out.println("Called one time");
         checkMethods();
+        fillMethods();
     }
     private void checkMethods() {
         try {
             for(Method m:Class.forName(FULLY_QUALIFIED_BEHAVIOUR).getMethods()){
                 //Operation op = MathMethods.toStaticOperation(m);
                 int modifiers = m.getModifiers();
+                Operation methodOperation = MathMethods.toStaticOperation(m);
                 if(!Modifier.isPublic(modifiers) || !Modifier.isStatic(modifiers)){
                     continue;
                 }
@@ -75,12 +77,17 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
                         break;
                     }
                 }
+                
                 for(Operations op: Operations.values()){
-                    
+                    if(op.name().equals(m.getName()) && op.signature.equals(methodOperation.signature) ){
+                        matches = true;
+                        break;
+                    }
                 }
                 
                 if(!matches)
-                    System.out.println(m.getName()+" doesn't matches any math method.");
+                    System.out.println(m.getName()+methodOperation.signature+
+                            " doesn't matches any math method nor any bytecode operation.");
             }
             
         } catch (SecurityException e) {
