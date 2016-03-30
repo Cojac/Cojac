@@ -46,7 +46,7 @@ final class NewMethodVisitor extends LocalVariablesSorter {
         this.factory = factory;
 
         this.classPath = classPath;
-        instrumenter = new NewInstrumenter(args, stats);
+        instrumenter = NewInstrumenter.getInstance(args, stats);
     }
 
     @Override

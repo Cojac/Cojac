@@ -43,7 +43,8 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
     
     private final String BEHAVIOUR;
     private final String FULLY_QUALIFIED_BEHAVIOUR;
-    public NewInstrumenter(Args args, InstrumentationStats stats) {
+    private static NewInstrumenter instance= null;
+    private NewInstrumenter(Args args, InstrumentationStats stats) {
         super();
         BEHAVIOUR = args.getBehaviour();
         //System.out.println(BEHAVIOUR);
@@ -51,10 +52,14 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
         FULLY_QUALIFIED_BEHAVIOUR = BEHAVIOUR.replace('/', '.');
         
         this.stats = stats;
-        //TODO: fix the 3 times called issue.
-        System.out.println("Called one time");
         checkMethods();
         fillMethods();
+    }
+    public static NewInstrumenter getInstance(Args args, InstrumentationStats stats){
+        if(instance == null){
+            instance = new NewInstrumenter(args, stats);
+        }
+        return instance;
     }
     private void checkMethods() {
         try {
