@@ -228,8 +228,7 @@ public final class Reactions {
         react(theReactionType.ordinal(), message, theLogFilename);
     }
     public static void reactWithException(String message) {
-        react(theReactionType.ordinal(), message, theLogFilename);
-        throw new ArithmeticException("COJAC: " );
+        react(ReactionType.EXCEPTION.value(), message, theLogFilename);
     }
     
 

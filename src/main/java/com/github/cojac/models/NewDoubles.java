@@ -25,6 +25,13 @@ public final class NewDoubles {
     private NewDoubles() {
         throw new AssertionError();
     }
+    
+   /* protected static double inTransform(double a) {
+        return (float) a;
+    }
+    protected static double outTransform(double a) {
+        return (float) a;
+    }*/
 
     public static double DADD(double a, double b) {
         return (float)a + (float)b;
