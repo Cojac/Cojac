@@ -37,6 +37,7 @@ public final class Reactions {
 
     public static ReactionType theReactionType=ReactionType.PRINT;
     public static String theLogFilename="cojac_log.txt";
+    public static String theCallback="dummyCallback"; 
     //-------------------------------------------------------
     
     public static final AtomicBoolean react = new AtomicBoolean(true);
@@ -49,6 +50,7 @@ public final class Reactions {
     public static final ConcurrentMap<String, Long> EVENTS = new ConcurrentHashMap<String, Long>(25);
 
     //TODO: check whether we can get rid of first/last parameter of react()
+    //      quite sure that "yes, we can"!
     public static void react(int reaction, String message, String logFileName) {
         switch (ReactionType.get(reaction)) {
             case PRINT:
@@ -67,7 +69,7 @@ public final class Reactions {
                 throwOverflow(message);
                 break;
             case CALLBACK:
-                callbackOverflow(message, logFileName);
+                callbackOverflow(message, theCallback); 
                 break;
         }
     }

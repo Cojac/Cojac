@@ -20,7 +20,10 @@ package com.github.cojac.utils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.regex.Pattern;
+
+import demo.HelloCojac;
 
 public final class ReflectionUtils {
     private static final Class<?>[] CALLBACK_PARAM_TYPES = {String.class};
@@ -77,7 +80,9 @@ public final class ReflectionUtils {
         String methodName = callbackName.substring(a + 1);
 
         try {
-            Class<?> clazz = Class.forName(className);
+//            System.out.println("RRR:"+ClassLoader.getSystemClassLoader());
+//            System.out.println("RRR:"+ReflectionUtils.class.getClassLoader());
+            Class<?> clazz = Class.forName(className, true, ClassLoader.getSystemClassLoader());
             Method method = clazz.getMethod(methodName, CALLBACK_PARAM_TYPES);
             method.invoke(null, callbackParam);
         } catch (Exception e) {
