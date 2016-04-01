@@ -67,6 +67,7 @@ public enum Arg {
     /*V.Gazzola*/
     
     DOUBLE2FLOAT("BD2F"),
+    CHECKB("BC"),
 
     // Those below are used internally, but no more appear in the usage.
     IADD("iadd", Opcodes.IADD, INTS),
@@ -300,7 +301,8 @@ public enum Arg {
         /*V.Gazzola*/
         options.addOption(Arg.DOUBLE2FLOAT.shortOpt(),
                 false, "Cast Doubles into Floats");
-        
+        options.addOption(Arg.CHECKB.shortOpt(),
+                false, "Sniff Numerical problems");
         return options;
     }
 

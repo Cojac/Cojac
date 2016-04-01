@@ -15,7 +15,7 @@ public enum Operations {
             IDIV(Opcodes.IDIV,INTEGER_BINARY.description, INTEGER_BINARY_PARAMS.params),
             
             INEG(Opcodes.INEG,INTEGER_UNARY.description, INTEGER_UNARY_PARAMS.params),
-            //IINC(Opcodes.IINC,INTEGER_UNARY.description, INTEGER_UNARY_PARAMS.params),
+            IINC(Opcodes.IINC,INTEGER_BINARY.description, INTEGER_BINARY_PARAMS.params),
             
             /*LONGS*/
             LADD(Opcodes.LADD,LONG_BINARY.description, LONG_BINARY_PARAMS.params),

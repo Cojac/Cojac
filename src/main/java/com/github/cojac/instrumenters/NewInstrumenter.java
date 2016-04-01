@@ -27,6 +27,7 @@ import com.github.cojac.InstrumentationStats;
 import com.github.cojac.models.MathMethods;
 import com.github.cojac.models.Operation;
 import com.github.cojac.models.Operations;
+import com.github.cojac.models.Reactions;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -50,7 +51,12 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
         //System.out.println(BEHAVIOUR);
 
         FULLY_QUALIFIED_BEHAVIOUR = BEHAVIOUR.replace('/', '.');
+        if (args.isSpecified(Arg.CALL_BACK))
+            Reactions.theLogFilename = args.getValue(Arg.CALL_BACK); // No, I'm not proud of that trick...
+        else
+            Reactions.theLogFilename = args.getValue(Arg.LOG_FILE);
         
+        Reactions.theReactionType = args.getReactionType();
         this.stats = stats;
         checkMethods();
         fillMethods();

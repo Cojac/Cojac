@@ -41,7 +41,7 @@ public final class Args {
     private static Map<Arg, String> behaviours = new EnumMap<>(Arg.class);
     static{
         behaviours.put(Arg.DOUBLE2FLOAT, "com/github/cojac/models/NewDoubles");
-        behaviours.put(Arg.ALL, "com/github/cojac/models/CheckedBehaviour");
+        behaviours.put(Arg.CHECKB, "com/github/cojac/models/CheckedBehaviour");
     }
     private static String USAGE =
              "java -javaagent:cojac.jar=\"[OPTIONS]\" YourApp [appArgs]\n"
@@ -172,7 +172,8 @@ public final class Args {
 
     private boolean areSomeCategoriesSelected() {
         return isSpecified(Arg.INTS) || isSpecified(Arg.DOUBLES) || isSpecified(Arg.FLOATS) ||
-            isSpecified(Arg.LONGS) || isSpecified(Arg.MATHS) || isSpecified(Arg.CASTS) || isSpecified(Arg.DOUBLE2FLOAT);
+            isSpecified(Arg.LONGS) || isSpecified(Arg.MATHS) || isSpecified(Arg.CASTS) 
+            || isSpecified(Arg.DOUBLE2FLOAT)|| isSpecified(Arg.CHECKB);
     }
 
     private boolean areSomeOpcodesSelected() {

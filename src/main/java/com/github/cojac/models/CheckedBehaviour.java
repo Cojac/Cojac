@@ -29,31 +29,31 @@ public class CheckedBehaviour {
     
     public static int L2I(long a) {
         if (a < Integer.MIN_VALUE || a > Integer.MAX_VALUE) {
-            Reactions.reactWithException( "Overflow : L2I");
+            Reactions.react( "Overflow : L2I");
         }
 
         return (int) a;
     }
 
-    public static short I2S(int a) {
+    public static int I2S(int a) {
         if (a < Short.MIN_VALUE || a > Short.MAX_VALUE) {
-            Reactions.reactWithException( "Overflow : I2S");
+            Reactions.react( "Overflow : I2S");
         }
 
         return (short) a;
     }
 
-    public static char I2C(int a) {
+    public static int I2C(int a) {
         if (a < Character.MIN_VALUE || a > Character.MAX_VALUE) {
-            Reactions.reactWithException( "Overflow : I2C");
+            Reactions.react( "Overflow : I2C");
         }
 
         return (char) a;
     }
 
-    public static byte I2B(int a) {
+    public static int I2B(int a) {
         if (a < Byte.MIN_VALUE || a > Byte.MAX_VALUE) {
-            Reactions.reactWithException( "Overflow : I2B");
+            Reactions.react( "Overflow : I2B");
         }
 
         return (byte) a;
@@ -61,7 +61,7 @@ public class CheckedBehaviour {
 
     public static int D2I(double a) {
         if (!(a >= Integer.MIN_VALUE && a <= Integer.MAX_VALUE)) {  // NaN too...
-            Reactions.reactWithException( "Overflow : D2I");
+            Reactions.react( "Overflow : D2I");
         }
 
         return (int) a;
@@ -69,7 +69,7 @@ public class CheckedBehaviour {
 
     public static long D2L(double a) {
         if (!(a >= Long.MIN_VALUE && a <= Long.MAX_VALUE)) {  // NaN too...
-            Reactions.reactWithException( "Overflow : D2L");
+            Reactions.react( "Overflow : D2L");
         }
 
         return (long) a;
@@ -77,7 +77,7 @@ public class CheckedBehaviour {
 
     public static int F2I(float a) {
         if (!(a >= Integer.MIN_VALUE && a <= Integer.MAX_VALUE)) {  // NaN too...
-            Reactions.reactWithException( "Overflow : F2I");
+            Reactions.react( "Overflow : F2I");
         }
 
         return (int) a;
@@ -85,7 +85,7 @@ public class CheckedBehaviour {
 
     public static long F2L(float a) {
         if (!(a >= Long.MIN_VALUE && a <= Long.MAX_VALUE)) {  // NaN too...
-            Reactions.reactWithException( "Overflow : F2L");
+            Reactions.react( "Overflow : F2L");
         }
 
         return (long) a;
@@ -93,7 +93,7 @@ public class CheckedBehaviour {
 
     public static float D2F(double a) {
         if (a < -Float.MAX_VALUE || a > Float.MAX_VALUE) {
-            Reactions.reactWithException( "Overflow : D2F");
+            Reactions.react( "Overflow : D2F");
         }
 
         return (float) a;
@@ -101,7 +101,7 @@ public class CheckedBehaviour {
     
     public static float I2F(int a) {
         if ((int)((float)a) != a) {
-            Reactions.reactWithException( "Loss of precision : I2F");
+            Reactions.react( "Loss of precision : I2F");
         }
 
         return (float) a;
@@ -109,7 +109,7 @@ public class CheckedBehaviour {
     
     public static double L2D(long a) {
         if ((long)((double)a) != a) {
-            Reactions.reactWithException( "Loss of precision : L2D");
+            Reactions.react( "Loss of precision : L2D");
         }
 
         return (double) a;
@@ -122,17 +122,17 @@ public class CheckedBehaviour {
         if (b != 0 && r == a || a != 0 && r == b) {
             if (r != 2.0 * r)  // means here: isInfinite(r) (can't be 0 on NaN)
             {
-                Reactions.reactWithException( PRECISION_MSG + "DADD");
+                Reactions.react( PRECISION_MSG + "DADD");
             }
         } else if (a != POSITIVE_INFINITY_DOUBLE && a != NEGATIVE_INFINITY_DOUBLE &&
             b != POSITIVE_INFINITY_DOUBLE && b != NEGATIVE_INFINITY_DOUBLE &&
             r != 0.0) {
             if (r == POSITIVE_INFINITY_DOUBLE) {
-                Reactions.reactWithException( RESULT_IS_POS_INF_MSG + "DADD");
+                Reactions.react( RESULT_IS_POS_INF_MSG + "DADD");
             } else if (r == NEGATIVE_INFINITY_DOUBLE) {
-                Reactions.reactWithException( RESULT_IS_NEG_INF_MSG + "DADD");
+                Reactions.react( RESULT_IS_NEG_INF_MSG + "DADD");
             } else if (Math.abs(r) <= CANCELLATION_ULP_FACTOR_DOUBLE * Math.ulp(a)) {
-                Reactions.reactWithException( CANCELLATION_MSG + "DADD");
+                Reactions.react( CANCELLATION_MSG + "DADD");
             }
         }
 
@@ -145,17 +145,17 @@ public class CheckedBehaviour {
         if (b != 0.0 && r == a || a != 0.0 && r == -b) {
             if (r != 2.0 * r)  // means here: isInfinite(r) (can't be 0 on NaN)
             {
-                Reactions.reactWithException( PRECISION_MSG + "DSUB");
+                Reactions.react( PRECISION_MSG + "DSUB");
             }
         } else if (a != POSITIVE_INFINITY_DOUBLE && a != NEGATIVE_INFINITY_DOUBLE &&
             b != POSITIVE_INFINITY_DOUBLE && b != NEGATIVE_INFINITY_DOUBLE &&
             r != 0.0) {
             if (r == POSITIVE_INFINITY_DOUBLE) {
-                Reactions.reactWithException( RESULT_IS_POS_INF_MSG + "DSUB");
+                Reactions.react( RESULT_IS_POS_INF_MSG + "DSUB");
             } else if (r == NEGATIVE_INFINITY_DOUBLE) {
-                Reactions.reactWithException( RESULT_IS_NEG_INF_MSG + "DSUB");
+                Reactions.react( RESULT_IS_NEG_INF_MSG + "DSUB");
             } else if (Math.abs(r) <= CANCELLATION_ULP_FACTOR_DOUBLE * Math.ulp(a)) {
-                Reactions.reactWithException( CANCELLATION_MSG + "DSUB");
+                Reactions.react( CANCELLATION_MSG + "DSUB");
             }
         }
 
@@ -167,11 +167,11 @@ public class CheckedBehaviour {
 
         if (a != POSITIVE_INFINITY_DOUBLE && a != NEGATIVE_INFINITY_DOUBLE && b != POSITIVE_INFINITY_DOUBLE && b != NEGATIVE_INFINITY_DOUBLE) {
             if (r == POSITIVE_INFINITY_DOUBLE) {
-                Reactions.reactWithException( RESULT_IS_POS_INF_MSG + "DMUL");
+                Reactions.react( RESULT_IS_POS_INF_MSG + "DMUL");
             } else if (r == NEGATIVE_INFINITY_DOUBLE) {
-                Reactions.reactWithException( RESULT_IS_NEG_INF_MSG + "DMUL");
+                Reactions.react( RESULT_IS_NEG_INF_MSG + "DMUL");
             } else if (r == 0.0 && a != 0.0 && b != 0.0) {
-                Reactions.reactWithException( UNDERFLOW_MSG + "DMUL");
+                Reactions.react( UNDERFLOW_MSG + "DMUL");
             }
         }
 
@@ -182,14 +182,14 @@ public class CheckedBehaviour {
         double r = a / b;
 
         if (a == a && b == b && r != r) {
-            Reactions.reactWithException( RESULT_IS_NAN_MSG + "DDIV");
+            Reactions.react( RESULT_IS_NAN_MSG + "DDIV");
         } else if (a != POSITIVE_INFINITY_DOUBLE && a != NEGATIVE_INFINITY_DOUBLE && b != POSITIVE_INFINITY_DOUBLE && b != NEGATIVE_INFINITY_DOUBLE) {
             if (r == POSITIVE_INFINITY_DOUBLE) {
-                Reactions.reactWithException( RESULT_IS_POS_INF_MSG + "DDIV");
+                Reactions.react( RESULT_IS_POS_INF_MSG + "DDIV");
             } else if (r == NEGATIVE_INFINITY_DOUBLE) {
-                Reactions.reactWithException( RESULT_IS_NEG_INF_MSG + "DDIV");
+                Reactions.react( RESULT_IS_NEG_INF_MSG + "DDIV");
             } else if (r == 0.0 && a != 0.0) {
-                Reactions.reactWithException( UNDERFLOW_MSG + "DDIV");
+                Reactions.react( UNDERFLOW_MSG + "DDIV");
             }
         }
 
@@ -200,10 +200,10 @@ public class CheckedBehaviour {
         double r = a % b;
 
         if (a == a && b == b && r != r) {
-            Reactions.reactWithException( RESULT_IS_NAN_MSG + "DREM");
+            Reactions.react( RESULT_IS_NAN_MSG + "DREM");
         }
         if (Math.ulp(a) > Math.abs(b)) {
-            Reactions.reactWithException( PRECISION_MSG + "DREM");
+            Reactions.react( PRECISION_MSG + "DREM");
         }
         return r;
     }
@@ -214,7 +214,7 @@ public class CheckedBehaviour {
         if (a == 2.0 * a || b == 2.0 * b)  // means here: isInfinite(r) (can't be 0 on NaN)
             return r;
         if (r != 0 && Math.abs(a - b) <= CLOSENESS_ULP_FACTOR_DOUBLE * Math.ulp(a)) {
-            Reactions.reactWithException( VERY_CLOSE_MSG + "DCMP");
+            Reactions.react( VERY_CLOSE_MSG + "DCMP");
         }
         return r;
     }
@@ -225,7 +225,7 @@ public class CheckedBehaviour {
         if (a == 2.0 * a || b == 2.0 * b)  // means here: isInfinite(r) (can't be 0 on NaN)
             return r;
         if (r != 0 && Math.abs(a - b) <= CLOSENESS_ULP_FACTOR_DOUBLE * Math.ulp(a)) {
-            Reactions.reactWithException( VERY_CLOSE_MSG + "DCMP");
+            Reactions.react( VERY_CLOSE_MSG + "DCMP");
         }
         return r;
     }
@@ -238,17 +238,17 @@ public class CheckedBehaviour {
         if (b != 0 && r == a || a != 0 && r == b) {
             if (r != 2.0 * r)  // means here: isInfinite(r) (can't be 0 on NaN)
             {
-                Reactions.reactWithException( PRECISION_MSG + "FADD");
+                Reactions.react( PRECISION_MSG + "FADD");
             }
         } else if (a != POSITIVE_INFINITY_FLOAT && a != NEGATIVE_INFINITY_FLOAT
             && b != POSITIVE_INFINITY_FLOAT && b != NEGATIVE_INFINITY_FLOAT
             && r != 0.0f) {
             if (r == POSITIVE_INFINITY_FLOAT) {
-                Reactions.reactWithException( RESULT_IS_POS_INF_MSG + "FADD");
+                Reactions.react( RESULT_IS_POS_INF_MSG + "FADD");
             } else if (r == NEGATIVE_INFINITY_FLOAT) {
-                Reactions.reactWithException( RESULT_IS_NEG_INF_MSG + "FADD");
+                Reactions.react( RESULT_IS_NEG_INF_MSG + "FADD");
             } else if (Math.abs(r) <= CANCELLATION_ULP_FACTOR_FLOAT * Math.ulp(a)) {
-                Reactions.reactWithException( CANCELLATION_MSG + "FADD");
+                Reactions.react( CANCELLATION_MSG + "FADD");
             }
         }
         return r;
@@ -260,17 +260,17 @@ public class CheckedBehaviour {
         if (b != 0 && r == a || a != 0 && r == -b) {
             if (r != 2.0 * r)  // means here: isInfinite(r) (can't be 0 on NaN)
             {
-                Reactions.reactWithException( PRECISION_MSG + "FSUB");
+                Reactions.react( PRECISION_MSG + "FSUB");
             }
         } else if (a != POSITIVE_INFINITY_FLOAT && a != NEGATIVE_INFINITY_FLOAT
             && b != POSITIVE_INFINITY_FLOAT && b != NEGATIVE_INFINITY_FLOAT
             && r != 0.0f) {
             if (r == POSITIVE_INFINITY_FLOAT) {
-                Reactions.reactWithException( RESULT_IS_POS_INF_MSG + "FSUB");
+                Reactions.react( RESULT_IS_POS_INF_MSG + "FSUB");
             } else if (r == NEGATIVE_INFINITY_FLOAT) {
-                Reactions.reactWithException( RESULT_IS_NEG_INF_MSG + "FSUB");
+                Reactions.react( RESULT_IS_NEG_INF_MSG + "FSUB");
             } else if (Math.abs(r) <= CANCELLATION_ULP_FACTOR_FLOAT * Math.ulp(a)) {
-                Reactions.reactWithException( CANCELLATION_MSG + "FSUB");
+                Reactions.react( CANCELLATION_MSG + "FSUB");
             }
         }
 
@@ -282,11 +282,11 @@ public class CheckedBehaviour {
 
         if (a != POSITIVE_INFINITY_FLOAT && a != NEGATIVE_INFINITY_FLOAT && b != POSITIVE_INFINITY_FLOAT && b != NEGATIVE_INFINITY_FLOAT) {
             if (r == POSITIVE_INFINITY_FLOAT) {
-                Reactions.reactWithException( RESULT_IS_POS_INF_MSG + "FMUL");
+                Reactions.react( RESULT_IS_POS_INF_MSG + "FMUL");
             } else if (r == NEGATIVE_INFINITY_FLOAT) {
-                Reactions.reactWithException( RESULT_IS_NEG_INF_MSG + "FMUL");
+                Reactions.react( RESULT_IS_NEG_INF_MSG + "FMUL");
             } else if (r == 0.0f && a != 0.0f && b != 0.0f) {
-                Reactions.reactWithException( UNDERFLOW_MSG + "FMUL");
+                Reactions.react( UNDERFLOW_MSG + "FMUL");
             }
         }
 
@@ -297,14 +297,14 @@ public class CheckedBehaviour {
         float r = a / b;
 
         if (a == a && b == b && r != r) {
-            Reactions.reactWithException( RESULT_IS_NAN_MSG + "FDIV");
+            Reactions.react( RESULT_IS_NAN_MSG + "FDIV");
         } else if (a != POSITIVE_INFINITY_FLOAT && a != NEGATIVE_INFINITY_FLOAT && b != POSITIVE_INFINITY_FLOAT && b != NEGATIVE_INFINITY_FLOAT) {
             if (r == POSITIVE_INFINITY_FLOAT) {
-                Reactions.reactWithException( RESULT_IS_POS_INF_MSG + "FDIV");
+                Reactions.react( RESULT_IS_POS_INF_MSG + "FDIV");
             } else if (r == NEGATIVE_INFINITY_FLOAT) {
-                Reactions.reactWithException( RESULT_IS_NEG_INF_MSG + "FDIV");
+                Reactions.react( RESULT_IS_NEG_INF_MSG + "FDIV");
             } else if (r == 0.0f && a != 0.0f) {
-                Reactions.reactWithException( UNDERFLOW_MSG + "FDIV");
+                Reactions.react( UNDERFLOW_MSG + "FDIV");
             }
         }
 
@@ -315,10 +315,10 @@ public class CheckedBehaviour {
         float r = a % b;
 
         if (a == a && b == b && r != r) {
-            Reactions.reactWithException( RESULT_IS_NAN_MSG + "FREM");
+            Reactions.react( RESULT_IS_NAN_MSG + "FREM");
         }
         if (Math.ulp(a) > Math.abs(b)) {
-            Reactions.reactWithException( PRECISION_MSG + "FREM");
+            Reactions.react( PRECISION_MSG + "FREM");
         }
 
         return r;
@@ -330,7 +330,7 @@ public class CheckedBehaviour {
         if (a == 2.0f * a || b == 2.0f * b)  // means here: isInfinite(a) (can't be 0 on NaN)
             return r;
         if (r != 0 && Math.abs(a - b) <= CLOSENESS_ULP_FACTOR_FLOAT * Math.ulp(a)) {
-            Reactions.reactWithException( VERY_CLOSE_MSG + "FCMP");
+            Reactions.react( VERY_CLOSE_MSG + "FCMP");
         }
         return r;
     }
@@ -341,7 +341,7 @@ public class CheckedBehaviour {
         if (a == 2.0f * a || b == 2.0f * b)  // means here: isInfinite(a) (can't be 0 on NaN)
             return r;
         if (r != 0 && Math.abs(a - b) <= CLOSENESS_ULP_FACTOR_FLOAT * Math.ulp(a)) {
-            Reactions.reactWithException( VERY_CLOSE_MSG + "FCMP");
+            Reactions.react( VERY_CLOSE_MSG + "FCMP");
         }
         return r;
     }
@@ -351,7 +351,7 @@ public class CheckedBehaviour {
         int r = a + b;
 
         if (((a ^ r) & (b ^ r)) < 0) {
-            Reactions.reactWithException( "Overflow : IADD");
+            Reactions.react( "Overflow : IADD");
         }
 
         return r;
@@ -361,7 +361,7 @@ public class CheckedBehaviour {
         int r = a - b;
 
         if (((a ^ b) & (a ^ r)) < 0) {
-            Reactions.reactWithException( "Overflow : ISUB");
+            Reactions.react( "Overflow : ISUB");
         }
 
         return r;
@@ -371,7 +371,7 @@ public class CheckedBehaviour {
         int r = a / b;
 
         if (a == Integer.MIN_VALUE && b == -1) {
-            Reactions.reactWithException( "Overflow : IDIV");
+            Reactions.react( "Overflow : IDIV");
         }
 
         return r;
@@ -385,7 +385,7 @@ public class CheckedBehaviour {
         }
 
         if (b == -1 && a == Integer.MIN_VALUE || r / b != a) {
-            Reactions.reactWithException( "Overflow : IMUL");
+            Reactions.react( "Overflow : IMUL");
         }
 
         return r;
@@ -395,7 +395,7 @@ public class CheckedBehaviour {
         int r = a + b;
 
         if (((a ^ r) & (b ^ r)) < 0) {
-            Reactions.reactWithException( "Overflow : IINC");
+            Reactions.react( "Overflow : IINC");
         }
 
         return r;
@@ -403,7 +403,7 @@ public class CheckedBehaviour {
 
     public static int INEG(int a) {
         if (a == Integer.MIN_VALUE) {
-            Reactions.reactWithException( "Overflow : INEG");
+            Reactions.react( "Overflow : INEG");
         }
 
         return -a;
@@ -414,7 +414,7 @@ public class CheckedBehaviour {
         long r = a + b;
 
         if (((a ^ r) & (b ^ r)) < 0) {
-            Reactions.reactWithException( "Overflow : LADD");
+            Reactions.react( "Overflow : LADD");
         }
 
         return r;
@@ -424,7 +424,7 @@ public class CheckedBehaviour {
         long r = a - b;
 
         if (((a ^ b) & (a ^ r)) < 0) {
-            Reactions.reactWithException( "Overflow : LSUB");
+            Reactions.react( "Overflow : LSUB");
         }
 
         return r;
@@ -434,7 +434,7 @@ public class CheckedBehaviour {
         long r = a / b;
 
         if (a == Long.MIN_VALUE && b == -1) {
-            Reactions.reactWithException( "Overflow : LDIV");
+            Reactions.react( "Overflow : LDIV");
         }
 
         return r;
@@ -448,7 +448,7 @@ public class CheckedBehaviour {
         }
 
         if (b == -1 && a == Long.MIN_VALUE || r / b != a) {
-            Reactions.reactWithException( "Overflow : LMUL");
+            Reactions.react( "Overflow : LMUL");
         }
 
         return r;
@@ -456,7 +456,7 @@ public class CheckedBehaviour {
 
     public static long LNEG(long a) {
         if (a == Long.MIN_VALUE) {
-            Reactions.reactWithException( "Overflow : LNEG");
+            Reactions.react( "Overflow : LNEG");
         }
 
         return -a;
@@ -466,11 +466,11 @@ public class CheckedBehaviour {
         double r = StrictMath.pow(a, b);
 
         if (r != r) {
-            Reactions.reactWithException( RESULT_IS_NAN_MSG + "Math.pow()");
+            Reactions.react( RESULT_IS_NAN_MSG + "Math.pow()");
         } else if (r == Double.POSITIVE_INFINITY) {
-            Reactions.reactWithException( RESULT_IS_POS_INF_MSG + "Math.pow()");
+            Reactions.react( RESULT_IS_POS_INF_MSG + "Math.pow()");
         } else if (r == Double.NEGATIVE_INFINITY) {
-            Reactions.reactWithException( RESULT_IS_NEG_INF_MSG + "Math.pow()");
+            Reactions.react( RESULT_IS_NEG_INF_MSG + "Math.pow()");
         }
 
         return r;
@@ -480,11 +480,11 @@ public class CheckedBehaviour {
         double r = StrictMath.asin(a);
 
         if (r != r) {
-            Reactions.reactWithException( RESULT_IS_NAN_MSG + "Math.asin()");
+            Reactions.react( RESULT_IS_NAN_MSG + "Math.asin()");
         } else if (r == Double.POSITIVE_INFINITY) {
-            Reactions.reactWithException( RESULT_IS_POS_INF_MSG + "Math.asin()");
+            Reactions.react( RESULT_IS_POS_INF_MSG + "Math.asin()");
         } else if (r == Double.NEGATIVE_INFINITY) {
-            Reactions.reactWithException( RESULT_IS_NEG_INF_MSG + "Math.asin()");
+            Reactions.react( RESULT_IS_NEG_INF_MSG + "Math.asin()");
         }
 
         return r;
@@ -494,11 +494,11 @@ public class CheckedBehaviour {
         double r = StrictMath.exp(a);
 
         if (r != r) {
-            Reactions.reactWithException( RESULT_IS_NAN_MSG + "Math.exp()");
+            Reactions.react( RESULT_IS_NAN_MSG + "Math.exp()");
         } else if (r == Double.POSITIVE_INFINITY) {
-            Reactions.reactWithException( RESULT_IS_POS_INF_MSG + "Math.exp()");
+            Reactions.react( RESULT_IS_POS_INF_MSG + "Math.exp()");
         } else if (r == Double.NEGATIVE_INFINITY) {
-            Reactions.reactWithException( RESULT_IS_NEG_INF_MSG + "Math.exp()");
+            Reactions.react( RESULT_IS_NEG_INF_MSG + "Math.exp()");
         }
 
         return r;
@@ -508,11 +508,11 @@ public class CheckedBehaviour {
         double r = StrictMath.log(a);
 
         if (r != r) {
-            Reactions.reactWithException( RESULT_IS_NAN_MSG + "Math.log()");
+            Reactions.react( RESULT_IS_NAN_MSG + "Math.log()");
         } else if (r == Double.POSITIVE_INFINITY) {
-            Reactions.reactWithException( RESULT_IS_POS_INF_MSG + "Math.log()");
+            Reactions.react( RESULT_IS_POS_INF_MSG + "Math.log()");
         } else if (r == Double.NEGATIVE_INFINITY) {
-            Reactions.reactWithException( RESULT_IS_NEG_INF_MSG + "Math.log()");
+            Reactions.react( RESULT_IS_NEG_INF_MSG + "Math.log()");
         }
 
         return r;

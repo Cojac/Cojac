@@ -230,7 +230,8 @@ public final class Reactions {
         react(theReactionType.ordinal(), message, theLogFilename);
     }
     public static void reactWithException(String message) {
-        react(ReactionType.EXCEPTION.value(), message, theLogFilename);
+        react(theReactionType.ordinal(), message, theLogFilename);
+        //react(ReactionType.EXCEPTION.value(), message, theLogFilename);
     }
     
 

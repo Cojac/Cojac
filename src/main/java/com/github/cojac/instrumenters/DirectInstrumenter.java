@@ -57,7 +57,6 @@ final class DirectInstrumenter implements IOpcodeInstrumenter {
             logFileName = args.getValue(Arg.CALL_BACK); // No, I'm not proud of that trick...
         else
             logFileName = args.getValue(Arg.LOG_FILE);
-        System.out.println("Called once.");
         fillMethods();
     }
     

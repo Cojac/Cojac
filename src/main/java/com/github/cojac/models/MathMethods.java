@@ -33,6 +33,9 @@ public class MathMethods {
         types.put(float.class, "F");
         types.put(double.class, "D");
         types.put(long.class, "J");
+        types.put(short.class, "S");
+        types.put(char.class, "C");
+        types.put(byte.class, "B");
     }
     public static ArrayList<Operation> operations = new ArrayList<Operation>();
     static{
