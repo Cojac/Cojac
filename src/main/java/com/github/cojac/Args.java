@@ -41,15 +41,18 @@ public final class Args {
     private static Map<Arg, String> behaviours = new EnumMap<>(Arg.class);
     static{
         behaviours.put(Arg.DOUBLE2FLOAT, "com/github/cojac/models/NewDoubles");
-        behaviours.put(Arg.CHECKB, "com/github/cojac/models/CheckedBehaviour");
-        behaviours.put(Arg.ALL, "com/github/cojac/models/CheckedBehaviour");
-        behaviours.put(Arg.OPCODES, "com/github/cojac/models/CheckedBehaviour");
-        behaviours.put(Arg.INTS, "com/github/cojac/models/CheckedBehaviour");
-        behaviours.put(Arg.DOUBLES, "com/github/cojac/models/CheckedBehaviour");
-        behaviours.put(Arg.FLOATS, "com/github/cojac/models/CheckedBehaviour");
-        behaviours.put(Arg.LONGS, "com/github/cojac/models/CheckedBehaviour");
-        behaviours.put(Arg.CASTS, "com/github/cojac/models/CheckedBehaviour");
-        behaviours.put(Arg.MATHS, "com/github/cojac/models/CheckedBehaviour");
+        behaviours.put(Arg.ALL, "com/github/cojac/models/CheckedMathBehaviour;com/github/cojac/models/CheckedCastBehaviour;"
+                +"com/github/cojac/models/CheckedDoubleBehaviour;com/github/cojac/models/CheckedFloatBehaviour;"
+                +"com/github/cojac/models/CheckedIntBehaviour;com/github/cojac/models/CheckedLongBehaviour;");
+        behaviours.put(Arg.OPCODES, "com/github/cojac/models/CheckedCastBehaviour;"
+                +"com/github/cojac/models/CheckedDoubleBehaviour;com/github/cojac/models/CheckedFloatBehaviour;"
+                +"com/github/cojac/models/CheckedIntBehaviour;com/github/cojac/models/CheckedLongBehaviour;");
+        behaviours.put(Arg.INTS, "com/github/cojac/models/CheckedIntBehaviour");
+        behaviours.put(Arg.DOUBLES, "com/github/cojac/models/CheckedDoubleBehaviour");
+        behaviours.put(Arg.FLOATS, "com/github/cojac/models/CheckedFloatBehaviour");
+        behaviours.put(Arg.LONGS, "com/github/cojac/models/CheckedLongBehaviour");
+        behaviours.put(Arg.CASTS, "com/github/cojac/models/CheckedCastBehaviour");
+        behaviours.put(Arg.MATHS, "com/github/cojac/models/CheckedMathBehaviour");
     }
     private static String USAGE =
              "java -javaagent:cojac.jar=\"[OPTIONS]\" YourApp [appArgs]\n"
@@ -64,7 +67,7 @@ public final class Args {
             +"\n----------------- OPTIONS -----------------\n";
     private static String FOOTER =
             "\n------> https://github.com/Cojac/Cojac <------";
-    private String behaviour = "com/github/cojac/models/CheckedBehaviour";
+    private String behaviour = behaviours.get(Arg.ALL);
     public Args() {
         super();
 
@@ -176,6 +179,7 @@ public final class Args {
         specify(Arg.DOUBLES);
         specify(Arg.MATHS);
         specify(Arg.CASTS);
+        behaviour = behaviours.get(Arg.ALL);
     }
 
     private boolean areSomeCategoriesSelected() {
