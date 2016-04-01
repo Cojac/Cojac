@@ -42,6 +42,14 @@ public final class Args {
     static{
         behaviours.put(Arg.DOUBLE2FLOAT, "com/github/cojac/models/NewDoubles");
         behaviours.put(Arg.CHECKB, "com/github/cojac/models/CheckedBehaviour");
+        behaviours.put(Arg.ALL, "com/github/cojac/models/CheckedBehaviour");
+        behaviours.put(Arg.OPCODES, "com/github/cojac/models/CheckedBehaviour");
+        behaviours.put(Arg.INTS, "com/github/cojac/models/CheckedBehaviour");
+        behaviours.put(Arg.DOUBLES, "com/github/cojac/models/CheckedBehaviour");
+        behaviours.put(Arg.FLOATS, "com/github/cojac/models/CheckedBehaviour");
+        behaviours.put(Arg.LONGS, "com/github/cojac/models/CheckedBehaviour");
+        behaviours.put(Arg.CASTS, "com/github/cojac/models/CheckedBehaviour");
+        behaviours.put(Arg.MATHS, "com/github/cojac/models/CheckedBehaviour");
     }
     private static String USAGE =
              "java -javaagent:cojac.jar=\"[OPTIONS]\" YourApp [appArgs]\n"
@@ -56,7 +64,7 @@ public final class Args {
             +"\n----------------- OPTIONS -----------------\n";
     private static String FOOTER =
             "\n------> https://github.com/Cojac/Cojac <------";
-    private String behaviour = null;
+    private String behaviour = "com/github/cojac/models/CheckedBehaviour";
     public Args() {
         super();
 

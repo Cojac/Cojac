@@ -229,10 +229,4 @@ public final class Reactions {
     public static void react(String message) {
         react(theReactionType.ordinal(), message, theLogFilename);
     }
-    public static void reactWithException(String message) {
-        react(theReactionType.ordinal(), message, theLogFilename);
-        //react(ReactionType.EXCEPTION.value(), message, theLogFilename);
-    }
-    
-
 }

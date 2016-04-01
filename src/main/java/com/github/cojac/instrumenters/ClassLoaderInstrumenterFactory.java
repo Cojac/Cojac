@@ -28,12 +28,13 @@ public final class ClassLoaderInstrumenterFactory implements IOpcodeInstrumenter
     public ClassLoaderInstrumenterFactory(Args args, InstrumentationStats stats) {
         super();
 
-        if (args.isSpecified(Arg.REPLACE_FLOATS))
+        if (args.isSpecified(Arg.REPLACE_FLOATS)){
             opCodeInstrumenter = new ReplaceFloatsInstrumenter(args, stats);
-        else if(args.isSpecified(Arg.DOUBLE2FLOAT)||args.isSpecified(Arg.CHECKB)){
+        }
+       /* else if(args.isSpecified(Arg.DOUBLE2FLOAT)||args.isSpecified(Arg.CHECKB)){
             //System.out.println("d2f specked");
             opCodeInstrumenter = NewInstrumenter.getInstance(args, stats);
-        }else{
+        }*/else{
             //System.out.println("default Behaviour(checker)");
             opCodeInstrumenter = NewInstrumenter.getInstance(args, stats);//new DirectInstrumenter(args, stats);
         }
