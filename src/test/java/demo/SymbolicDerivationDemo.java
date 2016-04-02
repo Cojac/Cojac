@@ -26,17 +26,15 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.github.cojac.models.wrappers.CommonDouble;
-import com.github.cojac.models.wrappers.WrapperSymbolic;
 
-public class SymbolicDemo {
+public class SymbolicDerivationDemo {
     private static int nbrTestPassed = 0;
     private static final double epsilon = 0.1;
     private static Map<String, Method> methods;
 
     static {
         methods = new TreeMap<>();
-        for (Method method : SymbolicDemo.class.getDeclaredMethods()) {
+        for (Method method : SymbolicDerivationDemo.class.getDeclaredMethods()) {
             methods.put(method.getName(), method);
         } // end for
     }
@@ -44,13 +42,33 @@ public class SymbolicDemo {
     // ----------------------------------------------------
 
     public static void main(String[] args) {
-        smallTest();
+        // compTest();
+        smallDerivationTest();
         runSymbolicTest();
 
         System.out.println("\n");
         if (nbrTestPassed == 13) {
             System.out.println("All test passed successfully !");
         }
+    }
+    
+    public static void  smallDerivationTest() {
+        
+        double x = COJAC_MAGIC_asSymbolicUnknown(0);
+        double y = std_f1(x);
+        double dy = der_f1(x);
+        double sdy = COJAC_MAGIC_derivateSymbolic(y);
+        System.out.println("dy : " + COJAC_MAGIC_toString(dy));
+        System.out.println("sdy : " + COJAC_MAGIC_toString(sdy));
+        
+    }
+    
+    static double std_f1(double x) {
+        return 2*x*x+10;
+    }
+    
+    static double der_f1(double x) {
+        return 4*x;
     }
 
     // ----------------------------------------------------
@@ -62,7 +80,8 @@ public class SymbolicDemo {
         return res;
     }
 
-    public static void smallTest() {
+    
+    public static void compTest() {
         double x = 2;
         x = COJAC_MAGIC_asSymbolicUnknown(x);
         Double y = someFunction(x, 3, 4);
@@ -162,15 +181,19 @@ public class SymbolicDemo {
         }
 
         System.out.printf("Function %d\n", fx);
-        double res = (double) f.invoke(SymbolicDemo.class, x);
-        double u = COJAC_MAGIC_asSymbolicUnknown(0);
-        Double y = (double) f.invoke(SymbolicDemo.class, u);
+        double res = (double) f.invoke(SymbolicDerivationDemo.class, x);
+        double dres = (double) df.invoke(SymbolicDerivationDemo.class, x);
         
-
+        double u = COJAC_MAGIC_asSymbolicUnknown(0);
+        double y = (double) f.invoke(SymbolicDerivationDemo.class, u);
+        double dy =COJAC_MAGIC_derivateSymbolic(y);
         double symRes = COJAC_MAGIC_evaluateSymbolicAt(y, x);
+        double dsymRes = COJAC_MAGIC_evaluateSymbolicAt(dy, x);
 
         System.out.printf("f%d(x) = %s \n", fx, COJAC_MAGIC_toString(y));
         System.out.printf("f%d(%s) = %s should be (%s) \n", fx, x, symRes, res);
+        System.out.printf("f'%d(x) = %s \n", fx, COJAC_MAGIC_toString(dy));
+        System.out.printf("f'%d(%s) = %s should be (%s) \n", fx, x, dsymRes, dres);
 
         if (Math.abs(res - symRes) < epsilon) {
             System.out.println("Test ok");
@@ -207,11 +230,17 @@ public class SymbolicDemo {
     public static double COJAC_MAGIC_evaluateSymbolicAt(double d, double x) {
         return d;
     }
+    
+    public static double COJAC_MAGIC_derivateSymbolic(double d) {
+        return d;
+    }
+    
+    public static float COJAC_MAGIC_derivateSymbolic(float d) {
+        return d;
+    }
 
     public static double f1(double x) {
-        double j =100;
-        double i =100+j;
-        return 4.0 * Math.pow(x, 3.0)+i;
+        return 4.0 * Math.pow(x, 3.0);
     }
 
     public static double df1(double x) {
@@ -303,7 +332,7 @@ public class SymbolicDemo {
     }
 
     public static double df12(double x) {
-        return 1.0;
+        return Double.NaN;
     }
 
     public static double f13(double x) {

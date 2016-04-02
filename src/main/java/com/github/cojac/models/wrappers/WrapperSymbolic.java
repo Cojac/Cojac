@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 
 public class WrapperSymbolic extends ACojacWrapper {
 
-    private static final boolean compr = true;
+    private static final boolean COMPR = true;
     private final SymbolicExpression expr;
 
     // -------------------------------------------------------------------------
@@ -257,6 +257,16 @@ public class WrapperSymbolic extends ACojacWrapper {
         return new CommonFloat(res);
     }
 
+    public static CommonDouble COJAC_MAGIC_derivateSymbolic(CommonDouble d) {
+        WrapperSymbolic res = new WrapperSymbolic(symb(d.val).expr.derivate());
+        return new CommonDouble(res);
+    }
+
+    public static CommonFloat COJAC_MAGIC_derivateSymbolic(CommonFloat d) {
+        WrapperSymbolic res = new WrapperSymbolic(symb(d.val).expr.derivate());
+        return new CommonFloat(res);
+    }
+
     // -------------------------------------------------------------------------
     private static WrapperSymbolic symb(ACojacWrapper w) {
         return (WrapperSymbolic) w;
@@ -291,7 +301,7 @@ public class WrapperSymbolic extends ACojacWrapper {
             this.value = oper.apply(left.value, right.value);
             this.containsUnknown = left.containsUnknown ||
                     right.containsUnknown;
-            if (this.containsUnknown && compr) {
+            if (this.containsUnknown && COMPR) {
                 this.oper = oper;
                 this.left = left;
                 this.right = right;
@@ -305,7 +315,7 @@ public class WrapperSymbolic extends ACojacWrapper {
         public SymbolicExpression(OP oper, SymbolicExpression left) {
             this.value = oper.apply(left.value, Double.NaN);
             this.containsUnknown = left.containsUnknown;
-            if (this.containsUnknown && compr) {
+            if (this.containsUnknown && COMPR) {
                 this.oper = oper;
                 this.left = left;
                 this.right = null;
@@ -326,6 +336,208 @@ public class WrapperSymbolic extends ACojacWrapper {
             return oper.apply(left.evaluate(x), Double.NaN);
         }
 
+        public SymbolicExpression derivate() {
+            /*
+             * if (!containsUnknown) return new SymbolicExpression(0d); if (oper
+             * == OP.NOP) return new SymbolicExpression(1d); if (oper == OP.ADD)
+             * return new SymbolicExpression(oper, left.derivate(),
+             * right.derivate()); if (oper == OP.MUL) { if (left.containsUnknown
+             * && !right.containsUnknown) return new SymbolicExpression(oper,
+             * left.derivate(), right); if (!left.containsUnknown &&
+             * right.containsUnknown) return new SymbolicExpression(oper, left,
+             * right.derivate()); SymbolicExpression l = new
+             * SymbolicExpression(oper, left.derivate(), right);
+             * SymbolicExpression r = new SymbolicExpression(oper, left,
+             * right.derivate()); return new SymbolicExpression(OP.ADD, l, r); }
+             */
+            switch (oper) {
+            case NOP:
+
+                if (containsUnknown)
+                    // x -> 1
+                    return new SymbolicExpression(1d);
+                // C -> 0
+                return new SymbolicExpression(0d);
+            case ADD:
+            case SUB:
+                // u ± v -> u' ± v'
+                return new SymbolicExpression(oper, left.derivate(), right.derivate());
+            case MUL:
+            /*
+             * // f(x) * C -> f'(x) * C if (left.containsUnknown &&
+             * !right.containsUnknown) return new SymbolicExpression(oper,
+             * left.derivate(), right); // C * f(x) -> C * f'(x) if
+             * (!left.containsUnknown && right.containsUnknown) return new
+             * SymbolicExpression(oper, left, right.derivate());
+             */
+            {
+                SymbolicExpression dl_mul_r = new SymbolicExpression(OP.MUL, left.derivate(), right);
+                SymbolicExpression l_mul_dr = new SymbolicExpression(OP.MUL, left, right.derivate());
+                // u * v -> u' * v + u * v'
+                return new SymbolicExpression(OP.ADD, dl_mul_r, l_mul_dr);
+            }
+            case DIV: {
+               
+                
+                SymbolicExpression dl_mul_r = new SymbolicExpression(OP.MUL, left.derivate(), right);
+                SymbolicExpression l_mul_dr = new SymbolicExpression(OP.MUL, left, right.derivate());
+                SymbolicExpression n = new SymbolicExpression(OP.SUB, dl_mul_r, l_mul_dr);
+                SymbolicExpression d = new SymbolicExpression(OP.POW, right, new SymbolicExpression(2));
+                // u / v -> (u' * v - u * v') / v^2
+                return new SymbolicExpression(OP.DIV, n, d);
+            }
+            case NEG:{
+                return new SymbolicExpression(OP.NEG,left.derivate());}
+            case REM:{
+                if (containsUnknown) {
+                    Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "Can not derivate symbolic expressions containing operator %");
+                    return new SymbolicExpression(Double.NaN);
+                }
+                return new SymbolicExpression(0d);}
+            case SQRT: {
+                SymbolicExpression n = left.derivate();
+                SymbolicExpression d = new SymbolicExpression(OP.MUL, new SymbolicExpression(2), this);
+                // sqrt(f(x)) -> f'(x)/(2*sqrt(f(x)))
+                return new SymbolicExpression(OP.DIV, n, d);
+            }
+            case ABS: {
+                SymbolicExpression n = new SymbolicExpression(OP.MUL, left, left.derivate());
+                // |u| or sqrt(u^2) -> u*u'/|u|
+                return new SymbolicExpression(OP.DIV, n, this);
+            }
+            case SIN: {
+                SymbolicExpression l = new SymbolicExpression(OP.COS, left);
+                // sin(u) -> cos(u) * u'
+                return new SymbolicExpression(OP.MUL, l, left.derivate());
+            }
+            case COS: {
+                SymbolicExpression l1 = new SymbolicExpression(OP.SIN, left);
+                SymbolicExpression l2 = new SymbolicExpression(OP.NEG, l1);
+                // cos(u) -> -sin(u) * u'
+                return new SymbolicExpression(OP.MUL, l2, left.derivate());
+            }
+            case TAN: {
+                SymbolicExpression n = left.derivate(); 
+                SymbolicExpression d = new SymbolicExpression(OP.COS, left);
+                d= new SymbolicExpression(OP.POW,d,new SymbolicExpression(2));
+                // tan(u) -> u'/cos^2(u)
+                return new SymbolicExpression(OP.DIV, n, d);
+            }
+            case ASIN: {
+                SymbolicExpression n = left.derivate(); 
+                SymbolicExpression d =new SymbolicExpression(OP.POW,left,new SymbolicExpression(2));
+                d = new SymbolicExpression(OP.SUB,new SymbolicExpression(1),d);
+                d = new SymbolicExpression(OP.SQRT,d);
+                // asin(u) -> u'/sqrt(1-u^2)
+                return new SymbolicExpression(OP.DIV, n, d);
+            }
+            case ACOS: {
+                SymbolicExpression n = new SymbolicExpression(OP.NEG,left.derivate()); 
+                SymbolicExpression d =new SymbolicExpression(OP.POW,left,new SymbolicExpression(2));
+                d = new SymbolicExpression(OP.SUB,new SymbolicExpression(1),d);
+                d = new SymbolicExpression(OP.SQRT,d);
+                // acos(u) -> -u'/sqrt(1-u^2)
+                return new SymbolicExpression(OP.DIV, n, d);
+            }
+            case ATAN: {
+                SymbolicExpression n = left.derivate(); 
+                SymbolicExpression d =new SymbolicExpression(OP.POW,left,new SymbolicExpression(2));
+                d = new SymbolicExpression(OP.ADD,new SymbolicExpression(1),d);
+                // atan(u) -> u'/(1-u^2)
+                return new SymbolicExpression(OP.DIV, n, d);
+            }
+            case SINH: {
+                SymbolicExpression l = new SymbolicExpression(OP.COSH, left);
+                // sinh(u) -> cosh(u) * u'
+                return new SymbolicExpression(OP.MUL, l, left.derivate());
+            }
+            case COSH: {
+                SymbolicExpression l = new SymbolicExpression(OP.SINH, left);
+                // cosh(u) -> sinh(u) * u'
+                return new SymbolicExpression(OP.MUL, l, left.derivate());
+            }
+            case TANH: {
+                SymbolicExpression n = left.derivate(); 
+                SymbolicExpression d = new SymbolicExpression(OP.COSH, left);
+                d= new SymbolicExpression(OP.POW,d,new SymbolicExpression(2));
+                // tanh(u) -> u'/cosh^2(u)
+                return new SymbolicExpression(OP.DIV, n, d);
+            }
+            case EXP: {
+                //e^u -> e^u * u'
+                return new SymbolicExpression(OP.MUL, this, left.derivate());
+            }
+            case LOG: {
+                // log(u) -> u'/u
+                return new SymbolicExpression(OP.DIV, left.derivate(), left);
+            }
+            case LOG10: {
+                SymbolicExpression n = left.derivate(); 
+                SymbolicExpression d = new SymbolicExpression(OP.LOG, new SymbolicExpression(10));
+                d= new SymbolicExpression(OP.MUL,d,left);
+                // log10(u) -> u'/(u*log(10))
+                return new SymbolicExpression(OP.DIV, n, d);
+            }
+            case RAD:{
+                if (containsUnknown) {
+                    Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "Can not derivate symbolic expressions containing operator toRadians");
+                    return new SymbolicExpression(Double.NaN);
+                }
+                return new SymbolicExpression(0d);}
+            case DEG:{
+                if (containsUnknown) {
+                    Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "Can not derivate symbolic expressions containing operator toDegrees");
+                    return new SymbolicExpression(Double.NaN);
+                }
+                return new SymbolicExpression(0d);}
+            case MIN:{
+                if (containsUnknown) {
+                    Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "Can not derivate symbolic expressions containing operator min");
+                    return new SymbolicExpression(Double.NaN);
+                }
+                return new SymbolicExpression(0d);}
+            case MAX:{
+                if (containsUnknown) {
+                    Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "Can not derivate symbolic expressions containing operator max");
+                    return new SymbolicExpression(Double.NaN);
+                }
+                return new SymbolicExpression(0d);}
+            case POW: {
+                // distinger ?? a^x et x^a??
+                SymbolicExpression p = new SymbolicExpression(OP.LOG,left);
+                p= new SymbolicExpression(OP.MUL,right,p);
+                p= new SymbolicExpression(OP.EXP,p);
+                // u^v = e^log(u^v) = e^(v*log(u)) 
+                return p.derivate();
+            }
+            default:
+
+                break;
+            }
+
+            return null;
+        }
+
+        public SymbolicExpression derivate(SymbolicExpression parent) {
+
+            return null;
+        }
+
+        /*
+         * public double symbEvaluate(double x) { SEEStruct s =
+         * this.toSEEStruct(x); return symbEvaluate(s);
+         * 
+         * } public double symbEvaluate(SEEStruct s) { double val = 0; for (int
+         * i = 0; i< s.length(); i++){ val =s.operators[i].apply(val,
+         * s.values[i]); } return val; }
+         * 
+         * public SEEStruct toSEEStruct(double x) { if (containsUnknown && oper
+         * == OP.NOP) { SEEStruct s = new SEEStruct(); s.operators = new OP[1];
+         * s.values = new double[]{x}; } if (oper == OP.NOP) { SEEStruct s = new
+         * SEEStruct(); s.operators = new OP[1]; s.values = new double[]{value};
+         * } if (right != null) { if(oper==OP.ADD) merge(left, right, oper); } }
+         */
+
         public String toString() {
             if (containsUnknown && oper == OP.NOP)
                 return "x";
@@ -335,8 +547,29 @@ public class WrapperSymbolic extends ACojacWrapper {
                 return oper + "(" + left + "," + right + ")";
             return oper + "(" + left + ")";
         }
-
     }
+    
+    private class SE extends SymbolicExpression{
+        
+    }
+
+    /*
+     * private class SEEStruct {
+     * 
+     * double values[]; OP operators[];
+     * 
+     * public int length() { return operators.length; }
+     * 
+     * } private SEEStruct merge(SEEStruct left,SEEStruct right,OP oper){
+     * 
+     * SEEStruct s = this.new SEEStruct(); s.values= new
+     * double[left.length()+right.length()]; left.operators[0]=OP.ADD;
+     * right.operators[0]=oper; for (int i= 0,j= 0,k = 0;i<s.values.length;i++
+     * ){ if (k>=left.length() || (j<left.length() &&
+     * left.values[j]<=right.values[k])){ s.values[i]= left.values[j];
+     * s.operators[i]= left.operators[j]; }else { s.values[i] = right.values[k];
+     * s.operators[i]= right.operators[k]; } } return s; }
+     */
 
     // -------------------------------------------------------------------------
     public static enum OP {
@@ -376,7 +609,6 @@ public class WrapperSymbolic extends ACojacWrapper {
         public double apply(double left, double right) {
             return binaryOp.applyAsDouble(left, right);
         }
-
     }
 
 }
