@@ -24,6 +24,8 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import com.github.cojac.models.ConversionBehaviour;
+import com.github.cojac.models.ConversionBehaviour.Conversion;
 import com.github.cojac.models.ReactionType;
 
 import java.util.EnumMap;
@@ -40,7 +42,7 @@ public final class Args {
     static final String DEFAULT_STABILITY_THRESHOLD = "0.0001";
     private static Map<Arg, String> behaviours = new EnumMap<>(Arg.class);
     static{
-        behaviours.put(Arg.DOUBLE2FLOAT, "com/github/cojac/models/NewDoubles");
+        behaviours.put(Arg.DOUBLE2FLOAT, "com/github/cojac/models/ConversionBehaviour");
         behaviours.put(Arg.ALL, "com/github/cojac/models/CheckedMathBehaviour;com/github/cojac/models/CheckedCastBehaviour;"
                 +"com/github/cojac/models/CheckedDoubleBehaviour;com/github/cojac/models/CheckedFloatBehaviour;"
                 +"com/github/cojac/models/CheckedIntBehaviour;com/github/cojac/models/CheckedLongBehaviour;");
@@ -205,13 +207,16 @@ public final class Args {
     }
 
     public boolean isSpecified(Arg arg) {
-        if(behaviours.containsKey(arg)){
+       /* if(behaviours.containsKey(arg)){
             behaviour = behaviours.get(arg);
-        }
+        }*/
         return values.get(arg).isSpecified();
     }
 
     public boolean specify(Arg arg) {
+        if(behaviours.containsKey(arg)){
+            behaviour = behaviours.get(arg);
+        }
         return values.get(arg).setSpecified();
     }
 
@@ -254,6 +259,15 @@ public final class Args {
         throw new RuntimeException("no reaction is defined!");
     }
     public String getBehaviour(){
+        if(isSpecified(Arg.DOUBLE2FLOAT)){
+            ConversionBehaviour.c = Conversion.Double2Float;
+        }
+        for (Arg arg : Arg.values()) {
+            if (!arg.isOperator() && isSpecified(arg) && 
+                    behaviours.containsKey(arg)) {
+                return behaviours.get(arg);
+            }
+        }
         return behaviour;
     }
 

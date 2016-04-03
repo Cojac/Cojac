@@ -17,8 +17,8 @@
  */
 package com.github.cojac.models;
 
-public interface ConversionBehaviour {
-   
+public class ConversionBehaviour {
+   public static Conversion c  = Conversion.NoConversion;
 
     public static double DADD(double a, double b) {
         return outTransform(inTransform(a) + inTransform(b));
@@ -43,8 +43,8 @@ public interface ConversionBehaviour {
             return 1;
         return DCMPL(a,b);
     }
-    /*public static double abs(double a){
-        return outTransform( Math.abs(a)));
+    public static double abs(double a){
+        return outTransform( Math.abs(a));
     }
     public static double acos(double a){
         return outTransform( Math.acos(inTransform(a)));
@@ -56,13 +56,13 @@ public interface ConversionBehaviour {
         return outTransform( Math.atan(inTransform(a)));
     }
     public static double atan2(double x,double y){
-        return outTransform( Math.atan2(inTransform(x,inTransform(y)));
+        return outTransform( Math.atan2(inTransform(x),inTransform(y)));
     }
     public static double cbrt(double a){
         return outTransform( Math.cbrt(inTransform(a)));
     }
     public static double copySign(double a,double b){
-        return Math.copySign(inTransform(a,inTransform(b)));
+        return Math.copySign(inTransform(a),inTransform(b));
     }
     public static double cos(double a){
         return outTransform( Math.cos(inTransform(a)));
@@ -77,13 +77,13 @@ public interface ConversionBehaviour {
         return outTransform( Math.expm1(inTransform(a)));
     }
     public static int getExponent(double a){
-        return Math.getExponent(inTransform(a)));
+        return Math.getExponent(inTransform(a));
     }
     public static double hypot(double a,double b){
-        return outTransform( Math.hypot(inTransform(a,inTransform(b)));
+        return outTransform( Math.hypot(inTransform(a),inTransform(b)));
     }
     public static double IEEEremainder(double a,double b){
-        return outTransform( Math.IEEEremainder(inTransform(a,inTransform(b)));
+        return outTransform( Math.IEEEremainder(inTransform(a),inTransform(b)));
     }
     public static double log(double a){
         return outTransform( Math.log(inTransform(a)));
@@ -95,23 +95,23 @@ public interface ConversionBehaviour {
         return outTransform( Math.log1p(inTransform(a)));
     }
     public static double max(double a, double b){
-        return Math.max(inTransform(a, inTransform(b)));
+        return Math.max(inTransform(a), inTransform(b));
     }
     public static double min(double a, double b){
-        return Math.min(inTransform(a, inTransform(b)));
+        return Math.min(inTransform(a), inTransform(b));
     }
     public static double nextAfter(double a, double b){
-        return Math.nextAfter(inTransform(a, inTransform(b)));
+        return Math.nextAfter(inTransform(a), inTransform(b));
     }
     public static double nextDown(double a){
-        return  Math.nextDown(inTransform(a)));
+        return  Math.nextDown(inTransform(a));
     }
     public static double nextUp(double a){
         return  Math.nextUp(inTransform(a));
     }
     public static double pow(double a, double b){
         return outTransform( Math.pow(inTransform(a), inTransform(b)));
-    }*/
+    }
     public static double random(){
         return outTransform( Math.random());
     }
@@ -143,9 +143,17 @@ public interface ConversionBehaviour {
         return Math.ulp(inTransform(a));
     }
     static double inTransform(double a){
+        if(c == Conversion.Double2Float)
+            return (float)a;
         return a;
     }
     static double outTransform(double a){
+        if(c == Conversion.Double2Float)
+            return (float)a;
         return a;
+    }
+    public enum Conversion{
+        Double2Float,
+        NoConversion;
     }
 }
