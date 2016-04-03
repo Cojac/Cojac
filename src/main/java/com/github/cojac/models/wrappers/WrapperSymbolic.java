@@ -18,9 +18,13 @@
 
 package com.github.cojac.models.wrappers;
 
+import java.util.ArrayList;
+import java.util.PriorityQueue;
 import java.util.function.DoubleBinaryOperator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.jfree.chart.block.Arrangement;
 
 public class WrapperSymbolic extends ACojacWrapper {
 
@@ -255,6 +259,18 @@ public class WrapperSymbolic extends ACojacWrapper {
         WrapperSymbolic res = new WrapperSymbolic(result);
         return new CommonFloat(res);
     }
+    
+    public static CommonDouble COJAC_MAGIC_evaluateBetterSymbolicAt(CommonDouble d, CommonDouble x) {
+        double result = symb(d.val).expr.evaluateBetter(symb(x.val).expr.value);
+        WrapperSymbolic res = new WrapperSymbolic(result);
+        return new CommonDouble(res);
+    }
+
+    public static CommonFloat COJAC_MAGIC_evaluateBetterSymbolicAt(CommonFloat d, CommonFloat x) {
+        double result = symb(d.val).expr.evaluateBetter(symb(x.val).expr.value);
+        WrapperSymbolic res = new WrapperSymbolic(result);
+        return new CommonFloat(res);
+    }
 
     public static CommonDouble COJAC_MAGIC_derivateSymbolic(CommonDouble d) {
         WrapperSymbolic res = new WrapperSymbolic(symb(d.val).expr.derivate());
@@ -273,7 +289,7 @@ public class WrapperSymbolic extends ACojacWrapper {
 
     // -------------------------------------------------------------------------
     public class SymbolicExpression {
-        private static final boolean COMPR = true;
+        private static final boolean COMPR = false;
 
         public final double value;
         public final boolean containsUnknown;
@@ -301,7 +317,7 @@ public class WrapperSymbolic extends ACojacWrapper {
             this.value = oper.apply(left.value, right.value);
             this.containsUnknown = left.containsUnknown ||
                     right.containsUnknown;
-            if (this.containsUnknown && COMPR) {
+            if (this.containsUnknown || !COMPR) {
                 this.oper = oper;
                 this.left = left;
                 this.right = right;
@@ -315,7 +331,7 @@ public class WrapperSymbolic extends ACojacWrapper {
         public SymbolicExpression(OP oper, SymbolicExpression left) {
             this.value = oper.apply(left.value, Double.NaN);
             this.containsUnknown = left.containsUnknown;
-            if (this.containsUnknown && COMPR) {
+            if (this.containsUnknown || !COMPR) {
                 this.oper = oper;
                 this.left = left;
                 this.right = null;
@@ -579,7 +595,6 @@ public class WrapperSymbolic extends ACojacWrapper {
                 return new SymbolicExpression(Double.NaN);
             }
             return new SymbolicExpression(0d);
-
         }
 
         // u^v = e^log(u^v) = e^(v*log(u))
@@ -605,6 +620,47 @@ public class WrapperSymbolic extends ACojacWrapper {
          * SEEStruct(); s.operators = new OP[1]; s.values = new double[]{value};
          * } if (right != null) { if(oper==OP.ADD) merge(left, right, oper); } }
          */
+
+        public ArrayList<SymbolicExpression> flatOperator(OP fOper) {
+            ArrayList<SymbolicExpression> listOfSE = new ArrayList<SymbolicExpression>();
+            if (oper == fOper) {
+                listOfSE.addAll(left.flatOperator(fOper));
+                listOfSE.addAll(right.flatOperator(fOper));
+            } else {
+                listOfSE.add(this);
+            }
+            return listOfSE;
+        }
+        
+        
+        public double evaluateBetter(double x) {
+            if(oper == OP.ADD){
+                ArrayList<SymbolicExpression> listOfSE =this.flatOperator(OP.ADD);
+                PriorityQueue<Double> queue = new  PriorityQueue<Double>();
+               // double sum = 0;
+               // for (SymbolicExpression se : listOfSE)
+                 //   sum += se.evaluateBetter(x);
+                double sum = 0;
+                for (SymbolicExpression se : listOfSE)
+                    queue.add(se.evaluateBetter(x));
+                while (!queue.isEmpty()){
+                    sum +=queue.remove();
+                }
+                //
+                // TODO : priorisé l'évaluation
+               
+                return sum;
+            }
+            
+            if (containsUnknown && oper == OP.NOP)
+                return x;
+            if (oper == OP.NOP)
+                return value;
+            if (right != null)
+                return oper.apply(left.evaluateBetter(x), right.evaluateBetter(x));
+            return oper.apply(left.evaluateBetter(x), Double.NaN);
+        }
+        
 
         public String toString() {
             if (containsUnknown && oper == OP.NOP)

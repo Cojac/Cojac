@@ -138,8 +138,8 @@ public class SymbolicDemo {
     public static void runSymbolicTest() {
         // run the Symbolic functions 1 to 13
         double[] xs = new double[]{4.0, 4.0, 4.0, 1.0, 4.0, 4.0, 4.0, 4.0, 0.4,
-                4.0, 4.0, 4.0, 4.0};
-        for (int i = 1; i <= 13; i++) {
+                4.0, 4.0, 4.0, 4.0,1.0};
+        for (int i = 1; i <= 14; i++) {
             try {
                 runFx(i, xs[i - 1]);
             } catch (InvocationTargetException | IllegalAccessException
@@ -168,9 +168,11 @@ public class SymbolicDemo {
         
 
         double symRes = COJAC_MAGIC_evaluateSymbolicAt(y, x);
+        double betterSymRes = COJAC_MAGIC_evaluateBetterSymbolicAt(y, x);
 
         System.out.printf("f%d(x) = %s \n", fx, COJAC_MAGIC_toString(y));
         System.out.printf("f%d(%s) = %s should be (%s) \n", fx, x, symRes, res);
+        System.out.printf("sf%d(%s) = %s should be (%s) \n", fx, x, betterSymRes, res);
 
         if (Math.abs(res - symRes) < epsilon) {
             System.out.println("Test ok");
@@ -205,6 +207,9 @@ public class SymbolicDemo {
     }
 
     public static double COJAC_MAGIC_evaluateSymbolicAt(double d, double x) {
+        return d;
+    }
+    public static double COJAC_MAGIC_evaluateBetterSymbolicAt(double d, double x) {
         return d;
     }
 
@@ -311,6 +316,19 @@ public class SymbolicDemo {
     }
 
     public static double df13(double x) {
+        return x < 0.0 ? -1.0 : 1.0;
+    }
+    
+    public static double f14(double x) {
+        double i = -1e16;
+       
+        i += 1.1;
+        
+        
+        return i;
+    }
+    
+    public static double df14(double x) {
         return x < 0.0 ? -1.0 : 1.0;
     }
 
