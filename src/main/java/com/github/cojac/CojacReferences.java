@@ -22,7 +22,9 @@ import org.objectweb.asm.ClassWriter;
 
 import com.github.cojac.instrumenters.ClassLoaderInstrumenterFactory;
 import com.github.cojac.instrumenters.IOpcodeInstrumenterFactory;
+import com.github.cojac.models.ConversionBehaviour;
 import com.github.cojac.models.Reactions;
+import com.github.cojac.models.ConversionBehaviour.Conversion;
 import com.github.cojac.models.wrappers.BigDecimalDouble;
 import com.github.cojac.models.wrappers.BigDecimalFloat;
 import com.github.cojac.models.wrappers.WrapperBigDecimalWithNaN;
@@ -307,7 +309,7 @@ public final class CojacReferences {
                 sbBypassList.append(BYPASS_SEPARATOR);
                 sbBypassList.append(args.getValue(Arg.BYPASS));
             }
-
+            
             bypassList = splitter.split(sbBypassList.toString());
 
             if (args.isSpecified(Arg.RUNTIME_STATS)) {
@@ -318,7 +320,11 @@ public final class CojacReferences {
                     }
                 });
             }
-
+            if(args.isSpecified(Arg.DOUBLE2FLOAT)){
+                ConversionBehaviour.c = Conversion.Double2Float;
+            }
+            
+            
             return new CojacReferences(this);
         }
 

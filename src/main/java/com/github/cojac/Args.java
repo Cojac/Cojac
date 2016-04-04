@@ -259,9 +259,9 @@ public final class Args {
         throw new RuntimeException("no reaction is defined!");
     }
     public String getBehaviour(){
-        if(isSpecified(Arg.DOUBLE2FLOAT)){
+        /*if(isSpecified(Arg.DOUBLE2FLOAT)){
             ConversionBehaviour.c = Conversion.Double2Float;
-        }
+        }*/
         for (Arg arg : Arg.values()) {
             if (!arg.isOperator() && isSpecified(arg) && 
                     behaviours.containsKey(arg)) {
