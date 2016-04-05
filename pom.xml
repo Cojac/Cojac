@@ -24,7 +24,7 @@
 
 	<groupId>ch.eiafr</groupId>
 	<artifactId>cojac</artifactId>
-	<version>1.4</version>
+	<version>1.4.1</version>
 	<name>COJAC</name>
     <description>a tool that leverages in new ways the arithmetic capabilities of the Java programming language.</description>
     <url>https://github.com/Cojac/</url>
