@@ -20,9 +20,9 @@ package com.github.cojac.unit;
 
 public class Double2FloatTests {
 
-public static float[] expectedResults = {3.0f-Math.ulp(3.0f)};
+public static float[] expectedResults = {Math.nextUp(3.0f)};
     public double test() {
-        double a = 3 - Math.ulp(3), b = 0;
+        double a = Math.nextUp(3) , b = 0;
         double c = a + b;
         //expectedResults.add(3.0f-Math.ulp(3.0f));
         return c;
