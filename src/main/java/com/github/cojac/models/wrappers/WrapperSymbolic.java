@@ -20,6 +20,7 @@ package com.github.cojac.models.wrappers;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.function.DoubleBinaryOperator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -375,10 +376,20 @@ public class WrapperSymbolic extends ACojacWrapper {
             if (oper == OP.ADD) {
                 ArrayList<SymbolicExpression> listOfSE = this.flatOperator(OP.ADD);
                 ArrayList<Double> list = new ArrayList<Double>();
-
                 for (SymbolicExpression se : listOfSE)
                     list.add(se.evaluateBetter(x));
-                double sum = 0;
+                list.sort(new ABSComparator());
+                
+                double sum=0;
+                double corr=0;
+                for (Double term : list){
+                    double corrTerm = term-corr;
+                    double tmpSum = sum+corrTerm;
+                    corr = (tmpSum - sum) - corrTerm;
+                    sum = tmpSum;
+                }
+                
+                /*double sum = 0;
                 while (true) {
 
                     list.sort(new ABSComparator());
@@ -398,7 +409,7 @@ public class WrapperSymbolic extends ACojacWrapper {
                     if (list.isEmpty())
                         break;
                     list.add(sum);
-                }
+                }*/
 
                 return sum;
             }

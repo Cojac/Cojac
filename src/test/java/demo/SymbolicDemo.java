@@ -138,8 +138,8 @@ public class SymbolicDemo {
     public static void runSymbolicTest() {
         // run the Symbolic functions 1 to 13
         double[] xs = new double[]{4.0, 4.0, 4.0, 1.0, 4.0, 4.0, 4.0, 4.0, 0.4,
-                4.0, 4.0, 4.0, 4.0,1.0};
-        for (int i = 1; i <= 14; i++) {
+                4.0, 4.0, 4.0, 4.0,1.0,1.0};
+        for (int i = 1; i <= 15; i++) {
             try {
                 runFx(i, xs[i - 1]);
             } catch (InvocationTargetException | IllegalAccessException
@@ -321,10 +321,10 @@ public class SymbolicDemo {
     
     public static double f14(double x) {
         double i = 1e16;
-        i += 1;
-        i += 1e-16;
+        i += 2;
+       // i += 1e-16;
         i += -1e16;
-        i += 1e-16;
+       // i += 1e-16;
         
         return i;
     }
@@ -332,5 +332,18 @@ public class SymbolicDemo {
     public static double df14(double x) {
         return x < 0.0 ? -1.0 : 1.0;
     }
+    
+    public static double f15(double x) {
+        double     a=0.08,b=0.0491,c=0.3218,d=0.0113,e=0.0;
+        double     X,Y;
 
+       // X=(A*B)*C;
+       
+        return a+b+c+d+e;
+    }
+    
+    public static double df15(double x) {
+        return x < 0.0 ? -1.0 : 1.0;
+    }
+    
 }

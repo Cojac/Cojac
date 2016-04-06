@@ -61,14 +61,14 @@ public class SymbUtils {
         return symbExpr(0d);
     }
 
-    // sqrt(f(x)) -> f'(x)/(2*sqrt(f(x)))
+    // sqrt(u) -> u'/(2*sqrt(u))
     public static SymbolicExpression derivateSQRT(SymbolicExpression se) {
         SymbolicExpression n = se.left.derivate();
         SymbolicExpression d = symbExpr(OP.MUL, symbExpr(2), se);
         return symbExpr(OP.DIV, n, d);
     }
 
-    // |u| or sqrt(u^2) -> u*u'/|u|
+    // |u| -> u*u'/|u|
     public static SymbolicExpression derivateABS(SymbolicExpression se) {
         SymbolicExpression n = symbExpr(OP.MUL, se.left, se.left.derivate());
         return symbExpr(OP.DIV, n, se);
