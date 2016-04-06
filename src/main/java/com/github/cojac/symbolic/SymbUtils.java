@@ -160,19 +160,11 @@ public class SymbUtils {
     }
 
     public static SymbolicExpression derivateRAD(SymbolicExpression se) {
-        if (se.containsUnknown) {
-            Logger.getLogger(se.getClass().getPackage().getName()).log(Level.WARNING, "Can not derivate symbolic expressions containing operator toRadians");
-            return symbExpr(Double.NaN);
-        }
-        return symbExpr(0d);
+        return symbExpr(OP.MUL, se.left, symbExpr(Math.PI/180)).derivate();
     }
 
     public static SymbolicExpression derivateDEG(SymbolicExpression se) {
-        if (se.containsUnknown) {
-            Logger.getLogger(se.getClass().getPackage().getName()).log(Level.WARNING, "Can not derivate symbolic expressions containing operator toDegrees");
-            return symbExpr(Double.NaN);
-        }
-        return symbExpr(0d);
+        return symbExpr(OP.MUL, se.left, symbExpr(180/Math.PI)).derivate();
     }
 
     public static SymbolicExpression derivateMIN(SymbolicExpression se) {
