@@ -19,6 +19,8 @@
 package com.github.cojac.models.wrappers;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.PriorityQueue;
 import java.util.function.DoubleBinaryOperator;
 import java.util.logging.Level;
@@ -259,7 +261,7 @@ public class WrapperSymbolic extends ACojacWrapper {
         WrapperSymbolic res = new WrapperSymbolic(result);
         return new CommonFloat(res);
     }
-    
+
     public static CommonDouble COJAC_MAGIC_evaluateBetterSymbolicAt(CommonDouble d, CommonDouble x) {
         double result = symb(d.val).expr.evaluateBetter(symb(x.val).expr.value);
         WrapperSymbolic res = new WrapperSymbolic(result);
@@ -288,7 +290,7 @@ public class WrapperSymbolic extends ACojacWrapper {
     }
 
     // -------------------------------------------------------------------------
-    public class SymbolicExpression {
+    public static class SymbolicExpression {
         private static final boolean COMPR = false;
 
         public final double value;
@@ -412,6 +414,7 @@ public class WrapperSymbolic extends ACojacWrapper {
             }
         }
 
+        // -------------------------------------------------------------------------
         public SymbolicExpression derivateNOP() {
             if (containsUnknown)
                 // x -> 1
@@ -606,6 +609,7 @@ public class WrapperSymbolic extends ACojacWrapper {
             return p.derivate();
         }
 
+        // -------------------------------------------------------------------------
         /*
          * public double symbEvaluate(double x) { SEEStruct s =
          * this.toSEEStruct(x); return symbEvaluate(s);
@@ -631,27 +635,54 @@ public class WrapperSymbolic extends ACojacWrapper {
             }
             return listOfSE;
         }
-        
-        
+
         public double evaluateBetter(double x) {
-            if(oper == OP.ADD){
-                ArrayList<SymbolicExpression> listOfSE =this.flatOperator(OP.ADD);
-                PriorityQueue<Double> queue = new  PriorityQueue<Double>();
-               // double sum = 0;
-               // for (SymbolicExpression se : listOfSE)
-                 //   sum += se.evaluateBetter(x);
-                double sum = 0;
+            if (oper == OP.ADD) {
+                ArrayList<SymbolicExpression> listOfSE = this.flatOperator(OP.ADD);
+
+                // version 1
+                // double sum = 0;
+                // for (SymbolicExpression se : listOfSE)
+                // sum += se.evaluateBetter(x);
+
+                // version 2
+                // PriorityQueue<Double> queue = new PriorityQueue<Double>();
+                // double sum = 0;
+                // for (SymbolicExpression se : listOfSE)
+                // queue.add(se.evaluateBetter(x));
+                // while (!queue.isEmpty()) {
+                // sum += queue.remove();
+                // }
+
+                ArrayList<Double> list = new ArrayList<Double>();
+
                 for (SymbolicExpression se : listOfSE)
-                    queue.add(se.evaluateBetter(x));
-                while (!queue.isEmpty()){
-                    sum +=queue.remove();
+                    list.add(se.evaluateBetter(x));
+                double sum = 0;
+                while (true) {
+
+                    list.sort(new ABSComparator());
+
+                    int shortestIndex = 1;
+                    double shortestDist = Double.POSITIVE_INFINITY;
+                    for (int i = 0; i + 1 < list.size(); i++) {
+                        double tmpDist = relativeDistance(list.get(i), list.get(i +
+                                1));
+                        if (tmpDist < shortestDist) {
+                            shortestDist = tmpDist;
+                            shortestIndex = i;
+                        }
+                    }
+                    sum = list.remove(shortestIndex) +
+                            list.remove(shortestIndex);
+                    if (list.isEmpty())
+                        break;
+                    list.add(sum);
                 }
-                //
-                // TODO : priorisé l'évaluation
-               
+
                 return sum;
             }
-            
+
             if (containsUnknown && oper == OP.NOP)
                 return x;
             if (oper == OP.NOP)
@@ -660,7 +691,14 @@ public class WrapperSymbolic extends ACojacWrapper {
                 return oper.apply(left.evaluateBetter(x), right.evaluateBetter(x));
             return oper.apply(left.evaluateBetter(x), Double.NaN);
         }
-        
+
+        public double relativeDistance(double a, double b) {
+            a = Math.abs(a);
+            b = Math.abs(b);
+            if (a >= b)
+                return Math.abs(a - b) / a;
+            return Math.abs(a - b) / b;
+        }
 
         public String toString() {
             if (containsUnknown && oper == OP.NOP)
@@ -670,6 +708,14 @@ public class WrapperSymbolic extends ACojacWrapper {
             if (right != null)
                 return oper + "(" + left + "," + right + ")";
             return oper + "(" + left + ")";
+        }
+    }
+
+    public static class ABSComparator implements Comparator<Double> {
+
+        @Override
+        public int compare(Double d1, Double d2) {
+            return Double.compare(Math.abs(d1), Math.abs(d2));
         }
     }
 

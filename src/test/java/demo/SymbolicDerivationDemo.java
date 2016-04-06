@@ -42,8 +42,7 @@ public class SymbolicDerivationDemo {
     // ----------------------------------------------------
 
     public static void main(String[] args) {
-        // compTest();
-        smallDerivationTest();
+        //smallDerivationTest();
         runSymbolicTest();
 
         System.out.println("\n");
