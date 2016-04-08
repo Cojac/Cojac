@@ -25,6 +25,8 @@ import com.github.cojac.instrumenters.IOpcodeInstrumenterFactory;
 import com.github.cojac.models.ConversionBehaviour;
 import com.github.cojac.models.Reactions;
 import com.github.cojac.models.ConversionBehaviour.Conversion;
+import com.github.cojac.models.PseudoRoundingBehaviour;
+import com.github.cojac.models.PseudoRoundingBehaviour.Rounding;
 import com.github.cojac.models.wrappers.BigDecimalDouble;
 import com.github.cojac.models.wrappers.BigDecimalFloat;
 import com.github.cojac.models.wrappers.WrapperBigDecimalWithNaN;
@@ -323,7 +325,15 @@ public final class CojacReferences {
             if(args.isSpecified(Arg.DOUBLE2FLOAT)){
                 ConversionBehaviour.c = Conversion.Double2Float;
             }
-            
+            if(args.isSpecified(Arg.ROUND_BIASED_UP)){
+                PseudoRoundingBehaviour.r = Rounding.UP;
+            }
+            if(args.isSpecified(Arg.ROUND_BIASED_DOWN)){
+                PseudoRoundingBehaviour.r = Rounding.DOWN;
+            }
+            if(args.isSpecified(Arg.ROUND_BIASED_RANDOM)){
+                PseudoRoundingBehaviour.r = Rounding.RANDOM;
+            }
             
             return new CojacReferences(this);
         }

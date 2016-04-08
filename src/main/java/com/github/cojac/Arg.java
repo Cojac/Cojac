@@ -68,7 +68,10 @@ public enum Arg {
     
     DOUBLE2FLOAT("BD2F"),
     CHECKB("BC"),
-
+    ROUND_BIASED_UP("Rbu"),
+    ROUND_BIASED_DOWN("Rbd"),
+    ROUND_BIASED_RANDOM("Rbr"),
+    
     // Those below are used internally, but no more appear in the usage.
     IADD("iadd", Opcodes.IADD, INTS),
     IDIV("idiv", Opcodes.IDIV, INTS),
@@ -303,6 +306,12 @@ public enum Arg {
                 false, "Cast Doubles into Floats");
         options.addOption(Arg.CHECKB.shortOpt(),
                 false, "Sniff Numerical problems");
+        options.addOption(Arg.ROUND_BIASED_UP.shortOpt(),
+                false, "\"Round\" (Biased) up");
+        options.addOption(Arg.ROUND_BIASED_DOWN.shortOpt(),
+                false, "\"Round\" (Biased) down");
+        options.addOption(Arg.ROUND_BIASED_RANDOM.shortOpt(),
+                false, "\"Round\" (Biased) randomly up or down");
         return options;
     }
 

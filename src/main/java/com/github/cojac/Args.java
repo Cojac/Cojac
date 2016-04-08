@@ -55,6 +55,10 @@ public final class Args {
         behaviours.put(Arg.LONGS, "com/github/cojac/models/CheckedLongBehaviour");
         behaviours.put(Arg.CASTS, "com/github/cojac/models/CheckedCastBehaviour");
         behaviours.put(Arg.MATHS, "com/github/cojac/models/CheckedMathBehaviour");
+        behaviours.put(Arg.ROUND_BIASED_UP, "com/github/cojac/models/PseudoRoundingBehaviour");
+        behaviours.put(Arg.ROUND_BIASED_DOWN, "com/github/cojac/models/PseudoRoundingBehaviour");
+        behaviours.put(Arg.ROUND_BIASED_RANDOM, "com/github/cojac/models/PseudoRoundingBehaviour");
+
     }
     private static String USAGE =
              "java -javaagent:cojac.jar=\"[OPTIONS]\" YourApp [appArgs]\n"
@@ -187,7 +191,8 @@ public final class Args {
     private boolean areSomeCategoriesSelected() {
         return isSpecified(Arg.INTS) || isSpecified(Arg.DOUBLES) || isSpecified(Arg.FLOATS) ||
             isSpecified(Arg.LONGS) || isSpecified(Arg.MATHS) || isSpecified(Arg.CASTS) 
-            || isSpecified(Arg.DOUBLE2FLOAT)|| isSpecified(Arg.CHECKB);
+            || isSpecified(Arg.DOUBLE2FLOAT)|| isSpecified(Arg.ROUND_BIASED_UP)
+            || isSpecified(Arg.ROUND_BIASED_DOWN)|| isSpecified(Arg.ROUND_BIASED_RANDOM);
     }
 
     private boolean areSomeOpcodesSelected() {
