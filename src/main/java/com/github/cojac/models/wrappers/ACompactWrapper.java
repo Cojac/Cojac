@@ -56,8 +56,8 @@ public abstract class ACompactWrapper extends ACojacWrapper {
     public ACojacWrapper math_toRadians() { return applyUnaryOp(Math::toRadians); }
     public ACojacWrapper math_toDegrees() { return applyUnaryOp(Math::toDegrees); }
 
-    public ACojacWrapper math_min(ACojacWrapper b) { return applyBinaryOp(Math::min, b); }
-    public ACojacWrapper math_max(ACojacWrapper b) { return applyBinaryOp(Math::max, b); }
+//    public ACojacWrapper math_min(ACojacWrapper b) { return applyBinaryOp(Math::min, b); }
+//    public ACojacWrapper math_max(ACojacWrapper b) { return applyBinaryOp(Math::max, b); }
     public ACojacWrapper math_pow(ACojacWrapper b) { return applyBinaryOp(Math::pow, b); }
     
     //-------------------------------------------------------------------------
