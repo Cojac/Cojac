@@ -62,6 +62,7 @@ public final class CojacReferences {
     private final int bigDecimalPrecision;
     private final double stabilityThreshold;
     private final boolean checkUnstableComparisons;
+    private final int arbitraryPrecisionBits;
 
     private CojacReferences(CojacReferencesBuilder builder) {
         this.args = builder.args;
@@ -78,6 +79,7 @@ public final class CojacReferences {
         this.bigDecimalPrecision = builder.bigDecimalPrecision;
         this.stabilityThreshold = builder.stabilityThreshold;
         this.checkUnstableComparisons = builder.checkUnstableComparisons;
+        this.arbitraryPrecisionBits = builder.arbitraryPrecisionBits;
     }
 
     public String getNgWrapper() {
@@ -103,7 +105,9 @@ public final class CojacReferences {
     public boolean getCheckUnstableComparisons() {
         return checkUnstableComparisons;
     }
-    
+    public int getArbitraryPrecisionBits() {
+        return arbitraryPrecisionBits;
+    }
     public String[] getBypassList() {
         return bypassList;
     }
@@ -208,7 +212,7 @@ public final class CojacReferences {
        private int bigDecimalPrecision;
         private double stabilityThreshold;
         private boolean checkUnstableComparisons=true;
-        
+        private int arbitraryPrecisionBits;
         private final String[] loadedClasses;
 
         private static final String STANDARD_PACKAGES = "com.sun.;java.;javax.;sun.;sunw.;"
@@ -334,6 +338,11 @@ public final class CojacReferences {
             if(args.isSpecified(Arg.ROUND_BIASED_RANDOM)){
                 PseudoRoundingBehaviour.r = Rounding.RANDOM;
             }
+            if(args.isSpecified(Arg.ARBITRARY_PRECISION)){
+                ConversionBehaviour.c = Conversion.Arbitrary;
+                ConversionBehaviour.setSignificativeBits(Integer.valueOf(args.getValue(Arg.ARBITRARY_PRECISION)));
+                
+            }
             
             return new CojacReferences(this);
         }
@@ -387,7 +396,7 @@ public final class CojacReferences {
                 checkUnstableComparisons=false;
                 clazz.getMethod("setCheckUnstableComparisons", boolean.class).invoke(clazz, checkUnstableComparisons);
             }
-
+            
         }
 
         private static String afterStandardPrefixExpansion(String className) {

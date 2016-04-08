@@ -71,7 +71,7 @@ public enum Arg {
     ROUND_BIASED_UP("Rbu"),
     ROUND_BIASED_DOWN("Rbd"),
     ROUND_BIASED_RANDOM("Rbr"),
-    
+    ARBITRARY_PRECISION("Ap"),
     // Those below are used internally, but no more appear in the usage.
     IADD("iadd", Opcodes.IADD, INTS),
     IDIV("idiv", Opcodes.IDIV, INTS),
@@ -312,6 +312,13 @@ public enum Arg {
                 false, "\"Round\" (Biased) down");
         options.addOption(Arg.ROUND_BIASED_RANDOM.shortOpt(),
                 false, "\"Round\" (Biased) randomly up or down");
+        options.addOption(OptionBuilder.
+                withLongOpt("arbitraryPrecisionBits").
+                withArgName("bits").
+                hasArg().
+                withDescription("Use Arbitrary precision with a certain number of bits in the mantissa.\n" +
+                        "Example: -"+ARBITRARY_PRECISION.shortOpt()+" 2 will drop the precision of floats and double to 2 bits").
+                create(ARBITRARY_PRECISION.shortOpt()));
         return options;
     }
 

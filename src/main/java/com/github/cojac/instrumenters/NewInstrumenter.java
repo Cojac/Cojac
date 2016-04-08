@@ -48,7 +48,7 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
     private NewInstrumenter(Args args, InstrumentationStats stats) {
         super();
         BEHAVIOURS = args.getBehaviour().split(";");
-        //System.out.println(BEHAVIOUR);
+        
         int i=0;
         FULLY_QUALIFIED_BEHAVIOURS = new String[BEHAVIOURS.length];
         for(String s: BEHAVIOURS){

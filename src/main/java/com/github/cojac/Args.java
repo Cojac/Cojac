@@ -58,7 +58,7 @@ public final class Args {
         behaviours.put(Arg.ROUND_BIASED_UP, "com/github/cojac/models/PseudoRoundingBehaviour");
         behaviours.put(Arg.ROUND_BIASED_DOWN, "com/github/cojac/models/PseudoRoundingBehaviour");
         behaviours.put(Arg.ROUND_BIASED_RANDOM, "com/github/cojac/models/PseudoRoundingBehaviour");
-
+        behaviours.put(Arg.ARBITRARY_PRECISION, "com/github/cojac/models/ConversionBehaviour");
     }
     private static String USAGE =
              "java -javaagent:cojac.jar=\"[OPTIONS]\" YourApp [appArgs]\n"
@@ -108,6 +108,7 @@ public final class Args {
         try {
             switch(arg) {
             case BIG_DECIMAL_PRECISION:
+            case ARBITRARY_PRECISION:
             case JMX_PORT: Integer.parseInt(val); break;
             case STABILITY_THRESHOLD: Double.parseDouble(val); break;
             case OPCODES: processOpcodeList(val); break;
@@ -192,7 +193,8 @@ public final class Args {
         return isSpecified(Arg.INTS) || isSpecified(Arg.DOUBLES) || isSpecified(Arg.FLOATS) ||
             isSpecified(Arg.LONGS) || isSpecified(Arg.MATHS) || isSpecified(Arg.CASTS) 
             || isSpecified(Arg.DOUBLE2FLOAT)|| isSpecified(Arg.ROUND_BIASED_UP)
-            || isSpecified(Arg.ROUND_BIASED_DOWN)|| isSpecified(Arg.ROUND_BIASED_RANDOM);
+            || isSpecified(Arg.ROUND_BIASED_DOWN)|| isSpecified(Arg.ROUND_BIASED_RANDOM)
+            || isSpecified(Arg.ARBITRARY_PRECISION);
     }
 
     private boolean areSomeOpcodesSelected() {

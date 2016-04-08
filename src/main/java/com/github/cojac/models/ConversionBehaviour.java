@@ -19,30 +19,57 @@ package com.github.cojac.models;
 
 public class ConversionBehaviour {
    public static Conversion c  = Conversion.NoConversion;
-
-    public static double DADD(double a, double b) {
-        return outTransform(inTransform(a) + inTransform(b));
-    }
-    public static double DSUB(double a, double b) {
-        return outTransform(inTransform(a)- inTransform(b));
-    }
-    public static double DMUL(double a, double b) {
-        return outTransform(inTransform(a) * inTransform(b));
-    }
-    public static double DDIV(double a, double b){
-        return outTransform(inTransform(a) / inTransform(b));
-    }
-    public static double DREM(double a, double b){
-        return outTransform(inTransform(a) %inTransform(b));
-    }
-    public static int DCMPL(double a, double b){
-        return Double.compare(inTransform(a) ,inTransform(b));
-    }
-    public static int DCMPG(double a, double b){
-        if(Double.isNaN(a)||Double.isNaN(b))
-            return 1;
-        return DCMPL(a,b);
-    }
+   public static final int SIGNIFICATIVE_DOUBLE_BITS = 52;
+   public static final int SIGNIFICATIVE_FLOAT_BITS = 23;
+   private static int significativeBits;
+   private static long mask = 0xffffffffffffffffL;
+   public static double DADD(double a, double b) {
+       return outTransform(inTransform(a) + inTransform(b));
+       
+   }
+   public static double DSUB(double a, double b) {
+       return outTransform(inTransform(a)- inTransform(b));
+   }
+   public static double DMUL(double a, double b) {
+       return outTransform(inTransform(a) * inTransform(b));
+   }
+   public static double DDIV(double a, double b){
+       return outTransform(inTransform(a) / inTransform(b));
+   }
+   public static double DREM(double a, double b){
+       return outTransform(inTransform(a) %inTransform(b));
+   }
+   public static int DCMPL(double a, double b){
+       return Double.compare(inTransform(a) ,inTransform(b));
+   }
+   public static int DCMPG(double a, double b){
+       if(Double.isNaN(a)||Double.isNaN(b))
+           return 1;
+       return DCMPL(a,b);
+   }
+   public static float FADD(float a, float b) {
+       return outTransform(inTransform(a) + inTransform(b));
+   }
+   public static float FSUB(float a, float b) {
+       return outTransform(inTransform(a)- inTransform(b));
+   }
+   public static float FMUL(float a, float b) {
+       return outTransform(inTransform(a) * inTransform(b));
+   }
+   public static float FDIV(float a, float b){
+       return outTransform(inTransform(a) / inTransform(b));
+   }
+   public static float FREM(float a, float b){
+       return outTransform(inTransform(a) %inTransform(b));
+   }
+   public static int FCMPL(float a, float b){
+       return Double.compare(inTransform(a) ,inTransform(b));
+   }
+   public static int FCMPG(float a, float b){
+       if(Double.isNaN(a)||Double.isNaN(b))
+           return 1;
+       return DCMPL(a,b);
+   }
     public static double abs(double a){
         return outTransform( Math.abs(a));
     }
@@ -143,17 +170,49 @@ public class ConversionBehaviour {
         return Math.ulp(inTransform(a));
     }
     static double inTransform(double a){
-        if(c == Conversion.Double2Float)
-            return (float)a;
+        switch(c){
+        case Double2Float:
+           return (float)a;
+        case Arbitrary:
+           return Double.longBitsToDouble(Double.doubleToLongBits(a)&mask);
+        }
         return a;
     }
     static double outTransform(double a){
-        if(c == Conversion.Double2Float)
-            return (float)a;
+        switch(c){
+        case Double2Float:
+           return (float)a;
+        case Arbitrary:
+           return Double.longBitsToDouble(Double.doubleToLongBits(a)&mask);
+        }
+        return a;
+    }
+    static float inTransform(float a){
+        switch(c){
+        case Arbitrary:
+            
+            if (significativeBits<SIGNIFICATIVE_FLOAT_BITS)
+           return (float) Double.longBitsToDouble(Double.doubleToLongBits(a)&mask);
+        }
+        return a;
+    }
+    static float outTransform(float a){
+        switch(c){
+        case Arbitrary:
+            if (significativeBits<SIGNIFICATIVE_FLOAT_BITS)
+           return (float) Double.longBitsToDouble(Double.doubleToLongBits(a)&mask);
+        }
         return a;
     }
     public enum Conversion{
         Double2Float,
+        Arbitrary,
         NoConversion;
+    }
+    public static void setSignificativeBits(int nb){
+        significativeBits = nb;
+        if(nb <=SIGNIFICATIVE_DOUBLE_BITS && nb >=0)
+            mask = mask ^((long) Math.pow(2,SIGNIFICATIVE_DOUBLE_BITS-nb)-1);
+        System.out.println("mask: "+Long.toBinaryString(mask));
     }
 }
