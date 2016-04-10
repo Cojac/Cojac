@@ -25,6 +25,7 @@ import com.github.cojac.Arg;
 import com.github.cojac.Args;
 import com.github.cojac.InstrumentationStats;
 import com.github.cojac.models.MathMethods;
+import com.github.cojac.models.NoCojacInstrumentation;
 import com.github.cojac.models.Operation;
 import com.github.cojac.models.Operations;
 import com.github.cojac.models.Reactions;
@@ -76,6 +77,9 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
             for (int i = 0; i < BEHAVIOURS.length; i++) {
                 for(Method m:Class.forName(FULLY_QUALIFIED_BEHAVIOURS[i]).getMethods()){
                     //Operation op = MathMethods.toStaticOperation(m);
+                    if (m.isAnnotationPresent(NoCojacInstrumentation.class)){
+                        break;
+                     }
                     int modifiers = m.getModifiers();
                     Operation methodOperation = MathMethods.toStaticOperation(m);
                     if(!Modifier.isPublic(modifiers) || !Modifier.isStatic(modifiers)){
@@ -130,8 +134,10 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
                 try {
                     //behaviourClass.getClass().getMethod(op.opCodeName, op.parameters);
                     
-                    Class.forName(FULLY_QUALIFIED_BEHAVIOURS[i]).getMethod(op.name(), op.parameters);
-                    
+                    Method m = Class.forName(FULLY_QUALIFIED_BEHAVIOURS[i]).getMethod(op.name(), op.parameters);
+                    if (m.isAnnotationPresent(NoCojacInstrumentation.class)){
+                       break;
+                    }
                     
                     //NewDoubles.class.getMethod(op.opCodeName, op.parameters);
                     //System.out.println("method \""+op.name()+"\" modified.");
@@ -149,7 +155,10 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
             for (int i = 0; i < BEHAVIOURS.length; i++) {
                 try {
                     //behaviourClass.getClass().getMethod(op.opCodeName, op.parameters);
-                    Class.forName(FULLY_QUALIFIED_BEHAVIOURS[i]).getMethod(op.opCodeName, op.parameters);
+                    Method m = Class.forName(FULLY_QUALIFIED_BEHAVIOURS[i]).getMethod(op.opCodeName, op.parameters);
+                    if (m.isAnnotationPresent(NoCojacInstrumentation.class)){
+                        break;
+                     }
                     //NewDoubles.class.getMethod(op.opCodeName, op.parameters);
                     //System.out.println("method \""+op.opCodeName+op.signature+"\" modified.");
                     methods.put(op.opCodeName+op.signature, new InvokableMethod(BEHAVIOURS[i], op.opCodeName, op.signature));
