@@ -45,10 +45,10 @@ public final class ClassLoaderInstrumenter implements IClassInstrumenter {
         CojacClassVisitor ccv;
         if(references.getArgs().isSpecified(Arg.REPLACE_FLOATS))
             ccv = new FloatReplaceClassVisitor(cw, references, cav);
-        else if(references.getArgs().isSpecified(Arg.DOUBLE2FLOAT))
+        else //if(references.getArgs().isSpecified(Arg.DOUBLE2FLOAT))
             ccv = new NewClassVisitor(cw, references, cav);
-        else 
-            ccv = new CojacClassVisitor(cw, references, cav);
+        /*else 
+            ccv = new CojacClassVisitor(cw, references, cav);*/
 		cr.accept(ccv, ClassReader.EXPAND_FRAMES);
 
         return cw.toByteArray();

@@ -134,7 +134,7 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
                     
                     
                     //NewDoubles.class.getMethod(op.opCodeName, op.parameters);
-                    //System.out.println("method \""+behaviour+op.opCodeName+"\" modified.");
+                    //System.out.println("method \""+op.name()+"\" modified.");
                     invocations.put(op.opCodeVal, new InvokableMethod(BEHAVIOURS[i], op.name(), op.signature));
                     break;
                 } catch (NoSuchMethodException e) {
@@ -151,7 +151,7 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
                     //behaviourClass.getClass().getMethod(op.opCodeName, op.parameters);
                     Class.forName(FULLY_QUALIFIED_BEHAVIOURS[i]).getMethod(op.opCodeName, op.parameters);
                     //NewDoubles.class.getMethod(op.opCodeName, op.parameters);
-                    //System.out.println("method \""+behaviour+op.opCodeName+"\" modified.");
+                    //System.out.println("method \""+op.opCodeName+op.signature+"\" modified.");
                     methods.put(op.opCodeName+op.signature, new InvokableMethod(BEHAVIOURS[i], op.opCodeName, op.signature));
                 } catch (NoSuchMethodException e) {
                     //Method not implemented, no problem.
@@ -187,7 +187,7 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
         methods.get(name+signature).invokeStatic(mv);
     }
     public boolean wantsToInstrumentMethod(int opcode, String name, String signature) {
-       // System.out.println("Wants to instrument method: "+name+"  "+invocations.containsKey(opcode));
+        //System.out.println("Wants to instrument method: "+name+"  "+methods.containsKey(name+signature));
         return (opcode == Opcodes.INVOKESTATIC) && methods.containsKey(name+signature);
         
     }

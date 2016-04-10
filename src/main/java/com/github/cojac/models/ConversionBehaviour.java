@@ -21,11 +21,10 @@ public class ConversionBehaviour {
    public static Conversion c  = Conversion.NoConversion;
    public static final int SIGNIFICATIVE_DOUBLE_BITS = 52;
    public static final int SIGNIFICATIVE_FLOAT_BITS = 23;
-   private static int significativeBits;
+   private static int significativeBits=SIGNIFICATIVE_DOUBLE_BITS;
    private static long mask = 0xffffffffffffffffL;
    public static double DADD(double a, double b) {
        return outTransform(inTransform(a) + inTransform(b));
-       
    }
    public static double DSUB(double a, double b) {
        return outTransform(inTransform(a)- inTransform(b));
@@ -169,7 +168,7 @@ public class ConversionBehaviour {
     public static double ulp(double a){
         return Math.ulp(inTransform(a));
     }
-    static double inTransform(double a){
+    private static double inTransform(double a){
         switch(c){
         case Double2Float:
            return (float)a;
@@ -178,7 +177,7 @@ public class ConversionBehaviour {
         }
         return a;
     }
-    static double outTransform(double a){
+    private static double outTransform(double a){
         switch(c){
         case Double2Float:
            return (float)a;
@@ -187,20 +186,19 @@ public class ConversionBehaviour {
         }
         return a;
     }
-    static float inTransform(float a){
+    private static float inTransform(float a){
         switch(c){
         case Arbitrary:
-            
             if (significativeBits<SIGNIFICATIVE_FLOAT_BITS)
-           return (float) Double.longBitsToDouble(Double.doubleToLongBits(a)&mask);
+                return (float) Double.longBitsToDouble(Double.doubleToLongBits(a)&mask);
         }
         return a;
     }
-    static float outTransform(float a){
+    private static float outTransform(float a){
         switch(c){
         case Arbitrary:
             if (significativeBits<SIGNIFICATIVE_FLOAT_BITS)
-           return (float) Double.longBitsToDouble(Double.doubleToLongBits(a)&mask);
+                return (float) Double.longBitsToDouble(Double.doubleToLongBits(a)&mask);
         }
         return a;
     }
@@ -215,4 +213,5 @@ public class ConversionBehaviour {
             mask = mask ^((long) Math.pow(2,SIGNIFICATIVE_DOUBLE_BITS-nb)-1);
         System.out.println("mask: "+Long.toBinaryString(mask));
     }
+   
 }
