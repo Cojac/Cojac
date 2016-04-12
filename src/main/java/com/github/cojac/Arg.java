@@ -72,6 +72,9 @@ public enum Arg {
     ROUND_BIASED_DOWN("Rbd"),
     ROUND_BIASED_RANDOM("Rbr"),
     ARBITRARY_PRECISION("Ap"),
+    DOUBLE_INTERVAL("Di"),
+    
+    
     // Those below are used internally, but no more appear in the usage.
     IADD("iadd", Opcodes.IADD, INTS),
     IDIV("idiv", Opcodes.IDIV, INTS),
@@ -312,6 +315,9 @@ public enum Arg {
                 false, "\"Round\" (Biased) down");
         options.addOption(Arg.ROUND_BIASED_RANDOM.shortOpt(),
                 false, "\"Round\" (Biased) randomly up or down");
+        options.addOption(Arg.DOUBLE_INTERVAL.shortOpt(),
+                false, "Perform interval computation on Double");
+        
         options.addOption(OptionBuilder.
                 withLongOpt("arbitraryPrecisionBits").
                 withArgName("bits").

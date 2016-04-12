@@ -25,7 +25,9 @@ import org.objectweb.asm.commons.LocalVariablesSorter;
 import com.github.cojac.instrumenters.IOpcodeInstrumenter;
 import com.github.cojac.instrumenters.NewInstrumenter;
 import com.github.cojac.instrumenters.IOpcodeInstrumenterFactory;
+import com.github.cojac.instrumenters.InvokableMethod;
 import com.github.cojac.models.CheckedMaths;
+import com.github.cojac.models.DoubleIntervalBehaviour;
 
 import java.util.Arrays;
 import java.util.List;
@@ -101,11 +103,26 @@ final class NewMethodVisitor extends LocalVariablesSorter {
             }else{
                 super.visitMethodInsn(opcode, owner, name, desc, itf);
             }
-        } else {
+        } else if(args.isSpecified(Arg.DOUBLE_INTERVAL) && opcode == INVOKESTATIC  &&
+                name.equals("toString") && owner.equals("java/lang/Double")){
+            System.out.println(" visit opcode: "+ opcode + "   name: "+name +"   owner: "+owner + "    desc: "+desc);
+            //Method printm = DoubleIntervalBehaviour.class.getMethod(name, parameterTypes)
+            new InvokableMethod(args.getBehaviour(), name, desc , opcode).invokeStatic(mv);
+            //Type t = new Type()
+            //super.visitMethodInsn(opcode, owner, name, desc, itf);
+        }else {
             super.visitMethodInsn(opcode, owner, name, desc, itf);
         }
     }
-
+    @Override
+    public void visitLdcInsn(Object cst){
+        if(instrumenter.wantsToInstrumentLDC(cst)){
+            instrumenter.instrumentLDC(mv, cst);
+        }else{
+            super.visitLdcInsn(cst);
+        }
+        
+    }
     //checkMathMethodResult(double r, int reaction, 
     //                      String logFileName, String operationName)
     

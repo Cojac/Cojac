@@ -212,7 +212,7 @@ public class ConversionBehaviour {
         significativeBits = nb;
         if(nb <=SIGNIFICATIVE_DOUBLE_BITS && nb >=0)
             mask = mask ^((long) Math.pow(2,SIGNIFICATIVE_DOUBLE_BITS-nb)-1);
-        System.out.println("mask: "+Long.toBinaryString(mask));
+        //System.out.println("mask: "+Long.toBinaryString(mask));
     }
    
 }

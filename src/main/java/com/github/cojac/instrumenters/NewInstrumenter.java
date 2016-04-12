@@ -24,6 +24,7 @@ import org.objectweb.asm.Opcodes;
 import com.github.cojac.Arg;
 import com.github.cojac.Args;
 import com.github.cojac.InstrumentationStats;
+import com.github.cojac.models.DoubleIntervalBehaviour;
 import com.github.cojac.models.MathMethods;
 import com.github.cojac.models.NoCojacInstrumentation;
 import com.github.cojac.models.Operation;
@@ -42,6 +43,7 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
     private final InstrumentationStats stats;
     private final Map<Integer, InvokableMethod> invocations = new HashMap<Integer, InvokableMethod>(50);
     private final Map<String, InvokableMethod> methods = new HashMap<String, InvokableMethod>(50);
+
     
     private final String[] BEHAVIOURS;
     private final String[] FULLY_QUALIFIED_BEHAVIOURS;
@@ -169,6 +171,30 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
                 }
             }
         }
+        /*Populate LDC*/
+       /* try {
+            for (int i = 0; i < BEHAVIOURS.length; i++) {
+                for(Method m:Class.forName(FULLY_QUALIFIED_BEHAVIOURS[i]).getMethods()){
+                    //Operation op = MathMethods.toStaticOperation(m);
+                    if (m.isAnnotationPresent(NoCojacInstrumentation.class)){
+                        break;
+                     }
+                    int modifiers = m.getModifiers();
+                    Operation methodOperation = MathMethods.toStaticOperation(m);
+                    if(!Modifier.isPublic(modifiers) || !Modifier.isStatic(modifiers)){
+                        continue;
+                    }
+                    boolean matches = false;
+                    
+                }
+            }
+        } catch (SecurityException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }*/
     }
 
     @Override
@@ -199,5 +225,19 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
         //System.out.println("Wants to instrument method: "+name+"  "+methods.containsKey(name+signature));
         return (opcode == Opcodes.INVOKESTATIC) && methods.containsKey(name+signature);
         
+    }
+    public void instrumentLDC(MethodVisitor mv, Object cst){
+        if(cst instanceof Double){
+            double c = (double) cst;
+            float inf = Math.nextDown((float)c);
+            float sup = Math.nextUp((float)c);
+            mv.visitLdcInsn(DoubleIntervalBehaviour.embedValues(inf, sup));
+        }else
+            mv.visitLdcInsn(cst);
+    }
+    public boolean wantsToInstrumentLDC(Object cst){
+        if(BEHAVIOURS[0].equals("com/github/cojac/models/DoubleIntervalBehaviour"))
+            return true;
+        return false;
     }
 }

@@ -59,6 +59,7 @@ public final class Args {
         behaviours.put(Arg.ROUND_BIASED_DOWN, "com/github/cojac/models/PseudoRoundingBehaviour");
         behaviours.put(Arg.ROUND_BIASED_RANDOM, "com/github/cojac/models/PseudoRoundingBehaviour");
         behaviours.put(Arg.ARBITRARY_PRECISION, "com/github/cojac/models/ConversionBehaviour");
+        behaviours.put(Arg.DOUBLE_INTERVAL, "com/github/cojac/models/DoubleIntervalBehaviour");
     }
     private static String USAGE =
              "java -javaagent:cojac.jar=\"[OPTIONS]\" YourApp [appArgs]\n"
@@ -194,7 +195,7 @@ public final class Args {
             isSpecified(Arg.LONGS) || isSpecified(Arg.MATHS) || isSpecified(Arg.CASTS) 
             || isSpecified(Arg.DOUBLE2FLOAT)|| isSpecified(Arg.ROUND_BIASED_UP)
             || isSpecified(Arg.ROUND_BIASED_DOWN)|| isSpecified(Arg.ROUND_BIASED_RANDOM)
-            || isSpecified(Arg.ARBITRARY_PRECISION);
+            || isSpecified(Arg.ARBITRARY_PRECISION)||isSpecified(Arg.DOUBLE_INTERVAL);
     }
 
     private boolean areSomeOpcodesSelected() {
