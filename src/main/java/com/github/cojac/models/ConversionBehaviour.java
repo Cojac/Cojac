@@ -207,7 +207,7 @@ public class ConversionBehaviour {
         Arbitrary,
         NoConversion;
     }
-    @NoCojacInstrumentation
+    @UtilityMethod
     public static void setSignificativeBits(int nb){
         significativeBits = nb;
         if(nb <=SIGNIFICATIVE_DOUBLE_BITS && nb >=0)

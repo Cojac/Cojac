@@ -17,7 +17,6 @@
  */
 package com.github.cojac.models;
 
-import org.objectweb.asm.MethodVisitor;
 
 public class DoubleIntervalBehaviour {
    private static final long INF_MASK = 0xffffffff00000000L;
@@ -61,6 +60,7 @@ public class DoubleIntervalBehaviour {
        float[] aLim = extractValues(a);
        return "["+aLim[0]+";"+aLim[1]+"]";
    }
+   @UtilityMethod
    public static float[] extractValues(Double d){
        float[] f = new float[2];
        long dL = Double.doubleToLongBits(d);
@@ -70,6 +70,7 @@ public class DoubleIntervalBehaviour {
        
        return f;
    }
+   @UtilityMethod
    public static double embedValues(float inf, float sup){
        long dL = Float.floatToRawIntBits(inf);
        dL = ((dL << 32) )| (Float.floatToRawIntBits(sup)& SUP_MASK); 

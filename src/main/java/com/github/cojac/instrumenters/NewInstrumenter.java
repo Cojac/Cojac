@@ -26,10 +26,10 @@ import com.github.cojac.Args;
 import com.github.cojac.InstrumentationStats;
 import com.github.cojac.models.DoubleIntervalBehaviour;
 import com.github.cojac.models.MathMethods;
-import com.github.cojac.models.NoCojacInstrumentation;
 import com.github.cojac.models.Operation;
 import com.github.cojac.models.Operations;
 import com.github.cojac.models.Reactions;
+import com.github.cojac.models.UtilityMethod;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -79,7 +79,7 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
             for (int i = 0; i < BEHAVIOURS.length; i++) {
                 for(Method m:Class.forName(FULLY_QUALIFIED_BEHAVIOURS[i]).getMethods()){
                     //Operation op = MathMethods.toStaticOperation(m);
-                    if (m.isAnnotationPresent(NoCojacInstrumentation.class)){
+                    if (m.isAnnotationPresent(UtilityMethod.class)){
                         break;
                      }
                     int modifiers = m.getModifiers();
@@ -137,7 +137,7 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
                     //behaviourClass.getClass().getMethod(op.opCodeName, op.parameters);
                     
                     Method m = Class.forName(FULLY_QUALIFIED_BEHAVIOURS[i]).getMethod(op.name(), op.parameters);
-                    if (m.isAnnotationPresent(NoCojacInstrumentation.class)){
+                    if (m.isAnnotationPresent(UtilityMethod.class)){
                        break;
                     }
                     
@@ -158,7 +158,7 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
                 try {
                     //behaviourClass.getClass().getMethod(op.opCodeName, op.parameters);
                     Method m = Class.forName(FULLY_QUALIFIED_BEHAVIOURS[i]).getMethod(op.opCodeName, op.parameters);
-                    if (m.isAnnotationPresent(NoCojacInstrumentation.class)){
+                    if (m.isAnnotationPresent(UtilityMethod.class)){
                         break;
                      }
                     //NewDoubles.class.getMethod(op.opCodeName, op.parameters);
