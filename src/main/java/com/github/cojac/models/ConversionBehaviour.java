@@ -210,8 +210,8 @@ public class ConversionBehaviour {
     @UtilityMethod
     public static void setSignificativeBits(int nb){
         significativeBits = nb;
-        if(nb <=SIGNIFICATIVE_DOUBLE_BITS && nb >=0)
-            mask = mask ^((long) Math.pow(2,SIGNIFICATIVE_DOUBLE_BITS-nb)-1);
+        if(nb <SIGNIFICATIVE_DOUBLE_BITS && nb >=0)
+            mask = mask ^((1L<<(52-nb))-1);
         //System.out.println("mask: "+Long.toBinaryString(mask));
     }
    
