@@ -30,25 +30,26 @@ import com.github.cojac.Arg;
 import com.github.cojac.Args;
 import com.github.cojac.CojacReferences.CojacReferencesBuilder;
 
-public class Double2FloatTest {
+public class ArbitraryPrecisionTest {
     @Test
-    public void testDouble2FloatConversion() throws ClassNotFoundException, IllegalAccessException, InstantiationException,
+    public void testSamePrecisionAsFloat() throws ClassNotFoundException, IllegalAccessException, InstantiationException,
             InvocationTargetException, UnmodifiableClassException {
         Args args = new Args();
         
-        args.specify(Arg.DOUBLE2FLOAT);
+        String[] options = {"-"+Arg.ARBITRARY_PRECISION.shortOpt(), ""+23}; 
+        args.parse(options);
         args.specify(Arg.PRINT);
 
-		CojacReferencesBuilder builder = new CojacReferencesBuilder(args);
-		
+        CojacReferencesBuilder builder = new CojacReferencesBuilder(args);
+        
         Agent agent = new Agent(builder.build());
         AgentTest.instrumentation.addTransformer(agent);
         
-        Class<?> classz = ClassLoader.getSystemClassLoader().loadClass("com.github.cojac.unit.Double2FloatTests");
+        Class<?> classz = ClassLoader.getSystemClassLoader().loadClass("com.github.cojac.unit.ArbitraryPrecisionTests");
         AgentTest.instrumentation.retransformClasses(classz);
         
         Object object = classz.newInstance();
-        float[] expectedResults = {Math.nextUp(3.0f),1.0000001f};
+        float[] expectedResults = {Math.nextUp(3.0f)};
         int i = 0;
         Method[] methods = classz.getMethods();
         for(Method m: methods){

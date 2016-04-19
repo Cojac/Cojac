@@ -18,22 +18,12 @@
 package com.github.cojac.unit;
 
 
-public class Double2FloatTests {
+public class ArbitraryPrecisionTests {
 
-    public double testNextUp() {
+    public double test() {
         double a = Math.nextUp(3) , b = 0;
         double c = a + b;
         //expectedResults.add(3.0f-Math.ulp(3.0f));
         return c;
     }
-    public double testPrecision(){
-        double a = 0.1f;
-        double b = 0;
-        
-        for (int i = 0; i < 10; i++) {
-            b+=a;
-        }
-        return b;
-    }
-    
 }

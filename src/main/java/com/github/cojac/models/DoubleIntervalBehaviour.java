@@ -66,7 +66,7 @@ public class DoubleIntervalBehaviour {
        long dL = Double.doubleToLongBits(d);
 
        f[INF_ID] = (float) Double.longBitsToDouble((dL & INF_MASK)); 
-       f[SUP_ID] = f[INF_ID] + Float.intBitsToFloat((((int) (dL & SUP_MASK)) << 2) | 3);
+       f[SUP_ID] = f[INF_ID] + Float.intBitsToFloat((((int) (dL & SUP_MASK)) << 2) | 3); //3 : the two last bits we lost
 
        return f;
    }
