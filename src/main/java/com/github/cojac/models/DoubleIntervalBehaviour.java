@@ -19,8 +19,8 @@ package com.github.cojac.models;
 
 
 public class DoubleIntervalBehaviour {
-   private static final long INF_MASK = 0xffffffff00000000L;
-   private static final long SUP_MASK = 0x00000000ffffffffL;
+   private static final long INF_MASK = 0xffffffffe0000000L;
+   private static final long SUP_MASK = 0x000000001fffffffL;
    private static final int INF_ID = 0;
    private static final int SUP_ID = 1;
   /* public static void LDC(MethodVisitor mv, double a){
@@ -31,49 +31,51 @@ public class DoubleIntervalBehaviour {
    public static double DADD(double a, double b) {
        float[] aLim = extractValues(a);
        float[] bLim = extractValues(b);
-       return embedValues(aLim[0]+bLim[0], aLim[1]+bLim[1]);
+       return embedValues(aLim[INF_ID]+bLim[INF_ID], aLim[SUP_ID]+bLim[SUP_ID]);
    }
    public static double DSUB(double a, double b) {
        float[] aLim = extractValues(a);
        float[] bLim = extractValues(b);
-       return embedValues(aLim[0]-bLim[1], aLim[1]-bLim[0]);
+       return embedValues(aLim[INF_ID]-bLim[SUP_ID], aLim[SUP_ID]-bLim[INF_ID]);
    }
    public static double DMUL(double a, double b) {
        float[] aLim = extractValues(a);
        float[] bLim = extractValues(b);
-       float inf = Math.min(Math.min(aLim[0] * bLim[0], aLim[0] * bLim[1]), Math.min(aLim[1] *
-               bLim[0], aLim[1] * bLim[1]));
-       float sup = Math.max(Math.max(aLim[0] * bLim[0], aLim[0] * bLim[1]), Math.max(aLim[1] *
-               bLim[0], aLim[1] * bLim[1]));
+       float inf = Math.min(Math.min(aLim[INF_ID] * bLim[INF_ID], aLim[INF_ID] * bLim[SUP_ID]), Math.min(aLim[SUP_ID] *
+               bLim[INF_ID], aLim[SUP_ID] * bLim[SUP_ID]));
+       float sup = Math.max(Math.max(aLim[INF_ID] * bLim[INF_ID], aLim[INF_ID] * bLim[SUP_ID]), Math.max(aLim[SUP_ID] *
+               bLim[INF_ID], aLim[SUP_ID] * bLim[SUP_ID]));
        return embedValues(inf, sup);
    }
    public static double DDIV(double a, double b){
        float[] aLim = extractValues(a);
        float[] bLim = extractValues(b);
-       float inf = Math.min(Math.min(aLim[0] / bLim[0], aLim[0] / bLim[1]), Math.min(aLim[1] /
-               bLim[0], aLim[1] / bLim[1]));
-       float sup = Math.max(Math.max(aLim[0] / bLim[0], aLim[0] / bLim[1]), Math.max(aLim[1] /
-               bLim[0], aLim[1] / bLim[1]));
+       float inf = Math.min(Math.min(aLim[INF_ID] / bLim[INF_ID], aLim[INF_ID] / bLim[SUP_ID]), Math.min(aLim[SUP_ID] /
+               bLim[INF_ID], aLim[SUP_ID] / bLim[SUP_ID]));
+       float sup = Math.max(Math.max(aLim[INF_ID] / bLim[INF_ID], aLim[INF_ID] / bLim[SUP_ID]), Math.max(aLim[SUP_ID] /
+               bLim[INF_ID], aLim[SUP_ID] / bLim[SUP_ID]));
        return embedValues(inf, sup);
    }
    public static String toString(double a){
        float[] aLim = extractValues(a);
-       return "["+aLim[0]+";"+aLim[1]+"]";
+       return "["+aLim[INF_ID]+";"+aLim[SUP_ID]+"]";
    }
    @UtilityMethod
-   public static float[] extractValues(Double d){
+   public static float[] extractValues(Double d) {
        float[] f = new float[2];
        long dL = Double.doubleToLongBits(d);
-       
-       f[SUP_ID] = Float.intBitsToFloat((int)(dL & SUP_MASK)); 
-       f[INF_ID] = Float.intBitsToFloat((int)(dL>>32 & SUP_MASK));
-       
+
+       f[INF_ID] = (float) Double.longBitsToDouble((dL & INF_MASK)); 
+       f[SUP_ID] = f[INF_ID] + Float.intBitsToFloat((((int) (dL & SUP_MASK)) << 2) | 3);
+
        return f;
    }
    @UtilityMethod
-   public static double embedValues(float inf, float sup){
-       long dL = Float.floatToRawIntBits(inf);
-       dL = ((dL << 32) )| (Float.floatToRawIntBits(sup)& SUP_MASK); 
+   public static double embedValues(float inf, float sup) {
+       long dL = Double.doubleToRawLongBits(inf);
+       dL = dL & INF_MASK;// (Float.floatToRawIntBits(sup)& SUP_MASK);
+       float gap = Math.nextUp(sup - inf);
+       dL = dL | (Float.floatToRawIntBits(gap) >>> 2);
        return Double.longBitsToDouble(dL);
    }
    
