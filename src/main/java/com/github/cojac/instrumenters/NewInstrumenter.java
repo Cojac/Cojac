@@ -24,6 +24,7 @@ import org.objectweb.asm.Opcodes;
 import com.github.cojac.Arg;
 import com.github.cojac.Args;
 import com.github.cojac.InstrumentationStats;
+import com.github.cojac.interval.FloatInterval;
 import com.github.cojac.models.DoubleIntervalBehaviour;
 import com.github.cojac.models.MathMethods;
 import com.github.cojac.models.Operation;
@@ -231,7 +232,7 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
             double c = (double) cst;
             float inf = Math.nextDown((float)c);
             float sup = Math.nextUp((float)c);
-            mv.visitLdcInsn(DoubleIntervalBehaviour.embedValues(inf, sup));
+            mv.visitLdcInsn(DoubleIntervalBehaviour.embedValues(new FloatInterval(inf,sup)));
         }else
             mv.visitLdcInsn(cst);
     }

@@ -26,7 +26,7 @@ public class Double2FloatTests {
         //expectedResults.add(3.0f-Math.ulp(3.0f));
         return c;
     }
-    public double testPrecision(){
+    /*public double testPrecision(){
         double a = 0.1f;
         double b = 0;
         
@@ -34,6 +34,6 @@ public class Double2FloatTests {
             b+=a;
         }
         return b;
-    }
+    }*/
     
 }

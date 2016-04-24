@@ -48,7 +48,7 @@ public class Double2FloatTest {
         AgentTest.instrumentation.retransformClasses(classz);
         
         Object object = classz.newInstance();
-        float[] expectedResults = {Math.nextUp(3.0f),1.0000001f};
+        float[] expectedResults = {Math.nextUp(3.0f)/*,1.000001f*/};
         int i = 0;
         Method[] methods = classz.getMethods();
         for(Method m: methods){
