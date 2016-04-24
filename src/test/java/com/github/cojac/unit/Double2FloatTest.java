@@ -65,8 +65,8 @@ public class Double2FloatTest {
     public void testDouble2FloatConversion() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
         for (int i = 0; i < expectedResults.length; i++) {
             Method method = classz.getMethod(methods[i]);
-            System.out.println("On \""+methods[i]+"\", Got: " +(double) method.invoke(object) + ", Expected: "+(double)expectedResults[i]);
-            Assert.assertTrue((double) expectedResults[i] == (double) method.invoke(object));
+            String out = "On \""+methods[i]+"\", Got: " +(double) method.invoke(object) + ", Expected: "+(double)expectedResults[i];
+            Assert.assertTrue(out,(double) expectedResults[i] == (double) method.invoke(object));
         }
     }
 }
