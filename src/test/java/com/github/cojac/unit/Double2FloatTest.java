@@ -22,8 +22,7 @@ import java.lang.instrument.UnmodifiableClassException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.*;
 
 import com.github.cojac.Agent;
 import com.github.cojac.Arg;
@@ -31,33 +30,43 @@ import com.github.cojac.Args;
 import com.github.cojac.CojacReferences.CojacReferencesBuilder;
 
 public class Double2FloatTest {
-    @Test
-    public void testDouble2FloatConversion() throws ClassNotFoundException, IllegalAccessException, InstantiationException,
-            InvocationTargetException, UnmodifiableClassException {
-        Args args = new Args();
+    String[] methods = {"testNextUp","testPrecision"};
+    float[] expectedResults = {Math.nextUp(3.0f), 0.1f+1f};
+    Object object;
+    Class<?> classz;
+    Agent agent;
+    @Before
+    public void instrument() throws ClassNotFoundException, UnmodifiableClassException, InstantiationException, IllegalAccessException{
         
+        Assert.assertTrue(methods.length == expectedResults.length);
+        Args args = new Args();
+
         args.specify(Arg.DOUBLE2FLOAT);
         args.specify(Arg.PRINT);
 
-		CojacReferencesBuilder builder = new CojacReferencesBuilder(args);
-		
-        Agent agent = new Agent(builder.build());
+        CojacReferencesBuilder builder = new CojacReferencesBuilder(args);
+
+        agent = new Agent(builder.build());
         AgentTest.instrumentation.addTransformer(agent);
-        
-        Class<?> classz = ClassLoader.getSystemClassLoader().loadClass("com.github.cojac.unit.Double2FloatTests");
+
+         classz = ClassLoader.getSystemClassLoader().loadClass("com.github.cojac.unit.Double2FloatTests");
         AgentTest.instrumentation.retransformClasses(classz);
-        
-        Object object = classz.newInstance();
-        float[] expectedResults = {Math.nextUp(3.0f)/*,1.000001f*/};
-        int i = 0;
-        Method[] methods = classz.getMethods();
-        for(Method m: methods){
-            if(i >= expectedResults.length){
-                break; //methods after that are extended from java.lang.Object
-            }
-            Assert.assertTrue((double)expectedResults[i++]==(double)m.invoke(object));
-        }
-        
+
+        object = classz.newInstance();
+    }
+    
+    @After
+    public void removeInstrumentation() throws UnmodifiableClassException{
         AgentTest.instrumentation.removeTransformer(agent);
+        AgentTest.instrumentation.retransformClasses(classz);
+    }
+    
+    @Test
+    public void testDouble2FloatConversion() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+        for (int i = 0; i < expectedResults.length; i++) {
+            Method method = classz.getMethod(methods[i]);
+            System.out.println("On \""+methods[i]+"\", Got: " +(double) method.invoke(object) + ", Expected: "+(double)expectedResults[i]);
+            Assert.assertTrue((double) expectedResults[i] == (double) method.invoke(object));
+        }
     }
 }

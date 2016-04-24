@@ -21,19 +21,15 @@ package com.github.cojac.unit;
 public class Double2FloatTests {
 
     public double testNextUp() {
-        double a = Math.nextUp(3) , b = 0;
-        double c = a + b;
-        //expectedResults.add(3.0f-Math.ulp(3.0f));
-        return c;
+        double a = Math.nextUp(3.0);
+        return a;
     }
-    /*public double testPrecision(){
-        double a = 0.1f;
-        double b = 0;
+    public double testPrecision(){
+        double a = 0.1;
+        double b = 1;
         
-        for (int i = 0; i < 10; i++) {
-            b+=a;
-        }
-        return b;
-    }*/
+        
+        return a+b;
+    }
     
 }

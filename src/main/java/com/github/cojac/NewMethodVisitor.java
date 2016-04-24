@@ -105,7 +105,7 @@ final class NewMethodVisitor extends LocalVariablesSorter {
             }
         } else if(args.isSpecified(Arg.DOUBLE_INTERVAL) && opcode == INVOKESTATIC  &&
                 name.equals("toString") && owner.equals("java/lang/Double")){
-            System.out.println(" visit opcode: "+ opcode + "   name: "+name +"   owner: "+owner + "    desc: "+desc);
+            //System.out.println(" visit opcode: "+ opcode + "   name: "+name +"   owner: "+owner + "    desc: "+desc);
             //Method printm = DoubleIntervalBehaviour.class.getMethod(name, parameterTypes)
             new InvokableMethod(args.getBehaviour(), name, desc , opcode).invokeStatic(mv);
             //Type t = new Type()

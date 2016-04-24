@@ -127,12 +127,21 @@ public class ConversionBehaviour {
         return Math.min(inTransform(a), inTransform(b));
     }
     public static double nextAfter(double a, double b){
+        if(c == Conversion.Double2Float){
+            return Math.nextDown((float) a);
+        }
         return Math.nextAfter(inTransform(a), inTransform(b));
     }
     public static double nextDown(double a){
+        if(c == Conversion.Double2Float){
+            return Math.nextDown((float) a);
+        }
         return  Math.nextDown(inTransform(a));
     }
     public static double nextUp(double a){
+        if(c == Conversion.Double2Float){
+            return Math.nextUp((float) a);
+        }
         return  Math.nextUp(inTransform(a));
     }
     public static double pow(double a, double b){
@@ -169,6 +178,7 @@ public class ConversionBehaviour {
         return Math.ulp(inTransform(a));
     }
     private static double inTransform(double a){
+
         switch(c){
         case Double2Float:
            return (float)a;

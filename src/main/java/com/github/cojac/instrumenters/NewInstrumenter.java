@@ -57,6 +57,7 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
         FULLY_QUALIFIED_BEHAVIOURS = new String[BEHAVIOURS.length];
         for(String s: BEHAVIOURS){
             FULLY_QUALIFIED_BEHAVIOURS[i++] = s.replace('/', '.');
+           // System.out.println(FULLY_QUALIFIED_BEHAVIOURS[i-1]);
         }
         
         if (args.isSpecified(Arg.CALL_BACK))
