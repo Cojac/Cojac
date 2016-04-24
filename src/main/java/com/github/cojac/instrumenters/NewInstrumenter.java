@@ -38,7 +38,21 @@ import java.lang.reflect.Parameter;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * This class instruments code with methods defined in the classes given by an instance of arg 
+ * (method getBehaviour)
+ * 
+ * Its policy regarding instrumentation is: 
+ * <ul>
+ * <li>Every instrument method in the behaviour classes should be public static and correspond to an opcode, 
+ * described in com.github.cojac.models.Operations or to a Java.lang.Math public static method.</li>
+ * <li>If a method has to be public but is not an instrument method, use the annotation "@UtilityMethod"</li>
+ * <li>If a method is set multiple times in one or more classes, only the first will be used as instrument</li>
+ * </ul>
+ * 
+ * @author Valentin
+ *
+ */
 public final class NewInstrumenter implements IOpcodeInstrumenter {
 
     private final InstrumentationStats stats;
@@ -49,6 +63,12 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
     private final String[] BEHAVIOURS;
     private final String[] FULLY_QUALIFIED_BEHAVIOURS;
     private static NewInstrumenter instance= null;
+    /**
+     * Constructor, private because only a singleton is available. 
+     * Use {@link #getInstance(Args, InstrumentationStats)} to get the instance. 
+     * @param args
+     * @param stats
+     */
     private NewInstrumenter(Args args, InstrumentationStats stats) {
         super();
         BEHAVIOURS = args.getBehaviour().split(";");
@@ -70,12 +90,22 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
         checkMethods();
         fillMethods();
     }
+    /**
+     * Method used to get the singleton instance. If not allready constructed, the params given will be used.
+     * 
+     * @param args the arguments with which Cojac has been run.
+     * @param stats
+     * @return
+     */
     public static NewInstrumenter getInstance(Args args, InstrumentationStats stats){
         if(instance == null){
             instance = new NewInstrumenter(args, stats);
         }
         return instance;
     }
+    /**
+     * Check if every method in the behaviour classes correspond to an Opcode or a java.lang.Math method.
+     */
     private void checkMethods() {
         try {
             for (int i = 0; i < BEHAVIOURS.length; i++) {
@@ -120,6 +150,13 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
             e.printStackTrace();
         }
     }
+    /**
+     * check if two sets of parameters match
+     * @param a the first set
+     * @param b the second set
+     * @return true if the sets are the same length, and if every parameter of set one match
+     * with the corresponding in the set two 
+     */
     private boolean matchingParameters(Parameter[]a, Parameter[]b){
         if(a.length != b.length)
             return false;
@@ -131,6 +168,10 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
         
         
     }
+    /**
+     * for every method in the behaviour classes that correspond to an Opcode or a Java.lang.Math method,
+     * stores that it's instrumented, and stores the InvokableMethod which will be called when executing.
+     */
     private void fillMethods() {
         /*Populate operations*/
         for(Operations op: Operations.values()){

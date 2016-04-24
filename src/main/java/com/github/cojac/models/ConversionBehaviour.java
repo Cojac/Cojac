@@ -16,7 +16,23 @@
  *
  */
 package com.github.cojac.models;
-
+/**
+ * This class represents different behaviours, which all apply a pre 
+ * and a post treatment on doubles and floats, both on opcodes and on 
+ * Math methods.
+ * 
+ * Behaviours implemented are:
+ * <ul>
+ * <li>No conversion (Standard behaviour)</li>
+ * <li>Double to float conversion</li>
+ * <li>Arbitrary precision</li>
+ * </ul>
+ * 
+ * 
+ * 
+ * @author Gazzola Valentin
+ *
+ */
 public class ConversionBehaviour {
    public static Conversion c  = Conversion.NoConversion;
    public static final int SIGNIFICATIVE_DOUBLE_BITS = 52;
@@ -26,6 +42,7 @@ public class ConversionBehaviour {
    public static double DADD(double a, double b) {
        return outTransform(inTransform(a) + inTransform(b));
    }
+   
    public static double DSUB(double a, double b) {
        return outTransform(inTransform(a)- inTransform(b));
    }
@@ -126,19 +143,26 @@ public class ConversionBehaviour {
     public static double min(double a, double b){
         return Math.min(inTransform(a), inTransform(b));
     }
+    
     public static double nextAfter(double a, double b){
+        //Necessary to redirect to the float method
+        //TODO: an equivalent trick for the Arbitrary behaviour
         if(c == Conversion.Double2Float){
-            return Math.nextDown((float) a);
+            return Math.nextAfter((float) a,(float) b);
         }
         return Math.nextAfter(inTransform(a), inTransform(b));
     }
     public static double nextDown(double a){
+      //Necessary to redirect to the float method
+      //TODO: an equivalent trick for the Arbitrary behaviour
         if(c == Conversion.Double2Float){
             return Math.nextDown((float) a);
         }
         return  Math.nextDown(inTransform(a));
     }
     public static double nextUp(double a){
+      //Necessary to redirect to the float method
+      //TODO: an equivalent trick for the Arbitrary behaviour
         if(c == Conversion.Double2Float){
             return Math.nextUp((float) a);
         }
@@ -177,8 +201,12 @@ public class ConversionBehaviour {
     public static double ulp(double a){
         return Math.ulp(inTransform(a));
     }
+    /**
+     * Transformation applied on double parameters (depends on "c") 
+     * @param a the parameter on which the transformation occur
+     * @return the transformed parameter, in form of a double
+     */
     private static double inTransform(double a){
-
         switch(c){
         case Double2Float:
            return (float)a;
@@ -187,6 +215,11 @@ public class ConversionBehaviour {
         }
         return a;
     }
+    /**
+     * Transformation applied on double returns (depends on "c") 
+     * @param a the return value on which the transformation occur
+     * @return the transformed value, in form of a double
+     */
     private static double outTransform(double a){
         switch(c){
         case Double2Float:
@@ -196,6 +229,11 @@ public class ConversionBehaviour {
         }
         return a;
     }
+    /**
+     * Transformation applied on float parameters (depends on "c") 
+     * @param a the parameter on which the transformation occur
+     * @return the transformed parameter, in form of a float
+     */
     private static float inTransform(float a){
         switch(c){
         case Arbitrary:
@@ -204,6 +242,11 @@ public class ConversionBehaviour {
         }
         return a;
     }
+    /**
+     * Transformation applied on float parameters (depends on "c") 
+     * @param a the return value on which the transformation occur
+     * @return the transformed value, in form of a float
+     */
     private static float outTransform(float a){
         switch(c){
         case Arbitrary:
@@ -212,6 +255,12 @@ public class ConversionBehaviour {
         }
         return a;
     }
+    /**
+     * Conversions behaviours implemented by this class
+     * 
+     * @author Gazzola Valentin
+     *
+     */
     public enum Conversion{
         Double2Float,
         Arbitrary,

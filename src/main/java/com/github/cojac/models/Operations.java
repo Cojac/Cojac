@@ -20,11 +20,6 @@ import  org.objectweb.asm.Opcodes;
 import static com.github.cojac.models.Parameters.*;
 import static com.github.cojac.models.Signatures.*;
 public enum Operations {
-    //TODO : enumerate
-    
-    
-   
-    
             /*INTEGERS*/
             IADD(Opcodes.IADD,INTEGER_BINARY.description, INTEGER_BINARY_PARAMS.params),
             ISUB(Opcodes.ISUB,INTEGER_BINARY.description, INTEGER_BINARY_PARAMS.params),
