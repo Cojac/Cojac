@@ -17,64 +17,55 @@
  */
 package com.github.cojac.models;
 
+import com.github.cojac.interval.FloatInterval;
 
 public class DoubleIntervalBehaviour {
+   /*inf value is stored as the 35 MS bits of the double
+   (it's the double equivalent of a float truncated to 23 bits of mantissa)*/
    private static final long INF_MASK = 0xffffffffe0000000L;
-   private static final long SUP_MASK = 0x000000001fffffffL;
-   private static final int INF_ID = 0;
-   private static final int SUP_ID = 1;
+   /*gap value is stored as the 29 LS bits of the double
+   (We loose only 2 bits (set to 1, as worst case), the sign bit being always '0')*/
+   private static final long GAP_MASK = 0x000000001fffffffL;
   /* public static void LDC(MethodVisitor mv, double a){
        double b = 3.0;
        mv.visitLdcInsn(a+b);
    }*/
    
    public static double DADD(double a, double b) {
-       float[] aLim = extractValues(a);
-       float[] bLim = extractValues(b);
-       return embedValues(aLim[INF_ID]+bLim[INF_ID], aLim[SUP_ID]+bLim[SUP_ID]);
+       FloatInterval aI = extractValues(a);
+       FloatInterval bI = extractValues(b);
+       return embedValues(FloatInterval.add(aI, bI));
    }
    public static double DSUB(double a, double b) {
-       float[] aLim = extractValues(a);
-       float[] bLim = extractValues(b);
-       return embedValues(aLim[INF_ID]-bLim[SUP_ID], aLim[SUP_ID]-bLim[INF_ID]);
+       FloatInterval aI = extractValues(a);
+       FloatInterval bI = extractValues(b);
+       return embedValues(FloatInterval.sub(aI, bI));
    }
    public static double DMUL(double a, double b) {
-       float[] aLim = extractValues(a);
-       float[] bLim = extractValues(b);
-       float inf = Math.min(Math.min(aLim[INF_ID] * bLim[INF_ID], aLim[INF_ID] * bLim[SUP_ID]), Math.min(aLim[SUP_ID] *
-               bLim[INF_ID], aLim[SUP_ID] * bLim[SUP_ID]));
-       float sup = Math.max(Math.max(aLim[INF_ID] * bLim[INF_ID], aLim[INF_ID] * bLim[SUP_ID]), Math.max(aLim[SUP_ID] *
-               bLim[INF_ID], aLim[SUP_ID] * bLim[SUP_ID]));
-       return embedValues(inf, sup);
+       FloatInterval aI = extractValues(a);
+       FloatInterval bI = extractValues(b);
+       return embedValues(FloatInterval.mul(aI, bI));
    }
    public static double DDIV(double a, double b){
-       float[] aLim = extractValues(a);
-       float[] bLim = extractValues(b);
-       float inf = Math.min(Math.min(aLim[INF_ID] / bLim[INF_ID], aLim[INF_ID] / bLim[SUP_ID]), Math.min(aLim[SUP_ID] /
-               bLim[INF_ID], aLim[SUP_ID] / bLim[SUP_ID]));
-       float sup = Math.max(Math.max(aLim[INF_ID] / bLim[INF_ID], aLim[INF_ID] / bLim[SUP_ID]), Math.max(aLim[SUP_ID] /
-               bLim[INF_ID], aLim[SUP_ID] / bLim[SUP_ID]));
-       return embedValues(inf, sup);
+       FloatInterval aI = extractValues(a);
+       FloatInterval bI = extractValues(b);
+       return embedValues(FloatInterval.div(aI, bI));
    }
    public static String toString(double a){
-       float[] aLim = extractValues(a);
-       return "["+aLim[INF_ID]+";"+aLim[SUP_ID]+"]";
+       return extractValues(a).toString();
    }
    @UtilityMethod
-   public static float[] extractValues(Double d) {
-       float[] f = new float[2];
+   public static FloatInterval extractValues(double d) {
        long dL = Double.doubleToLongBits(d);
-
-       f[INF_ID] = (float) Double.longBitsToDouble((dL & INF_MASK)); 
-       f[SUP_ID] = f[INF_ID] + Float.intBitsToFloat((((int) (dL & SUP_MASK)) << 2) | 3); //3 : the two last bits we lost
-
-       return f;
+       float inf = (float) Double.longBitsToDouble((dL & INF_MASK)); 
+       float sup = inf + Float.intBitsToFloat((((int) (dL & GAP_MASK)) << 2) | 3); //3 : the two last bits we lost
+       return new FloatInterval(inf,sup);
    }
    @UtilityMethod
-   public static double embedValues(float inf, float sup) {
-       long dL = Double.doubleToRawLongBits(inf);
+   public static double embedValues(FloatInterval interval) {
+       long dL = Double.doubleToRawLongBits(interval.inf);
        dL = dL & INF_MASK;// (Float.floatToRawIntBits(sup)& SUP_MASK);
-       float gap = Math.nextUp(sup - inf);
+       float gap = Math.nextUp(interval.sup - interval.inf);
        dL = dL | (Float.floatToRawIntBits(gap) >>> 2);
        return Double.longBitsToDouble(dL);
    }
