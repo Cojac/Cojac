@@ -52,6 +52,7 @@ public enum Arg {
     STOCHASTIC("Rs"),             // -RstochasticArithmetic
     AUTOMATIC_DERIVATION("Ra"),    // -Rautodiff
     SYMBOLIC("Rsy"),    // -Rsymbolic
+    CHEBFUN("Rcheb"),   // -Rchebfun
     DISABLE_UNSTABLE_COMPARISONS_CHECK("R_noUnstableComparisons"),
     STABILITY_THRESHOLD("R_unstableAt"),
 
@@ -269,7 +270,8 @@ public enum Arg {
                 "autodiff",false,"Use automatic differentiation wrapping");
         options.addOption(Arg.SYMBOLIC.shortOpt(),
                 "symbolic",false,"Use symbolic wrapping");
-        
+        options.addOption(Arg.CHEBFUN.shortOpt(),
+                "chebfun",false,"Use chefun wrapping");  
         options.addOption(Arg.DISABLE_UNSTABLE_COMPARISONS_CHECK.shortOpt(),
                 false,"Disable unstability checks in comparisons, for the Interval or Stochastic wrappers");
         options.addOption(OptionBuilder.

@@ -334,12 +334,8 @@ public class SymbolicDemo {
     }
     
     public static double f15(double x) {
-        double     a=0.08,b=0.0491,c=0.3218,d=0.0113,e=0.0;
-        double     X,Y;
-
-       // X=(A*B)*C;
-       
-        return a+b+c+d+e;
+        double     a=0.08,b=0.0491,c=0.3218;
+        return a+b+c;
     }
     
     public static double df15(double x) {

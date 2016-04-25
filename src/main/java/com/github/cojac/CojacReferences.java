@@ -273,6 +273,12 @@ public final class CojacReferences {
 //                args.setValue(Arg.DOUBLE_WRAPPER, "com.github.cojac.models.wrappers.SymbolicDouble");
                 args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperSymbolic");
    }
+            if (args.isSpecified(Arg.CHEBFUN)) {
+                args.specify(Arg.REPLACE_FLOATS);
+//                args.setValue(Arg.FLOAT_WRAPPER, "com.github.cojac.models.wrappers.SymbolicFloat");
+//                args.setValue(Arg.DOUBLE_WRAPPER, "com.github.cojac.models.wrappers.SymbolicDouble");
+                args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperChebfun");
+   }
 
             if (args.isSpecified(Arg.REPLACE_FLOATS)) { 
                 sbBypassList.append(BYPASS_SEPARATOR);  // Only for proxy tests
