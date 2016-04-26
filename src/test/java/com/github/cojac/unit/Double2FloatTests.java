@@ -17,19 +17,55 @@
  */
 package com.github.cojac.unit;
 
-
+/*
+ * These tests should work with the double to float instrumenter. (option -BD2F)
+ * 
+ * */
 public class Double2FloatTests {
 
+    /*
+     * This test checks that the call to Math.nextUp(double) is correctly redirected to Math.nextUp(float)
+     * Return should be Math.nextUp(3.0f) when instrumented
+     */
     public double testNextUp() {
         double a = Math.nextUp(3.0);
         return a;
     }
-    public double testPrecision(){
+    /*
+     * This test should check the precision difference between float and double in an addition
+     * return should be 1.1f when instrumented
+     */
+    public double testPrecisionAdd(){
         double a = 0.1;
         double b = 1;
-        
-        
         return a+b;
+    }
+    /*
+     * This test should check the precision difference between float and double in a substraction
+     * return should be -0.9f when instrumented 
+     */
+    public double testPrecisionSub(){
+        double a = 0.1;
+        double b = 1;
+        return a-b;
+    }
+    /*
+     * This test should check the precision difference between float and double in a multiplication
+     * return should be 1.1f when instrumented 
+     */
+    public double testPrecisionMul(){
+        double a = 0.05;
+        double b = 2;
+        return a*b;
+    }
+    /*
+     * This test should check the precision difference between float and double in a division
+     * return should be 10f when instrumented 
+     */
+    public double testPrecisionDiv(){
+        double a = 1;
+        double b = 0.1;
+        return a/b;
     }
     
 }

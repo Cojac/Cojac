@@ -30,11 +30,16 @@ import com.github.cojac.Args;
 import com.github.cojac.CojacReferences.CojacReferencesBuilder;
 
 public class Double2FloatTest {
-    String[] methods = {"testNextUp","testPrecision"};
-    float[] expectedResults = {Math.nextUp(3.0f), 0.1f+1f};
+    //correspond to the methods in Class "Double2FloatTests" that will be tested
+    String[] methods = {"testNextUp","testPrecisionAdd","testPrecisionSub","testPrecisionMul","testPrecisionDiv"};
+    //expected output of these methods, in the same order as the methods in "methods"
+    float[] expectedResults = {Math.nextUp(3.0f), 1.1f, -0.9f, 0.1f,10f};
     Object object;
     Class<?> classz;
     Agent agent;
+    /*
+     * initialization method, instrumenting "Double2FloatTests" with Arg.DOUBLE2FLOAT
+     */
     @Before
     public void instrument() throws ClassNotFoundException, UnmodifiableClassException, InstantiationException, IllegalAccessException{
         
@@ -42,8 +47,6 @@ public class Double2FloatTest {
         Args args = new Args();
 
         args.specify(Arg.DOUBLE2FLOAT);
-        args.specify(Arg.PRINT);
-
         CojacReferencesBuilder builder = new CojacReferencesBuilder(args);
 
         agent = new Agent(builder.build());
@@ -54,13 +57,18 @@ public class Double2FloatTest {
 
         object = classz.newInstance();
     }
-    
+    /*
+     * Post-test method removing instrumentation on "Double2FloatTests"
+     */
     @After
     public void removeInstrumentation() throws UnmodifiableClassException{
         AgentTest.instrumentation.removeTransformer(agent);
         AgentTest.instrumentation.retransformClasses(classz);
     }
     
+    /*
+     * checks one by one that expectedResult[i] equals method[i]() call.
+     */
     @Test
     public void testDouble2FloatConversion() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
         for (int i = 0; i < expectedResults.length; i++) {
