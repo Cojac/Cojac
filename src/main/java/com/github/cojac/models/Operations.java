@@ -34,6 +34,13 @@ public enum Operations {
             
             INEG(Opcodes.INEG,INTEGER_UNARY.description, INTEGER_UNARY_PARAMS.params),
             IINC(Opcodes.IINC,INTEGER_BINARY.description, INTEGER_BINARY_PARAMS.params),
+            ICONST_M1(Opcodes.ICONST_M1, INTEGER_VOID.description, VOID_PARAM.params ),
+            ICONST_0(Opcodes.ICONST_0, INTEGER_VOID.description, VOID_PARAM.params ),
+            ICONST_1(Opcodes.ICONST_1, INTEGER_VOID.description, VOID_PARAM.params ),
+            ICONST_2(Opcodes.ICONST_2, INTEGER_VOID.description, VOID_PARAM.params ),
+            ICONST_3(Opcodes.ICONST_3, INTEGER_VOID.description, VOID_PARAM.params ),
+            ICONST_4(Opcodes.ICONST_4, INTEGER_VOID.description, VOID_PARAM.params ),
+            ICONST_5(Opcodes.ICONST_5, INTEGER_VOID.description, VOID_PARAM.params ),
             
             /*LONGS*/
             LADD(Opcodes.LADD,LONG_BINARY.description, LONG_BINARY_PARAMS.params),
@@ -42,6 +49,8 @@ public enum Operations {
             LDIV(Opcodes.LDIV,LONG_BINARY.description, LONG_BINARY_PARAMS.params),
             
             LNEG(Opcodes.LNEG,LONG_UNARY.description, LONG_UNARY_PARAMS.params),
+            LCONST_0(Opcodes.LCONST_0, LONG_VOID.description, VOID_PARAM.params),
+            LCONST_1(Opcodes.LCONST_1, LONG_VOID.description, VOID_PARAM.params),
             
             /*FLOATS*/
             FADD(Opcodes.FADD,FLOAT_BINARY.description, FLOAT_BINARY_PARAMS.params),
@@ -53,6 +62,9 @@ public enum Operations {
             FCMPG(Opcodes.FCMPG,FLOAT_CMP.description, FLOAT_BINARY_PARAMS.params),//  1 if NaN
             
             FNEG(Opcodes.FNEG,FLOAT_UNARY.description, FLOAT_UNARY_PARAMS.params),
+            FCONST_0(Opcodes.FCONST_0, FLOAT_VOID.description, VOID_PARAM.params),
+            FCONST_1(Opcodes.FCONST_1, FLOAT_VOID.description, VOID_PARAM.params),
+            FCONST_2(Opcodes.FCONST_2, FLOAT_VOID.description, VOID_PARAM.params),
             
             /*DOUBLES*/
             DADD(Opcodes.DADD,DOUBLE_BINARY.description, DOUBLE_BINARY_PARAMS.params),
@@ -64,6 +76,8 @@ public enum Operations {
             DCMPG(Opcodes.DCMPG,DOUBLE_CMP.description, DOUBLE_BINARY_PARAMS.params),//  1 if NaN
             
             DNEG(Opcodes.DNEG,DOUBLE_UNARY.description, DOUBLE_UNARY_PARAMS.params),
+            DCONST_0(Opcodes.DCONST_0, DOUBLE_VOID.description, VOID_PARAM.params),
+            DCONST_1(Opcodes.DCONST_1, DOUBLE_VOID.description, VOID_PARAM.params),
             
             /*CASTING*/
             

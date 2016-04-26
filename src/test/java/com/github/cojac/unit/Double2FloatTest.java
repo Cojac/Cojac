@@ -47,12 +47,13 @@ public class Double2FloatTest {
         Args args = new Args();
 
         args.specify(Arg.DOUBLE2FLOAT);
+        args.specify(Arg.PRINT);
         CojacReferencesBuilder builder = new CojacReferencesBuilder(args);
 
         agent = new Agent(builder.build());
         AgentTest.instrumentation.addTransformer(agent);
 
-         classz = ClassLoader.getSystemClassLoader().loadClass("com.github.cojac.unit.Double2FloatTests");
+        classz = ClassLoader.getSystemClassLoader().loadClass("com.github.cojac.unit.Double2FloatTests");
         AgentTest.instrumentation.retransformClasses(classz);
 
         object = classz.newInstance();

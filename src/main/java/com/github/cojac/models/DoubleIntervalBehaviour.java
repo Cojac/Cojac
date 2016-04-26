@@ -51,6 +51,12 @@ public class DoubleIntervalBehaviour {
        FloatInterval bI = extractValues(b);
        return embedValues(FloatInterval.div(aI, bI));
    }
+   public static double DCONST_0(){
+       return embedValues(new FloatInterval(0.0f));
+   }
+   public static double DCONST_1(){
+       return embedValues(new FloatInterval(1.0f));
+   }
    public static String toString(double a){
        return extractValues(a).toString();
    }
