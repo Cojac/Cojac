@@ -17,6 +17,11 @@
  */
 package com.github.cojac.models;
 
+/**
+ * Enum representing the parameters used by the opcode operations
+ * @author Valentin
+ *
+ */
 public enum Parameters {
     INTEGER_BINARY_PARAMS(int.class, int.class),
     INTEGER_UNARY_PARAMS(int.class),

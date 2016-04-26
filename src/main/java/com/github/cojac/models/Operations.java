@@ -19,6 +19,12 @@ package com.github.cojac.models;
 import  org.objectweb.asm.Opcodes;
 import static com.github.cojac.models.Parameters.*;
 import static com.github.cojac.models.Signatures.*;
+/**
+ * Represents the enumeration of opcode which can be instrumented
+ * 
+ * @author Valentin
+ *
+ */
 public enum Operations {
             /*INTEGERS*/
             IADD(Opcodes.IADD,INTEGER_BINARY.description, INTEGER_BINARY_PARAMS.params),
@@ -91,6 +97,13 @@ public enum Operations {
     public final String signature;
     public final Class<?>[] parameters;
     
+    /**
+     * Represents a opcode operation
+     * 
+     * @param opCodeVal the value of the opcode (specified by the JVM)
+     * @param signature (A String signature described in @see com.github.cojac.models.Signatures
+     * @param parameters (A Class<?> array representing the classes of the parameters @see com.github.cojac.models.Parameters
+     */
     private Operations(int opCodeVal, String signature, Class<?>[] parameters ) {
        this.opCodeVal=opCodeVal;
        //this.opCodeName=opCodeName;

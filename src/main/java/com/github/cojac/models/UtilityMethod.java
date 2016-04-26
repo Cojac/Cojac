@@ -19,7 +19,12 @@ package com.github.cojac.models;
 import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-@Retention(RUNTIME)
+/**
+ * Annotation for an utility method, which therefore will not instrument code.
+ * @author Valentin
+ *
+ */
+@Retention(RUNTIME)//so the annotation can be used reflexively
 public @interface UtilityMethod {
 
 }

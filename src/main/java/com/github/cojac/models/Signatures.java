@@ -16,7 +16,21 @@
  *
  */
 package com.github.cojac.models;
-
+/**
+ * Enum representing all used opcode signatures in Strings
+ * 
+ * format: "([param]*)[return]?" 
+ * Where param and return is of the following types:
+ * <ul>
+ * <li>'I' for int</li>
+ * <li>'J' for long</li>
+ * <li>'F' for float</li>
+ * <li>'D' for double</li>
+ * </ul>
+ * 
+ * @author Valentin
+ *
+ */
 public enum Signatures {
     INTEGER_BINARY("(II)I"),
     INTEGER_UNARY("(I)I"),
