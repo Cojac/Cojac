@@ -21,13 +21,19 @@ package com.github.cojac;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 
+/**
+ * Class visitor specification using the @see com.github.cojac.NewMethodVisitor 
+ * @author Valentin
+ *
+ */
 public class NewClassVisitor extends CojacClassVisitor {
-   
-
     public NewClassVisitor(ClassVisitor cv, CojacReferences references, CojacAnnotationVisitor cav) {
 		super(cv, references, cav);
 		
     }
+    /**
+     * Method called each time a method is visited in an instrumented class.
+     */
     @Override
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
         //System.out.println("visiting method: "+name);
@@ -39,7 +45,9 @@ public class NewClassVisitor extends CojacClassVisitor {
         }      
         return instrumentMethod(mv, access, desc);
     }
-
+    /**
+     * Calls the NewMethodVisitor for each instrumented method.
+     */
     private MethodVisitor instrumentMethod(MethodVisitor parentMv, int access, String desc) {
        // System.out.println("in NewClassVisitor.instrumentMethod");
         MethodVisitor mv=null;
