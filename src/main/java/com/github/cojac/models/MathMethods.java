@@ -36,6 +36,7 @@ public class MathMethods {
         types.put(short.class, "S");
         types.put(char.class, "C");
         types.put(byte.class, "B");
+        types.put(String.class, "Ljava/lang/String;");
     }
     public static ArrayList<Operation> operations = new ArrayList<Operation>();
     static{

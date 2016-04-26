@@ -20,11 +20,12 @@ import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Annotation for an utility method, which therefore will not instrument code.
+ * Annotation for indicating a specific Class, other than "java/lang/Math" in a behaviour.
+ * annotation should be like this: @FromClass("java/lang/Double")
  * @author Gazzola Valentin
  *
  */
 @Retention(RUNTIME)//so the annotation can be used reflexively
-public @interface UtilityMethod {
-
+public @interface FromClass {
+    public String value();
 }

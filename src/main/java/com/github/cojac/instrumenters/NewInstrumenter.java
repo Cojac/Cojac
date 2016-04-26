@@ -26,6 +26,7 @@ import com.github.cojac.Args;
 import com.github.cojac.InstrumentationStats;
 import com.github.cojac.interval.FloatInterval;
 import com.github.cojac.models.DoubleIntervalBehaviour;
+import com.github.cojac.models.FromClass;
 import com.github.cojac.models.MathMethods;
 import com.github.cojac.models.Operation;
 import com.github.cojac.models.Operations;
@@ -119,27 +120,42 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
                     if(!Modifier.isPublic(modifiers) || !Modifier.isStatic(modifiers)){
                         continue;
                     }
-                    boolean matches = false;
-                    for(Method mathm : Math.class.getMethods()){
-                        modifiers = mathm.getModifiers();
-                        if(!Modifier.isPublic(modifiers) || !Modifier.isStatic(modifiers)){
-                            continue;
+                    if(m.isAnnotationPresent(FromClass.class)){
+                        String classQualifier = m.getAnnotation(FromClass.class).value();
+                        try {
+                            Class.forName(classQualifier.replace('/', '.')).getMethod(m.getName(), m.getParameterTypes());
+                            
+                        } catch (NoSuchMethodException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
                         }
-                        if(mathm.getName().equals(m.getName()) && matchingParameters(mathm.getParameters(), m.getParameters())
-                                &&mathm.getReturnType().equals(m.getReturnType())){
-                            matches = true;
-                            break;
+                    }else{
+                        boolean matches = false;
+                        for(Method mathm : Math.class.getMethods()){
+                            modifiers = mathm.getModifiers();
+                            if(!Modifier.isPublic(modifiers) || !Modifier.isStatic(modifiers)){
+                                continue;
+                            }
+                            if(mathm.getName().equals(m.getName()) && matchingParameters(mathm.getParameters(), m.getParameters())
+                                    &&mathm.getReturnType().equals(m.getReturnType())){
+                                matches = true;
+                                break;
+                            }
                         }
+                        if(!matches)
+                        for(Operations op: Operations.values()){
+                            if(op.name().equals(m.getName()) && op.signature.equals(methodOperation.signature) ){
+                                matches = true;
+                                break;
+                            }
+                        } 
+                        if(!matches)
+                            System.out.println(m.getName()+methodOperation.signature+
+                                    " doesn't matches any math method nor any bytecode operation.");
                     }
-                    for(Operations op: Operations.values()){
-                        if(op.name().equals(m.getName()) && op.signature.equals(methodOperation.signature) ){
-                            matches = true;
-                            break;
-                        }
-                    }
-                    if(!matches)
-                        System.out.println(m.getName()+methodOperation.signature+
-                                " doesn't matches any math method nor any bytecode operation.");
+                    
+                    
+                    
                 }
             }
         } catch (SecurityException e) {
@@ -195,8 +211,8 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
                 }
             }
         }
-        /*Populate methods*/
-        for(Operation op: MathMethods.operations){
+        /*Populate Math methods*/
+       /* for(Operation op: MathMethods.operations){
             for (int i = 0; i < BEHAVIOURS.length; i++) {
                 try {
                     //behaviourClass.getClass().getMethod(op.opCodeName, op.parameters);
@@ -204,9 +220,10 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
                     if (m.isAnnotationPresent(UtilityMethod.class)){
                         break;
                      }
+                    
                     //NewDoubles.class.getMethod(op.opCodeName, op.parameters);
-                    //System.out.println("method \""+op.opCodeName+op.signature+"\" modified.");
-                    methods.put(op.opCodeName+op.signature, new InvokableMethod(BEHAVIOURS[i], op.opCodeName, op.signature));
+                    System.out.println("method \""+op.opCodeName+op.signature+"\" modified.");
+                    mathMethods.put(op.opCodeName+op.signature, new InvokableMethod(BEHAVIOURS[i], op.opCodeName, op.signature));
                 } catch (NoSuchMethodException e) {
                     //Method not implemented, no problem.
                 }catch(Exception e){
@@ -214,30 +231,47 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
                 }
             }
         }
-        /*Populate LDC*/
-       /* try {
-            for (int i = 0; i < BEHAVIOURS.length; i++) {
+        */
+        for (int i = 0; i < BEHAVIOURS.length; i++) {
+            try {
                 for(Method m:Class.forName(FULLY_QUALIFIED_BEHAVIOURS[i]).getMethods()){
                     //Operation op = MathMethods.toStaticOperation(m);
-                    if (m.isAnnotationPresent(NoCojacInstrumentation.class)){
+                    if (m.isAnnotationPresent(UtilityMethod.class)){
                         break;
                      }
                     int modifiers = m.getModifiers();
-                    Operation methodOperation = MathMethods.toStaticOperation(m);
                     if(!Modifier.isPublic(modifiers) || !Modifier.isStatic(modifiers)){
                         continue;
                     }
                     boolean matches = false;
+                    if(!m.isAnnotationPresent(FromClass.class)){
+                        try {
+                            Math.class.getMethod(m.getName(), m.getParameterTypes());
+                            Operation op = MathMethods.toStaticOperation(m);
+                            methods.put("java/lang/Math"+op.opCodeName+op.signature, new InvokableMethod(BEHAVIOURS[i], op.opCodeName, op.signature));
+                        } catch (NoSuchMethodException e) {
+                            // not a Math method.
+                        }
+                    }else{
+                        String classQualifier = m.getAnnotation(FromClass.class).value();
+                        try {
+                            Class.forName(classQualifier.replace('/', '.')).getMethod(m.getName(), m.getParameterTypes());
+                            Operation op = MathMethods.toStaticOperation(m);
+                           // System.out.println("method \""+op.opCodeName+op.signature+"\" from "+classQualifier+" modified.");
+                            methods.put(classQualifier+op.opCodeName+op.signature, new InvokableMethod(BEHAVIOURS[i], op.opCodeName, op.signature));
+                        } catch (NoSuchMethodException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
                     
                 }
+            } catch (SecurityException | ClassNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
-        } catch (SecurityException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }*/
+        }
+        
     }
 
     @Override
@@ -260,13 +294,13 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
         return invocations.containsKey(opcode);
     }
     
-    public void instrumentMethod(MethodVisitor mv, String name, String signature) { 
-       // System.out.println("instrumenting method: "+name);
-        methods.get(name+signature).invokeStatic(mv);
+    public void instrumentMethod(MethodVisitor mv,String owner, String name, String signature) { 
+        //System.out.println("instrumenting method: "+name);
+        methods.get(owner+name+signature).invokeStatic(mv);
     }
-    public boolean wantsToInstrumentMethod(int opcode, String name, String signature) {
-        //System.out.println("Wants to instrument method: "+name+"  "+methods.containsKey(name+signature));
-        return (opcode == Opcodes.INVOKESTATIC) && methods.containsKey(name+signature);
+    public boolean wantsToInstrumentMethod(int opcode,String owner, String name, String signature) {
+        //System.out.println("Wants to instrument method: "+name+signature+" from "+owner+" "+methods.containsKey(owner+name+signature));
+        return (opcode == Opcodes.INVOKESTATIC) && methods.containsKey(owner+name+signature);
         
     }
     public void instrumentLDC(MethodVisitor mv, Object cst){

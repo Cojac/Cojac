@@ -112,7 +112,7 @@ public enum Operations {
     public final Class<?>[] parameters;
     
     /**
-     * Represents a opcode operation
+     * Represents an opcode operation
      * 
      * @param opCodeVal the value of the opcode (specified by the JVM)
      * @param signature (A String signature described in @see com.github.cojac.models.Signatures

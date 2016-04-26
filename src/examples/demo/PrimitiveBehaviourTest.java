@@ -2,9 +2,8 @@ package demo;
 
 public class PrimitiveBehaviourTest {
     public static void main(String[] args) {
-        // TODO Auto-generated method stub
-        double f = 1f;
-        System.out.println("f: "+f);
+        String s = "2.32340";
+        System.out.println("s= "+s+",   2s ="+2*Double.parseDouble(s));
         double a=10.000002, b=2;
         Double c = new Double(3);
         System.out.println("a = "+Double.toString(a)+", b = "+Double.toString(b)+ ", c= "+Double.toString(c));

@@ -57,9 +57,16 @@ public class DoubleIntervalBehaviour {
    public static double DCONST_1(){
        return embedValues(new FloatInterval(1.0f));
    }
+   @FromClass("java/lang/Double")
    public static String toString(double a){
        return extractValues(a).toString();
    }
+   @FromClass("java/lang/Double")
+   public static double parseDouble(String s){
+       double a = Double.parseDouble(s);
+       return embedValues(new FloatInterval((float)a));
+   }
+   
    @UtilityMethod
    public static FloatInterval extractValues(double d) {
        long dL = Double.doubleToLongBits(d);

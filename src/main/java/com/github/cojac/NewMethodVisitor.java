@@ -63,19 +63,13 @@ final class NewMethodVisitor extends LocalVariablesSorter {
     }
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-        if (opcode == INVOKESTATIC /*&& args.isOperationEnabled(Arg.MATHS)*/ &&
-            ("java/lang/Math".equals(owner) || "java/lang/StrictMath".equals(owner))) {
-            if (instrumenter.wantsToInstrumentMethod(opcode, name,desc)){
-                instrumenter.instrumentMethod(mv, name, desc);
-            }else{
-                super.visitMethodInsn(opcode, owner, name, desc, itf);
-            }
-        } else if(args.isSpecified(Arg.DOUBLE_INTERVAL) && opcode == INVOKESTATIC  &&
-                name.equals("toString") && owner.equals("java/lang/Double")){
-            new InvokableMethod(args.getBehaviour(), name, desc , opcode).invokeStatic(mv);
-        }else {
+   
+        if (instrumenter.wantsToInstrumentMethod(opcode, owner,name,desc)){
+            instrumenter.instrumentMethod(mv,owner, name, desc);
+        }else{
             super.visitMethodInsn(opcode, owner, name, desc, itf);
         }
+   
     }
     @Override
     public void visitLdcInsn(Object cst){
