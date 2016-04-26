@@ -26,11 +26,6 @@ import com.github.cojac.instrumenters.IOpcodeInstrumenter;
 import com.github.cojac.instrumenters.NewInstrumenter;
 import com.github.cojac.instrumenters.IOpcodeInstrumenterFactory;
 import com.github.cojac.instrumenters.InvokableMethod;
-import com.github.cojac.models.CheckedMaths;
-import com.github.cojac.models.DoubleIntervalBehaviour;
-
-import java.util.Arrays;
-import java.util.List;
 
 import static org.objectweb.asm.Opcodes.*;
 /**
