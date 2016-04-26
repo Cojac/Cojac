@@ -84,13 +84,13 @@ public class FloatInterval implements Comparable<FloatInterval> {
      */
     @Override
     public int compareTo(FloatInterval o) {
-        if (this.isNan() && o.isNan()) {
+        if (this.isNaN() && o.isNaN()) {
             return 0;
         }
-        if (this.isNan()) {
+        if (this.isNaN()) {
             return -1;
         }
-        if (o.isNan()) {
+        if (o.isNaN()) {
             return 1;
         }
         if (o.sup < this.inf) {
@@ -117,10 +117,10 @@ public class FloatInterval implements Comparable<FloatInterval> {
      *         - value > sup -> -1, the value is over the set
      */
     public int compareTo(double value) {
-        if (this.isNan() && Double.isNaN(value)) {
+        if (this.isNaN() && Double.isNaN(value)) {
             return 0;
         }
-        if (this.isNan()) {
+        if (this.isNaN()) {
             return -1;
         }
         if (Double.isNaN(value)) {
@@ -142,7 +142,7 @@ public class FloatInterval implements Comparable<FloatInterval> {
      * @return true only if the Interval are strictly equal
      */
     public boolean strictlyEquals(FloatInterval o) {
-        return !(o.isNan() || this.isNan()) &&
+        return !(o.isNaN() || this.isNaN()) &&
                 (this.inf == o.inf && this.sup == o.sup);
     }
     
@@ -152,7 +152,7 @@ public class FloatInterval implements Comparable<FloatInterval> {
 
     @Override
     public String toString() {
-        if (isNan()) {
+        if (isNaN()) {
             return "[NaN;NaN]";
         }
         return "[" + this.inf + ";" + this.sup + "]";
@@ -190,7 +190,7 @@ public class FloatInterval implements Comparable<FloatInterval> {
     /**
      * @return true if the interval is bounding NaN
      */
-    public boolean isNan() {
+    public boolean isNaN() {
         return Double.isNaN(inf) || Double.isNaN(sup);
     }
 
@@ -204,7 +204,7 @@ public class FloatInterval implements Comparable<FloatInterval> {
      *         else false
      */
     public boolean hasValidBounds() {
-        return this.isNan() || this.inf <= this.sup;
+        return this.isNaN() || this.inf <= this.sup;
     }
 
     /* Mathematical operations */
@@ -306,7 +306,7 @@ public class FloatInterval implements Comparable<FloatInterval> {
      *         interval
      */
     public static FloatInterval pow(FloatInterval base, float exponent) {
-        assert (base.isNan() || base.inf >= 0.0);
+        assert (base.isNaN() || base.inf >= 0.0);
         
         float v1 =  pow(base.inf, exponent);
         float v2 =  pow(base.sup, exponent);
@@ -325,7 +325,7 @@ public class FloatInterval implements Comparable<FloatInterval> {
      *         easy to compute
      */
     public static FloatInterval pow(FloatInterval base, FloatInterval exponent) {
-        assert (base.isNan() || base.inf >= 0.0);
+        assert (base.isNaN() || base.inf >= 0.0);
         float v1 = Math.min(Math.min(pow(base.inf, exponent.inf), pow(base.inf, exponent.sup)), Math.min(pow(base.sup, exponent.inf), pow(base.sup, exponent.sup)));
         float v2 = Math.max(Math.max(pow(base.inf, exponent.inf), pow(base.inf, exponent.sup)), Math.max(pow(base.sup, exponent.inf), pow(base.sup, exponent.sup)));
         return roundedInterval(v1, v2);
@@ -356,7 +356,7 @@ public class FloatInterval implements Comparable<FloatInterval> {
         if (a.inf < 0) {
             return new FloatInterval(Float.NaN);
         }
-        assert (a.isNan() || a.inf > 0.0);
+        assert (a.isNaN() || a.inf > 0.0);
         float v1 = (float)Math.log(a.inf);
         float v2 = (float)Math.log(a.sup);
         return roundedInterval(v1, v2);
@@ -374,7 +374,7 @@ public class FloatInterval implements Comparable<FloatInterval> {
         if (a.inf < 0) {
             return new FloatInterval(Float.NaN);
         }
-        assert (a.isNan() || a.inf > 0.0);
+        assert (a.isNaN() || a.inf > 0.0);
         float v1 = (float)Math.log10(a.inf);
         float v2 = (float)Math.log10(a.sup);
         return roundedInterval(v1, v2);
@@ -388,7 +388,7 @@ public class FloatInterval implements Comparable<FloatInterval> {
      * @return a new FloatInterval that's the result of the sqrt operation
      */
     public static FloatInterval sqrt(FloatInterval a) {
-        assert (a.isNan() || a.inf > 0.0);
+        assert (a.isNaN() || a.inf > 0.0);
         float v1 = (float)Math.sqrt(a.inf);
         float v2 = (float)Math.sqrt(a.sup);
         return roundedInterval(v1, v2);
@@ -425,7 +425,7 @@ public class FloatInterval implements Comparable<FloatInterval> {
 
     /** @return a new FloatInterval that's the result of the cosine operation on a*/
     public static FloatInterval cos(FloatInterval a) {
-        if (a.isNan()) return new FloatInterval(Float.NaN);
+        if (a.isNaN()) return new FloatInterval(Float.NaN);
         FloatInterval wholeDomain = new FloatInterval(-1,+1);
         if (width(a) >= TWO_PI) return wholeDomain;
         float inf = (a.inf % TWO_PI + TWO_PI) % TWO_PI; // now inf is in [0..2PI[
@@ -455,7 +455,7 @@ public class FloatInterval implements Comparable<FloatInterval> {
     /** @return a new FloatInterval that's the result of the tangent operation on a*/
     public static FloatInterval tan(FloatInterval a) {
         // (see [Julmy15], p. 26)
-        if (a.isNan()) 
+        if (a.isNaN()) 
             return new FloatInterval(Float.NaN);
         FloatInterval wholeDomain = new FloatInterval(Float.NEGATIVE_INFINITY, 
                                                         Float.POSITIVE_INFINITY);
@@ -515,7 +515,7 @@ public class FloatInterval implements Comparable<FloatInterval> {
      * @return a new FloatInterval that's the negative the operand
      */
     public static FloatInterval asin(FloatInterval a) {
-        assert a.isNan() || (a.inf >= -1.0 && a.sup <= 1.0);
+        assert a.isNaN() || (a.inf >= -1.0 && a.sup <= 1.0);
         float v1 = (float)Math.asin(a.inf);
         float v2 = (float)Math.asin(a.sup);
         return roundedInterval(v1, v2);
@@ -529,7 +529,7 @@ public class FloatInterval implements Comparable<FloatInterval> {
      * @return a new FloatInterval that's the negative the operand
      */
     public static FloatInterval acos(FloatInterval a) {
-        assert a.isNan() || (a.inf >= -1.0 && a.sup <= 1.0);
+        assert a.isNaN() || (a.inf >= -1.0 && a.sup <= 1.0);
         float v1 = (float)Math.acos(a.sup);
         float v2 = (float)Math.acos(a.inf);
         return roundedInterval(v1, v2);
@@ -552,7 +552,7 @@ public class FloatInterval implements Comparable<FloatInterval> {
      * @return a new FloatInterval that's the result of the a%b operation
      */
     public static FloatInterval modulo(FloatInterval a, FloatInterval b) {
-        if (a.isNan() || b.isNan()) return new FloatInterval(Float.NaN);
+        if (a.isNaN() || b.isNaN()) return new FloatInterval(Float.NaN);
         if (b.contains(0.0f))        return new FloatInterval(Float.NaN);
 
         int q1=(int)(a.inf/b.inf), q2=(int)(a.sup/b.inf);

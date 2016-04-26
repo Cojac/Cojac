@@ -49,11 +49,11 @@ public final class NewDoubles {
         return (float)a %(float)b;
     }
     public static int DCMPL(double a, double b){
-        System.out.println("here i am");
+        //System.out.println("here i am");
         return Double.compare((float)a ,(float)b);
     }
     public static int DCMPG(double a, double b){
-        System.out.println("here i am");
+        //System.out.println("here i am");
         if(Double.isNaN(a)||Double.isNaN(b))
             return 1;
         return DCMPL(a,b);
