@@ -34,17 +34,21 @@ package com.github.cojac.models;
 public enum Signatures {
     INTEGER_BINARY("(II)I"),
     INTEGER_UNARY("(I)I"),
+    INTEGER_VOID("()I"),
    
     LONG_BINARY("(JJ)J"),
     LONG_UNARY("(J)J"),
+    LONG_VOID("()J"),
     
     DOUBLE_BINARY("(DD)D"),
     DOUBLE_UNARY("(D)D"),
     DOUBLE_CMP("(DD)I"),
+    DOUBLE_VOID("()D"),
     
     FLOAT_BINARY("(FF)F"),
     FLOAT_UNARY("(F)F"),
     FLOAT_CMP("(FF)I"),
+    FLOAT_VOID("()F"),
     
     I2S_CAST("(I)I"),
     I2C_CAST("(I)I"),
