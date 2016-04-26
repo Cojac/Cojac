@@ -30,7 +30,8 @@ public enum Parameters {
     FLOAT_BINARY_PARAMS(float.class, float.class),
     FLOAT_UNARY_PARAMS(float.class),
     DOUBLE_BINARY_PARAMS(double.class, double.class),
-    DOUBLE_UNARY_PARAMS(double.class);
+    DOUBLE_UNARY_PARAMS(double.class),
+    VOID_PARAM();
    
     
     public Class<?>[] params;
