@@ -243,7 +243,6 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
                     if(!Modifier.isPublic(modifiers) || !Modifier.isStatic(modifiers)){
                         continue;
                     }
-                    boolean matches = false;
                     if(!m.isAnnotationPresent(FromClass.class)){
                         try {
                             Math.class.getMethod(m.getName(), m.getParameterTypes());
