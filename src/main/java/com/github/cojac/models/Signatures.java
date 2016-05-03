@@ -32,6 +32,7 @@ package com.github.cojac.models;
  *
  */
 public enum Signatures {
+    //TODO: remove parameters enum, include values here.
     INTEGER_BINARY("(II)I"),
     INTEGER_UNARY("(I)I"),
     INTEGER_VOID("()I"),

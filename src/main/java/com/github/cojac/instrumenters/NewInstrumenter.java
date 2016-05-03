@@ -25,6 +25,7 @@ import com.github.cojac.Arg;
 import com.github.cojac.Args;
 import com.github.cojac.InstrumentationStats;
 import com.github.cojac.interval.FloatInterval;
+import com.github.cojac.models.ConstTransform;
 import com.github.cojac.models.DoubleIntervalBehaviour;
 import com.github.cojac.models.FromClass;
 import com.github.cojac.models.MathMethods;
@@ -191,18 +192,45 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
     private void fillMethods() {
         /*Populate operations*/
         for(Operations op: Operations.values()){
+            if(!op.loadsConst){
+                for (int i = 0; i < BEHAVIOURS.length; i++) {
+                    try {
+                        //behaviourClass.getClass().getMethod(op.opCodeName, op.parameters);
+                        
+                        Method m = Class.forName(FULLY_QUALIFIED_BEHAVIOURS[i]).getMethod(op.name(), op.parameters);
+                        if (m.isAnnotationPresent(UtilityMethod.class)){
+                           break;
+                        }
+                        
+                        //NewDoubles.class.getMethod(op.opCodeName, op.parameters);
+                        //System.out.println("method \""+op.name()+"\" modified.");
+                        invocations.put(op.opCodeVal, new InvokableMethod(BEHAVIOURS[i], op.name(), op.signature));
+                        break;
+                    } catch (NoSuchMethodException e) {
+                        //Method not implemented, no problem.
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+            
+        }
+        /*Populate Constant loading methods*/
+        for(ConstTransform ct: ConstTransform.values()){
+            Operation op = ct.operation;
             for (int i = 0; i < BEHAVIOURS.length; i++) {
                 try {
                     //behaviourClass.getClass().getMethod(op.opCodeName, op.parameters);
                     
-                    Method m = Class.forName(FULLY_QUALIFIED_BEHAVIOURS[i]).getMethod(op.name(), op.parameters);
+                    Method m = Class.forName(FULLY_QUALIFIED_BEHAVIOURS[i]).getMethod(op.opCodeName, op.parameters);
                     if (m.isAnnotationPresent(UtilityMethod.class)){
                        break;
                     }
                     
                     //NewDoubles.class.getMethod(op.opCodeName, op.parameters);
                     //System.out.println("method \""+op.name()+"\" modified.");
-                    invocations.put(op.opCodeVal, new InvokableMethod(BEHAVIOURS[i], op.name(), op.signature));
+                    methods.put(op.opCodeName, new InvokableMethod(BEHAVIOURS[i], op.opCodeName, op.signature));
+                    
                     break;
                 } catch (NoSuchMethodException e) {
                     //Method not implemented, no problem.
@@ -211,27 +239,7 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
                 }
             }
         }
-        /*Populate Math methods*/
-       /* for(Operation op: MathMethods.operations){
-            for (int i = 0; i < BEHAVIOURS.length; i++) {
-                try {
-                    //behaviourClass.getClass().getMethod(op.opCodeName, op.parameters);
-                    Method m = Class.forName(FULLY_QUALIFIED_BEHAVIOURS[i]).getMethod(op.opCodeName, op.parameters);
-                    if (m.isAnnotationPresent(UtilityMethod.class)){
-                        break;
-                     }
-                    
-                    //NewDoubles.class.getMethod(op.opCodeName, op.parameters);
-                    System.out.println("method \""+op.opCodeName+op.signature+"\" modified.");
-                    mathMethods.put(op.opCodeName+op.signature, new InvokableMethod(BEHAVIOURS[i], op.opCodeName, op.signature));
-                } catch (NoSuchMethodException e) {
-                    //Method not implemented, no problem.
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-            }
-        }
-        */
+        /* Populate methods (math and others) */
         for (int i = 0; i < BEHAVIOURS.length; i++) {
             try {
                 for(Method m:Class.forName(FULLY_QUALIFIED_BEHAVIOURS[i]).getMethods()){
@@ -302,18 +310,21 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
         return (opcode == Opcodes.INVOKESTATIC) && methods.containsKey(owner+name+signature);
         
     }
-    public void instrumentLDC(MethodVisitor mv, Object cst){
-        if(cst instanceof Double){
+    public void instrumentConstLoading(MethodVisitor mv, Class<?> cst){
+        /*if(cst instanceof Double){
             double c = (double) cst;
             float inf = Math.nextDown((float)c);
             float sup = Math.nextUp((float)c);
             mv.visitLdcInsn(DoubleIntervalBehaviour.embedValues(new FloatInterval(inf,sup)));
         }else
-            mv.visitLdcInsn(cst);
+            mv.visitLdcInsn(cst);*/
+        ConstTransform methodToUse = ConstTransform.getMethodForClass(cst);
+        methods.get(methodToUse.operation.opCodeName).invoke(mv);
     }
-    public boolean wantsToInstrumentLDC(Object cst){
-        if(BEHAVIOURS[0].equals("com/github/cojac/models/DoubleIntervalBehaviour"))
-            return true;
-        return false;
+    public boolean wantsToInstrumentConstLoading(Class<?> o){
+        ConstTransform methodToUse = ConstTransform.getMethodForClass(o);
+       return methodToUse != null && methods.containsKey(methodToUse.operation.opCodeName);
+        
+     
     }
 }

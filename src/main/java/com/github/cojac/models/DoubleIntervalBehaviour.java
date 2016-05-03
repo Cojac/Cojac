@@ -16,9 +16,7 @@
  *
  */
 package com.github.cojac.models;
-
 import com.github.cojac.interval.FloatInterval;
-import com.github.cojac.models.ConversionBehaviour.Conversion;
 
 public class DoubleIntervalBehaviour {
    /*inf value is stored as the 35 MS bits of the double
@@ -107,8 +105,6 @@ public class DoubleIntervalBehaviour {
        FloatInterval bI = extractValues(b);
        return embedValues(aI.compareTo(bI)<=0?aI:bI);
    }
-   
-  
    public static double pow(double a, double b){
        return embedValues(FloatInterval.pow(extractValues(a),extractValues(b)));
    }
@@ -137,16 +133,20 @@ public class DoubleIntervalBehaviour {
        FloatInterval aI = extractValues(a);
        return Math.ulp(aI.inf);
    }
-   public static double DCONST_0(){
+  /* public static double DCONST_0(){
        return embedValues(new FloatInterval(0.0f));
    }
    public static double DCONST_1(){
        return embedValues(new FloatInterval(1.0f));
-   }
+   }*/
+   public static double fromUninstrumentedDouble(double d){
+    return embedValues(new FloatInterval((float)d));
+       
+   }/*
    @FromClass("java/lang/Double")
    public static String toString(double a){
        return extractValues(a).toString();
-   }
+   }*/
    @FromClass("java/lang/Double")
    public static double parseDouble(String s){
        double a = Double.parseDouble(s);

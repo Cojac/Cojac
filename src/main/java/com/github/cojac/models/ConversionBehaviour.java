@@ -199,6 +199,7 @@ public class ConversionBehaviour {
         return outTransform( Math.toRadians(inTransform(a)));
     }
     public static double ulp(double a){
+        //TODO: comme les autres.
         return Math.ulp(inTransform(a));
     }
     /**

@@ -24,6 +24,7 @@ import org.objectweb.asm.commons.LocalVariablesSorter;
 
 import com.github.cojac.instrumenters.IOpcodeInstrumenter;
 import com.github.cojac.instrumenters.NewInstrumenter;
+import com.github.cojac.models.Operations;
 import com.github.cojac.instrumenters.IOpcodeInstrumenterFactory;
 import com.github.cojac.instrumenters.InvokableMethod;
 
@@ -33,8 +34,18 @@ import static org.objectweb.asm.Opcodes.*;
  * and change the method's behaviour.
  * @author Valentin
  */
+
+import java.util.ArrayList;
+import java.util.BitSet;
 final class NewMethodVisitor extends LocalVariablesSorter {
     private final IOpcodeInstrumenterFactory factory;
+    private static BitSet constLoadInst = new BitSet(255);//there is 255 possible opcodes
+    static{
+        for(Operations op: Operations.values()){
+            if(op.loadsConst)
+                constLoadInst.set(op.opCodeVal);
+        }
+    }
     private final InstrumentationStats stats;
     private final Args args;
     private final String classPath;
@@ -58,7 +69,12 @@ final class NewMethodVisitor extends LocalVariablesSorter {
         if (instrumenter == null) {
             super.visitInsn(opCode);
         } else {
-            instrumenter.instrument(mv, opCode); //, classPath, methods, reaction, this);
+            if(constLoadInst.get(opCode)){//the operation is a constant loading one
+                super.visitInsn(opCode);//load the constant
+                visitConstantLoading(Operations.getReturnType(opCode));//transform it
+            }else{
+                instrumenter.instrument(mv, opCode); //, classPath, methods, reaction, this);
+            }
         }
     }
     @Override
@@ -73,12 +89,17 @@ final class NewMethodVisitor extends LocalVariablesSorter {
     }
     @Override
     public void visitLdcInsn(Object cst){
-        if(instrumenter.wantsToInstrumentLDC(cst)){
-            instrumenter.instrumentLDC(mv, cst);
+        super.visitLdcInsn(cst);
+        if(instrumenter.wantsToInstrumentConstLoading(cst.getClass())){
+            //instrumenter.instrumentLDC(mv, cst);
+            visitConstantLoading(cst.getClass());
         }else{
-            super.visitLdcInsn(cst);
+         //   super.visitLdcInsn(cst);
         }
         
+    }
+    private void visitConstantLoading(Class<?> cl){
+        instrumenter.instrumentConstLoading(mv, cl);
     }
     
 }

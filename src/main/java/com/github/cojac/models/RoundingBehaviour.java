@@ -2,9 +2,9 @@ package com.github.cojac.models;
 
 public class RoundingBehaviour {
     
-    public static native double DADD(double a, double b);
+   // public static native double DADD(double a, double b);
     static{
-        System.load("C:/Users/Valentin/Documents/workspace/Cojac/NativeRounding.dll");
+     //   System.load("C:/Users/Valentin/Documents/workspace/Cojac/NativeRounding.dll");
     }
     /*public static RoundingMode rm = RoundingMode.DOWN;
     
