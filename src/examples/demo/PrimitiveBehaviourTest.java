@@ -21,5 +21,12 @@ public class PrimitiveBehaviourTest {
         System.out.println("a < b = "+(a<b));
         System.out.println("sqrt(a)  = "+Double.toString(Math.sqrt(a))+"\nin double: 3.1622779763961297");
         System.out.println("pow(4,2) = "+Double.toString(Math.pow(4,2)));
+        
+        double d = 1.0;
+        double e = 1E-16;
+        System.out.println(" d + e = " +(d+e));
+        System.out.println(" d - e = " +(d-e));
+        System.out.println("-d - e = " +(-d-e));
+        System.out.println("-d + e = " +(-d+e));
     }
 }

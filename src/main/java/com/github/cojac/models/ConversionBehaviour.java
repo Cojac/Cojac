@@ -28,13 +28,26 @@ package com.github.cojac.models;
  * <li>Arbitrary precision</li>
  * </ul>
  * 
- * 
- * 
+ * com.github.cojac.models.ConversionBehaviour
+ * FE_UPWARDS   = 2048
+ * FE_TONEAREST = 0
+ * FE_TOWARDZERO= 3072
+ * FE_DOWNWARD  = 1024
  * @author Gazzola Valentin
  *
  */
 public class ConversionBehaviour {
+    /*Native rounding behaviour methods and constants*/
+   public static native int changeRounding(int rounding);
+    
+   
+   static{
+       //System.load("C:/Users/Valentin/Documents/workspace/Cojac/target/classes/NativeRoundingMode.dll");
+       //System.load("C:/NativeRoundingMode.dll");
+       System.loadLibrary("NativeRoundingMode");
+   }
    public static Conversion c  = Conversion.NoConversion;
+   /*Arbitrary precision behaviour variables*/
    public static final int SIGNIFICATIVE_DOUBLE_BITS = 52;
    public static final int SIGNIFICATIVE_FLOAT_BITS = 23;
    private static int significativeBits=SIGNIFICATIVE_DOUBLE_BITS;
@@ -213,6 +226,9 @@ public class ConversionBehaviour {
            return (float)a;
         case Arbitrary:
            return Double.longBitsToDouble(Double.doubleToLongBits(a)&mask);
+        case NativeRounding:
+            System.out.println("oldRoundingValue: "+changeRounding(10));
+            return a;
         }
         return a;
     }
@@ -240,6 +256,10 @@ public class ConversionBehaviour {
         case Arbitrary:
             if (significativeBits<SIGNIFICATIVE_FLOAT_BITS)
                 return (float) Double.longBitsToDouble(Double.doubleToLongBits(a)&mask);
+            break;
+        case NativeRounding:
+            System.out.println("oldRoundingValue: "+changeRounding(10));
+            return a;
         }
         return a;
     }
@@ -265,7 +285,8 @@ public class ConversionBehaviour {
     public enum Conversion{
         Double2Float,
         Arbitrary,
-        NoConversion;
+        NoConversion,
+        NativeRounding;
     }
     @UtilityMethod
     public static void setSignificativeBits(int nb){

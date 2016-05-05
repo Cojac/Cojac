@@ -60,7 +60,7 @@ public final class Args {
         behaviours.put(Arg.ROUND_BIASED_RANDOM, "com/github/cojac/models/PseudoRoundingBehaviour");
         behaviours.put(Arg.ARBITRARY_PRECISION, "com/github/cojac/models/ConversionBehaviour");
         behaviours.put(Arg.DOUBLE_INTERVAL, "com/github/cojac/models/DoubleIntervalBehaviour");
-        behaviours.put(Arg.ROUNDING, "com/github/cojac/models/RoundingBehaviour");
+        behaviours.put(Arg.ROUNDING, "com/github/cojac/models/ConversionBehaviour");
     }
     private static String USAGE =
              "java -javaagent:cojac.jar=\"[OPTIONS]\" YourApp [appArgs]\n"

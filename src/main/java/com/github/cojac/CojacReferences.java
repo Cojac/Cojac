@@ -341,7 +341,9 @@ public final class CojacReferences {
             if(args.isSpecified(Arg.ARBITRARY_PRECISION)){
                 ConversionBehaviour.c = Conversion.Arbitrary;
                 ConversionBehaviour.setSignificativeBits(Integer.valueOf(args.getValue(Arg.ARBITRARY_PRECISION)));
-                
+            }
+            if(args.isSpecified(Arg.ROUNDING)){
+                ConversionBehaviour.c = Conversion.NativeRounding;
             }
             
             return new CojacReferences(this);
