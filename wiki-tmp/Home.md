@@ -1,4 +1,4 @@
-<p align="center">
+﻿<p align="center">
 <img src="https://github.com/Cojac/Cojac/wiki/images/logo-cojac-512.png"
    width=256" />
 <h1 align="center">********** User Guide **********</h1>
@@ -27,14 +27,17 @@
   4. [Number model "Discrete stochastic arithmetic"](home#34---number-model-discrete-stochastic-arithmetic)
   5. [Number model "Automatic differentiation"](home#35---number-model-automatic-differentiation)
 
-4. [Detailed usage](home#4---detailed-usage)
+4. [COJAC: Changing Java's primitive type behaviour](home#4---Changing-javas-primitive-type-behaviour)
 
-5. [Limitations and known issues](home#5---limitations-and-known-issues)
 
-  1. [Issues with the sniffer](home#51---issues-with-the-sniffer)
-  2. [Issues with the wrapper](home#52---issues-with-the-wrapper)
+5. [Detailed usage](home#5---detailed-usage)
 
-6. [And now...](home#6---and-now)
+6. [Limitations and known issues](home#6---limitations-and-known-issues)
+
+  1. [Issues with the sniffer](home#61---issues-with-the-sniffer)
+  2. [Issues with the wrapper](home#62---issues-with-the-wrapper)
+
+7. [And now...](home#7---and-now)
 
 --------------------------------------------------
 # 1 - Introduction
@@ -65,7 +68,7 @@ into richer number types, so that you can experiment, at a very low cost, some
 beautiful models such as arbitrary precision numbers, interval computation,
 or even the marvelous automatic differentiation. 
 See [§3](home#3---cojac-the-enriching-wrapper). This second tool is fun but still experimental (some
-[limitations](home#52---issues-with-the-wrapper) such as quite naive models implementation, 
+[limitations](home#62---issues-with-the-wrapper) such as quite naive models implementation, 
 strong slowdown, poorly tested support for Java8 lambdas, problem when user-code 
 is "called back" from Java library...).
 
@@ -142,7 +145,7 @@ The COJAC sniffer tracks the following kinds of event:
 Note that all these example expressions, when written verbatim in Java, 
 are evaluated at compile-time because they involve only literal values; so in 
 that (uninteresting) case, the problems won't be detected by COJAC (see 
-[known issues](home#51---issues-with-the-sniffer)).
+[known issues](home#61---issues-with-the-sniffer)).
 
 --------------------------------------------------
 ## 2.2 - Configuring what COJAC will detect
@@ -488,9 +491,27 @@ f'(x): 16.0
 ```
 
 As you can check, the results are those expected!
+--------------------------------------------------
+# 4 - Changing Java's primitive type behaviour
+
+Cojac implements multiple new behaviours for java, one of which being the numerical sniffer. We have tried to add up to java behaviours that we felt were missing, like in the sniffer, where we fill java's holes about IEEE754 floating-point implementation, that was lacking *overflow*, *smearing*, and so on. Now, we also added some behaviours to java for doing much more other things:
+
+* Double to float casting, to try out a program's reaction to less precision calculation (to see if the program's behaviour drastically changed or if the result stays reasonable).
+
+* Change (downwards) arbitrarly the precision of all floating-point calculation, with the same goal as the Casting of double to float, but with more freedom.
+
+* Change the rounding mode of java's arithmetic
+  * *Artificially*, by adding or removing ulps.
+  * Natively, with C code that allow to change the processor's rounding mode.
+
+* Use all double as intervals (with bounds of roughly float precision)
+
+
+
+
 
 --------------------------------------------------
-# 4 - Detailed usage
+# 5 - Detailed usage
 
 
 Here is the full manpage-like description of COJAC, as produced by the help argument (`java -javaagent:cojac.jar="-h"`): 
@@ -560,11 +581,11 @@ Two nice tools to enrich Java arithmetic capabilities, on-the-fly:
 ```
 
 --------------------------------------------------
-# 5 - Limitations and known issues
+# 6 - Limitations and known issues
 
 This section discusses a couple of issues for the current version of Cojac.
 
-## 5.1 - Issues with the sniffer
+## 6.1 - Issues with the sniffer
 
 The sniffer part of COJAC is rather stable. Here are some limitations:
 
@@ -579,7 +600,7 @@ The sniffer part of COJAC is rather stable. Here are some limitations:
  you dream of a numerical sniffer not limited to the Java world, have a look at 
  [cojac-grind](https://github.com/Cojac/cojac-grind)...
 
-## 5.2 - Issues with the wrapper
+## 6.2 - Issues with the wrapper
 
 The wrapper part of COJAC should be considered an experimental prototype. Here 
 are some limitations:
@@ -612,7 +633,7 @@ every Math.* operations with the required precision in the BigDecimal model.
 * Of course, the slow-down is very important.
 
 --------------------------------------------------
-# 6 - And now...
+# 7 - And now...
 
 ...well, happy problem sniffing, and happy number wrapping!  
 
