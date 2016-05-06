@@ -515,9 +515,13 @@ This behaviour is activated with the option `-BD2F`
 Here is a visual example of what it changes to Mandelbrot's fractal ( Java SE Development Kit demo, that you can find here: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) 
 
 Here is a detail of the fractal, with original (double) precision:
+
+
 <img src="/images/MandelbrotDetail.PNG"  width=600" align="center"/>
 
 And here the same detail when instrumented with `-BD2F`
+
+
 <img src="/images/MandelbrotDetail(-BD2F).PNG"  width=600" align="center"/>
 
 The demo works perfectly fine with less precision, the result is similar with less details, but there is no errors.
@@ -531,10 +535,14 @@ The option for this option is `-Ap <bits>`, where `<bits>` is the numbers of bit
 Here is now an example with a mantissa of 5.
 
 First, a view of the Mandelbrot fractal with double precision.
+
+
 <img src="/images/MandelbrotFull.PNG"  width=600" align="center"/>
 
 And now the same view, with Cojac and the option `-Ap 5`.
-<img src="/images/MandelbrotDetail(-BD2F)"  width=600" align="center"/>
+
+
+<img src="/images/MandelbrotFull(-Ap5).PNG"  width=600" align="center"/>
 
 The programm is stable, even with an ultra-low precision, and the result is very *pixelated*, yet similar to the original.
 
