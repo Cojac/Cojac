@@ -506,6 +506,25 @@ Cojac implements multiple new behaviours for java, one of which being the numeri
 
 * Use all double as intervals (with bounds of roughly float precision)
 
+## 4.1 Double to float casting
+
+This mode downgrades every double as a float, therefore testing the arithmetic stability of a program. If your program doesn't produce a similar, less precise result with this mode, you should check (maybe with the other numerous possibilities offered by Cojac?)
+
+This behaviour is activated with the option `-BD2F`
+
+Here is a visual example of what it changes to Mandelbrot's fractal ( Java SE Development Kit demo, that you can find here: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) 
+
+![Fractal detail with the original demo](/images/MandelbrotDetail.PNG)
+![Fractal detail with float precision](/images/MandelbrotDetail(-BD2F).PNG)
+
+
+## 4.2 Arbitrarly low floating-point arithmetics
+
+## 4.3 Artificial *rounding* modes
+
+## 4.4 Native rounding mode
+
+
 
 
 
