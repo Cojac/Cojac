@@ -21,13 +21,7 @@
 
 package demo;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.TreeMap;
 
-import com.github.cojac.models.wrappers.CommonDouble;
-import com.github.cojac.models.wrappers.WrapperSymbolic;
 
 public class ChebfunDemo {
 
@@ -41,10 +35,22 @@ public class ChebfunDemo {
 
     public static void smallTest() {
         double chebfun = COJAC_MAGIC_asChebfun(0.0);
-        chebfun= chebfun*2;
-        double r = COJAC_MAGIC_evaluateChebfunAt(chebfun, 0.5123);
-        System.out.printf("f(x) = %s should be (%s) \n", r, 0.5123);
+//        chebfun*=50;
+//        chebfun = Math.sin(chebfun);
+        chebfun = Math.sin(chebfun);
+        chebfun = COJAC_MAGIC_derivateChebfun(chebfun);
+        chebfun = COJAC_MAGIC_derivateChebfun(chebfun);
+        chebfun = COJAC_MAGIC_derivateChebfun(chebfun);
+        chebfun = COJAC_MAGIC_derivateChebfun(chebfun);
+        chebfun = COJAC_MAGIC_derivateChebfun(chebfun);
+        chebfun = COJAC_MAGIC_derivateChebfun(chebfun);
+        chebfun = COJAC_MAGIC_derivateChebfun(chebfun);
+        chebfun = COJAC_MAGIC_derivateChebfun(chebfun);
+        chebfun = COJAC_MAGIC_derivateChebfun(chebfun);
 
+        
+        double r = COJAC_MAGIC_evaluateChebfunAt(chebfun, 0.5123);
+        System.out.printf("f(x) = %s should be (%s) \n", r, Math.cos(0.5123));
     }
 
     // ----------------------------------------------------
@@ -63,6 +69,9 @@ public class ChebfunDemo {
     }
 
     public static double COJAC_MAGIC_evaluateChebfunAt(double d, double x) {
+        return d;
+    }
+    public static double COJAC_MAGIC_derivateChebfun(double d) {
         return d;
     }
 
