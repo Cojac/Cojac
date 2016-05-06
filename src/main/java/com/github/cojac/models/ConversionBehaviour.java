@@ -29,7 +29,7 @@ package com.github.cojac.models;
  * </ul>
  * 
  * com.github.cojac.models.ConversionBehaviour
- * FE_UPWARDS   = 2048
+ * FE_UPWARD    = 2048
  * FE_TONEAREST = 0
  * FE_TOWARDZERO= 3072
  * FE_DOWNWARD  = 1024
@@ -39,12 +39,17 @@ package com.github.cojac.models;
 public class ConversionBehaviour {
     /*Native rounding behaviour methods and constants*/
    public static native int changeRounding(int rounding);
-    
-   
+   public static final int FE_UPWARD    = 2048;
+   public static final int FE_TONEAREST = 0;
+   public static final int FE_TOWARDZERO= 3072;
+   public static final int FE_DOWNWARD  = 1024;
+   private static int currentRoundingMode = FE_TONEAREST;
+   private static int originalRoundingMode = FE_TONEAREST;
    static{
-       //System.load("C:/Users/Valentin/Documents/workspace/Cojac/target/classes/NativeRoundingMode.dll");
+       System.load("C:/Users/Valentin/Documents/workspace/Cojac/target/NativeRoundingMode.dll");
        //System.load("C:/NativeRoundingMode.dll");
-       System.loadLibrary("NativeRoundingMode");
+       //System.out.println( "java.library.path:  "+System.getProperty("java.library.path"));
+       //System.loadLibrary("NativeRoundingMode");
    }
    public static Conversion c  = Conversion.NoConversion;
    /*Arbitrary precision behaviour variables*/
@@ -227,7 +232,7 @@ public class ConversionBehaviour {
         case Arbitrary:
            return Double.longBitsToDouble(Double.doubleToLongBits(a)&mask);
         case NativeRounding:
-            System.out.println("oldRoundingValue: "+changeRounding(10));
+            changeRounding(currentRoundingMode);
             return a;
         }
         return a;
@@ -243,6 +248,9 @@ public class ConversionBehaviour {
            return (float)a;
         case Arbitrary:
            return Double.longBitsToDouble(Double.doubleToLongBits(a)&mask);
+        case NativeRounding:
+            changeRounding(originalRoundingMode);
+            return a;
         }
         return a;
     }
@@ -258,7 +266,7 @@ public class ConversionBehaviour {
                 return (float) Double.longBitsToDouble(Double.doubleToLongBits(a)&mask);
             break;
         case NativeRounding:
-            System.out.println("oldRoundingValue: "+changeRounding(10));
+            System.out.println("oldRoundingValue: "+changeRounding(currentRoundingMode));
             return a;
         }
         return a;
@@ -273,6 +281,9 @@ public class ConversionBehaviour {
         case Arbitrary:
             if (significativeBits<SIGNIFICATIVE_FLOAT_BITS)
                 return (float) Double.longBitsToDouble(Double.doubleToLongBits(a)&mask);
+        case NativeRounding:
+            changeRounding(originalRoundingMode);
+            return a;
         }
         return a;
     }
@@ -294,6 +305,10 @@ public class ConversionBehaviour {
         if(nb <SIGNIFICATIVE_DOUBLE_BITS && nb >=0)
             mask = mask ^((1L<<(52-nb))-1);
         //System.out.println("mask: "+Long.toBinaryString(mask));
+    }
+    @UtilityMethod
+    public static void setRoundingMode(int mode){
+        currentRoundingMode = mode;
     }
    
 }

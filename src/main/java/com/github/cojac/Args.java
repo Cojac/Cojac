@@ -60,7 +60,9 @@ public final class Args {
         behaviours.put(Arg.ROUND_BIASED_RANDOM, "com/github/cojac/models/PseudoRoundingBehaviour");
         behaviours.put(Arg.ARBITRARY_PRECISION, "com/github/cojac/models/ConversionBehaviour");
         behaviours.put(Arg.DOUBLE_INTERVAL, "com/github/cojac/models/DoubleIntervalBehaviour");
-        behaviours.put(Arg.ROUNDING, "com/github/cojac/models/ConversionBehaviour");
+        behaviours.put(Arg.ROUND_NATIVELY_UP, "com/github/cojac/models/ConversionBehaviour");
+        behaviours.put(Arg.ROUND_NATIVELY_DOWN, "com/github/cojac/models/ConversionBehaviour");
+        behaviours.put(Arg.ROUND_NATIVELY_TO_ZERO, "com/github/cojac/models/ConversionBehaviour");
     }
     private static String USAGE =
              "java -javaagent:cojac.jar=\"[OPTIONS]\" YourApp [appArgs]\n"
@@ -197,7 +199,7 @@ public final class Args {
             || isSpecified(Arg.DOUBLE2FLOAT)|| isSpecified(Arg.ROUND_BIASED_UP)
             || isSpecified(Arg.ROUND_BIASED_DOWN)|| isSpecified(Arg.ROUND_BIASED_RANDOM)
             || isSpecified(Arg.ARBITRARY_PRECISION)||isSpecified(Arg.DOUBLE_INTERVAL)
-            ||isSpecified(Arg.ROUNDING);
+            ||isSpecified(Arg.ROUND_NATIVELY_UP)||isSpecified(Arg.ROUND_NATIVELY_DOWN)||isSpecified(Arg.ROUND_NATIVELY_TO_ZERO);
     }
 
     private boolean areSomeOpcodesSelected() {

@@ -2,6 +2,9 @@ package demo;
 
 public class PrimitiveBehaviourTest {
     public static void main(String[] args) {
+        for(String s: args){
+            System.out.println("arg: "+s);
+        }
         String s = "2.32340";
         System.out.println("s= "+s+",   2s ="+2*Double.parseDouble(s));
         double a=10.000002, b=2.564654654654;
