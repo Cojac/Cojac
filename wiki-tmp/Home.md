@@ -1,4 +1,4 @@
-﻿<p align="center">
+<p align="center">
 <img src="https://github.com/Cojac/Cojac/wiki/images/logo-cojac-512.png"
    width=256" />
 <h1 align="center">********** User Guide **********</h1>
@@ -514,11 +514,29 @@ This behaviour is activated with the option `-BD2F`
 
 Here is a visual example of what it changes to Mandelbrot's fractal ( Java SE Development Kit demo, that you can find here: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) 
 
-![Fractal detail with the original demo](/images/MandelbrotDetail.PNG)
-![Fractal detail with float precision](/images/MandelbrotDetail(-BD2F).PNG)
+Here is a detail of the fractal, with original (double) precision:
+<img src="/images/MandelbrotDetail.PNG"  width=600" align="center"/>
 
+And here the same detail when instrumented with `-BD2F`
+<img src="/images/MandelbrotDetail(-BD2F).PNG"  width=600" align="center"/>
+
+The demo works perfectly fine with less precision, the result is similar with less details, but there is no errors.
 
 ## 4.2 Arbitrarly low floating-point arithmetics
+
+Similarly to the conversion to floats, this behaviours allows to test the effect of having less precise floating point operation (Want to see what results an 8-bit computer would give?)
+
+The option for this option is `-Ap <bits>`, where `<bits>` is the numbers of bits that will be used in the mantissa. If the precision is set to be less than 23 (float's mantissa size) it will affect floats as well as double.
+
+Here is now an example with a mantissa of 5.
+
+First, a view of the Mandelbrot fractal with double precision.
+<img src="/images/MandelbrotFull.PNG"  width=600" align="center"/>
+
+And now the same view, with Cojac and the option `-Ap 5`.
+<img src="/images/MandelbrotDetail(-BD2F)"  width=600" align="center"/>
+
+The programm is stable, even with an ultra-low precision, and the result is very *pixelated*, yet similar to the original.
 
 ## 4.3 Artificial *rounding* modes
 
