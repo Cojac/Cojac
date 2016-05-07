@@ -16,7 +16,7 @@
  *
  */
 
-package com.github.cojac.unit;
+package com.github.cojac.unit.behaviours;
 
 import java.lang.instrument.UnmodifiableClassException;
 import java.lang.reflect.InvocationTargetException;
@@ -28,6 +28,7 @@ import com.github.cojac.Agent;
 import com.github.cojac.Arg;
 import com.github.cojac.Args;
 import com.github.cojac.CojacReferences.CojacReferencesBuilder;
+import com.github.cojac.unit.AgentTest;
 
 public class Double2FloatTest {
     //correspond to the methods in Class "Double2FloatTests" that will be tested
@@ -53,7 +54,7 @@ public class Double2FloatTest {
         agent = new Agent(builder.build());
         AgentTest.instrumentation.addTransformer(agent);
 
-        classz = ClassLoader.getSystemClassLoader().loadClass("com.github.cojac.unit.Double2FloatTests");
+        classz = ClassLoader.getSystemClassLoader().loadClass("com.github.cojac.unit.behaviours.Double2FloatTests");
         AgentTest.instrumentation.retransformClasses(classz);
 
         object = classz.newInstance();

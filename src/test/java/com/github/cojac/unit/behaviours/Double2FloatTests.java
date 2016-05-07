@@ -15,7 +15,7 @@
  *    limitations under the License.
  *
  */
-package com.github.cojac.unit;
+package com.github.cojac.unit.behaviours;
 
 /*
  * These tests should work with the double to float instrumenter. (option -BD2F)

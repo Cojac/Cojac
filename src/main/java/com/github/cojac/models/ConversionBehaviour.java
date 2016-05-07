@@ -38,6 +38,7 @@ package com.github.cojac.models;
  */
 public class ConversionBehaviour {
     /*Native rounding behaviour methods and constants*/
+   @UtilityMethod
    public static native int changeRounding(int rounding);
    public static final int FE_UPWARD    = 2048;
    public static final int FE_TONEAREST = 0;
