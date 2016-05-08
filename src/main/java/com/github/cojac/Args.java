@@ -158,7 +158,8 @@ public final class Args {
                 values.get(Arg.JMX_NAME).setValue(DEFAULT_JMX_NAME);
             }
         }
-        values.get(Arg.STABILITY_THRESHOLD).setValue(DEFAULT_STABILITY_THRESHOLD);
+        if(!isSpecified(Arg.STABILITY_THRESHOLD))
+            values.get(Arg.STABILITY_THRESHOLD).setValue(DEFAULT_STABILITY_THRESHOLD);
         
         if (isSpecified(Arg.FLOAT_WRAPPER)) {
             specify(Arg.REPLACE_FLOATS);
