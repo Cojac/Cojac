@@ -37,8 +37,11 @@ public class ConversionBehaviour {
    public static Conversion c  = Conversion.NoConversion;
    public static final int SIGNIFICATIVE_DOUBLE_BITS = 52;
    public static final int SIGNIFICATIVE_FLOAT_BITS = 23;
+   public static final long DOUBLE_EXP_MASK = 0x7ff0000000000000L;
+   
    private static int significativeBits=SIGNIFICATIVE_DOUBLE_BITS;
    private static long mask = 0xffffffffffffffffL;
+   
    public static double DADD(double a, double b) {
        return outTransform(inTransform(a) + inTransform(b));
    }
@@ -146,25 +149,40 @@ public class ConversionBehaviour {
     
     public static double nextAfter(double a, double b){
         //Necessary to redirect to the float method
-        //TODO: an equivalent trick for the Arbitrary behaviour
         if(c == Conversion.Double2Float){
             return Math.nextAfter((float) a,(float) b);
+        }else if(c== Conversion.Arbitrary){
+            if(Double.isNaN(a)||Double.isNaN(b)){
+                return Double.NaN;
+            }
+            if(b>a){
+                return nextUp(a);
+            }else if(b<a){
+                return nextDown(a);
+            }else
+                return b;
         }
         return Math.nextAfter(inTransform(a), inTransform(b));
     }
     public static double nextDown(double a){
       //Necessary to redirect to the float method
-      //TODO: an equivalent trick for the Arbitrary behaviour
         if(c == Conversion.Double2Float){
             return Math.nextDown((float) a);
+        }else if(c== Conversion.Arbitrary){
+            Long la = Double.doubleToRawLongBits(a);
+            la -= ((1L<<(52-significativeBits)));
+            return Double.longBitsToDouble(la&mask);
         }
         return  Math.nextDown(inTransform(a));
     }
     public static double nextUp(double a){
       //Necessary to redirect to the float method
-      //TODO: an equivalent trick for the Arbitrary behaviour
         if(c == Conversion.Double2Float){
             return Math.nextUp((float) a);
+        }else if(c== Conversion.Arbitrary){
+            Long la = Double.doubleToRawLongBits(a);
+            la += ((1L<<(52-significativeBits)));
+            return Double.longBitsToDouble(la&mask);
         }
         return  Math.nextUp(inTransform(a));
     }
@@ -199,7 +217,15 @@ public class ConversionBehaviour {
         return outTransform( Math.toRadians(inTransform(a)));
     }
     public static double ulp(double a){
-        //TODO: comme les autres.
+        System.out.println("ulp called in conversionBehaviour");
+        if(c == Conversion.Double2Float){//necessary to redirect to the float method
+            return Math.ulp((float) a);
+        }else if(c== Conversion.Arbitrary){
+            Long la = Double.doubleToRawLongBits(a);
+            Long expa = la & DOUBLE_EXP_MASK;
+            expa += ((1L<<(52-significativeBits)));
+            return Double.longBitsToDouble(expa&mask)-1;
+        }
         return Math.ulp(inTransform(a));
     }
     /**
