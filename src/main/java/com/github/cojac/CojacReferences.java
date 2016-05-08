@@ -205,9 +205,6 @@ public final class CojacReferences {
         return true;
     }
     public boolean hasToBeInstrumented(String className, String methodName) {
-        System.out.println("Classname = "+className);
-        System.out.println("MethodName = "+methodName);
-        
         if(classesToInstrument != null){
             if (!hasToBeInstrumented(className))
                 return false; 
@@ -219,9 +216,6 @@ public final class CojacReferences {
         return true;
     }
     public boolean hasToBeInstrumented(String className, int lineNb) {
-        System.out.println("Classname = "+className);
-        System.out.println("line = "+lineNb);
-        
         if(classesToInstrument != null){
             if (!hasToBeInstrumented(className))
                 return false; 
@@ -370,7 +364,6 @@ public final class CojacReferences {
                 });
             }
             if(args.isSpecified(Arg.INSTRUMENT_SELECTIVELY)){
-                System.out.println("Arg: "+args.getValue(Arg.INSTRUMENT_SELECTIVELY));
                 this.classesToInstrument = parseClassesIndices(args.getValue(Arg.INSTRUMENT_SELECTIVELY));
             }
             

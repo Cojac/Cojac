@@ -36,7 +36,6 @@ public class NewClassVisitor extends CojacClassVisitor {
      */
     @Override
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-        System.out.println("visiting method: "+name+desc);
         //boolean isNative = (access & Opcodes.ACC_NATIVE) > 0;
         MethodVisitor mv = cv.visitMethod(access, name, desc, signature, exceptions);
         String currentMethodID = crtClassName + '/' + name;

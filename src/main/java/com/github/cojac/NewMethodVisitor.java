@@ -74,7 +74,6 @@ final class NewMethodVisitor extends LocalVariablesSorter {
 
         //Delegate to parent
         if (instrumenter != null && (instrumentMethod || instrumentLine)) {
-            System.out.println("visitInsn");
             if(constLoadInst.get(opCode)){//the operation is a constant loading one
                 super.visitInsn(opCode);//load the constant
                 visitConstantLoading(Operations.getReturnType(opCode));//transform it
@@ -87,9 +86,7 @@ final class NewMethodVisitor extends LocalVariablesSorter {
     }
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-        System.out.println("instrument line: "+instrumentLine);
         if ((instrumentMethod||instrumentLine) && instrumenter.wantsToInstrumentMethod(opcode, owner,name,desc)){
-            System.out.println("visitMethodInsn");
             instrumenter.instrumentMethod(mv,owner, name, desc);
         }else{
             super.visitMethodInsn(opcode, owner, name, desc, itf);
