@@ -131,7 +131,8 @@ public class DoubleIntervalBehaviour {
    }
    public static double ulp(double a){
        FloatInterval aI = extractValues(a);
-       return Math.ulp(aI.inf);
+       //return ulp of the biggest (in absolute size) bound
+       return Math.abs(aI.inf)>Math.abs(aI.sup)? Math.ulp(aI.inf): Math.ulp(aI.sup);
    }
   /* public static double DCONST_0(){
        return embedValues(new FloatInterval(0.0f));
