@@ -36,22 +36,22 @@ public class NewClassVisitor extends CojacClassVisitor {
      */
     @Override
     public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-        System.out.println("visiting method: "+name);
+        System.out.println("visiting method: "+name+desc);
         //boolean isNative = (access & Opcodes.ACC_NATIVE) > 0;
         MethodVisitor mv = cv.visitMethod(access, name, desc, signature, exceptions);
         String currentMethodID = crtClassName + '/' + name;
         if (cav.isClassAnnotated() || cav.isMethodAnnotated(currentMethodID)) {
             return mv;
         }      
-        return instrumentMethod(mv, access, desc);
+        return instrumentMethod(mv, access, desc, name);
     }
     /**
      * Calls the NewMethodVisitor for each instrumented method.
      */
-    private MethodVisitor instrumentMethod(MethodVisitor parentMv, int access, String desc) {
+    private MethodVisitor instrumentMethod(MethodVisitor parentMv, int access, String desc, String name) {
        // System.out.println("in NewClassVisitor.instrumentMethod");
         MethodVisitor mv=null;
-        mv = new NewMethodVisitor(access, desc, parentMv, stats, args, crtClassName, factory, references);
+        mv = new NewMethodVisitor(access, desc, parentMv, stats, args, crtClassName, factory, references, name);
         return mv;
     }
 }

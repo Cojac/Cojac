@@ -332,7 +332,7 @@ public enum Arg {
                 withArgName("instrumentCode").
                 hasOptionalArg().
                 withDescription("Select what to instrument. InstrumentCode has to be Classes names " +
-                        "separated by semicolons, plus eventually, following a Class name, curly brackets "+
+                        "separated by Ampersand (&), plus, eventually, following a Class name, curly brackets "+
                         "Containing a list of method names+signature or line numbers (or intervals) separated by commas. "+
                         "Example: "+Arg.INSTRUMENT_SELECTIVELY.shortOpt()+" \"foo.Bar{m1(II)I,m3(),1,12,112,25};foo.foobar.Bar{10-354}\" "+
                         "Will instrument fully methods m1(II)I, m3() and lines [1,12,112,25] from Class foo.Bar "+

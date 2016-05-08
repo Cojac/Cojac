@@ -52,6 +52,7 @@ import java.util.logging.Logger;
 
 public final class CojacReferences {
     public static final String BYPASS_SEPARATOR = ";";
+    public static final String OPT_IN_CLASS_SEPARATOR = "&";
     public static final String OPT_IN_METHOD_SEPARATOR = ",";
     public static final String OPT_IN_INTERVALS_SEPARATOR = "-";
     public static final String OPT_IN_DESCRIPTOR_START= "{";
@@ -483,7 +484,7 @@ public final class CojacReferences {
         }
         private static HashMap<String, PartiallyInstrumentable> parseClassesIndices(String arg){
             HashMap<String, PartiallyInstrumentable> classesToInstrument = new HashMap<String, PartiallyInstrumentable>();
-            CojacClassLoaderSplitter sp = new CojacClassLoaderSplitter();
+            CojacClassToInstrumentSplitter sp = new CojacClassToInstrumentSplitter();
             if(arg != null){
                 String[] classes = sp.split(arg.replaceAll("\\s+",""));
                 
@@ -517,6 +518,13 @@ public final class CojacReferences {
         @Override
         public String[] split(String list) {
             return list.split(BYPASS_SEPARATOR);
+        }
+    }
+    // ========================================================================
+    public static class CojacClassToInstrumentSplitter implements Splitter {
+        @Override
+        public String[] split(String list) {
+            return list.split(OPT_IN_CLASS_SEPARATOR);
         }
     }
 

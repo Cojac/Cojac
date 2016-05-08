@@ -51,9 +51,11 @@ final class NewMethodVisitor extends LocalVariablesSorter {
     private final Args args;
     private final String classPath;
     private final CojacReferences references;
+    private boolean instrumentMethod = false;
     private boolean instrumentLine=false;
     NewInstrumenter instrumenter ;
-    NewMethodVisitor(int access, String desc, MethodVisitor mv, InstrumentationStats stats, Args args, String classPath, IOpcodeInstrumenterFactory factory, CojacReferences references) {
+    NewMethodVisitor(int access, String desc, MethodVisitor mv, InstrumentationStats stats, Args args, String classPath,
+            IOpcodeInstrumenterFactory factory, CojacReferences references, String MethodName) {
         super(Opcodes.ASM5, access, desc, mv);
 
         this.stats = stats;
@@ -62,6 +64,7 @@ final class NewMethodVisitor extends LocalVariablesSorter {
 
         this.classPath = classPath;
         this.references = references;
+        instrumentMethod = references.hasToBeInstrumented(classPath, MethodName+desc);
         instrumenter = NewInstrumenter.getInstance(args, stats);
     }
 
@@ -70,9 +73,7 @@ final class NewMethodVisitor extends LocalVariablesSorter {
         IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opCode);
 
         //Delegate to parent
-        if (instrumenter == null || !instrumentLine) {
-            super.visitInsn(opCode);
-        } else{
+        if (instrumenter != null && (instrumentMethod || instrumentLine)) {
             System.out.println("visitInsn");
             if(constLoadInst.get(opCode)){//the operation is a constant loading one
                 super.visitInsn(opCode);//load the constant
@@ -80,12 +81,14 @@ final class NewMethodVisitor extends LocalVariablesSorter {
             }else{
                 instrumenter.instrument(mv, opCode); //, classPath, methods, reaction, this);
             }
+        } else{
+            super.visitInsn(opCode);
         }
     }
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
         System.out.println("instrument line: "+instrumentLine);
-        if (/*references.hasToBeInstrumented(classPath, name+ desc)&&*/instrumentLine && instrumenter.wantsToInstrumentMethod(opcode, owner,name,desc)){
+        if ((instrumentMethod||instrumentLine) && instrumenter.wantsToInstrumentMethod(opcode, owner,name,desc)){
             System.out.println("visitMethodInsn");
             instrumenter.instrumentMethod(mv,owner, name, desc);
         }else{
@@ -96,7 +99,7 @@ final class NewMethodVisitor extends LocalVariablesSorter {
     @Override
     public void visitLdcInsn(Object cst){
         super.visitLdcInsn(cst);
-        if(instrumenter.wantsToInstrumentConstLoading(cst.getClass())&&instrumentLine){
+        if(instrumenter.wantsToInstrumentConstLoading(cst.getClass())&&(instrumentMethod||instrumentLine)){
             //instrumenter.instrumentLDC(mv, cst);
             visitConstantLoading(cst.getClass());
         }else{
