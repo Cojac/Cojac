@@ -1,4 +1,4 @@
-<p align="center">
+﻿<p align="center">
 <img src="https://github.com/Cojac/Cojac/wiki/images/logo-cojac-512.png"
    width=256" />
 <h1 align="center">********** User Guide **********</h1>
@@ -415,7 +415,7 @@ the "true" mathematical result. The idea behind the *interval computation* techn
 
 Our Interval wrapper is a toy realization of this technique. Internally, we emit
 a warning whenever the relative error of a number goes beyond a certain threshold 
-(that can be adjusted via an option).
+(that can be adjusted via the `-R_unstableAt` option (default value is 0.00001)).
 
 This wrapper is activated with the option `-Ri`. Two additional magic methods are defined for this model:
 ```java

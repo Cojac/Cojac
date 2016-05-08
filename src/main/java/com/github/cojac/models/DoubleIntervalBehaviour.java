@@ -19,7 +19,8 @@ package com.github.cojac.models;
 import com.github.cojac.interval.FloatInterval;
 
 public class DoubleIntervalBehaviour {
-   /*inf value is stored as the 35 MS bits of the double
+   public static final String UNSTABLE_INTERVAL_MESSAGE = "The interval's width is bigger than the limit value.";
+    /*inf value is stored as the 35 MS bits of the double
    (it's the double equivalent of a float truncated to 23 bits of mantissa)*/
    private static final long INF_MASK = 0xffffffffe0000000L;
    /*gap value is stored as the 29 LS bits of the double
@@ -29,7 +30,7 @@ public class DoubleIntervalBehaviour {
        double b = 3.0;
        mv.visitLdcInsn(a+b);
    }*/
-   
+   private static double threshold;
    public static double DADD(double a, double b) {
        FloatInterval aI = extractValues(a);
        FloatInterval bI = extractValues(b);
@@ -165,8 +166,15 @@ public class DoubleIntervalBehaviour {
        long dL = Double.doubleToRawLongBits(interval.inf);
        dL = dL & INF_MASK;// (Float.floatToRawIntBits(sup)& SUP_MASK);
        float gap = Math.nextUp(interval.sup - interval.inf);
+       if(gap > threshold){
+           Reactions.react(UNSTABLE_INTERVAL_MESSAGE+ " Width: " +gap+", Threshold: "+threshold);
+       }
        dL = dL | (Float.floatToRawIntBits(gap) >>> 2);
        return Double.longBitsToDouble(dL);
    }
+   @UtilityMethod
+    public static void setThreshold(Double threshold) {
+        DoubleIntervalBehaviour.threshold = threshold;
+    }
    
 }

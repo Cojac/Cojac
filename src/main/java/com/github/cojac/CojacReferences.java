@@ -25,6 +25,7 @@ import com.github.cojac.instrumenters.IOpcodeInstrumenterFactory;
 import com.github.cojac.models.ConversionBehaviour;
 import com.github.cojac.models.Reactions;
 import com.github.cojac.models.ConversionBehaviour.Conversion;
+import com.github.cojac.models.DoubleIntervalBehaviour;
 import com.github.cojac.models.PseudoRoundingBehaviour;
 import com.github.cojac.models.PseudoRoundingBehaviour.Rounding;
 import com.github.cojac.models.wrappers.BigDecimalDouble;
@@ -383,6 +384,9 @@ public final class CojacReferences {
                 ConversionBehaviour.c = Conversion.Arbitrary;
                 ConversionBehaviour.setSignificativeBits(Integer.valueOf(args.getValue(Arg.ARBITRARY_PRECISION)));
                 
+            }
+            if(args.isSpecified(Arg.DOUBLE_INTERVAL) ){
+                DoubleIntervalBehaviour.setThreshold(Double.parseDouble(args.getValue(Arg.STABILITY_THRESHOLD)));
             }
             
             return new CojacReferences(this);
