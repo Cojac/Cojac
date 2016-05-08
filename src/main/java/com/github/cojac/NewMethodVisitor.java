@@ -70,9 +70,9 @@ final class NewMethodVisitor extends LocalVariablesSorter {
         IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opCode);
 
         //Delegate to parent
-        if (instrumenter == null) {
+        if (instrumenter == null || !instrumentLine) {
             super.visitInsn(opCode);
-        } else if( instrumentLine){
+        } else{
             System.out.println("visitInsn");
             if(constLoadInst.get(opCode)){//the operation is a constant loading one
                 super.visitInsn(opCode);//load the constant

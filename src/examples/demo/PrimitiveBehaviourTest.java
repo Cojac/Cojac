@@ -8,6 +8,7 @@ public class PrimitiveBehaviourTest {
         Double c = new Double(3);
         System.out.println("a = "+Double.toString(a)+", b = "+Double.toString(b)+ ", c= "+Double.toString(c));
         System.out.println(Double.toString(c));
+        
         System.out.println("a + b = "+Double.toString(a+b));
         System.out.println("a - b = "+Double.toString(a-b));
         System.out.println("a * b = "+Double.toString(a*b));
