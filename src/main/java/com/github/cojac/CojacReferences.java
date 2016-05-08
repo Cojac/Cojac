@@ -32,6 +32,7 @@ import com.github.cojac.models.wrappers.BigDecimalFloat;
 import com.github.cojac.models.wrappers.WrapperBigDecimalWithNaN;
 import com.github.cojac.utils.ReflectionUtils;
 
+
 import javax.management.*;
 import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
@@ -41,13 +42,20 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.rmi.registry.LocateRegistry;
+import java.util.BitSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public final class CojacReferences {
     public static final String BYPASS_SEPARATOR = ";";
-
+    public static final String OPT_IN_METHOD_SEPARATOR = ",";
+    public static final String OPT_IN_INTERVALS_SEPARATOR = "-";
+    public static final String OPT_IN_DESCRIPTOR_START= "{";
+    public static final String OPT_IN_DESCRIPTOR_END = "}";
     private final Args args;
     private final InstrumentationStats stats;
     private final IOpcodeInstrumenterFactory factory;
@@ -63,6 +71,7 @@ public final class CojacReferences {
     private final double stabilityThreshold;
     private final boolean checkUnstableComparisons;
     private final int arbitraryPrecisionBits;
+    private HashMap<String, PartiallyInstrumentable> classesToInstrument = null;
 
     private CojacReferences(CojacReferencesBuilder builder) {
         this.args = builder.args;
@@ -80,6 +89,7 @@ public final class CojacReferences {
         this.stabilityThreshold = builder.stabilityThreshold;
         this.checkUnstableComparisons = builder.checkUnstableComparisons;
         this.arbitraryPrecisionBits = builder.arbitraryPrecisionBits;
+        this.classesToInstrument = builder.classesToInstrument;
     }
 
     public String getNgWrapper() {
@@ -188,9 +198,40 @@ public final class CojacReferences {
                 return false;
             }
         }
+        if(classesToInstrument !=null){
+            return classesToInstrument.containsKey(className.replace("/","."));
+        }
         return true;
     }
-
+    public boolean hasToBeInstrumented(String className, String methodName) {
+        System.out.println("Classname = "+className);
+        System.out.println("MethodName = "+methodName);
+        
+        if(classesToInstrument != null){
+            if (!hasToBeInstrumented(className))
+                return false; 
+           PartiallyInstrumentable pi =  classesToInstrument.get(className.replace("/", "."));
+           if(pi==null)
+               return false;
+           return pi.instrumentMethod(methodName);
+        }
+        return true;
+    }
+    public boolean hasToBeInstrumented(String className, int lineNb) {
+        System.out.println("Classname = "+className);
+        System.out.println("line = "+lineNb);
+        
+        if(classesToInstrument != null){
+            if (!hasToBeInstrumented(className))
+                return false; 
+           PartiallyInstrumentable pi =  classesToInstrument.get(className.replace("/", "."));
+           if(pi==null)
+               return false;
+           return pi.instrumentLine(lineNb);
+        }
+        return true;
+    }
+    
     @SuppressWarnings("unused")
     public static int getFlags(Args args) {
         return ClassWriter.COMPUTE_FRAMES;
@@ -198,6 +239,7 @@ public final class CojacReferences {
 
     // ========================================================================
     public static final class CojacReferencesBuilder {
+        public HashMap<String, PartiallyInstrumentable> classesToInstrument;
         private final Args args;
         private ClassLoader loader;
         private InstrumentationStats stats;
@@ -326,6 +368,11 @@ public final class CojacReferences {
                     }
                 });
             }
+            if(args.isSpecified(Arg.INSTRUMENT_SELECTIVELY)){
+                System.out.println("Arg: "+args.getValue(Arg.INSTRUMENT_SELECTIVELY));
+                this.classesToInstrument = parseClassesIndices(args.getValue(Arg.INSTRUMENT_SELECTIVELY));
+            }
+            
             if(args.isSpecified(Arg.DOUBLE2FLOAT)){
                 ConversionBehaviour.c = Conversion.Double2Float;
             }
@@ -434,6 +481,30 @@ public final class CojacReferences {
                 e.printStackTrace();
             }
         }
+        private static HashMap<String, PartiallyInstrumentable> parseClassesIndices(String arg){
+            HashMap<String, PartiallyInstrumentable> classesToInstrument = new HashMap<String, PartiallyInstrumentable>();
+            CojacClassLoaderSplitter sp = new CojacClassLoaderSplitter();
+            if(arg != null){
+                String[] classes = sp.split(arg.replaceAll("\\s+",""));
+                
+                for(String classe: classes){
+                    
+                    if(classe.contains("{")){
+                        int openingCurlyIndex = classe.indexOf(OPT_IN_DESCRIPTOR_START);
+                        int closingCurlyIndex = classe.indexOf(OPT_IN_DESCRIPTOR_END);
+                        if(openingCurlyIndex+1 < closingCurlyIndex){
+                            String name = classe.substring(0, openingCurlyIndex).replace("/", ".");
+                            String methodsOrLines = classe.substring(openingCurlyIndex+1, closingCurlyIndex);
+                            classesToInstrument.put(name, new ClassPartiallyInstrumented(name, methodsOrLines));
+                        }//else: nothing to instrument
+                    }else{
+                        classesToInstrument.put(classe.replace("/", "."), new ClassFullyInstrumented(classe.replace("/", ".")));
+                    }
+                    
+                }
+            }
+            return classesToInstrument;
+        }
     }
 
     // ========================================================================
@@ -455,6 +526,72 @@ public final class CojacReferences {
         public String[] split(String list) {
             list = list.replaceAll("\\.", "/");
             return super.split(list);
+        }
+    }
+    
+    public interface PartiallyInstrumentable{
+        public boolean instrumentMethod(String methodName); 
+        public boolean instrumentLine(int lineNb);
+    }
+    public static class ClassFullyInstrumented implements PartiallyInstrumentable{
+        public String name;
+        public ClassFullyInstrumented(String name) {
+            this.name = name;
+        }
+        @Override
+        public boolean instrumentMethod(@SuppressWarnings("unused") String methodName) {
+            return true;
+        }
+        @Override
+        public boolean instrumentLine(@SuppressWarnings("unused") int lineNb) {
+            return true;
+        }
+        public String toString(){
+            return name;
+        }
+    }
+    
+    public static class ClassPartiallyInstrumented implements PartiallyInstrumentable{
+        private String name;
+        private HashSet<String> methods = new HashSet<String>();
+        private BitSet lines = new BitSet(256);
+        public ClassPartiallyInstrumented(String className,String methodsOrLines) {
+            this.name = className;
+            String[] methodOrLine = methodsOrLines.split(OPT_IN_METHOD_SEPARATOR);
+            for(String s: methodOrLine){
+                if(Character.isDigit(s.charAt(0))){/*Check for lineNb or line range*/
+                    String[] lineNb = s.split(OPT_IN_INTERVALS_SEPARATOR);
+                    if(lineNb.length ==1){//line number
+                        lines.set(Integer.parseInt(lineNb[0]));
+                    }else if(lineNb.length ==2){//line range
+                        int from = Integer.parseInt(lineNb[0]);
+                        int to = Integer.parseInt(lineNb[1]);
+                        lines.set(from, to+1);
+                    }else{//what?
+                        throw new RuntimeException("Error parsing methods to instrument for class "+className);
+                    }
+                }else{
+                    methods.add(s);
+                }
+            }
+        }
+        public String toString(){
+            String s = ""+name;
+            Iterator<String> itr = methods.iterator();
+            int i = 0;
+            while(itr.hasNext()){
+                s = s + "Method "+ (++i)+"= \""+  itr.next()+"\"\n"; 
+            }
+            s = s + "Lines: "+ lines.toString();
+            return s;
+        }
+        @Override
+        public boolean instrumentMethod(String methodName) {
+            return methods.contains(methodName);
+        }
+        @Override
+        public boolean instrumentLine(int lineNb) {
+            return lines.get(lineNb);
         }
     }
 }

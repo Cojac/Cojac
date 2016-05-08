@@ -74,6 +74,7 @@ public enum Arg {
     ARBITRARY_PRECISION("Ap"),
     DOUBLE_INTERVAL("Di"),
     ROUNDING("Rn"),
+    INSTRUMENT_SELECTIVELY("Oi"),
     
     // Those below are used internally, but no more appear in the usage.
     IADD("iadd", Opcodes.IADD, INTS),
@@ -326,6 +327,17 @@ public enum Arg {
                 withDescription("Use Arbitrary precision with a certain number of bits in the mantissa.\n" +
                         "Example: -"+ARBITRARY_PRECISION.shortOpt()+" 2 will drop the precision of floats and double to 2 bits").
                 create(ARBITRARY_PRECISION.shortOpt()));
+        options.addOption(OptionBuilder.
+                withLongOpt("optin").
+                withArgName("instrumentCode").
+                hasOptionalArg().
+                withDescription("Select what to instrument. InstrumentCode has to be Classes names " +
+                        "separated by semicolons, plus eventually, following a Class name, curly brackets "+
+                        "Containing a list of method names+signature or line numbers (or intervals) separated by commas. "+
+                        "Example: "+Arg.INSTRUMENT_SELECTIVELY.shortOpt()+" \"foo.Bar{m1(II)I,m3(),1,12,112,25};foo.foobar.Bar{10-354}\" "+
+                        "Will instrument fully methods m1(II)I, m3() and lines [1,12,112,25] from Class foo.Bar "+
+                        "and lines 10 to 354 (inclusive) from Class foo.foobar.Bar").
+                create(Arg.INSTRUMENT_SELECTIVELY.shortOpt()));
         return options;
     }
 
