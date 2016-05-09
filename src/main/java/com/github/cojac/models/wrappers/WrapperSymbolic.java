@@ -361,17 +361,17 @@ public class WrapperSymbolic extends ACojacWrapper {
             return oper.derivate(this);
         }
 
-        public ArrayList<SymbolicExpression> flatOperatorForSummation(OP fOper) {
+        public ArrayList<SymbolicExpression> flatOperatorForSummation() {
             ArrayList<SymbolicExpression> listOfSE = new ArrayList<SymbolicExpression>();
-            if (oper == fOper) {
-                listOfSE.addAll(left.flatOperatorForSummation(fOper));
-                listOfSE.addAll(right.flatOperatorForSummation(fOper));
+            if (oper == OP.ADD) {
+                listOfSE.addAll(left.flatOperatorForSummation());
+                listOfSE.addAll(right.flatOperatorForSummation());
             } else if (oper == OP.SUB) {
-                listOfSE.addAll(left.flatOperatorForSummation(fOper));
-                for (SymbolicExpression se : right.flatOperatorForSummation(fOper))
+                listOfSE.addAll(left.flatOperatorForSummation());
+                for (SymbolicExpression se : right.flatOperatorForSummation())
                     listOfSE.add(new SymbolicExpression(OP.NEG, se));
             } else if (oper == OP.NEG) {
-                for (SymbolicExpression se : left.flatOperatorForSummation(fOper))
+                for (SymbolicExpression se : left.flatOperatorForSummation())
                     listOfSE.add(new SymbolicExpression(OP.NEG, se));
             } else {
                 listOfSE.add(this);
@@ -381,7 +381,7 @@ public class WrapperSymbolic extends ACojacWrapper {
 
         public double evaluateBetter(double x) {
             if (oper == OP.ADD || oper == OP.SUB) {
-                ArrayList<SymbolicExpression> listOfSE = this.flatOperatorForSummation(OP.ADD);
+                ArrayList<SymbolicExpression> listOfSE = this.flatOperatorForSummation();
                 ArrayList<Double> list = new ArrayList<Double>();
                 for (SymbolicExpression se : listOfSE)
                     list.add(se.evaluateBetter(x));
