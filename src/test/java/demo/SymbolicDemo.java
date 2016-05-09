@@ -321,9 +321,14 @@ public class SymbolicDemo {
     
     public static double f14(double x) {
         double i = 1e16;
-        i += 2;
-       // i += 1e-16;
-        i += -1e16;
+        i += 1;
+       i += 1e-16;
+      // i += 0.2e-16;
+    
+           //    i += 0.5e-16;
+       
+         double j=1e16;
+        i += -(j-1e-16);
        // i += 1e-16;
         
         return i;

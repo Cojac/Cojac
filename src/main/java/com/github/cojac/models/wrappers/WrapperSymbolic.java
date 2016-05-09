@@ -361,11 +361,18 @@ public class WrapperSymbolic extends ACojacWrapper {
             return oper.derivate(this);
         }
 
-        public ArrayList<SymbolicExpression> flatOperator(OP fOper) {
+        public ArrayList<SymbolicExpression> flatOperatorForSummation(OP fOper) {
             ArrayList<SymbolicExpression> listOfSE = new ArrayList<SymbolicExpression>();
             if (oper == fOper) {
-                listOfSE.addAll(left.flatOperator(fOper));
-                listOfSE.addAll(right.flatOperator(fOper));
+                listOfSE.addAll(left.flatOperatorForSummation(fOper));
+                listOfSE.addAll(right.flatOperatorForSummation(fOper));
+            } else if (oper == OP.SUB) {
+                listOfSE.addAll(left.flatOperatorForSummation(fOper));
+                for (SymbolicExpression se : right.flatOperatorForSummation(fOper))
+                    listOfSE.add(new SymbolicExpression(OP.NEG, se));
+            } else if (oper == OP.NEG) {
+                for (SymbolicExpression se : left.flatOperatorForSummation(fOper))
+                    listOfSE.add(new SymbolicExpression(OP.NEG, se));
             } else {
                 listOfSE.add(this);
             }
@@ -373,43 +380,37 @@ public class WrapperSymbolic extends ACojacWrapper {
         }
 
         public double evaluateBetter(double x) {
-            if (oper == OP.ADD) {
-                ArrayList<SymbolicExpression> listOfSE = this.flatOperator(OP.ADD);
+            if (oper == OP.ADD || oper == OP.SUB) {
+                ArrayList<SymbolicExpression> listOfSE = this.flatOperatorForSummation(OP.ADD);
                 ArrayList<Double> list = new ArrayList<Double>();
                 for (SymbolicExpression se : listOfSE)
                     list.add(se.evaluateBetter(x));
-                list.sort(new ABSComparator());
-                
-                double sum=0;
-                double corr=0;
-                for (Double term : list){
-                    double corrTerm = term-corr;
-                    double tmpSum = sum+corrTerm;
+                list.sort(new AbsDescComparator());
+
+                double sum = 0;
+                double corr = 0;
+                for (Double term : list) {
+                    System.out.println("d : " + term);
+                    double corrTerm = term - corr;
+                    double tmpSum = sum + corrTerm;
                     corr = (tmpSum - sum) - corrTerm;
                     sum = tmpSum;
                 }
-                
-                /*double sum = 0;
-                while (true) {
 
-                    list.sort(new ABSComparator());
-
-                    int shortestIndex = 1;
-                    double shortestDist = Double.POSITIVE_INFINITY;
-                    for (int i = 0; i + 1 < list.size(); i++) {
-                        double tmpDist = relativeDistance(list.get(i), list.get(i +
-                                1));
-                        if (tmpDist < shortestDist) {
-                            shortestDist = tmpDist;
-                            shortestIndex = i;
-                        }
-                    }
-                    sum = list.remove(shortestIndex) +
-                            list.remove(shortestIndex);
-                    if (list.isEmpty())
-                        break;
-                    list.add(sum);
-                }*/
+                /*
+                 * double sum = 0; while (true) {
+                 * 
+                 * list.sort(new ABSComparator());
+                 * 
+                 * int shortestIndex = 1; double shortestDist =
+                 * Double.POSITIVE_INFINITY; for (int i = 0; i + 1 <
+                 * list.size(); i++) { double tmpDist =
+                 * relativeDistance(list.get(i), list.get(i + 1)); if (tmpDist <
+                 * shortestDist) { shortestDist = tmpDist; shortestIndex = i; }
+                 * } sum = list.remove(shortestIndex) +
+                 * list.remove(shortestIndex); if (list.isEmpty()) break;
+                 * list.add(sum); }
+                 */
 
                 return sum;
             }
@@ -441,11 +442,11 @@ public class WrapperSymbolic extends ACojacWrapper {
             return oper + "(" + left + ")";
         }
 
-        public static class ABSComparator implements Comparator<Double> {
+        public static class AbsDescComparator implements Comparator<Double> {
 
             @Override
             public int compare(Double d1, Double d2) {
-                return Double.compare(Math.abs(d1), Math.abs(d2));
+                return Double.compare(Math.abs(d2), Math.abs(d1));
             }
         }
 
