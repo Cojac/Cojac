@@ -210,6 +210,7 @@ public final class CojacReferences {
         private static final String STANDARD_PACKAGES = "com.sun.;java.;javax.;sun.;sunw.;"
                 + "org.xml.sax.;org.w3c.dom.;org.omg.;org.ietf.jgss.;"
                 + "com.apple.;apple.;"
+                + "javafx.;"
                    // BAPST: trick to avoid a "callback" issue. Note that it is
                    // not need to fix that here, we can use the bypass option:
                    //  -b java2d.demos.Fonts.AttributedStr$ScalableImageGraphicAttribute
@@ -298,7 +299,9 @@ public final class CojacReferences {
             }
             ReflectionUtils.setStaticFieldValue(loader, "com.github.cojac.models.Reactions", "theReactionType", args.getReactionType());
             ReflectionUtils.setStaticFieldValue(loader, "com.github.cojac.models.Reactions", "theLogFilename", args.getValue(Arg.LOG_FILE));
-
+            if (args.isSpecified(Arg.CALL_BACK)) {
+                ReflectionUtils.setStaticFieldValue(loader, "com.github.cojac.models.Reactions", "theCallback", args.getValue(Arg.CALL_BACK));
+            }
             if (args.isOperationEnabled(Arg.JMX_ENABLE)) {
                 mbServer = ManagementFactory.getPlatformMBeanServer();
                 registerInstrumentationStats(mbServer, stats);

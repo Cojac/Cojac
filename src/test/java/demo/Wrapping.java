@@ -28,10 +28,10 @@ import java.util.function.DoubleUnaryOperator;
 import javax.swing.JFrame;
 
 /* ------------------------------------------
-To be run without Cojac, or with cojac with those options:
+To be run without Cojac, or with cojac and those options:
     -javaagent:D:\Git-MyRepository\cojac\target\cojac.jar=
 
-"-Bb 3"
+"-Rb 3"
 "-Rs"
 "-Ri"
 "-Ra"
@@ -271,6 +271,11 @@ public class Wrapping {
   private static void ok(boolean b) {
     if (!b) throw new RuntimeException("bad news...");
   }
+  // demo/Wrapping/myCallback
+  public static void myCallback(String s) {
+      System.out.println("__CALLBACK__: "+s);
+  }
+  
   //======================================================================
   // any class with name containing "CojacDebugDump" will be dumped after
   // instrumentation, for debugging purposes (see cojac/Agent)
