@@ -22,7 +22,7 @@ package com.github.cojac.unit.behaviours;
  * Behaviour: native rounding. (option -Rnu)
  * 
  * */
-public class NativeRoundingUpTests {
+public class NativeRoundingTests {
 
     /*
      * This test checks that the processor rounds effectively up for an addition of two positive numbers.

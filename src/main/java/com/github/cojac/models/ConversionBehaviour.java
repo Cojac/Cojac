@@ -341,6 +341,7 @@ public class ConversionBehaviour {
     public static void setRoundingMode(int mode){
         currentRoundingMode = mode;
     }
+    @UtilityMethod
     public static void setConversion(Conversion c){
         if(c == Conversion.NativeRounding && !isNativeLibLoaded){
             throw new RuntimeException("Native library for rounding could not be charged for your system. "+

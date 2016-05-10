@@ -34,49 +34,71 @@ public class NativeRoundingTest {
     //correspond to the methods in Class "Double2FloatTests" that will be tested
     String[] methods = {"testAddition1","testAddition2","testAddition3"};
     //expected output of these methods, in the same order as the methods in "methods"
-    double[] expectedResults = {Math.nextUp(1.0), Math.nextUp(-1.0), 1.0};
+    
     Object object;
     Class<?> classz;
     Agent agent;
-    /*
-     * initialization method, instrumenting "Double2FloatTests" with Arg.DOUBLE2FLOAT
-     */
-    @Before
-    public void instrument() throws ClassNotFoundException, UnmodifiableClassException, InstantiationException, IllegalAccessException{
-        
-        Assert.assertTrue(methods.length == expectedResults.length);
-        Args args = new Args();
-
-        args.specify(Arg.ROUND_NATIVELY_UP);
-        args.specify(Arg.PRINT);
-        CojacReferencesBuilder builder = new CojacReferencesBuilder(args);
-
-        agent = new Agent(builder.build());
-        AgentTest.instrumentation.addTransformer(agent);
-
-        classz = ClassLoader.getSystemClassLoader().loadClass("com.github.cojac.unit.behaviours.NativeRoundingUpTests");
-        AgentTest.instrumentation.retransformClasses(classz);
-
-        object = classz.newInstance();
-    }
+    boolean isLibraryLoaded = false;
+  
     /*
      * Post-test method removing instrumentation on "Double2FloatTests"
      */
     @After
     public void removeInstrumentation() throws UnmodifiableClassException{
-        AgentTest.instrumentation.removeTransformer(agent);
+        if(agent != null )
+            AgentTest.instrumentation.removeTransformer(agent);
+        if(classz != null )
         AgentTest.instrumentation.retransformClasses(classz);
     }
     
-    /*
-     * checks one by one that expectedResult[i] equals method[i]() call.
-     */
+    
     @Test
-    public void NativeRoundingUp() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+    public void NativeRoundingUp() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException, InstantiationException, UnmodifiableClassException {
+        double[] expectedResults = {Math.nextUp(1.0), Math.nextUp(-1.0), 1.0};
+        test(Arg.ROUND_NATIVELY_UP, expectedResults);
+    }
+    @Test
+    public void NativeRoundingDown() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException, InstantiationException, UnmodifiableClassException {
+        double[] expectedResults = {1.0, -1.0, Math.nextDown(1.0)};
+        test(Arg.ROUND_NATIVELY_DOWN, expectedResults);
+    }
+    @Test
+    public void NativeRoundingTowardZero() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException, InstantiationException, UnmodifiableClassException {
+        double[] expectedResults = {1.0,  Math.nextUp(-1.0), Math.nextDown(1.0)};
+        test(Arg.ROUND_NATIVELY_TO_ZERO, expectedResults);
+    }
+    /*
+     * checks one by one that expectedResult[i] equals method[i]() call, when instrumented with Arg a.
+     */
+    private void test(Arg a, double[] expectedResults) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException, InstantiationException, UnmodifiableClassException{
+        Assert.assertTrue(methods.length == expectedResults.length);
+        setRounding(a);
+        Assume.assumeTrue(isLibraryLoaded);//if not, test will be skipped
         for (int i = 0; i < expectedResults.length; i++) {
             Method method = classz.getMethod(methods[i]);
             String out = "On \""+methods[i]+"\", Got: " +(double) method.invoke(object) + ", Expected: "+expectedResults[i];
             Assert.assertTrue(out,expectedResults[i] == (double) method.invoke(object));
+        }
+    }
+    
+    /*dynamic init with Arg a */
+    private void setRounding(Arg a) throws ClassNotFoundException, UnmodifiableClassException, InstantiationException, IllegalAccessException{
+        Args args = new Args();
+        args.specify(a);
+        args.specify(Arg.PRINT);
+        CojacReferencesBuilder builder = new CojacReferencesBuilder(args);
+        try{
+            agent = new Agent(builder.build());
+            isLibraryLoaded = true;
+            AgentTest.instrumentation.addTransformer(agent);
+
+            classz = ClassLoader.getSystemClassLoader().loadClass("com.github.cojac.unit.behaviours.NativeRoundingTests");
+            AgentTest.instrumentation.retransformClasses(classz);
+
+            object = classz.newInstance();
+        }catch(RuntimeException e){
+            System.err.println("Library couldn't be charged. Abording Native rounding tests.");
+            isLibraryLoaded = false;
         }
     }
 }
