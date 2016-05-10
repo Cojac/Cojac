@@ -16,6 +16,11 @@
  *
  */
 package com.github.cojac.models;
+
+import java.io.IOException;
+
+import com.github.cojac.utils.NativeUtils;
+
 /**
  * This class represents different behaviours, which all apply a pre 
  * and a post treatment on doubles and floats, both on opcodes and on 
@@ -47,9 +52,16 @@ public class ConversionBehaviour {
    private static int currentRoundingMode = FE_TONEAREST;
    private static int originalRoundingMode = FE_TONEAREST;
    static{
-       System.load("C:/Users/Valentin/Documents/workspace/Cojac/target/NativeRoundingMode.dll");
+       //System.load("C:/Users/Valentin/Documents/workspace/Cojac/target/NativeRoundingMode.dll");
        //System.load("C:/NativeRoundingMode.dll");
        //System.out.println( "java.library.path:  "+System.getProperty("java.library.path"));
+       try {    
+           NativeUtils.loadLibraryFromJar("/native-libraries/NativeRoundingMode.dll");   
+       } catch (IOException e) {
+           // This is probably not the best way to handle exception :-)    
+           System.load("C:/Users/Valentin/Documents/workspace/Cojac/target/NativeRoundingMode.dll");
+           e.printStackTrace();
+       }    
        //System.loadLibrary("NativeRoundingMode");
    }
    public static Conversion c  = Conversion.NoConversion;
