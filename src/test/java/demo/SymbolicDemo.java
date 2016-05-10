@@ -340,7 +340,7 @@ public class SymbolicDemo {
     
     public static double f15(double x) {
         double     a=0.08,b=0.0491,c=0.3218;
-        return a+b+c;
+        return a+b+c+a+b+c+a+b+c+a+b+c;
     }
     
     public static double df15(double x) {
