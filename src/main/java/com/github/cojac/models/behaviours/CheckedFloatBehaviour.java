@@ -15,8 +15,10 @@
  *    limitations under the License.
  *
  */
-package com.github.cojac.models;
-import static com.github.cojac.models.CheckedBehaviourConstants.*;
+package com.github.cojac.models.behaviours;
+import static com.github.cojac.models.behaviours.CheckedBehaviourConstants.*;
+
+import com.github.cojac.models.Reactions;
 public class CheckedFloatBehaviour {
     public CheckedFloatBehaviour() {
         throw new AssertionError();

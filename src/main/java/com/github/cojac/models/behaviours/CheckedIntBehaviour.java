@@ -15,7 +15,9 @@
  *    limitations under the License.
  *
  */
-package com.github.cojac.models;
+package com.github.cojac.models.behaviours;
+
+import com.github.cojac.models.Reactions;
 
 public class CheckedIntBehaviour {
     public CheckedIntBehaviour() {

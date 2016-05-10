@@ -15,10 +15,11 @@
  *    limitations under the License.
  *
  */
-package com.github.cojac.models;
+package com.github.cojac.models.behaviours;
 
 import java.io.IOException;
 
+import com.github.cojac.models.UtilityMethod;
 import com.github.cojac.utils.NativeUtils;
 
 /**

@@ -24,7 +24,7 @@ extern "C" {
  * Method:    changeRounding
  * Signature: (I)I
  */
-JNIEXPORT jint JNICALL Java_com_github_cojac_models_ConversionBehaviour_changeRounding
+JNIEXPORT jint JNICALL Java_com_github_cojac_models_behaviours_ConversionBehaviour_changeRounding
   (JNIEnv *, jclass, jint);
 
 #ifdef __cplusplus

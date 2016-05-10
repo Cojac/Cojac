@@ -51,26 +51,25 @@ public class NativeRoundingTest {
         AgentTest.instrumentation.retransformClasses(classz);
     }
     
-    
     @Test
-    public void NativeRoundingUp() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException, InstantiationException, UnmodifiableClassException {
+    public void NativeRoundingUp() throws Exception {
         double[] expectedResults = {Math.nextUp(1.0), Math.nextUp(-1.0), 1.0};
         test(Arg.ROUND_NATIVELY_UP, expectedResults);
     }
     @Test
-    public void NativeRoundingDown() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException, InstantiationException, UnmodifiableClassException {
+    public void NativeRoundingDown() throws Exception {
         double[] expectedResults = {1.0, -1.0, Math.nextDown(1.0)};
         test(Arg.ROUND_NATIVELY_DOWN, expectedResults);
     }
     @Test
-    public void NativeRoundingTowardZero() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException, InstantiationException, UnmodifiableClassException {
+    public void NativeRoundingTowardZero() throws Exception {
         double[] expectedResults = {1.0,  Math.nextUp(-1.0), Math.nextDown(1.0)};
         test(Arg.ROUND_NATIVELY_TO_ZERO, expectedResults);
     }
     /*
      * checks one by one that expectedResult[i] equals method[i]() call, when instrumented with Arg a.
      */
-    private void test(Arg a, double[] expectedResults) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException, InstantiationException, UnmodifiableClassException{
+    private void test(Arg a, double[] expectedResults) throws Exception{
         Assert.assertTrue(methods.length == expectedResults.length);
         setRounding(a);
         Assume.assumeTrue(isLibraryLoaded);//if not, test will be skipped

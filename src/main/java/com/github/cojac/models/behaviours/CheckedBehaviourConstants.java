@@ -15,7 +15,7 @@
  *    limitations under the License.
  *
  */
-package com.github.cojac.models;
+package com.github.cojac.models.behaviours;
 
 
 public final class CheckedBehaviourConstants {

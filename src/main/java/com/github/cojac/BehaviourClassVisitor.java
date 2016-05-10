@@ -26,8 +26,8 @@ import org.objectweb.asm.MethodVisitor;
  * @author Valentin
  *
  */
-public class NewClassVisitor extends CojacClassVisitor {
-    public NewClassVisitor(ClassVisitor cv, CojacReferences references, CojacAnnotationVisitor cav) {
+public class BehaviourClassVisitor extends CojacClassVisitor {
+    public BehaviourClassVisitor(ClassVisitor cv, CojacReferences references, CojacAnnotationVisitor cav) {
 		super(cv, references, cav);
 		
     }
@@ -50,7 +50,7 @@ public class NewClassVisitor extends CojacClassVisitor {
     private MethodVisitor instrumentMethod(MethodVisitor parentMv, int access, String desc, String name) {
        // System.out.println("in NewClassVisitor.instrumentMethod");
         MethodVisitor mv=null;
-        mv = new NewMethodVisitor(access, desc, parentMv, stats, args, crtClassName, factory, references, name);
+        mv = new BehaviourMethodVisitor(access, desc, parentMv, stats, args, crtClassName, factory, references, name);
         return mv;
     }
 }

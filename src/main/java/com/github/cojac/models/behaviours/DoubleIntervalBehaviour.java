@@ -15,8 +15,11 @@
  *    limitations under the License.
  *
  */
-package com.github.cojac.models;
+package com.github.cojac.models.behaviours;
 import com.github.cojac.interval.FloatInterval;
+import com.github.cojac.models.FromClass;
+import com.github.cojac.models.Reactions;
+import com.github.cojac.models.UtilityMethod;
 
 public class DoubleIntervalBehaviour {
    public static final String UNSTABLE_INTERVAL_MESSAGE = "The interval's width is bigger than the limit value.";

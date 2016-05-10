@@ -22,12 +22,12 @@ import org.objectweb.asm.ClassWriter;
 
 import com.github.cojac.instrumenters.ClassLoaderInstrumenterFactory;
 import com.github.cojac.instrumenters.IOpcodeInstrumenterFactory;
-import com.github.cojac.models.ConversionBehaviour;
 import com.github.cojac.models.Reactions;
-import com.github.cojac.models.ConversionBehaviour.Conversion;
-import com.github.cojac.models.DoubleIntervalBehaviour;
 import com.github.cojac.models.PseudoRoundingBehaviour;
 import com.github.cojac.models.PseudoRoundingBehaviour.Rounding;
+import com.github.cojac.models.behaviours.ConversionBehaviour;
+import com.github.cojac.models.behaviours.DoubleIntervalBehaviour;
+import com.github.cojac.models.behaviours.ConversionBehaviour.Conversion;
 import com.github.cojac.models.wrappers.BigDecimalDouble;
 import com.github.cojac.models.wrappers.BigDecimalFloat;
 import com.github.cojac.models.wrappers.WrapperBigDecimalWithNaN;

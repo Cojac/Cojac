@@ -26,13 +26,13 @@ import com.github.cojac.Args;
 import com.github.cojac.InstrumentationStats;
 import com.github.cojac.interval.FloatInterval;
 import com.github.cojac.models.ConstTransform;
-import com.github.cojac.models.DoubleIntervalBehaviour;
 import com.github.cojac.models.FromClass;
 import com.github.cojac.models.MathMethods;
 import com.github.cojac.models.Operation;
 import com.github.cojac.models.Operations;
 import com.github.cojac.models.Reactions;
 import com.github.cojac.models.UtilityMethod;
+import com.github.cojac.models.behaviours.DoubleIntervalBehaviour;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;

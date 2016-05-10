@@ -24,9 +24,9 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import com.github.cojac.models.ConversionBehaviour;
-import com.github.cojac.models.ConversionBehaviour.Conversion;
 import com.github.cojac.models.ReactionType;
+import com.github.cojac.models.behaviours.ConversionBehaviour;
+import com.github.cojac.models.behaviours.ConversionBehaviour.Conversion;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -40,29 +40,30 @@ public final class Args {
     static final String DEFAULT_JMX_PORT = "5217";
     static final String DEFAULT_JMX_NAME = "COJAC";
     static final String DEFAULT_STABILITY_THRESHOLD = "0.0001";
+    static final String BEHAVIOUR_PACKAGE = "com/github/cojac/models/behaviours/";
     private static Map<Arg, String> behaviours = new EnumMap<>(Arg.class);
     static{
-        behaviours.put(Arg.DOUBLE2FLOAT, "com/github/cojac/models/ConversionBehaviour");
-        behaviours.put(Arg.ALL, "com/github/cojac/models/CheckedMathBehaviour;com/github/cojac/models/CheckedCastBehaviour;"
-                +"com/github/cojac/models/CheckedDoubleBehaviour;com/github/cojac/models/CheckedFloatBehaviour;"
-                +"com/github/cojac/models/CheckedIntBehaviour;com/github/cojac/models/CheckedLongBehaviour;");
-        behaviours.put(Arg.OPCODES, "com/github/cojac/models/CheckedCastBehaviour;"
-                +"com/github/cojac/models/CheckedDoubleBehaviour;com/github/cojac/models/CheckedFloatBehaviour;"
-                +"com/github/cojac/models/CheckedIntBehaviour;com/github/cojac/models/CheckedLongBehaviour;");
-        behaviours.put(Arg.INTS, "com/github/cojac/models/CheckedIntBehaviour");
-        behaviours.put(Arg.DOUBLES, "com/github/cojac/models/CheckedDoubleBehaviour");
-        behaviours.put(Arg.FLOATS, "com/github/cojac/models/CheckedFloatBehaviour");
-        behaviours.put(Arg.LONGS, "com/github/cojac/models/CheckedLongBehaviour");
-        behaviours.put(Arg.CASTS, "com/github/cojac/models/CheckedCastBehaviour");
-        behaviours.put(Arg.MATHS, "com/github/cojac/models/CheckedMathBehaviour");
-        behaviours.put(Arg.ROUND_BIASED_UP, "com/github/cojac/models/PseudoRoundingBehaviour");
-        behaviours.put(Arg.ROUND_BIASED_DOWN, "com/github/cojac/models/PseudoRoundingBehaviour");
-        behaviours.put(Arg.ROUND_BIASED_RANDOM, "com/github/cojac/models/PseudoRoundingBehaviour");
-        behaviours.put(Arg.ARBITRARY_PRECISION, "com/github/cojac/models/ConversionBehaviour");
-        behaviours.put(Arg.DOUBLE_INTERVAL, "com/github/cojac/models/DoubleIntervalBehaviour");
-        behaviours.put(Arg.ROUND_NATIVELY_UP, "com/github/cojac/models/ConversionBehaviour");
-        behaviours.put(Arg.ROUND_NATIVELY_DOWN, "com/github/cojac/models/ConversionBehaviour");
-        behaviours.put(Arg.ROUND_NATIVELY_TO_ZERO, "com/github/cojac/models/ConversionBehaviour");
+        behaviours.put(Arg.DOUBLE2FLOAT, BEHAVIOUR_PACKAGE + "ConversionBehaviour");
+        behaviours.put(Arg.ALL, BEHAVIOUR_PACKAGE + "CheckedMathBehaviour;"+BEHAVIOUR_PACKAGE+"CheckedCastBehaviour;"
+                +BEHAVIOUR_PACKAGE + "CheckedDoubleBehaviour;"+BEHAVIOUR_PACKAGE+"CheckedFloatBehaviour;"
+                +BEHAVIOUR_PACKAGE + "CheckedIntBehaviour;"+BEHAVIOUR_PACKAGE+"CheckedLongBehaviour;");
+        behaviours.put(Arg.OPCODES, BEHAVIOUR_PACKAGE + "CheckedCastBehaviour;"
+                +BEHAVIOUR_PACKAGE + "CheckedDoubleBehaviour;"+BEHAVIOUR_PACKAGE+"CheckedFloatBehaviour;"
+                +BEHAVIOUR_PACKAGE + "CheckedIntBehaviour;"+BEHAVIOUR_PACKAGE+"CheckedLongBehaviour;");
+        behaviours.put(Arg.INTS, BEHAVIOUR_PACKAGE + "CheckedIntBehaviour");
+        behaviours.put(Arg.DOUBLES, BEHAVIOUR_PACKAGE + "CheckedDoubleBehaviour");
+        behaviours.put(Arg.FLOATS, BEHAVIOUR_PACKAGE + "CheckedFloatBehaviour");
+        behaviours.put(Arg.LONGS, BEHAVIOUR_PACKAGE + "CheckedLongBehaviour");
+        behaviours.put(Arg.CASTS, BEHAVIOUR_PACKAGE + "CheckedCastBehaviour");
+        behaviours.put(Arg.MATHS, BEHAVIOUR_PACKAGE + "CheckedMathBehaviour");
+        behaviours.put(Arg.ROUND_BIASED_UP, BEHAVIOUR_PACKAGE + "PseudoRoundingBehaviour");
+        behaviours.put(Arg.ROUND_BIASED_DOWN, BEHAVIOUR_PACKAGE + "PseudoRoundingBehaviour");
+        behaviours.put(Arg.ROUND_BIASED_RANDOM, BEHAVIOUR_PACKAGE + "PseudoRoundingBehaviour");
+        behaviours.put(Arg.ARBITRARY_PRECISION, BEHAVIOUR_PACKAGE + "ConversionBehaviour");
+        behaviours.put(Arg.DOUBLE_INTERVAL, BEHAVIOUR_PACKAGE + "DoubleIntervalBehaviour");
+        behaviours.put(Arg.ROUND_NATIVELY_UP, BEHAVIOUR_PACKAGE + "ConversionBehaviour");
+        behaviours.put(Arg.ROUND_NATIVELY_DOWN, BEHAVIOUR_PACKAGE + "ConversionBehaviour");
+        behaviours.put(Arg.ROUND_NATIVELY_TO_ZERO, BEHAVIOUR_PACKAGE + "ConversionBehaviour");
     }
     private static String USAGE =
              "java -javaagent:cojac.jar=\"[OPTIONS]\" YourApp [appArgs]\n"

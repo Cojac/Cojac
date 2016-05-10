@@ -15,9 +15,11 @@
  *    limitations under the License.
  *
  */
-package com.github.cojac.models;
+package com.github.cojac.models.behaviours;
 
-import static com.github.cojac.models.CheckedBehaviourConstants.*;
+import static com.github.cojac.models.behaviours.CheckedBehaviourConstants.*;
+
+import com.github.cojac.models.Reactions;
 public class CheckedMathBehaviour {
     /*--------------------------MATH--------------------------*/
     public static double pow(double a, double b) {

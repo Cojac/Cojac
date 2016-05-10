@@ -38,7 +38,7 @@ import static org.objectweb.asm.Opcodes.*;
 
 import java.util.ArrayList;
 import java.util.BitSet;
-final class NewMethodVisitor extends LocalVariablesSorter {
+final class BehaviourMethodVisitor extends LocalVariablesSorter {
     private final IOpcodeInstrumenterFactory factory;
     private static BitSet constLoadInst = new BitSet(255);//there is 255 possible opcodes
     static{
@@ -54,7 +54,7 @@ final class NewMethodVisitor extends LocalVariablesSorter {
     private boolean instrumentMethod = false;
     private boolean instrumentLine=false;
     NewInstrumenter instrumenter ;
-    NewMethodVisitor(int access, String desc, MethodVisitor mv, InstrumentationStats stats, Args args, String classPath,
+    BehaviourMethodVisitor(int access, String desc, MethodVisitor mv, InstrumentationStats stats, Args args, String classPath,
             IOpcodeInstrumenterFactory factory, CojacReferences references, String MethodName) {
         super(Opcodes.ASM5, access, desc, mv);
 
