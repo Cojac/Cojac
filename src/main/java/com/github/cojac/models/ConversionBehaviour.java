@@ -51,34 +51,38 @@ public class ConversionBehaviour {
    public static final int FE_DOWNWARD  = 1024;
    private static int currentRoundingMode = FE_TONEAREST;
    private static int originalRoundingMode = FE_TONEAREST;
+   private static boolean isNativeLibLoaded = false;
    static{
        String libRoot = "/native-libraries/";
        String winLib64 = libRoot+"NativeRoundingMode64.dll";
        String winLib32 = libRoot+"NativeRoundingMode32.dll";
-       String linLib = libRoot+"libNativeRoundingMode.so";
+       String linLib64 = libRoot+"libNativeRoundingMode.so";
        String OSName = System.getProperty("os.name");
        int arch = Integer.parseInt(System.getProperty("sun.arch.data.model"));
        System.out.println(arch);
        try {    
            if(OSName.startsWith("Windows")){
-               if(arch == 32)
+               if(arch == 32){
                    NativeUtils.loadLibraryFromJar(winLib32); 
-               else if(arch == 64)
-                   NativeUtils.loadLibraryFromJar(winLib64); 
+                   isNativeLibLoaded = true;
+                }
+               else if(arch == 64){
+                   NativeUtils.loadLibraryFromJar(winLib64);
+                   isNativeLibLoaded = true;
+               }
            }else if(OSName.startsWith("Linux")){
-               NativeUtils.loadLibraryFromJar(linLib); 
-           }else{
-               System.out.println("OS not corresponding to a supported OS, .");
+               if(arch == 64){
+                   NativeUtils.loadLibraryFromJar(linLib64); 
+                   isNativeLibLoaded = true;
+               }
            }
              
        } catch (IOException e) {
-           //trick for tests, when the jar doesn't exist yet.
-           System.loadLibrary("NativeRoundingMode");   
-           e.printStackTrace();
+            isNativeLibLoaded =false; //should already be false
        }    
        //
    }
-   public static Conversion c  = Conversion.NoConversion;
+   private static Conversion c  = Conversion.NoConversion;
    /*Arbitrary precision behaviour variables*/
    public static final int SIGNIFICATIVE_DOUBLE_BITS = 52;
    public static final int SIGNIFICATIVE_FLOAT_BITS = 23;
@@ -293,7 +297,7 @@ public class ConversionBehaviour {
                 return (float) Double.longBitsToDouble(Double.doubleToLongBits(a)&mask);
             break;
         case NativeRounding:
-            System.out.println("oldRoundingValue: "+changeRounding(currentRoundingMode));
+            changeRounding(currentRoundingMode);
             return a;
         }
         return a;
@@ -337,5 +341,11 @@ public class ConversionBehaviour {
     public static void setRoundingMode(int mode){
         currentRoundingMode = mode;
     }
-   
+    public static void setConversion(Conversion c){
+        if(c == Conversion.NativeRounding && !isNativeLibLoaded){
+            throw new RuntimeException("Native library for rounding could not be charged for your system. "+
+                                    "Please contact Cojac team or consult user doc for generating the correct lib.");
+        }
+        ConversionBehaviour.c = c;
+    }
 }

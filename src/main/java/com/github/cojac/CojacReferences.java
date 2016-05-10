@@ -327,7 +327,7 @@ public final class CojacReferences {
                 });
             }
             if(args.isSpecified(Arg.DOUBLE2FLOAT)){
-                ConversionBehaviour.c = Conversion.Double2Float;
+                ConversionBehaviour.setConversion(Conversion.Double2Float);
             }
             if(args.isSpecified(Arg.ROUND_BIASED_UP)){
                 PseudoRoundingBehaviour.r = Rounding.UP;
@@ -339,19 +339,19 @@ public final class CojacReferences {
                 PseudoRoundingBehaviour.r = Rounding.RANDOM;
             }
             if(args.isSpecified(Arg.ARBITRARY_PRECISION)){
-                ConversionBehaviour.c = Conversion.Arbitrary;
+                ConversionBehaviour.setConversion(Conversion.Arbitrary);
                 ConversionBehaviour.setSignificativeBits(Integer.valueOf(args.getValue(Arg.ARBITRARY_PRECISION)));
             }
             if(args.isSpecified(Arg.ROUND_NATIVELY_UP)){
-                ConversionBehaviour.c = Conversion.NativeRounding;
+                ConversionBehaviour.setConversion(Conversion.NativeRounding);
                 ConversionBehaviour.setRoundingMode(ConversionBehaviour.FE_UPWARD);
             }
             if(args.isSpecified(Arg.ROUND_NATIVELY_DOWN)){
-                ConversionBehaviour.c = Conversion.NativeRounding;
+                ConversionBehaviour.setConversion(Conversion.NativeRounding);
                 ConversionBehaviour.setRoundingMode(ConversionBehaviour.FE_DOWNWARD);
             }
             if(args.isSpecified(Arg.ROUND_NATIVELY_TO_ZERO)){
-                ConversionBehaviour.c = Conversion.NativeRounding;
+                ConversionBehaviour.setConversion(Conversion.NativeRounding);
                 ConversionBehaviour.setRoundingMode(ConversionBehaviour.FE_TOWARDZERO);
             }
             
