@@ -52,17 +52,31 @@ public class ConversionBehaviour {
    private static int currentRoundingMode = FE_TONEAREST;
    private static int originalRoundingMode = FE_TONEAREST;
    static{
-       //System.load("C:/Users/Valentin/Documents/workspace/Cojac/target/NativeRoundingMode.dll");
-       //System.load("C:/NativeRoundingMode.dll");
-       //System.out.println( "java.library.path:  "+System.getProperty("java.library.path"));
+       String libRoot = "/native-libraries/";
+       String winLib64 = libRoot+"NativeRoundingMode64.dll";
+       String winLib32 = libRoot+"NativeRoundingMode32.dll";
+       String linLib = libRoot+"libNativeRoundingMode.so";
+       String OSName = System.getProperty("os.name");
+       int arch = Integer.parseInt(System.getProperty("sun.arch.data.model"));
+       System.out.println(arch);
        try {    
-           NativeUtils.loadLibraryFromJar("/native-libraries/NativeRoundingMode.dll");   
+           if(OSName.startsWith("Windows")){
+               if(arch == 32)
+                   NativeUtils.loadLibraryFromJar(winLib32); 
+               else if(arch == 64)
+                   NativeUtils.loadLibraryFromJar(winLib64); 
+           }else if(OSName.startsWith("Linux")){
+               NativeUtils.loadLibraryFromJar(linLib); 
+           }else{
+               System.out.println("OS not corresponding to a supported OS, .");
+           }
+             
        } catch (IOException e) {
-           // This is probably not the best way to handle exception :-)    
-           System.load("C:/Users/Valentin/Documents/workspace/Cojac/target/NativeRoundingMode.dll");
+           //trick for tests, when the jar doesn't exist yet.
+           System.loadLibrary("NativeRoundingMode");   
            e.printStackTrace();
        }    
-       //System.loadLibrary("NativeRoundingMode");
+       //
    }
    public static Conversion c  = Conversion.NoConversion;
    /*Arbitrary precision behaviour variables*/
