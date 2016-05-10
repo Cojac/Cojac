@@ -53,14 +53,18 @@ public class ConversionBehaviour {
    private static int currentRoundingMode = FE_TONEAREST;
    private static int originalRoundingMode = FE_TONEAREST;
    private static boolean isNativeLibLoaded = false;
-   static{
+   /*
+    * Loads native libraries for changing the rounding mode.
+    * Should be in a "static{}" bloc, but then it would be called even when not needed (I/O -> slowdown).
+    * Therefore, should be called only if native rounding is needed and isNativeLibLoaded == false.
+    * */
+   private static void loadLibrary(){
        String libRoot = "/native-libraries/";
        String winLib64 = libRoot+"NativeRoundingMode64.dll";
        String winLib32 = libRoot+"NativeRoundingMode32.dll";
        String linLib64 = libRoot+"libNativeRoundingMode.so";
        String OSName = System.getProperty("os.name");
        int arch = Integer.parseInt(System.getProperty("sun.arch.data.model"));
-       System.out.println(arch);
        try {    
            if(OSName.startsWith("Windows")){
                if(arch == 32){
@@ -371,8 +375,11 @@ public class ConversionBehaviour {
     @UtilityMethod
     public static void setConversion(Conversion c){
         if(c == Conversion.NativeRounding && !isNativeLibLoaded){
-            throw new RuntimeException("Native library for rounding could not be charged for your system. "+
-                                    "Please contact Cojac team or consult user doc for generating the correct lib.");
+            loadLibrary();
+            if(!isNativeLibLoaded){
+                throw new RuntimeException("Native library for rounding could not be charged for your system. "+
+                        "Please contact Cojac team or consult user doc for generating the correct lib.");
+            }
         }
         ConversionBehaviour.c = c;
     }
