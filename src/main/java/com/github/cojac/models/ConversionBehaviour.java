@@ -16,6 +16,11 @@
  *
  */
 package com.github.cojac.models;
+
+import java.io.IOException;
+
+import com.github.cojac.utils.NativeUtils;
+
 /**
  * This class represents different behaviours, which all apply a pre 
  * and a post treatment on doubles and floats, both on opcodes and on 
@@ -28,13 +33,57 @@ package com.github.cojac.models;
  * <li>Arbitrary precision</li>
  * </ul>
  * 
- * 
- * 
+ * com.github.cojac.models.ConversionBehaviour
+ * FE_UPWARD    = 2048
+ * FE_TONEAREST = 0
+ * FE_TOWARDZERO= 3072
+ * FE_DOWNWARD  = 1024
  * @author Gazzola Valentin
  *
  */
 public class ConversionBehaviour {
-   public static Conversion c  = Conversion.NoConversion;
+    /*Native rounding behaviour methods and constants*/
+   @UtilityMethod
+   public static native int changeRounding(int rounding);
+   public static final int FE_UPWARD    = 2048;
+   public static final int FE_TONEAREST = 0;
+   public static final int FE_TOWARDZERO= 3072;
+   public static final int FE_DOWNWARD  = 1024;
+   private static int currentRoundingMode = FE_TONEAREST;
+   private static int originalRoundingMode = FE_TONEAREST;
+   private static boolean isNativeLibLoaded = false;
+   static{
+       String libRoot = "/native-libraries/";
+       String winLib64 = libRoot+"NativeRoundingMode64.dll";
+       String winLib32 = libRoot+"NativeRoundingMode32.dll";
+       String linLib64 = libRoot+"libNativeRoundingMode.so";
+       String OSName = System.getProperty("os.name");
+       int arch = Integer.parseInt(System.getProperty("sun.arch.data.model"));
+       System.out.println(arch);
+       try {    
+           if(OSName.startsWith("Windows")){
+               if(arch == 32){
+                   NativeUtils.loadLibraryFromJar(winLib32); 
+                   isNativeLibLoaded = true;
+                }
+               else if(arch == 64){
+                   NativeUtils.loadLibraryFromJar(winLib64);
+                   isNativeLibLoaded = true;
+               }
+           }else if(OSName.startsWith("Linux")){
+               if(arch == 64){
+                   NativeUtils.loadLibraryFromJar(linLib64); 
+                   isNativeLibLoaded = true;
+               }
+           }
+             
+       } catch (IOException e) {
+            isNativeLibLoaded =false; //should already be false
+       }    
+       //
+   }
+   private static Conversion c  = Conversion.NoConversion;
+   /*Arbitrary precision behaviour variables*/
    public static final int SIGNIFICATIVE_DOUBLE_BITS = 52;
    public static final int SIGNIFICATIVE_FLOAT_BITS = 23;
    public static final long DOUBLE_EXP_MASK = 0x7ff0000000000000L;
@@ -239,6 +288,9 @@ public class ConversionBehaviour {
            return (float)a;
         case Arbitrary:
            return Double.longBitsToDouble(Double.doubleToLongBits(a)&mask);
+        case NativeRounding:
+            changeRounding(currentRoundingMode);
+            return a;
         }
         return a;
     }
@@ -253,6 +305,9 @@ public class ConversionBehaviour {
            return (float)a;
         case Arbitrary:
            return Double.longBitsToDouble(Double.doubleToLongBits(a)&mask);
+        case NativeRounding:
+            changeRounding(originalRoundingMode);
+            return a;
         }
         return a;
     }
@@ -266,6 +321,10 @@ public class ConversionBehaviour {
         case Arbitrary:
             if (significativeBits<SIGNIFICATIVE_FLOAT_BITS)
                 return (float) Double.longBitsToDouble(Double.doubleToLongBits(a)&mask);
+            break;
+        case NativeRounding:
+            changeRounding(currentRoundingMode);
+            return a;
         }
         return a;
     }
@@ -279,6 +338,9 @@ public class ConversionBehaviour {
         case Arbitrary:
             if (significativeBits<SIGNIFICATIVE_FLOAT_BITS)
                 return (float) Double.longBitsToDouble(Double.doubleToLongBits(a)&mask);
+        case NativeRounding:
+            changeRounding(originalRoundingMode);
+            return a;
         }
         return a;
     }
@@ -291,7 +353,8 @@ public class ConversionBehaviour {
     public enum Conversion{
         Double2Float,
         Arbitrary,
-        NoConversion;
+        NoConversion,
+        NativeRounding;
     }
     @UtilityMethod
     public static void setSignificativeBits(int nb){
@@ -300,5 +363,16 @@ public class ConversionBehaviour {
             mask = mask ^((1L<<(52-nb))-1);
         //System.out.println("mask: "+Long.toBinaryString(mask));
     }
-   
+    @UtilityMethod
+    public static void setRoundingMode(int mode){
+        currentRoundingMode = mode;
+    }
+    @UtilityMethod
+    public static void setConversion(Conversion c){
+        if(c == Conversion.NativeRounding && !isNativeLibLoaded){
+            throw new RuntimeException("Native library for rounding could not be charged for your system. "+
+                                    "Please contact Cojac team or consult user doc for generating the correct lib.");
+        }
+        ConversionBehaviour.c = c;
+    }
 }

@@ -73,9 +73,11 @@ public enum Arg {
     ROUND_BIASED_RANDOM("Rbr"),
     ARBITRARY_PRECISION("Ap"),
     DOUBLE_INTERVAL("Di"),
-    ROUNDING("Rn"),
+
     INSTRUMENT_SELECTIVELY("Oi"),
-    
+    ROUND_NATIVELY_UP("Rnu"),
+    ROUND_NATIVELY_DOWN("Rnd"),
+    ROUND_NATIVELY_TO_ZERO("Rnz"),
     // Those below are used internally, but no more appear in the usage.
     IADD("iadd", Opcodes.IADD, INTS),
     IDIV("idiv", Opcodes.IDIV, INTS),
@@ -318,8 +320,12 @@ public enum Arg {
                 false, "\"Round\" (Biased) randomly up or down");
         options.addOption(Arg.DOUBLE_INTERVAL.shortOpt(),
                 false, "Perform interval computation on Double");
-        options.addOption(Arg.ROUNDING.shortOpt(),
-                false, "Change the CPU's rounding mode (alpha)");
+        options.addOption(Arg.ROUND_NATIVELY_UP.shortOpt(),
+                false, "Change the CPU's rounding mode toward infinity");
+        options.addOption(Arg.ROUND_NATIVELY_DOWN.shortOpt(),
+                false, "Change the CPU's rounding mode toward minus infinity");
+        options.addOption(Arg.ROUND_NATIVELY_TO_ZERO.shortOpt(),
+                false, "Change the CPU's rounding mode toward zero");
         options.addOption(OptionBuilder.
                 withLongOpt("arbitraryPrecisionBits").
                 withArgName("bits").

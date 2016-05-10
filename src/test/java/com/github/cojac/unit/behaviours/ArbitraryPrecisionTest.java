@@ -16,7 +16,7 @@
  *
  */
 
-package com.github.cojac.unit;
+package com.github.cojac.unit.behaviours;
 
 import java.lang.instrument.UnmodifiableClassException;
 import java.lang.reflect.InvocationTargetException;
@@ -29,6 +29,7 @@ import com.github.cojac.Agent;
 import com.github.cojac.Arg;
 import com.github.cojac.Args;
 import com.github.cojac.CojacReferences.CojacReferencesBuilder;
+import com.github.cojac.unit.AgentTest;
 
 public class ArbitraryPrecisionTest {
     @Test
@@ -45,7 +46,7 @@ public class ArbitraryPrecisionTest {
         Agent agent = new Agent(builder.build());
         AgentTest.instrumentation.addTransformer(agent);
         
-        Class<?> classz = ClassLoader.getSystemClassLoader().loadClass("com.github.cojac.unit.ArbitraryPrecisionTests");
+        Class<?> classz = ClassLoader.getSystemClassLoader().loadClass("com.github.cojac.unit.behaviours.ArbitraryPrecisionTests");
         AgentTest.instrumentation.retransformClasses(classz);
         
         Object object = classz.newInstance();
