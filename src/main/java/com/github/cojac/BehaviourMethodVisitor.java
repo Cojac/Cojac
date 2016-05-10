@@ -27,16 +27,13 @@ import com.github.cojac.instrumenters.IOpcodeInstrumenter;
 import com.github.cojac.instrumenters.NewInstrumenter;
 import com.github.cojac.models.Operations;
 import com.github.cojac.instrumenters.IOpcodeInstrumenterFactory;
-import com.github.cojac.instrumenters.InvokableMethod;
 
-import static org.objectweb.asm.Opcodes.*;
 /**
  * Class called for each instrumented method, which can change a variable for another, 
  * and change the method's behaviour.
  * @author Valentin
  */
 
-import java.util.ArrayList;
 import java.util.BitSet;
 final class BehaviourMethodVisitor extends LocalVariablesSorter {
     private final IOpcodeInstrumenterFactory factory;
@@ -52,7 +49,8 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
     private final String classPath;
     private final CojacReferences references;
     private boolean instrumentMethod = false;
-    private boolean instrumentLine=false;
+    private int lineNb=0;
+    private int instructionNb = 0;
     NewInstrumenter instrumenter ;
     BehaviourMethodVisitor(int access, String desc, MethodVisitor mv, InstrumentationStats stats, Args args, String classPath,
             IOpcodeInstrumenterFactory factory, CojacReferences references, String MethodName) {
@@ -70,10 +68,11 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
 
     @Override
     public void visitInsn(int opCode) {
+        ++instructionNb;
         IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opCode);
-
+        //System.out.println("Has to be instrumented: "+references.hasToBeInstrumented(classPath, lineNb, instructionNb));
         //Delegate to parent
-        if (instrumenter != null && (instrumentMethod || instrumentLine)) {
+        if (instrumenter != null && (instrumentMethod || references.hasToBeInstrumented(classPath, lineNb, instructionNb))) {
             if(constLoadInst.get(opCode)){//the operation is a constant loading one
                 super.visitInsn(opCode);//load the constant
                 visitConstantLoading(Operations.getReturnType(opCode));//transform it
@@ -86,7 +85,9 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
     }
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-        if ((instrumentMethod||instrumentLine) && instrumenter.wantsToInstrumentMethod(opcode, owner,name,desc)){
+        ++instructionNb;
+        //System.out.println("Has to be instrumented: "+references.hasToBeInstrumented(classPath, lineNb, instructionNb));
+        if ((instrumentMethod||references.hasToBeInstrumented(classPath, lineNb, instructionNb)) && instrumenter.wantsToInstrumentMethod(opcode, owner,name,desc)){
             instrumenter.instrumentMethod(mv,owner, name, desc);
         }else{
             super.visitMethodInsn(opcode, owner, name, desc, itf);
@@ -95,8 +96,10 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
     }
     @Override
     public void visitLdcInsn(Object cst){
+        ++instructionNb;
         super.visitLdcInsn(cst);
-        if(instrumenter.wantsToInstrumentConstLoading(cst.getClass())&&(instrumentMethod||instrumentLine)){
+        //System.out.println("Has to be instrumented: "+references.hasToBeInstrumented(classPath, lineNb, instructionNb));
+        if(instrumenter.wantsToInstrumentConstLoading(cst.getClass())&&(instrumentMethod||references.hasToBeInstrumented(classPath, lineNb, instructionNb))){
             //instrumenter.instrumentLDC(mv, cst);
             visitConstantLoading(cst.getClass());
         }else{
@@ -108,7 +111,7 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
     }
     @Override
     public void visitLineNumber(int line, Label start){
-        instrumentLine = references.hasToBeInstrumented(classPath, line); 
+        lineNb = line; 
         super.visitLineNumber(line, start);
     }
 }

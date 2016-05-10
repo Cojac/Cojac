@@ -58,6 +58,7 @@ public final class CojacReferences {
     public static final String OPT_IN_INTERVALS_SEPARATOR = "-";
     public static final String OPT_IN_DESCRIPTOR_START= "{";
     public static final String OPT_IN_DESCRIPTOR_END = "}";
+    public static final String OPT_IN_INSTRUCTIONS_SEPARATOR= "_";
     private final Args args;
     private final InstrumentationStats stats;
     private final IOpcodeInstrumenterFactory factory;
@@ -216,14 +217,14 @@ public final class CojacReferences {
         }
         return true;
     }
-    public boolean hasToBeInstrumented(String className, int lineNb) {
+    public boolean hasToBeInstrumented(String className, int lineNb, int instructionNb) {
         if(classesToInstrument != null){
             if (!hasToBeInstrumented(className))
                 return false; 
            PartiallyInstrumentable pi =  classesToInstrument.get(className.replace("/", "."));
            if(pi==null)
                return false;
-           return pi.instrumentLine(lineNb);
+           return  pi.instrumentInstruction(lineNb, instructionNb);
         }
         return true;
     }
@@ -497,14 +498,26 @@ public final class CojacReferences {
                 String[] classes = sp.split(arg.replaceAll("\\s+",""));
                 
                 for(String classe: classes){
-                    
-                    if(classe.contains("{")){
+                     if(classe.contains(OPT_IN_DESCRIPTOR_START)){
                         int openingCurlyIndex = classe.indexOf(OPT_IN_DESCRIPTOR_START);
                         int closingCurlyIndex = classe.indexOf(OPT_IN_DESCRIPTOR_END);
                         if(openingCurlyIndex+1 < closingCurlyIndex){
                             String name = classe.substring(0, openingCurlyIndex).replace("/", ".");
-                            String methodsOrLines = classe.substring(openingCurlyIndex+1, closingCurlyIndex);
-                            classesToInstrument.put(name, new ClassPartiallyInstrumented(name, methodsOrLines));
+                            String tmp = classe.substring(openingCurlyIndex+1, closingCurlyIndex);
+                            String[] methodsLinesInstructions = tmp.split(OPT_IN_INSTRUCTIONS_SEPARATOR);
+                            if(methodsLinesInstructions.length ==0){
+                                continue; // I'm kind enough to test "class{_}"...
+                            }
+                            PartiallyInstrumentable pi;
+                            if(tmp.startsWith(OPT_IN_INSTRUCTIONS_SEPARATOR)){
+                                
+                                pi = new ClassPartiallyInstrumented(name,"" ,methodsLinesInstructions[0]);
+                            }else if(tmp.endsWith(OPT_IN_INSTRUCTIONS_SEPARATOR) || !classe.contains(OPT_IN_INSTRUCTIONS_SEPARATOR)){
+                                pi = new ClassPartiallyInstrumented(name,methodsLinesInstructions[0],"");
+                            }else{
+                                pi = new ClassPartiallyInstrumented(name, methodsLinesInstructions[0],methodsLinesInstructions[1]);
+                            }
+                            classesToInstrument.put(name,pi);
                         }//else: nothing to instrument
                     }else{
                         classesToInstrument.put(classe.replace("/", "."), new ClassFullyInstrumented(classe.replace("/", ".")));
@@ -548,6 +561,7 @@ public final class CojacReferences {
     public interface PartiallyInstrumentable{
         public boolean instrumentMethod(String methodName); 
         public boolean instrumentLine(int lineNb);
+        public boolean instrumentInstruction(int lineNb, int instructionNumber);
     }
     public static class ClassFullyInstrumented implements PartiallyInstrumentable{
         public String name;
@@ -565,15 +579,21 @@ public final class CojacReferences {
         public String toString(){
             return name;
         }
+        @Override
+        public boolean instrumentInstruction(@SuppressWarnings("unused") int lineNb, @SuppressWarnings("unused") int instructionNumber) {
+            return true;
+        }
     }
     
     public static class ClassPartiallyInstrumented implements PartiallyInstrumentable{
         private String name;
         private HashSet<String> methods = new HashSet<String>();
         private BitSet lines = new BitSet(256);
-        public ClassPartiallyInstrumented(String className,String methodsOrLines) {
+        private BitSet instructions = new BitSet(256);
+        public ClassPartiallyInstrumented(String className,String methodsOrLines,String instructions) {
             this.name = className;
             String[] methodOrLine = methodsOrLines.split(OPT_IN_METHOD_SEPARATOR);
+            if(!methodsOrLines.equals(""))
             for(String s: methodOrLine){
                 if(Character.isDigit(s.charAt(0))){/*Check for lineNb or line range*/
                     String[] lineNb = s.split(OPT_IN_INTERVALS_SEPARATOR);
@@ -590,6 +610,20 @@ public final class CojacReferences {
                     methods.add(s);
                 }
             }
+            String[] instr = instructions.split(OPT_IN_METHOD_SEPARATOR);
+            if(!instructions.equals(""))
+            for(String s: instr){
+                String[] lineNb = s.split(OPT_IN_INTERVALS_SEPARATOR);
+                if(lineNb.length ==1){//instruction number
+                    this.instructions.set(Integer.parseInt(lineNb[0]));
+                }else if(lineNb.length ==2){//line range
+                    int from = Integer.parseInt(lineNb[0]);
+                    int to = Integer.parseInt(lineNb[1]);
+                    this.instructions.set(from, to+1);
+                }else{//what?
+                    throw new RuntimeException("Error parsing instructions to instrument for class "+className);
+                }
+            }
         }
         public String toString(){
             String s = ""+name;
@@ -599,6 +633,7 @@ public final class CojacReferences {
                 s = s + "Method "+ (++i)+"= \""+  itr.next()+"\"\n"; 
             }
             s = s + "Lines: "+ lines.toString();
+            s = s + "\nInstructions: "+ instructions.toString();
             return s;
         }
         @Override
@@ -609,5 +644,10 @@ public final class CojacReferences {
         public boolean instrumentLine(int lineNb) {
             return lines.get(lineNb);
         }
+        @Override
+        public boolean instrumentInstruction(int lineNb, @SuppressWarnings("unused") int instructionNumber) {
+            return instrumentLine(lineNb)|| instructions.get(instructionNumber);
+        }
     }
+    
 }
