@@ -216,7 +216,10 @@ public final class CojacReferences {
                    //  -b java2d.demos.Fonts.AttributedStr$ScalableImageGraphicAttribute
                 + "java2d.demos.Fonts.AttributedStr$ScalableImageGraphicAttribute;" 
                 + "com.github.cojac.models;"
-                + "com.github.cojac.interval;" + "jdk.internal;" + "org.slf4j";
+                + "com.github.cojac.interval;"
+                + "jdk.internal;"
+                + "org.slf4j;"
+                + "org.apache.commons.math3";
 
         public CojacReferencesBuilder(final Args args) {
             this(args, null);
