@@ -546,16 +546,46 @@ And now the same view, with Cojac and the option `-Ap 5`.
 </p>
 The programm is stable, even with an ultra-low precision, and the result is very *pixelated*, yet similar to the original.
 
-## 4.3 Artificial *rounding* modes
+## 4.3 Rounding mode in floating-point arithmetic
+In java, we don't have access to the CPU's rounding modes. This is a serious deficiency in java's IEEE 754 floating point *support*, which just uses the nearest possible float/double. The use of rounding modes are multiple, even if it won't affect every programmer.
+* It can be used as a way of testing the stability of mathematical functions or programs, that souldn't give much different results under a different rounding mode
+* It can bring certainty in a result. For example, in an interval, rounding the value of the inferior bound down is more pessimistic than rounding to the nearest, but then the *real* value (with infinite precision) represented by the interval is assured to be included. The same goes with the upper bound, that should be rounded up.
 
+We want to (partially) resolve that with cojac, in two different manners that both present pros and cons.
 
+### 4.3.1 Artificial *rounding* mode
+The first solution (that never should called a solution) we invented is to add and remove ulps after every computation.
+This has been done because, as java doesn't provide natively access to the CPU's rounding modes, it was a simple, with relatively low performance impact and native way of ensuring that the result value goes in the selected direction.
 
-## 4.4 Native rounding mode
+The benefit is that we provide a native (meaning it can be run on every plateform supporting java) pseudo rounding mode.
 
+The drawback is that every operation, even if no rounding is needed, will be affected, as we will see in this small example.
 
+0.25 + 0.25, under normal conditions, give 0.5, with no rounding needed, as the three number are exactly represented with IEEE 754 floats.
+With artificial rounding up, the result will be 0.5 + ulp(0.5), which is unnecessary imprecise.
 
+The modes provided by this behaviour are: 
+* "Round" up (toward infinity), with the option `-Rbu`
+* "Round" randomly up or down with the option `-Rbr`
+* "Round" down (toward -infinity) with the option `-Rbd`
 
+This behaviour can then be useful, but keep it's limitations in mind when using it. This won't replace a CPU's modes.
 
+### 4.3.2 Native rounding mode
+The second solution we implemented is to use JNI (Java Native Interface) to change the processor's mode, with a C routine.
+
+The drawback of that is that we lose java's portability. The C method has to be compiled in various libraries, one for each platform, those libraries have to be included in cojac, and the java code may have to be modified for including the correct version. This also means that tests should be run on every platform on which we may want to run cojac. All of which is very time consuming and impractical
+
+The benefit is that the CPU's rounding modes (the true, unbiased rounding modes) become finally accessible to java programs.
+
+The modes provided by this behaviour are: 
+* Round up, with the option `-Rnu`
+* Round toward zero with the option `-Rbz`
+* Round down with the option `-Rbd`
+
+Notes: 
+* If the native library fails to be loaded, unit tests are skipped, and if using one of the above options, Cojac stops and throws a RuntimeException.
+* Libraries have been created for Windows (32 & 64 bits), and Linux (64 bits) and only the 64 bits versions have been tested.
 
 --------------------------------------------------
 # 5 - Detailed usage
