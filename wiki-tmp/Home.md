@@ -496,17 +496,17 @@ As you can check, the results are those expected!
 
 Cojac implements multiple new behaviours for java, one of which being the numerical sniffer. We have tried to add up to java behaviours that we felt were missing, like in the sniffer, where we fill java's holes about IEEE754 floating-point implementation, that was lacking *overflow*, *smearing*, and so on. Now, we also added some behaviours to java for doing much more other things:
 
-* Double to float casting, to try out a program's reaction to less precision calculation (to see if the program's behaviour drastically changed or if the result stays reasonable).
+* Double as float casting, to try out a program's reaction to less precision calculation (to see if the program's behaviour drastically changed or if the result stays reasonable).
 
-* Change (downwards) arbitrarly the precision of all floating-point calculation, with the same goal as the Casting of double to float, but with more freedom.
+* Change (downwards) arbitrarily the precision of all floating-point calculation, with the same goal as the transformation of double as float, but with more freedom.
 
 * Change the rounding mode of java's arithmetic
   * *Artificially*, by adding or removing ulps.
-  * Natively, with C code that allow to change the processor's rounding mode.
+  * Natively, with C code that allows to change the processor's rounding mode.
 
 * Use all double as intervals (with bounds of roughly float precision)
 
-## 4.1 Double to float casting
+## 4.1 Double as float casting
 
 This mode downgrades every double as a float, therefore testing the arithmetic stability of a program. If your program doesn't produce a similar, less precise result with this mode, you should check (maybe with the other numerous possibilities offered by Cojac?)
 
@@ -516,19 +516,19 @@ Here is a visual example of what it changes to Mandelbrot's fractal ( Java SE De
 
 Here is a detail of the fractal, with original (double) precision:
 
-
-<img src="/images/MandelbrotDetail.PNG"  width=600" align="center"/>
-
+<p align="center">
+<img src="/images/MandelbrotDetail.PNG"  width=600"/>
+</p>
 And here the same detail when instrumented with `-BD2F`
 
-
+<p align="center">
 <img src="/images/MandelbrotDetail(-BD2F).PNG"  width=600" align="center"/>
-
+</p>
 The demo works perfectly fine with less precision, the result is similar with less details, but there is no errors.
 
-## 4.2 Arbitrarly low floating-point arithmetics
+## 4.2 Arbitrarily low floating-point arithmetics
 
-Similarly to the conversion to floats, this behaviours allows to test the effect of having less precise floating point operation (Want to see what results an 8-bit computer would give?)
+Similarly to the conversion to floats, this behaviour allows to test the effect of having less precise floating point operation (Want to see what results an 8-bit computer would give?)
 
 The option for this option is `-Ap <bits>`, where `<bits>` is the numbers of bits that will be used in the mantissa. If the precision is set to be less than 23 (float's mantissa size) it will affect floats as well as double.
 
@@ -536,17 +536,19 @@ Here is now an example with a mantissa of 5.
 
 First, a view of the Mandelbrot fractal with double precision.
 
-
+<p align="center">
 <img src="/images/MandelbrotFull.PNG"  width=600" align="center"/>
-
+</p>
 And now the same view, with Cojac and the option `-Ap 5`.
 
-
+<p align="center">
 <img src="/images/MandelbrotFull(-Ap5).PNG"  width=600" align="center"/>
-
+</p>
 The programm is stable, even with an ultra-low precision, and the result is very *pixelated*, yet similar to the original.
 
 ## 4.3 Artificial *rounding* modes
+
+
 
 ## 4.4 Native rounding mode
 
