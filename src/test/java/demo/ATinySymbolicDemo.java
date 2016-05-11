@@ -39,9 +39,9 @@ public class ATinySymbolicDemo {
         System.out.println("f(2)  = " + COJAC_MAGIC_evaluateSymbolicAt(f, 2)); // compute the result of the function
         System.out.println("f'(2) = " + COJAC_MAGIC_evaluateSymbolicAt(df, 2));// compute the result of the derivative
         
-        double[] t={+2, 1E-16, 1E-16, 1E-16, 5E-17, 5E-17};
-        double sum=0;
-        for(double e:t) sum+= e;
+        double[] t = {+2, 1E-16, 1E-16, 1E-16, 5E-17, 5E-17};
+        double sum = 0;
+        for(double e:t) sum += e;
         System.out.println("sum  = " + COJAC_MAGIC_evaluateSymbolicAt(sum, 0.0));      // compute the sum (standard)
         System.out.println("sum  = " + COJAC_MAGIC_evaluateBetterSymbolicAt(sum, 0.0));// compute the sum (better)
         
