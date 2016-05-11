@@ -136,6 +136,9 @@ public class ConversionBehaviour {
        return outTransform(inTransform(a) %inTransform(b));
    }
    public static int FCMPL(float a, float b){
+       if(c == Conversion.NativeRounding){
+          return Double.compare(a ,b);
+       }
        return Double.compare(inTransform(a) ,inTransform(b));
    }
    public static int FCMPG(float a, float b){
@@ -144,6 +147,9 @@ public class ConversionBehaviour {
        return DCMPL(a,b);
    }
     public static double abs(double a){
+        if(c == Conversion.NativeRounding){
+            return Math.abs(a);
+        }
         return outTransform( Math.abs(a));
     }
     public static double acos(double a){
@@ -156,6 +162,9 @@ public class ConversionBehaviour {
         return outTransform( Math.atan(inTransform(a)));
     }
     public static double atan2(double x,double y){
+        if(c == Conversion.NativeRounding){
+            return outTransform( Math.atan2(inTransform(x),y));
+        }
         return outTransform( Math.atan2(inTransform(x),inTransform(y)));
     }
     public static double cbrt(double a){
@@ -177,6 +186,8 @@ public class ConversionBehaviour {
         return outTransform( Math.expm1(inTransform(a)));
     }
     public static int getExponent(double a){
+        if(c == Conversion.NativeRounding)
+            return Math.getExponent(a);
         return Math.getExponent(inTransform(a));
     }
     public static double hypot(double a,double b){
@@ -216,7 +227,7 @@ public class ConversionBehaviour {
             }else
                 return b;
         }
-        return Math.nextAfter(inTransform(a), inTransform(b));
+        return outTransform(Math.nextAfter(inTransform(a), inTransform(b)));
     }
     public static double nextDown(double a){
       //Necessary to redirect to the float method
@@ -227,7 +238,7 @@ public class ConversionBehaviour {
             la -= ((1L<<(52-significativeBits)));
             return Double.longBitsToDouble(la&mask);
         }
-        return  Math.nextDown(inTransform(a));
+        return  outTransform(Math.nextDown(inTransform(a)));
     }
     public static double nextUp(double a){
       //Necessary to redirect to the float method
@@ -238,7 +249,7 @@ public class ConversionBehaviour {
             la += ((1L<<(52-significativeBits)));
             return Double.longBitsToDouble(la&mask);
         }
-        return  Math.nextUp(inTransform(a));
+        return  outTransform(Math.nextUp(inTransform(a)));
     }
     public static double pow(double a, double b){
         return outTransform( Math.pow(inTransform(a), inTransform(b)));
@@ -280,7 +291,7 @@ public class ConversionBehaviour {
             expa += ((1L<<(52-significativeBits)));
             return Double.longBitsToDouble(expa&mask)-1;
         }
-        return Math.ulp(inTransform(a));
+        return outTransform(Math.ulp(inTransform(a)));
     }
     /**
      * Transformation applied on double parameters (depends on "c") 
@@ -294,7 +305,7 @@ public class ConversionBehaviour {
         case Arbitrary:
            return Double.longBitsToDouble(Double.doubleToLongBits(a)&mask);
         case NativeRounding:
-            changeRounding(currentRoundingMode);
+            originalRoundingMode = changeRounding(currentRoundingMode);
             return a;
         }
         return a;
@@ -311,7 +322,8 @@ public class ConversionBehaviour {
         case Arbitrary:
            return Double.longBitsToDouble(Double.doubleToLongBits(a)&mask);
         case NativeRounding:
-            changeRounding(originalRoundingMode);
+            int tmp = changeRounding(originalRoundingMode);
+            assert tmp == currentRoundingMode;
             return a;
         }
         return a;
@@ -328,7 +340,7 @@ public class ConversionBehaviour {
                 return (float) Double.longBitsToDouble(Double.doubleToLongBits(a)&mask);
             break;
         case NativeRounding:
-            changeRounding(currentRoundingMode);
+            originalRoundingMode = changeRounding(currentRoundingMode);
             return a;
         }
         return a;
@@ -344,7 +356,8 @@ public class ConversionBehaviour {
             if (significativeBits<SIGNIFICATIVE_FLOAT_BITS)
                 return (float) Double.longBitsToDouble(Double.doubleToLongBits(a)&mask);
         case NativeRounding:
-            changeRounding(originalRoundingMode);
+            int tmp = changeRounding(originalRoundingMode);
+            assert tmp == currentRoundingMode;
             return a;
         }
         return a;

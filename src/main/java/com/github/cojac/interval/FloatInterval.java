@@ -18,6 +18,7 @@
 
 package com.github.cojac.interval;
 
+import static com.github.cojac.models.FloatReplacerClasses.COJAC_STABILITY_THRESHOLD;
 import static java.lang.Math.PI;
 
 /**
@@ -599,5 +600,26 @@ public class FloatInterval implements Comparable<FloatInterval> {
     private static float pow(float a,float b){
         return (float) Math.pow(a, b);
     }
-
+    /*
+     * (Copied from wrapper/intervalDouble)
+     * We don't see a clean way to define the relative error when the value is 
+     * (very close to) zero, which is yet quite common. Here we use a very
+     * dirty trick to handle that. 
+     */
+    public double relativeError() {
+        float inf = this.inf, sup = this.sup;
+        boolean containsZero = (inf<=0 && sup >= 0);
+        double numerator=sup-inf;
+        inf=Math.abs(inf);
+        sup=Math.abs(sup);
+        double denominator = Math.min(inf, sup);
+        if(containsZero && Math.max(inf, sup) < COJAC_STABILITY_THRESHOLD)
+            return numerator;  // here we "bet" that the true value is zero...
+        if (denominator * COJAC_STABILITY_THRESHOLD < Double.MIN_NORMAL) {
+            denominator = Math.max(inf,  sup);
+            if (denominator * COJAC_STABILITY_THRESHOLD < Double.MIN_NORMAL)
+                return numerator;  // here we "bet" that the true value is zero...
+        }
+        return numerator / denominator;
+    }
 }
