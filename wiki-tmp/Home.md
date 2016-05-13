@@ -506,7 +506,7 @@ Cojac implements multiple new behaviours for java, one of which being the numeri
 
 * Use all double as intervals (with bounds of roughly float precision)
 
-## 4.1 Double as float casting
+## 4.1 - Double as float casting
 
 This mode downgrades every double as a float, therefore testing the arithmetic stability of a program. If your program doesn't produce a similar, less precise result with this mode, you should check (maybe with the other numerous possibilities offered by Cojac?)
 
@@ -526,7 +526,7 @@ And here the same detail when instrumented with `-BD2F`
 </p>
 The demo works perfectly fine with less precision, the result is similar with less details, but there is no errors.
 
-## 4.2 Arbitrarily low floating-point arithmetics
+## 4.2 - Arbitrarily low floating-point arithmetics
 
 Similarly to the conversion to floats, this behaviour allows to test the effect of having less precise floating point operation (Want to see what results an 8-bit computer would give?)
 
@@ -546,14 +546,14 @@ And now the same view, with Cojac and the option `-Ap 5`.
 </p>
 The programm is stable, even with an ultra-low precision, and the result is very *pixelated*, yet similar to the original.
 
-## 4.3 Rounding mode in floating-point arithmetic
+## 4.3 - Rounding mode in floating-point arithmetic
 In java, we don't have access to the CPU's rounding modes. This is a serious deficiency in java's IEEE 754 floating point *support*, which just uses the nearest possible float/double. The use of rounding modes are multiple, even if it won't affect every programmer.
 * It can be used as a way of testing the stability of mathematical functions or programs, that souldn't give much different results under a different rounding mode
 * It can bring certainty in a result. For example, in an interval, rounding the value of the inferior bound down is more pessimistic than rounding to the nearest, but then the *real* value (with infinite precision) represented by the interval is assured to be included. The same goes with the upper bound, that should be rounded up.
 
 We want to (partially) resolve that with cojac, in two different manners that both present pros and cons.
 
-### 4.3.1 Artificial *rounding* mode
+### 4.3.1 - Artificial *rounding* mode
 The first solution (that never should called a solution) we invented is to add and remove ulps after every computation.
 This has been done because, as java doesn't provide natively access to the CPU's rounding modes, it was a simple, with relatively low performance impact and native way of ensuring that the result value goes in the selected direction.
 
@@ -571,7 +571,7 @@ The modes provided by this behaviour are:
 
 This behaviour can then be useful, but keep its limitations in mind when using it. This won't replace a CPU's modes.
 
-### 4.3.2 Native rounding mode
+### 4.3.2 - Native rounding mode
 The second solution we implemented is to use JNI (Java Native Interface) to change the processor's mode, with a C routine.
 
 The drawback of that is that we lose java's portability. The C method has to be compiled in various libraries, one for each platform, those libraries have to be included in cojac, and the java code may have to be modified for including the correct version. This also means that tests should be run on every platform on which we may want to run cojac. All of which is very time consuming and impractical
@@ -586,6 +586,12 @@ The modes provided by this behaviour are:
 Notes: 
 * If the native library fails to be loaded, unit tests are skipped, and if using one of the above options, Cojac stops and throws a RuntimeException.
 * Libraries have been created for Windows (32 & 64 bits), and Linux (64 bits) and only the 64 bits versions have been tested.
+* The source C code is included in Cojac/src/main/resources/native-libraries/src, feel free to compile them for your system (and include the added library in  com.github.cojac.models.behaviours.ConversionBehaviour)
+ 
+## 4.4 - Double as float interval
+As replacing with objects poses some problems, like signature incompatibility, problems with arrays, we tried to give a similar tool to the interval wrapper, without changing the content of the stack (i.e. without replacing doubles). What we did is to use double as two (near-float) values, storing the (pessimistic) bounds of the *real* value. This allows to react (with prints, exceptions or callback) when the relative error gets bigger than a given threshold (default value: 1E-5, user definable with `-R_unstableAt <newValue>`)
+
+Drawback: due to the representation used, the interval value quickly loses precision, even for operations for which it shouldn't happen (interval wrapper does not have the same problem, for instance)
 
 --------------------------------------------------
 # 5 - Detailed usage
