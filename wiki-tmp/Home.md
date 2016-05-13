@@ -639,12 +639,24 @@ For some behaviours, it could be interesting to instrument only parts of the cod
 * By selecting all instrumented class with the option `-Oi <Classes>` 
 
 Syntax diagram of `<Classes>`: 
-
+ 
 ![Classes](images/Classes.png "Classes")
+
+Class
 ![Class](images/Class.png "Class")
+
+MethodsOrLines
 ![Methods or line number](images/MethodsOrLines.png "Methods or line number")
+
+Operations
 ![Operations](images/Operations.png "Operations")
+
+Interval
 ![Interval](images/Interval.png "Interval")
+
+Example:
+`-Oi com.package.Foo{method(),`
+
 --------------------------------------------------
 # 5 - Detailed usage
 
