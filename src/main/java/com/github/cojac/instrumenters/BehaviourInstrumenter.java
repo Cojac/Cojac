@@ -55,7 +55,7 @@ import java.util.Map;
  * @author Valentin
  *
  */
-public final class NewInstrumenter implements IOpcodeInstrumenter {
+public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
 
     private final InstrumentationStats stats;
     private final Map<Integer, InvokableMethod> invocations = new HashMap<Integer, InvokableMethod>(50);
@@ -64,14 +64,14 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
     
     private final String[] BEHAVIOURS;
     private final String[] FULLY_QUALIFIED_BEHAVIOURS;
-    private static NewInstrumenter instance= null;
+    private static BehaviourInstrumenter instance= null;
     /**
      * Constructor, private because only a singleton is available. 
      * Use {@link #getInstance(Args, InstrumentationStats)} to get the instance. 
      * @param args
      * @param stats
      */
-    private NewInstrumenter(Args args, InstrumentationStats stats) {
+    private BehaviourInstrumenter(Args args, InstrumentationStats stats) {
         super();
         BEHAVIOURS = args.getBehaviour().split(";");
         
@@ -99,9 +99,9 @@ public final class NewInstrumenter implements IOpcodeInstrumenter {
      * @param stats
      * @return
      */
-    public static NewInstrumenter getInstance(Args args, InstrumentationStats stats){
+    public static BehaviourInstrumenter getInstance(Args args, InstrumentationStats stats){
         if(instance == null){
-            instance = new NewInstrumenter(args, stats);
+            instance = new BehaviourInstrumenter(args, stats);
         }
         return instance;
     }

@@ -493,7 +493,7 @@ As you can check, the results are those expected!
 --------------------------------------------------
 # 4 - Changing Java's primitive type behaviour
 
-Cojac implements multiple new behaviours for java, one of which being the numerical sniffer. We have tried to add up to java behaviours that we felt were missing, like in the sniffer, where we fill java's holes about IEEE754 floating-point implementation, that was lacking *overflow*, *smearing*, and so on. Now, we also added some behaviours to java for doing much more other things:
+Cojac implements multiple new behaviours for Java, one of which being the numerical sniffer. We have tried to add up to Java behaviours that we felt were missing, like in the sniffer, where we fill Java's holes about IEEE754 floating-point implementation, that was lacking *overflow*, *smearing*, and so on. Now, we also added some behaviours to Java for doing much more other things:
 
 * Double as float casting, to try out a program's reaction to less precision calculation (to see if the program's behaviour drastically changed or if the result stays reasonable).
 
@@ -546,7 +546,7 @@ And now the same view, with Cojac and the option `-Ap 5`.
 The programm is stable, even with an ultra-low precision, and the result is very *pixelated*, yet similar to the original.
 
 ## 4.3 - Rounding mode in floating-point arithmetic
-In java, we don't have access to the CPU's rounding modes. This is a serious deficiency in java's IEEE 754 floating point *support*, which just uses the nearest possible float/double. The use of rounding modes are multiple, even if it won't affect every programmer.
+In Java, we don't have access to the CPU's rounding modes. This is a serious deficiency in Java's IEEE 754 floating point *support*, which just uses the nearest possible float/double. The use of rounding modes are multiple, even if it won't affect every programmer.
 * It can be used as a way of testing the stability of mathematical functions or programs, that souldn't give much different results under a different rounding mode
 * It can bring certainty in a result. For example, in an interval, rounding the value of the inferior bound down is more pessimistic than rounding to the nearest, but then the *real* value (with infinite precision) represented by the interval is assured to be included. The same goes with the upper bound, that should be rounded up.
 
@@ -554,9 +554,9 @@ We want to (partially) resolve that with cojac, in two different manners that bo
 
 ### 4.3.1 - Artificial *rounding* mode
 The first solution (that never should called a solution) we invented is to add and remove ulps after every computation.
-This has been done because, as java doesn't provide natively access to the CPU's rounding modes, it was a simple, with relatively low performance impact and native way of ensuring that the result value goes in the selected direction.
+This has been done because, as Java doesn't provide natively access to the CPU's rounding modes, it was a simple, with relatively low performance impact and native way of ensuring that the result value goes in the selected direction.
 
-The benefit is that we provide a native (meaning it can be run on every plateform supporting java) pseudo rounding mode.
+The benefit is that we provide a native (meaning it can be run on every platform supporting Java) pseudo rounding mode.
 
 The drawback is that every operation, even if no rounding is needed, will be affected, as we will see in this small example.
 
@@ -573,9 +573,9 @@ This behaviour can then be useful, but keep its limitations in mind when using i
 ### 4.3.2 - Native rounding mode
 The second solution we implemented is to use JNI (Java Native Interface) to change the processor's mode, with a C routine.
 
-The drawback of that is that we lose java's portability. The C method has to be compiled in various libraries, one for each platform, those libraries have to be included in cojac, and the java code may have to be modified for including the correct version. This also means that tests should be run on every platform on which we may want to run cojac. All of which is very time consuming and impractical
+The drawback of that is that we lose Java's portability. The C method has to be compiled in various libraries, one for each platform, those libraries have to be included in cojac, and the Java code may have to be modified for including the correct version. This also means that tests should be run on every platform on which we may want to run cojac. All of which is very time consuming and impractical
 
-The benefit is that the CPU's rounding modes (the true, unbiased rounding modes) become finally accessible to java programs.
+The benefit is that the CPU's rounding modes (the true, unbiased rounding modes) become finally accessible to Java programs.
 
 The modes provided by this behaviour are: 
 * Round up, with the option `-Rnu`
@@ -762,7 +762,7 @@ point numbers are being passed around.
 use it), but it has not been thoroughly  tested yet, so we expect some problems 
 with Java8 lambdas (Cojac 1.4.1 has fixed some problems).
 
-* In case of `class A extends J` where `J` is from the java library, and
+* In case of `class A extends J` where `J` is from the Java library, and
 offers a method `f()` (with floating point parameters/result) that `A` does
 not redefine : suppose the declaration `A a`, then the call `a.f(...)` fails,
 whereas `((J)a).f(...)` is OK. This should be fixed in Cojac 1.4.1.

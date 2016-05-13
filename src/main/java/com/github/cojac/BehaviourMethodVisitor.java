@@ -24,7 +24,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.LocalVariablesSorter;
 
 import com.github.cojac.instrumenters.IOpcodeInstrumenter;
-import com.github.cojac.instrumenters.NewInstrumenter;
+import com.github.cojac.instrumenters.BehaviourInstrumenter;
 import com.github.cojac.models.Operations;
 import com.github.cojac.instrumenters.IOpcodeInstrumenterFactory;
 
@@ -51,7 +51,7 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
     private boolean instrumentMethod = false;
     private int lineNb=0;
     private int instructionNb = 0;
-    NewInstrumenter instrumenter ;
+    BehaviourInstrumenter instrumenter ;
     BehaviourMethodVisitor(int access, String desc, MethodVisitor mv, InstrumentationStats stats, Args args, String classPath,
             IOpcodeInstrumenterFactory factory, CojacReferences references, String MethodName) {
         super(Opcodes.ASM5, access, desc, mv);
@@ -63,7 +63,7 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
         this.classPath = classPath;
         this.references = references;
         instrumentMethod = references.hasToBeInstrumented(classPath, MethodName+desc);
-        instrumenter = NewInstrumenter.getInstance(args, stats);
+        instrumenter = BehaviourInstrumenter.getInstance(args, stats);
     }
 
     @Override
