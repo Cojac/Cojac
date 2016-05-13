@@ -569,7 +569,7 @@ The modes provided by this behaviour are:
 * "Round" randomly up or down with the option `-Rbr`
 * "Round" down (toward -infinity) with the option `-Rbd`
 
-This behaviour can then be useful, but keep it's limitations in mind when using it. This won't replace a CPU's modes.
+This behaviour can then be useful, but keep its limitations in mind when using it. This won't replace a CPU's modes.
 
 ### 4.3.2 Native rounding mode
 The second solution we implemented is to use JNI (Java Native Interface) to change the processor's mode, with a C routine.
