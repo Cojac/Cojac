@@ -634,7 +634,17 @@ Cojac checks if the methods in the behaviour class correspond to an actual metho
 
 
 ## 4.6 - Selective instrumentation
+For some behaviours, it could be interesting to instrument only parts of the code. Cojac offers two ways of selecting what to instrument:
+* By excluding some classes with the option `-Xb`, like for wrappers
+* By selecting all instrumented class with the option `-Oi <Classes>` 
 
+Syntax diagram of `<Classes>`: 
+
+![Classes](images/Classes.png "Classes")
+![Class](images/Class.png "Class")
+![Methods or line number](images/MethodsOrLines.png "Methods or line number")
+![Operations](images/Operations.png "Operations")
+![Interval](images/Interval.png "Interval")
 --------------------------------------------------
 # 5 - Detailed usage
 
