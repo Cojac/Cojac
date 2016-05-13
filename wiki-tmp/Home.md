@@ -29,7 +29,6 @@
 
 4. [COJAC: Changing Java's primitive type behaviour](home#4---Changing-javas-primitive-type-behaviour)
 
-
 5. [Detailed usage](home#5---detailed-usage)
 
 6. [Limitations and known issues](home#6---limitations-and-known-issues)
@@ -592,6 +591,49 @@ Notes:
 As replacing with objects poses some problems, like signature incompatibility, problems with arrays, we tried to give a similar tool to the interval wrapper, without changing the content of the stack (i.e. without replacing doubles). What we did is to use double as two (near-float) values, storing the (pessimistic) bounds of the *real* value. This allows to react (with prints, exceptions or callback) when the relative error gets bigger than a given threshold (default value: 1E-5, user definable with `-R_unstableAt <newValue>`)
 
 Drawback: due to the representation used, the interval value quickly loses precision, even for operations for which it shouldn't happen (interval wrapper does not have the same problem, for instance)
+
+## 4.5 - Create a new behaviour
+For adding those behaviours easily, a powerful mechanism has been implemented, allowing to create a new behaviour in minutes, when following some convention.
+It is possible to change the following things:
+* ByteCode operations (Exclusively: IADD, ISUB, IMUL, IDIV, INEG, IINC, ICONST_M1, ICONST_0, ICONST_1, ICONST_2, ICONST_3, ICONST_4, ICONST_5, LADD, LSUB, LMUL, LDIV, LNEG, LCONST_0, LCONST_1, FADD, FSUB, FMUL, FDIV, FREM, FCMPL, FCMPG, FNEG, FCONST_0, FCONST_1, FCONST_2, DADD, DSUB, DMUL, DDIV, DREM, DCMPL, DCMPG, DNEG, DCONST_0, DCONST_1, I2S, I2C, I2B, I2F, I2L, I2D, L2I, L2F, L2D, F2I, F2D, F2L, D2F, D2I, D2L)
+* java.lang.Math public static methods
+* Any public static methods
+
+### 4.5.1 - Replacing a ByteCode operation or a Math (public static) method
+In the behaviour's class, write a method corresponding to the operation's *signature*  (you will find those here: https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-6.html), or to the java.lang.Math's method signature (https://docs.oracle.com/javase/8/docs/api/java/lang/Math.html).
+
+Example: DADD takes two double from the stack and returns one, its signature has to be `public static double DADD(double, double)`. 
+
+```
+//this will be called in place of a double addition in the instrumented code.
+public static double DADD(double a, double b) {
+       return a + Math.PI - b -Math.PI ;
+}
+```
+For replacing the Math method "ceil" (signature: `public static double ceil(double a)`):
+```
+//this will be called in place of a call to Math.ceil in the instrumented code.
+public static double ceil(double a) {
+        double c = Math.ceil(a); // Math calls can be performed
+       return a + c / 2 ;
+}
+```
+
+### 4.5.3 - Replacing a public static method
+For replacing any public static method (from other classes than java.lang.Math), an annotation `FromClass` with the class's fully qualified name as value must be added to the method and the signature of the method respected.
+
+Example: If you want to instrument the method `public static int bar(String)` from the class `com.package.Foo`:
+```
+@FromClass("com/package/Foo")
+public static int bar(String s){
+        return Integer.MAX_VALUE;
+}
+```
+### 4.5.4 - Ignoring a method in the behaviour class
+Cojac checks if the methods in the behaviour class correspond to an actual method (or operation). For utility, setup, tear down or other methods, an annotation `@UtilityMethod` indicated to Cojac that it shall ignore this method.
+
+
+## 4.6 - Selective instrumentation
 
 --------------------------------------------------
 # 5 - Detailed usage
