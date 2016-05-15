@@ -1,5 +1,7 @@
 package demo;
 
+import java.math.BigDecimal;
+
 public class ATinySymbolicDemo {
 
     public static String COJAC_MAGIC_toString(double n) {
@@ -24,8 +26,8 @@ public class ATinySymbolicDemo {
 
     // f(x) = 3x^2 + 2x + 5
     static double myFunction(double x) {
-        double res = 3 * x * x; // the computation can be complex,
-        res = res + 2 * x; // with loops, calls, recursion etc.
+        double res = 3 * x * x; 
+        res = res + 2 * x; 
         res = res + 5;
         return res; 
     }
@@ -39,13 +41,19 @@ public class ATinySymbolicDemo {
         System.out.println("f(2)  = " + COJAC_MAGIC_evaluateSymbolicAt(f, 2)); // compute the result of the function
         System.out.println("f'(2) = " + COJAC_MAGIC_evaluateSymbolicAt(df, 2));// compute the result of the derivative
         
-        double[] t = {+2, 1E-16, 1E-16, 1E-16, 5E-17, 5E-17};
+        double[] t = {+2, 1E-16, 1E-16, 1E-16, 5E-17, 5E-17, +5, -3, -2};
         double sum = 0;
         for(double e:t) sum += e;
         System.out.println("sum  = " + COJAC_MAGIC_evaluateSymbolicAt(sum, 0.0));      // compute the sum (standard)
         System.out.println("sum  = " + COJAC_MAGIC_evaluateBetterSymbolicAt(sum, 0.0));// compute the sum (better)
-        
-        
+        double g = 2*x;
+        g = COJAC_MAGIC_derivateSymbolic(g);
+        System.out.println(COJAC_MAGIC_toString(g));
+        BigDecimal b = new BigDecimal(""+0.08);
+        BigDecimal c = new BigDecimal(""+0.0491);
+        BigDecimal d = new BigDecimal(""+0.3218);
+        BigDecimal r = b.add(c).add(d);
+        System.out.println(r);
     }
-
+    
 }

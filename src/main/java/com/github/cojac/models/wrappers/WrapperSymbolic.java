@@ -390,7 +390,6 @@ public class WrapperSymbolic extends ACojacWrapper {
                 double sum = 0;
                 double corr = 0;
                 for (Double term : list) {
-                    System.out.println("d : " + term);
                     double corrTerm = term - corr;
                     double tmpSum = sum + corrTerm;
                     corr = (tmpSum - sum) - corrTerm;

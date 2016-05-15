@@ -37,20 +37,16 @@ public class ChebfunDemo {
         double chebfun = COJAC_MAGIC_asChebfun(0.0);
 //        chebfun*=50;
 //        chebfun = Math.sin(chebfun);
-        chebfun = Math.sin(chebfun);
-        chebfun = COJAC_MAGIC_derivateChebfun(chebfun);
-        chebfun = COJAC_MAGIC_derivateChebfun(chebfun);
-        chebfun = COJAC_MAGIC_derivateChebfun(chebfun);
-        chebfun = COJAC_MAGIC_derivateChebfun(chebfun);
-        chebfun = COJAC_MAGIC_derivateChebfun(chebfun);
-        chebfun = COJAC_MAGIC_derivateChebfun(chebfun);
-        chebfun = COJAC_MAGIC_derivateChebfun(chebfun);
-        chebfun = COJAC_MAGIC_derivateChebfun(chebfun);
-        chebfun = COJAC_MAGIC_derivateChebfun(chebfun);
+//        chebfun = Math.sin(chebfun);
+        chebfun = chebfun*chebfun;
+      //  chebfun = COJAC_MAGIC_derivateChebfun(chebfun);
+       ;
 
-        
-        double r = COJAC_MAGIC_evaluateChebfunAt(chebfun, 0.5123);
-        System.out.printf("f(x) = %s should be (%s) \n", r, Math.cos(0.5123));
+       System.out.println(COJAC_MAGIC_evaluateChebfunAt(chebfun, 0.5));
+//        
+//        double r = COJAC_MAGIC_evaluateChebfunAt(chebfun, -0.5123);
+//        System.out.printf("f(x) = %s should be (%s) \n", r, Math.cos(0.5123));
+//        System.out.printf(COJAC_MAGIC_toString(chebfun));
     }
 
     // ----------------------------------------------------

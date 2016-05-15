@@ -488,11 +488,13 @@ prompt> java -javaagent:cojac.jar="-Ra" DerivationDemo
 f(x):  21.0
 f'(x): 16.0
 ```
-## 3.7 - Number model "Symbolic computation"
+## 3.6 - Number model "Symbolic computation"
 
-Symbolic computation is known for representing numbers and mathematical functions in an exact finite way. On the other hand the symbolic computation provides functionalities like derivate of a function or finding roots.
+Symbolic computation is known for representing numbers and mathematical functions in an exact finite way. On the other hand the symbolic computation provides functionalities such as compute the derivative of a function, or finding its roots.
 
-We attempted a similar approach by storing the whole symbolic expression tree  of a number. What makes that numbers become functions.Through this mechanism, we are now able to store, evaluate and derivate functions.
+We attempted a similar approach by storing the whole symbolic expression tree  of a number. What makes that numbers become functions.
+
+Through this mechanism, we are now able to store, evaluate and differentiate functions.
 
 This wrapper can be activated via the "-Rsy" option. Here are the magic methods available:
 
@@ -511,8 +513,8 @@ public class ATinySymbolicDemo {
   public static double COJAC_MAGIC_derivateSymbolic(double d) {return d;}
   // f(x) = 3x^2 + 2x + 5
   static double myFunction(double x) {
-    double res = 3 * x * x; // the computation can be complex,
-    res = res + 2 * x; // with loops, calls, recursion etc.
+    double res = 3 * x * x; 
+    res = res + 2 * x; 
     res = res + 5;
     return res; 
   }
@@ -536,6 +538,8 @@ f'(x) = ADD(ADD(ADD(MUL(ADD(MUL(0.0,x),MUL(3.0,1.0)),x),MUL(MUL(3.0,x),1.0)),ADD
 f(2)  = 21.0
 f'(2) = 14.0
 ```
+We can see that the results are those expected.
+
 Another feature is to exploit the symbolic representation to improve the accuracy of the calculated amounts. And that by using the Kahan summation algorithm.
 
 Here is the corresponding magic method:
@@ -563,8 +567,48 @@ prompt> java -javaagent:cojac.jar="-Rsy" ATinySymbolicDemo
 sum  = 2.0
 sum  = 2.0000000000000004
 ```
-
 By observing the results, we can see that the accuracy of the summation is improved.
+
+
+## 3.7 - Number model "Chebfun"
+
+Chebfun is an open-source library for MATLAB that uses polynomial approximations for representing functions. This polynomial representation allows operations such as compute finite integral or derivative.
+
+We are based on this concept to create a new wrapper. This wrapper allow to define functions (those will be polynomial approximations). For now we are able to define, evaluate and differentiate functions.
+
+This wrapper can be activated via the "-Rcheb" option. Here are the magic methods available:
+
+```java
+public static double COJAC_MAGIC_asChebfun(double a) {return a;}
+public static double COJAC_MAGIC_evaluateChebfunAt(double d, double x) {return d;}
+public static double COJAC_MAGIC_derivateChebfun(double d) {return d;}
+```
+And here is a small example of what we can do with this wrapper.
+
+```java
+public class ATinyChebfunDemo {
+  public static String COJAC_MAGIC_toString(double n) {return "";}
+  public static double COJAC_MAGIC_asChebfun(double a) {return a;}
+  public static double COJAC_MAGIC_evaluateChebfunAt(double d, double x) {return d;}
+  public static double COJAC_MAGIC_derivateChebfun(double d) {return d;}
+  public static void main(String[] args) {      
+    double x = COJAC_MAGIC_asChebfun(0.0); // define a function x=x
+    double f = Math.sin(2*x); // apply operations on x
+    double df= COJAC_MAGIC_derivateChebfun(f); // compute the derivative of f
+    System.out.printf("f(x) = %s should be (%s) \n", COJAC_MAGIC_evaluateChebfunAt(f, 0.5123), Math.sin(2*0.5123));
+    System.out.printf("f'(x) = %s should be (%s) \n", COJAC_MAGIC_evaluateChebfunAt(df, 0.5123),2*Math.cos(2*0.5123));   
+  }
+}
+
+```
+And that's how we run this program with the Chebfun wrapper and the result:
+
+```
+prompt> java -javaagent:cojac.jar="-Rcheb" ATinyChebfunDemo
+f(x) = 0.854506481547763 should be (0.8545064815477629) 
+f'(x) = 1.0388814619442395 should be (1.0388814619442641) 
+```
+We can see that the results are those expected (at 13 digits).
 
 --------------------------------------------------
 # 4 - Detailed usage
@@ -614,6 +658,7 @@ Two nice tools to enrich Java arithmetic capabilities, on-the-fly:
  -Ri,--interval              Use interval computation wrapping
  -Rs,--stochastic            Use discrete stochastic arithmetic wrapping
  -Rsy,--symbolic             Use symbolic computation wrapping
+ -Rcheb,--chebfun            Use chebfun wrapping
  -Sc,--console               Signal problems with console messages to stderr
                              (default signaling policy)
  -Sd,--detailed              Log the full stack trace (combined with -Cc or -Cl)
