@@ -410,7 +410,7 @@ public class WrapperSymbolic extends ACojacWrapper {
                 ArrayList<Double> list = new ArrayList<Double>();
                 for (SymbolicExpression se : listOfSE)
                     list.add(se.evaluateBetter(x));
-
+                // Trie les termes de manière absolue et dans un ordre descendent
                 list.sort(new Comparator<Double>() {
                     @Override
                     public int compare(Double d1, Double d2) {
@@ -513,11 +513,11 @@ public class WrapperSymbolic extends ACojacWrapper {
                 this.binaryOp = binaryOp;
                 this.symbOP = symbOP;
             }
-
+            // Apply the standard operator
             public double apply(double left, double right) {
                 return binaryOp.applyAsDouble(left, right);
             }
-
+            // Apply the differentiation
             public SymbolicExpression derivate(SymbolicExpression se) {
                 return symbOP.derivate(se);
             }
