@@ -20,7 +20,6 @@ package com.github.cojac.models.wrappers;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.function.DoubleBinaryOperator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,8 +30,10 @@ import com.github.cojac.symbolic.SymbUtils.SymbolicDerivationOperator;
 
 public class WrapperSymbolic extends ACojacWrapper {
 
-    private final SymbolicExpression expr;
+    private final SymbolicExpression expr; //
 
+    // -------------------------------------------------------------------------
+    // ----------------- Constructors ------------------------------------------
     // -------------------------------------------------------------------------
     private WrapperSymbolic() {
         this.expr = new SymbolicExpression();
@@ -60,8 +61,10 @@ public class WrapperSymbolic extends ACojacWrapper {
     public WrapperSymbolic(ACojacWrapper w) {
         this(w == null ? null : asSymbWrapper(w).expr);
     }
-    // -------------------------------------------------------------------------
 
+    // -------------------------------------------------------------------------
+    // ----------------- Override operators ------------------------------------
+    // -------------------------------------------------------------------------
     @Override
     public ACojacWrapper dadd(ACojacWrapper w) {
         return new WrapperSymbolic(OP.ADD, this.expr, asSymbWrapper(w).expr);
@@ -188,38 +191,36 @@ public class WrapperSymbolic extends ACojacWrapper {
     }
 
     // -------------------------------------------------------------------------
+    // ----------------- Comparison operator
+    // ------------------------------------
+    // -------------------------------------------------------------------------
+    @Override
+    public int dcmpl(ACojacWrapper w) {
+        // Averti que l'on ne peut pas comparer des fonctions
+        if (this.expr.containsUnknown || asSymbWrapper(w).expr.containsUnknown)
+            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "Can not compare symbolic expressions containing unknowns");
+        return super.dcmpl(w);
+    }
+
+    @Override
+    public int dcmpg(ACojacWrapper w) {
+        // Averti que l'on ne peut pas comparer des fonctions
+        if (this.expr.containsUnknown || asSymbWrapper(w).expr.containsUnknown)
+            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "Can not compare symbolic expressions containing unknowns");
+        return super.dcmpg(w);
+    }
+
+    // -------------------------------------------------------------------------
+    // ----------------- Necessary wrapper methods -----------------------------
+    // -------------------------------------------------------------------------
     @Override
     public double toDouble() {
         return expr.value;
     }
 
     @Override
-    public ACojacWrapper fromDouble(double a, boolean wasFromFloat) {
-
+    public ACojacWrapper fromDouble(double a, @SuppressWarnings("unused") boolean wasFromFloat) {
         return new WrapperSymbolic(a);
-    }
-
-    @Override
-    public int dcmpl(ACojacWrapper w) {
-        if (this.expr.containsUnknown || asSymbWrapper(w).expr.containsUnknown)
-            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "Can not compare symbolic expressions containing unknowns");
-        if (this.isNaN() || w.isNaN())
-            return -1;
-        return this.compareTo(w);
-    }
-
-    @Override
-    public int dcmpg(ACojacWrapper w) {
-        if (this.expr.containsUnknown || asSymbWrapper(w).expr.containsUnknown)
-            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "Can not compare symbolic expressions containing unknowns");
-        if (this.isNaN() || w.isNaN())
-            return 1;
-        return this.compareTo(w);
-    }
-
-    @Override
-    public int compareTo(ACojacWrapper w) {
-        return Double.compare(toDouble(), w.toDouble());
     }
 
     @Override
@@ -232,7 +233,9 @@ public class WrapperSymbolic extends ACojacWrapper {
         return "Symbolic";
     }
 
-    // ------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
+    // ----------------- Magic methods -----------------------------------------
+    // -------------------------------------------------------------------------
     public static boolean COJAC_MAGIC_isSymbolicUnknown(CommonDouble d) {
         return asSymbWrapper(d.val).expr.containsUnknown;
     }
