@@ -156,9 +156,9 @@ public class WrapperChebfun extends ACompactWrapper {
         return this.value;
     }
 
-    @SuppressWarnings("unused")
+
     @Override
-    public ACojacWrapper fromDouble(double a, boolean wasFromFloat) {
+    public ACojacWrapper fromDouble(double a, @SuppressWarnings("unused") boolean wasFromFloat) {
         return new WrapperChebfun(a, null);
     }
 
@@ -193,14 +193,12 @@ public class WrapperChebfun extends ACompactWrapper {
         return asCheb(d.val).isChebfun();
     }
 
-    @SuppressWarnings("unused")
-    public static CommonDouble COJAC_MAGIC_asChebfun(CommonDouble d) {
+    public static CommonDouble COJAC_MAGIC_asChebfun(@SuppressWarnings("unused") CommonDouble d) {
         WrapperChebfun res = new WrapperChebfun(Double.NaN, initChebun(BASE_DEGREE));
         return new CommonDouble(res);
     }
 
-    @SuppressWarnings("unused")
-    public static CommonFloat COJAC_MAGIC_asChebfun(CommonFloat d) {
+    public static CommonFloat COJAC_MAGIC_asChebfun(@SuppressWarnings("unused") CommonFloat d) {
         WrapperChebfun res = new WrapperChebfun(Double.NaN, initChebun(BASE_DEGREE));
         return new CommonFloat(res);
     }
@@ -371,9 +369,8 @@ public class WrapperChebfun extends ACompactWrapper {
 
         // extraction des N+1 premiers éléments (de 0 à N compris)
         double[] f = new double[n + 1];
-        for (int j = 0; j <= n; j++) {
+        for (int j = 0; j <= n; j++)
             f[j] = dataRI1[0][j];
-        }
         return f;
     }
 
@@ -464,6 +461,7 @@ public class WrapperChebfun extends ACompactWrapper {
         return resFuncValues;
     }
 
+    // Permet d'étendre le degré polynome par un facteur de 2
     private static double[] extendDegree(double[] funcValues) {
         int extendedDegree = (funcValues.length - 1) * 2;
         double[] extendedValues = new double[extendedDegree + 1];
@@ -475,6 +473,8 @@ public class WrapperChebfun extends ACompactWrapper {
         return extendedValues;
     }
 
+    // Permet de déterminer si le degré du polynome est suffisant pour
+    // repérenter la fonction de manière précise
     private static boolean isDegreeGoodEnough(double[] funcValues) {
         if (Double.isNaN(funcValues[0]))
             return true;
@@ -502,9 +502,8 @@ public class WrapperChebfun extends ACompactWrapper {
 
         b[n] = 0;
         b[n - 1] = 2 * n * a[n];
-        for (int k = n - 1; k >= 2; k--) {
+        for (int k = n - 1; k >= 2; k--)
             b[k - 1] = b[k + 1] + 2 * k * a[k];
-        }
         b[0] = b[2] / 2 + a[1];
 
         return ifft(b);
