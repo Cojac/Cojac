@@ -91,7 +91,7 @@ public class WrapperChebfun extends ACompactWrapper {
         } else if (this.isChebfun()) {
             poly = applyOp(this.funcValues, asCheb(w2).value, op);
         } else {
-            poly = applyOp(this.value ,asCheb(w2).funcValues, op);
+            poly = applyOp(this.value, asCheb(w2).funcValues, op);
         }
 
         return new WrapperChebfun(Double.NaN, poly);
@@ -101,7 +101,26 @@ public class WrapperChebfun extends ACompactWrapper {
     // ----------------- Override operators ------------------------------------
     // -------------------------------------------------------------------------
 
-    // TODO: Redéfinir les opérateurs nécessaires (avecles avertissements)
+    @Override
+    public ACojacWrapper math_abs() {
+        if (isChebfun())
+            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "The operation (abs) should not be used with a Chefun");
+        return super.math_abs();
+    }
+
+    @Override
+    public ACojacWrapper math_min(ACojacWrapper b) {
+        if (isChebfun() || asCheb(b).isChebfun())
+            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "The operation (min) should not be used with a Chefun");
+        return super.math_min(b);
+    }
+
+    @Override
+    public ACojacWrapper math_max(ACojacWrapper b) {
+        if (isChebfun() || asCheb(b).isChebfun())
+            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "The operation (max) should not be used with a Chefun");
+        return super.math_max(b);
+    }
 
     // -------------------------------------------------------------------------
     // ----------------- Comparison operators ----------------------------------
@@ -150,7 +169,8 @@ public class WrapperChebfun extends ACompactWrapper {
             return "" + this.value;
 
         String s = "Real poly degree : " + (funcValues.length - 1) + "\n";
-        s += "Min poly degree : " + (minReasonableDegree(fft(funcValues))) + "\n";
+        s += "Min poly degree : " + (minReasonableDegree(fft(funcValues))) +
+                "\n";
         s += "Poly values at Cheb points :  \n";
         for (double d : funcValues)
             s += d + "\n";
@@ -360,7 +380,6 @@ public class WrapperChebfun extends ACompactWrapper {
     // Permet d'appliquer une opération entre 2 Chebfuns
     private static double[] applyOp(double[] funcValuesA, double[] funcValuesB, DoubleBinaryOperator op) {
 
-        
         double[] resFuncValues; // polynôme résultant
 
         // égualise les tailles des 2 polynôme
@@ -406,9 +425,9 @@ public class WrapperChebfun extends ACompactWrapper {
         }
         return resFuncValues;
     }
-    
+
     // Permet d'appliquer une opération entre un Chefun et une constante
-    private static double[] applyOp( double constant, double[] funcValues, DoubleBinaryOperator op) {
+    private static double[] applyOp(double constant, double[] funcValues, DoubleBinaryOperator op) {
 
         double[] resFuncValues; // polynôme résultant
 
@@ -417,7 +436,7 @@ public class WrapperChebfun extends ACompactWrapper {
             // applique l'opération entre le Chebfun et la constante
             // ex : {C*f0,C*f1,...,C+fN}
             for (int i = 0; i < funcValues.length; i++)
-                resFuncValues[i] = op.applyAsDouble(constant,funcValues[i]);
+                resFuncValues[i] = op.applyAsDouble(constant, funcValues[i]);
             // contrôle si le degrée du polynôme résultant est suffisant
             if (isDegreeGoodEnough(resFuncValues))
                 break;
@@ -444,7 +463,6 @@ public class WrapperChebfun extends ACompactWrapper {
         }
         return resFuncValues;
     }
-    
 
     private static double[] extendDegree(double[] funcValues) {
         int extendedDegree = (funcValues.length - 1) * 2;
