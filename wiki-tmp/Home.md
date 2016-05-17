@@ -1,4 +1,4 @@
-﻿<p align="center">
+<p align="center">
 <img src="https://github.com/Cojac/Cojac/wiki/images/logo-cojac-512.png"
    width=256" />
 <h1 align="center">********** User Guide **********</h1>
@@ -26,6 +26,8 @@
   3. [Number model "Interval computation"](home#33---number-model-interval-computation)
   4. [Number model "Discrete stochastic arithmetic"](home#34---number-model-discrete-stochastic-arithmetic)
   5. [Number model "Automatic differentiation"](home#35---number-model-automatic-differentiation)
+  6. [Number model "Symbolic computation"](home#36---number-model-symbolic-computation)
+  7. [Number model "Chebfun"](home#37---number-model-chebfun)
 
 4. [COJAC: Changing Java's primitive type behaviour](home#4---Changing-javas-primitive-type-behaviour)
 
@@ -67,6 +69,7 @@ into richer number types, so that you can experiment, at a very low cost, some
 beautiful models such as arbitrary precision numbers, interval computation,
 or even the marvelous automatic differentiation. 
 See [§3](home#3---cojac-the-enriching-wrapper). This second tool is fun but still experimental (some
+
 [limitations](home#62---issues-with-the-wrapper) such as quite naive models implementation, 
 strong slowdown, poorly tested support for Java8 lambdas, problem when user-code 
 is "called back" from Java library...).
@@ -145,6 +148,7 @@ Note that all these example expressions, when written verbatim in Java,
 are evaluated at compile-time because they involve only literal values; so in 
 that (uninteresting) case, the problems won't be detected by COJAC (see 
 [known issues](home#61---issues-with-the-sniffer)).
+
 
 --------------------------------------------------
 ## 2.2 - Configuring what COJAC will detect
@@ -488,6 +492,127 @@ prompt> java -javaagent:cojac.jar="-Ra" DerivationDemo
 f(x):  21.0
 f'(x): 16.0
 ```
+## 3.6 - Number model "Symbolic computation"
+
+Symbolic computation is known for representing numbers and mathematical functions in an exact finite way. On the other hand the symbolic computation provides functionalities such as compute the derivative of a function, or finding its roots.
+
+We attempted a similar approach by storing the whole symbolic expression tree  of a number. What makes that numbers become functions.
+
+Through this mechanism, we are now able to store, evaluate and differentiate functions.
+
+This wrapper can be activated via the "-Rsy" option. Here are the magic methods available:
+
+```java
+public static double COJAC_MAGIC_asSymbolicUnknown(double a);
+public static double COJAC_MAGIC_evaluateSymbolicAt(double d, double x);
+public static double COJAC_MAGIC_derivateSymbolic(double d);
+```
+And here is a small example of what we can do with this wrapper.
+
+```java
+public class ATinySymbolicDemo {
+  public static String COJAC_MAGIC_toString(double n) {return "";}
+  public static double COJAC_MAGIC_asSymbolicUnknown(double a) {return a;}
+  public static double COJAC_MAGIC_evaluateSymbolicAt(double d, double x) {return d;}
+  public static double COJAC_MAGIC_derivateSymbolic(double d) {return d;}
+  // f(x) = 3x^2 + 2x + 5
+  static double myFunction(double x) {
+    double res = 3 * x * x; 
+    res = res + 2 * x; 
+    res = res + 5;
+    return res; 
+  }
+  public static void main(String[] args) {
+    double x = COJAC_MAGIC_asSymbolicUnknown(0.0); // define the unknown
+    double f = myFunction(x);                      // define the function
+    double df = COJAC_MAGIC_derivateSymbolic(f);   // compute the derivative
+    System.out.println("f(x)  = " + COJAC_MAGIC_toString(f));  // print the function "f"
+    System.out.println("f'(x) = " + COJAC_MAGIC_toString(df)); // print the derivative of "f"
+    System.out.println("f(2)  = " + COJAC_MAGIC_evaluateSymbolicAt(f, 2)); // compute the results of the function
+    System.out.println("f'(2) = " + COJAC_MAGIC_evaluateSymbolicAt(df, 2));// compute the results of the derivative
+  }
+}
+```
+And that's how we run this program with the Symbolic wrapper and the result:
+
+```
+prompt> java -javaagent:cojac.jar="-Rsy" ATinySymbolicDemo
+f(x)  = ADD(ADD(MUL(MUL(3.0,x),x),MUL(2.0,x)),5.0)
+f'(x) = ADD(ADD(ADD(MUL(ADD(MUL(0.0,x),MUL(3.0,1.0)),x),MUL(MUL(3.0,x),1.0)),ADD(MUL(0.0,x),MUL(2.0,1.0))),0.0)
+f(2)  = 21.0
+f'(2) = 14.0
+```
+We can see that the results are those expected.
+
+Another feature is to exploit the symbolic representation to improve the accuracy of the calculated amounts. And that by using the Kahan summation algorithm.
+
+Here is the corresponding magic method:
+```java
+public static double COJAC_MAGIC_evaluateBetterSymbolicAt(double d, double x);
+```
+And here is an example:
+
+```java
+public class ATinySymbolicDemo {
+  public static double COJAC_MAGIC_evaluateSymbolicAt(double d, double x) {return d;}
+  public static double COJAC_MAGIC_evaluateBetterSymbolicAt(double d, double x) {return d;}
+  public static void main(String[] args) {
+    double[] t = {+2, 1E-16, 1E-16, 1E-16, 5E-17, 5E-17};
+    double sum = 0;
+    for(double e : t) sum + = e;
+    System.out.println("sum  = " + COJAC_MAGIC_evaluateSymbolicAt(sum, 0.0));      // compute the sum (standard)
+    System.out.println("sum  = " + COJAC_MAGIC_evaluateBetterSymbolicAt(sum, 0.0));// compute the sum (better)
+  }
+}
+```
+
+```
+prompt> java -javaagent:cojac.jar="-Rsy" ATinySymbolicDemo
+sum  = 2.0
+sum  = 2.0000000000000004
+```
+By observing the results, we can see that the accuracy of the summation is improved.
+
+
+## 3.7 - Number model "Chebfun"
+
+Chebfun is an open-source library for MATLAB that uses polynomial approximations for representing functions. This polynomial representation allows operations such as compute finite integral or derivative.
+
+We are based on this concept to create a new wrapper. This wrapper allow to define functions (those will be polynomial approximations). For now we are able to define, evaluate and differentiate functions.
+
+This wrapper can be activated via the "-Rcheb" option. Here are the magic methods available:
+
+```java
+public static double COJAC_MAGIC_asChebfun(double a) {return a;}
+public static double COJAC_MAGIC_evaluateChebfunAt(double d, double x) {return d;}
+public static double COJAC_MAGIC_derivateChebfun(double d) {return d;}
+```
+And here is a small example of what we can do with this wrapper.
+
+```java
+public class ATinyChebfunDemo {
+  public static String COJAC_MAGIC_toString(double n) {return "";}
+  public static double COJAC_MAGIC_asChebfun(double a) {return a;}
+  public static double COJAC_MAGIC_evaluateChebfunAt(double d, double x) {return d;}
+  public static double COJAC_MAGIC_derivateChebfun(double d) {return d;}
+  public static void main(String[] args) {      
+    double x = COJAC_MAGIC_asChebfun(0.0); // define a function x=x
+    double f = Math.sin(2*x); // apply operations on x
+    double df= COJAC_MAGIC_derivateChebfun(f); // compute the derivative of f
+    System.out.printf("f(x) = %s should be (%s) \n", COJAC_MAGIC_evaluateChebfunAt(f, 0.5123), Math.sin(2*0.5123));
+    System.out.printf("f'(x) = %s should be (%s) \n", COJAC_MAGIC_evaluateChebfunAt(df, 0.5123),2*Math.cos(2*0.5123));   
+  }
+}
+
+```
+And that's how we run this program with the Chebfun wrapper and the result:
+
+```
+prompt> java -javaagent:cojac.jar="-Rcheb" ATinyChebfunDemo
+f(x) = 0.854506481547763 should be (0.8545064815477629) 
+f'(x) = 1.0388814619442395 should be (1.0388814619442641) 
+```
+We can see that the results are those expected (at 13 digits).
 
 As you can check, the results are those expected!
 --------------------------------------------------
@@ -660,7 +785,6 @@ Example:
 --------------------------------------------------
 # 5 - Detailed usage
 
-
 Here is the full manpage-like description of COJAC, as produced by the help argument (`java -javaagent:cojac.jar="-h"`): 
 
 ```
@@ -704,6 +828,8 @@ Two nice tools to enrich Java arithmetic capabilities, on-the-fly:
                              100-significant-digit BigDecimals
  -Ri,--interval              Use interval computation wrapping
  -Rs,--stochastic            Use discrete stochastic arithmetic wrapping
+ -Rsy,--symbolic             Use symbolic computation wrapping
+ -Rcheb,--chebfun            Use chebfun wrapping
  -Sc,--console               Signal problems with console messages to stderr
                              (default signaling policy)
  -Sd,--detailed              Log the full stack trace (combined with -Cc or -Cl)
@@ -728,6 +854,7 @@ Two nice tools to enrich Java arithmetic capabilities, on-the-fly:
 ```
 
 --------------------------------------------------
+
 # 6 - Limitations and known issues
 
 This section discusses a couple of issues for the current version of Cojac.
@@ -747,6 +874,7 @@ The sniffer part of COJAC is rather stable. Here are some limitations:
  you dream of a numerical sniffer not limited to the Java world, have a look at 
  [cojac-grind](https://github.com/Cojac/cojac-grind)...
 
+
 ## 6.2 - Issues with the wrapper
 
 The wrapper part of COJAC should be considered an experimental prototype. Here 
@@ -762,7 +890,7 @@ point numbers are being passed around.
 use it), but it has not been thoroughly  tested yet, so we expect some problems 
 with Java8 lambdas (Cojac 1.4.1 has fixed some problems).
 
-* In case of `class A extends J` where `J` is from the Java library, and
+* In case of `class A extends J` where `J` is from the java library, and
 offers a method `f()` (with floating point parameters/result) that `A` does
 not redefine : suppose the declaration `A a`, then the call `a.f(...)` fails,
 whereas `((J)a).f(...)` is OK. This should be fixed in Cojac 1.4.1.
@@ -780,6 +908,7 @@ every Math.* operations with the required precision in the BigDecimal model.
 * Of course, the slow-down is very important.
 
 --------------------------------------------------
+
 # 7 - And now...
 
 ...well, happy problem sniffing, and happy number wrapping!  

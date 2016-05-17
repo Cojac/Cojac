@@ -263,7 +263,10 @@ public final class CojacReferences {
                    //  -b java2d.demos.Fonts.AttributedStr$ScalableImageGraphicAttribute
                 + "java2d.demos.Fonts.AttributedStr$ScalableImageGraphicAttribute;" 
                 + "com.github.cojac.models;"
-                + "com.github.cojac.interval;" + "jdk.internal;" + "org.slf4j";
+                + "com.github.cojac.interval;"
+                + "jdk.internal;"
+                + "org.slf4j;"
+                + "org.apache.commons.math3";
 
         public CojacReferencesBuilder(final Args args) {
             this(args, null);
@@ -313,6 +316,19 @@ public final class CojacReferences {
 //                args.setValue(Arg.FLOAT_WRAPPER, "com.github.cojac.models.wrappers.DerivationFloat");
 //                args.setValue(Arg.DOUBLE_WRAPPER, "com.github.cojac.models.wrappers.DerivationDouble");
                 args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperDerivation");
+   }
+            
+            if (args.isSpecified(Arg.SYMBOLIC)) {
+                args.specify(Arg.REPLACE_FLOATS);
+//                args.setValue(Arg.FLOAT_WRAPPER, "com.github.cojac.models.wrappers.SymbolicFloat");
+//                args.setValue(Arg.DOUBLE_WRAPPER, "com.github.cojac.models.wrappers.SymbolicDouble");
+                args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperSymbolic");
+   }
+            if (args.isSpecified(Arg.CHEBFUN)) {
+                args.specify(Arg.REPLACE_FLOATS);
+//                args.setValue(Arg.FLOAT_WRAPPER, "com.github.cojac.models.wrappers.SymbolicFloat");
+//                args.setValue(Arg.DOUBLE_WRAPPER, "com.github.cojac.models.wrappers.SymbolicDouble");
+                args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperChebfun");
    }
 
             if (args.isSpecified(Arg.REPLACE_FLOATS)) { 
