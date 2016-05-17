@@ -312,9 +312,10 @@ public class WrapperSymbolic extends ACojacWrapper {
         public final OP oper;
         // Sub trees : both are NULL if the node is a constant or an unknown
         // right is null if the node is an unary operator
-        public final SymbolicExpression left; 
+        public final SymbolicExpression left;
         public final SymbolicExpression right;
 
+        // Constructor for unknown
         public SymbolicExpression() {
             this.value = Double.NaN;
             this.containsUnknown = true;
@@ -323,6 +324,7 @@ public class WrapperSymbolic extends ACojacWrapper {
             this.left = null;
         }
 
+        // Constructor for constant
         public SymbolicExpression(double value) {
             this.value = value;
             this.containsUnknown = false;
@@ -331,6 +333,7 @@ public class WrapperSymbolic extends ACojacWrapper {
             this.right = null;
         }
 
+        // Constructor for unary operator
         public SymbolicExpression(OP oper, SymbolicExpression left) {
             this.value = oper.apply(left.value, Double.NaN);
             this.containsUnknown = left.containsUnknown;
@@ -345,6 +348,7 @@ public class WrapperSymbolic extends ACojacWrapper {
             }
         }
 
+        // Constructor for binary opretor
         public SymbolicExpression(OP oper, SymbolicExpression left, SymbolicExpression right) {
             this.value = oper.apply(left.value, right.value);
             this.containsUnknown = left.containsUnknown ||
@@ -360,6 +364,7 @@ public class WrapperSymbolic extends ACojacWrapper {
             }
         }
 
+        // Evaluate the current sub-tree at "x"
         public double evaluate(double x) {
             if (containsUnknown && oper == OP.NOP)
                 return x;
@@ -370,10 +375,12 @@ public class WrapperSymbolic extends ACojacWrapper {
             return oper.apply(left.evaluate(x), Double.NaN);
         }
 
+        // Differentiate the current sub-tree
         public SymbolicExpression derivate() {
             return oper.derivate(this);
         }
 
+        // Mise à plat des opérateurs d'addition et de soustration
         public ArrayList<SymbolicExpression> flatOperatorForSummation() {
             ArrayList<SymbolicExpression> listOfSE = new ArrayList<SymbolicExpression>();
             if (oper == OP.ADD) {
@@ -392,13 +399,26 @@ public class WrapperSymbolic extends ACojacWrapper {
             return listOfSE;
         }
 
+        /*
+         * Cette méthode permet d'évaluter l'arbre d'un manière plus précise.
+         * Elle met à plat l'opérateur d'addition et de soustration puis
+         * réordonne ceux-ci dans un ordre asbosolu décroissant et finalement
+         * applique la somme de Kahan
+         */
         public double evaluateBetter(double x) {
+            // Si l'on rencontre ADD ou SUB -> mise à plat -> Kahan
             if (oper == OP.ADD || oper == OP.SUB) {
                 ArrayList<SymbolicExpression> listOfSE = this.flatOperatorForSummation();
                 ArrayList<Double> list = new ArrayList<Double>();
                 for (SymbolicExpression se : listOfSE)
                     list.add(se.evaluateBetter(x));
-                list.sort(new AbsDescComparator());
+
+                list.sort(new Comparator<Double>() {
+                    @Override
+                    public int compare(Double d1, Double d2) {
+                        return Double.compare(Math.abs(d2), Math.abs(d1));
+                    };
+                });
 
                 double sum = 0;
                 double corr = 0;
@@ -410,9 +430,10 @@ public class WrapperSymbolic extends ACojacWrapper {
                 }
 
                 /*
-                 * double sum = 0; while (true) {
+                 * Somme les termes dans l'ordre les plus proches
+                 * (relatif/asbsolue) double sum = 0; while (true) {
                  * 
-                 * list.sort(new ABSComparator());
+                 * list.sort(new AbsAscComparator());
                  * 
                  * int shortestIndex = 1; double shortestDist =
                  * Double.POSITIVE_INFINITY; for (int i = 0; i + 1 <
@@ -423,7 +444,6 @@ public class WrapperSymbolic extends ACojacWrapper {
                  * list.remove(shortestIndex); if (list.isEmpty()) break;
                  * list.add(sum); }
                  */
-
                 return sum;
             }
 
@@ -452,14 +472,6 @@ public class WrapperSymbolic extends ACojacWrapper {
             if (right != null)
                 return oper + "(" + left + "," + right + ")";
             return oper + "(" + left + ")";
-        }
-
-        public static class AbsDescComparator implements Comparator<Double> {
-
-            @Override
-            public int compare(Double d1, Double d2) {
-                return Double.compare(Math.abs(d2), Math.abs(d1));
-            }
         }
 
         public static enum OP {
