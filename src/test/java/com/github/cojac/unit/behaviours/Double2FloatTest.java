@@ -32,9 +32,9 @@ import com.github.cojac.unit.AgentTest;
 
 public class Double2FloatTest {
     //correspond to the methods in Class "Double2FloatTests" that will be tested
-    String[] methods = {"testNextUp","testPrecisionAdd","testPrecisionSub","testPrecisionMul","testPrecisionDiv"};
+    String[] methods = {"testNextUp","testPrecisionAdd","testPrecisionSub","testPrecisionMul","testPrecisionDiv", "testSqrt"};
     //expected output of these methods, in the same order as the methods in "methods"
-    float[] expectedResults = {Math.nextUp(3.0f), 1.1f, -0.9f, 0.1f,10f};
+    float[] expectedResults = {Math.nextUp(3.0f), 1.0f, -1f, (float)1.00000095E-11,(float)9.99999E-12,1.4142135f};
     Object object;
     Class<?> classz;
     Agent agent;

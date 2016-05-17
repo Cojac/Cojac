@@ -16,7 +16,7 @@
  *
  */
 package com.github.cojac.models;
-import  org.objectweb.asm.Opcodes;
+import  org.objectweb.asm.Opcodes; //for opcode real numeric values
 import static com.github.cojac.models.Parameters.*;
 import static com.github.cojac.models.Signatures.*;
 /**

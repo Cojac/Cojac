@@ -33,39 +33,46 @@ public class Double2FloatTests {
     }
     /*
      * This test should check the precision difference between float and double in an addition
-     * return should be 1.1f when instrumented
+     * return should be 1.0f when instrumented
      */
     public double testPrecisionAdd(){
-        double a = 0.1;
+        double a = 1E-10 ;
         double b = 1;
         return a+b;
     }
     /*
      * This test should check the precision difference between float and double in a substraction
-     * return should be -0.9f when instrumented 
+     * return should be -1.0f when instrumented 
      */
     public double testPrecisionSub(){
-        double a = 0.1;
+        double a = 1E-11;
         double b = 1;
         return a-b;
     }
     /*
      * This test should check the precision difference between float and double in a multiplication
-     * return should be 1.1f when instrumented 
+     * return should be 1.00000095E-11 when instrumented 
      */
     public double testPrecisionMul(){
-        double a = 0.05;
-        double b = 2;
+        double a = 1E-11;
+        double b = 1.000001;
         return a*b;
     }
     /*
      * This test should check the precision difference between float and double in a division
-     * return should be 10f when instrumented 
+     * return should be 9.99999E-12 when instrumented 
      */
     public double testPrecisionDiv(){
-        double a = 1;
-        double b = 0.1;
+        double a = 1E-11;
+        double b = 1.000001;
         return a/b;
     }
-    
+    /*
+     * This test should check the Math.sqrt method
+     * return should be 1.4142135f when instrumented 
+     */
+    public double testSqrt(){
+        double a = 2.0;
+        return Math.sqrt(a);
+    }
 }
