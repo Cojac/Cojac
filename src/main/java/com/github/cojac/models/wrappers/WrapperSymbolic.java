@@ -191,8 +191,7 @@ public class WrapperSymbolic extends ACojacWrapper {
     }
 
     // -------------------------------------------------------------------------
-    // ----------------- Comparison operator
-    // ------------------------------------
+    // ----------------- Comparison operator _----------------------------------
     // -------------------------------------------------------------------------
     @Override
     public int dcmpl(ACojacWrapper w) {
@@ -236,11 +235,12 @@ public class WrapperSymbolic extends ACojacWrapper {
     // -------------------------------------------------------------------------
     // ----------------- Magic methods -----------------------------------------
     // -------------------------------------------------------------------------
-    public static boolean COJAC_MAGIC_isSymbolicUnknown(CommonDouble d) {
+
+    public static boolean COJAC_MAGIC_isSymbolicFunction(CommonDouble d) {
         return asSymbWrapper(d.val).expr.containsUnknown;
     }
 
-    public static boolean COJAC_MAGIC_isSymbolicUnknown(CommonFloat d) {
+    public static boolean COJAC_MAGIC_isSymbolicFunction(CommonFloat d) {
         return asSymbWrapper(d.val).expr.containsUnknown;
     }
 
@@ -289,20 +289,30 @@ public class WrapperSymbolic extends ACojacWrapper {
     }
 
     // -------------------------------------------------------------------------
+    // ----------------- Useful methods ----------------------------------------
+    // -------------------------------------------------------------------------
 
     private static WrapperSymbolic asSymbWrapper(ACojacWrapper w) {
         return (WrapperSymbolic) w;
     }
 
     // -------------------------------------------------------------------------
-
+    // ----------------- Symbolic expression tree ------------------------------
+    // -------------------------------------------------------------------------
     public static class SymbolicExpression {
-        private static final boolean COMPR = false;
-
+        // Active compression for constant sub trees
+        private static final boolean COMPRESSION_MODE = false;
+        // The value of the constant or the value of the sub tree if
+        // !containsUnknown
         public final double value;
+        // Indicate if the current sub contains at least one unknown
         public final boolean containsUnknown;
+        // Determine the current operator ( if the node is an unknown or a
+        // constant the operator is NOP)
         public final OP oper;
-        public final SymbolicExpression left;
+        // Sub trees : both are NULL if the node is a constant or an unknown
+        // right is null if the node is an unary operator
+        public final SymbolicExpression left; 
         public final SymbolicExpression right;
 
         public SymbolicExpression() {
@@ -324,7 +334,7 @@ public class WrapperSymbolic extends ACojacWrapper {
         public SymbolicExpression(OP oper, SymbolicExpression left) {
             this.value = oper.apply(left.value, Double.NaN);
             this.containsUnknown = left.containsUnknown;
-            if (this.containsUnknown || !COMPR) {
+            if (this.containsUnknown || !COMPRESSION_MODE) {
                 this.oper = oper;
                 this.left = left;
                 this.right = null;
@@ -339,7 +349,7 @@ public class WrapperSymbolic extends ACojacWrapper {
             this.value = oper.apply(left.value, right.value);
             this.containsUnknown = left.containsUnknown ||
                     right.containsUnknown;
-            if (this.containsUnknown || !COMPR) {
+            if (this.containsUnknown || !COMPRESSION_MODE) {
                 this.oper = oper;
                 this.left = left;
                 this.right = right;
