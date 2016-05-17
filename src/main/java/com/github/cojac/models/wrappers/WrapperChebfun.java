@@ -91,7 +91,7 @@ public class WrapperChebfun extends ACompactWrapper {
         } else if (this.isChebfun()) {
             poly = applyOp(this.funcValues, asCheb(w2).value, op);
         } else {
-            poly = applyOp(this.value ,asCheb(w2).funcValues, op);
+            poly = applyOp(this.value, asCheb(w2).funcValues, op);
         }
 
         return new WrapperChebfun(Double.NaN, poly);
@@ -101,7 +101,26 @@ public class WrapperChebfun extends ACompactWrapper {
     // ----------------- Override operators ------------------------------------
     // -------------------------------------------------------------------------
 
-    // TODO: Redéfinir les opérateurs nécessaires (avecles avertissements)
+    @Override
+    public ACojacWrapper math_abs() {
+        if (isChebfun())
+            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "The operation (abs) should not be used with a Chefun");
+        return super.math_abs();
+    }
+
+    @Override
+    public ACojacWrapper math_min(ACojacWrapper b) {
+        if (isChebfun() || asCheb(b).isChebfun())
+            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "The operation (min) should not be used with a Chefun");
+        return super.math_min(b);
+    }
+
+    @Override
+    public ACojacWrapper math_max(ACojacWrapper b) {
+        if (isChebfun() || asCheb(b).isChebfun())
+            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "The operation (max) should not be used with a Chefun");
+        return super.math_max(b);
+    }
 
     // -------------------------------------------------------------------------
     // ----------------- Comparison operators ----------------------------------
@@ -137,9 +156,9 @@ public class WrapperChebfun extends ACompactWrapper {
         return this.value;
     }
 
-    @SuppressWarnings("unused")
+
     @Override
-    public ACojacWrapper fromDouble(double a, boolean wasFromFloat) {
+    public ACojacWrapper fromDouble(double a, @SuppressWarnings("unused") boolean wasFromFloat) {
         return new WrapperChebfun(a, null);
     }
 
@@ -150,7 +169,8 @@ public class WrapperChebfun extends ACompactWrapper {
             return "" + this.value;
 
         String s = "Real poly degree : " + (funcValues.length - 1) + "\n";
-        s += "Min poly degree : " + (minReasonableDegree(fft(funcValues))) + "\n";
+        s += "Min poly degree : " + (minReasonableDegree(fft(funcValues))) +
+                "\n";
         s += "Poly values at Cheb points :  \n";
         for (double d : funcValues)
             s += d + "\n";
@@ -173,14 +193,12 @@ public class WrapperChebfun extends ACompactWrapper {
         return asCheb(d.val).isChebfun();
     }
 
-    @SuppressWarnings("unused")
-    public static CommonDouble COJAC_MAGIC_asChebfun(CommonDouble d) {
+    public static CommonDouble COJAC_MAGIC_asChebfun(@SuppressWarnings("unused") CommonDouble d) {
         WrapperChebfun res = new WrapperChebfun(Double.NaN, initChebun(BASE_DEGREE));
         return new CommonDouble(res);
     }
 
-    @SuppressWarnings("unused")
-    public static CommonFloat COJAC_MAGIC_asChebfun(CommonFloat d) {
+    public static CommonFloat COJAC_MAGIC_asChebfun(@SuppressWarnings("unused") CommonFloat d) {
         WrapperChebfun res = new WrapperChebfun(Double.NaN, initChebun(BASE_DEGREE));
         return new CommonFloat(res);
     }
@@ -351,16 +369,14 @@ public class WrapperChebfun extends ACompactWrapper {
 
         // extraction des N+1 premiers éléments (de 0 à N compris)
         double[] f = new double[n + 1];
-        for (int j = 0; j <= n; j++) {
+        for (int j = 0; j <= n; j++)
             f[j] = dataRI1[0][j];
-        }
         return f;
     }
 
     // Permet d'appliquer une opération entre 2 Chebfuns
     private static double[] applyOp(double[] funcValuesA, double[] funcValuesB, DoubleBinaryOperator op) {
 
-        
         double[] resFuncValues; // polynôme résultant
 
         // égualise les tailles des 2 polynôme
@@ -406,9 +422,9 @@ public class WrapperChebfun extends ACompactWrapper {
         }
         return resFuncValues;
     }
-    
+
     // Permet d'appliquer une opération entre un Chefun et une constante
-    private static double[] applyOp( double constant, double[] funcValues, DoubleBinaryOperator op) {
+    private static double[] applyOp(double constant, double[] funcValues, DoubleBinaryOperator op) {
 
         double[] resFuncValues; // polynôme résultant
 
@@ -417,7 +433,7 @@ public class WrapperChebfun extends ACompactWrapper {
             // applique l'opération entre le Chebfun et la constante
             // ex : {C*f0,C*f1,...,C+fN}
             for (int i = 0; i < funcValues.length; i++)
-                resFuncValues[i] = op.applyAsDouble(constant,funcValues[i]);
+                resFuncValues[i] = op.applyAsDouble(constant, funcValues[i]);
             // contrôle si le degrée du polynôme résultant est suffisant
             if (isDegreeGoodEnough(resFuncValues))
                 break;
@@ -444,8 +460,8 @@ public class WrapperChebfun extends ACompactWrapper {
         }
         return resFuncValues;
     }
-    
 
+    // Permet d'étendre le degré polynome par un facteur de 2
     private static double[] extendDegree(double[] funcValues) {
         int extendedDegree = (funcValues.length - 1) * 2;
         double[] extendedValues = new double[extendedDegree + 1];
@@ -457,6 +473,8 @@ public class WrapperChebfun extends ACompactWrapper {
         return extendedValues;
     }
 
+    // Permet de déterminer si le degré du polynome est suffisant pour
+    // repérenter la fonction de manière précise
     private static boolean isDegreeGoodEnough(double[] funcValues) {
         if (Double.isNaN(funcValues[0]))
             return true;
@@ -484,9 +502,8 @@ public class WrapperChebfun extends ACompactWrapper {
 
         b[n] = 0;
         b[n - 1] = 2 * n * a[n];
-        for (int k = n - 1; k >= 2; k--) {
+        for (int k = n - 1; k >= 2; k--)
             b[k - 1] = b[k + 1] + 2 * k * a[k];
-        }
         b[0] = b[2] / 2 + a[1];
 
         return ifft(b);

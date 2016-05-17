@@ -26,180 +26,23 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.github.cojac.models.wrappers.CommonDouble;
-import com.github.cojac.models.wrappers.WrapperSymbolic;
-
 public class SymbolicDemo {
-    private static int nbrTestPassed = 0;
-    private static final double epsilon = 0.1;
+
+    private static final double epsilon = 1e-15;
     private static Map<String, Method> methods;
 
     static {
         methods = new TreeMap<>();
         for (Method method : SymbolicDemo.class.getDeclaredMethods()) {
             methods.put(method.getName(), method);
-        } // end for
-    }
-
-    // ----------------------------------------------------
-
-    public static void main(String[] args) {
-        smallTest();
-        runSymbolicTest();
-
-        System.out.println("\n");
-        if (nbrTestPassed == 13) {
-            System.out.println("All test passed successfully !");
         }
     }
 
     // ----------------------------------------------------
-
-    static double someFunction(double x, double a, double b) {
-        double res = a * x * x;
-        res = res * b + x;
-        res = res * 1;
-        return res;
-    }
-
-    public static void smallTest() {
-        double x = 2;
-        x = COJAC_MAGIC_asSymbolicUnknown(x);
-        Double y = someFunction(x, 3, 4);
-        
-        double z = 2;
-        System.out.println("y=" + y + " z = " + z);
-        Double yy = y;
-
-        double j = Double.NaN;
-        System.out.println(y.compareTo(y));
-        System.out.println(Double.compare(y, y));
-
-        // y=1d;
-        if (y > 2)
-            System.out.println(y + ">" + 2);
-        if (y >= 2)
-            System.out.println(y + ">=" + 2);
-        if (y == 2)
-            System.out.println(y + "==" + 2);
-        if (y != 2)
-            System.out.println(y + "!=" + 2);
-        if (y < 2)
-            System.out.println(y + "<" + 2);
-        if (y <= 2)
-            System.out.println(y + "<=" + 2);
-
-        if (y > 2)
-            System.out.println(y + ">" + 2);
-        if (y >= 2)
-            System.out.println(y + ">=" + 2);
-        if (y == 2)
-            System.out.println(y + "==" + 2);
-        if (y != 2)
-            System.out.println(y + "!=" + 2);
-        if (y < 2)
-            System.out.println(y + "<" + 2);
-        if (y <= 2)
-            System.out.println(y + "<=" + 2);
-
-        if (2 > y)
-            System.out.println(y + ">" + 2);
-        if (2 >= y)
-            System.out.println(y + ">=" + 2);
-        if (2 == y)
-            System.out.println(y + "==" + 2);
-        if (2 != y)
-            System.out.println(y + "!=" + 2);
-        if (2 < y)
-            System.out.println(y + "<" + 2);
-        if (2 <= y)
-            System.out.println(y + "<=" + 2);
-
-        if (y > y)
-            System.out.println(y + ">" + y);
-        if (y >= y)
-            System.out.println(y + ">=" + y);
-        if (y == j)
-            System.out.println(y + "==" + j);
-        if (y != j)
-            System.out.println(y + "!=" + j);
-        if (y < y)
-            System.out.println(y + "<" + y);
-        if (y <= y)
-            System.out.println(y + "<=" + y);
-          
-        System.out.println("-------------------------------");
-      //  System.out.println("f(2):  " + y);
-      //  System.out.println("x : " + COJAC_MAGIC_isSymbolicUnknown(x));
-      //  System.out.println("f(10): " + COJAC_MAGIC_evaluateSymbolicAt(y, 10));
-
-    }
-
-    public static void runSymbolicTest() {
-        // run the Symbolic functions 1 to 13
-        double[] xs = new double[]{4.0, 4.0, 4.0, 1.0, 4.0, 4.0, 4.0, 4.0, 0.4,
-                4.0, 4.0, 4.0, 4.0,1.0,1.0};
-        for (int i = 1; i <= 15; i++) {
-            try {
-                runFx(i, xs[i - 1]);
-            } catch (InvocationTargetException | IllegalAccessException
-                    | NoSuchMethodException e) {
-                e.printStackTrace();
-            }
-        } // end for
-
-    }
-
+    // ---------- COJAC MAGIC -----------------------------
     // ----------------------------------------------------
-
-    public static void runFx(int fx, double x) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
-
-        Method f = methods.get("f" + fx);
-        Method df = methods.get("df" + fx);
-
-        if (f == null || df == null) {
-            throw new NoSuchMethodException(fx + " not found...");
-        }
-
-        System.out.printf("Function %d\n", fx);
-        double res = (double) f.invoke(SymbolicDemo.class, x);
-        double u = COJAC_MAGIC_asSymbolicUnknown(0);
-        Double y = (double) f.invoke(SymbolicDemo.class, u);
-        
-
-        double symRes = COJAC_MAGIC_evaluateSymbolicAt(y, x);
-        double betterSymRes = COJAC_MAGIC_evaluateBetterSymbolicAt(y, x);
-
-        System.out.printf("f%d(x) = %s \n", fx, COJAC_MAGIC_toString(y));
-        System.out.printf("f%d(%s) = %s should be (%s) \n", fx, x, symRes, res);
-        System.out.printf("sf%d(%s) = %s should be (%s) \n", fx, x, betterSymRes, res);
-
-        if (Math.abs(res - symRes) < epsilon) {
-            System.out.println("Test ok");
-            nbrTestPassed++;
-        }
-
-    }
-
-    // ----------------------------------------------------
-
-    /*
-     * Magic method, see cojac implementation of those in the SymbolicDouble
-     */
     public static String COJAC_MAGIC_toString(double n) {
         return "";
-    }
-
-    public static String COJAC_MAGIC_toString(float n) {
-        return "";
-    }
-
-    public static double COJAC_MAGIC_getSymbolic(double a) {
-        return 0;
-    }
-
-    public static boolean COJAC_MAGIC_isSymbolicUnknown(double a) {
-        return false;
     }
 
     public static double COJAC_MAGIC_asSymbolicUnknown(double a) {
@@ -209,14 +52,224 @@ public class SymbolicDemo {
     public static double COJAC_MAGIC_evaluateSymbolicAt(double d, double x) {
         return d;
     }
+
     public static double COJAC_MAGIC_evaluateBetterSymbolicAt(double d, double x) {
         return d;
     }
 
+    public static double COJAC_MAGIC_derivateSymbolic(double d) {
+        return d;
+    }
+
+    // ----------------------------------------------------
+    // ---------- GLOBAL TEST -----------------------------
+    // ----------------------------------------------------
+
+    public static void main(String[] args) {
+
+        int nbrError = 0;
+        nbrError += comparisonTest();
+        nbrError += runSymbolicTest();
+
+        if (nbrError == 0) {
+            System.out.println("----------------------------------------");
+            System.out.println(" Test finished successfully !");
+            System.out.println("----------------------------------------");
+        } else {
+            System.err.println("----------------------------------------");
+            System.err.println(" Test finished with " + nbrError + " error");
+            System.err.println("----------------------------------------");
+        }
+
+    }
+
+    // ----------------------------------------------------
+    // ---------- COMPARISON TEST -------------------------
+    // ----------------------------------------------------
+
+    public static int comparisonTest() {
+        System.out.println("----------------------------------------");
+        System.out.println(" Start Comparison Test");
+        System.out.println("----------------------------------------");
+
+        int nbrError = 0;
+
+        double x = COJAC_MAGIC_asSymbolicUnknown(0.0);
+        Double y = someFunction(x, 3, 4);
+
+        if (y > 2) {
+            System.err.println(y + ">" + 2);
+            nbrError++;
+        }
+        if (y >= 2) {
+            System.err.println(y + ">=" + 2);
+            nbrError++;
+        }
+        if (y == 2) {
+            System.err.println(y + "==" + 2);
+            nbrError++;
+        }
+        if (!(y != 2)) {
+            System.err.println(y + "!=" + 2);
+            nbrError++;
+        }
+        if (y < 2) {
+            System.err.println(y + "<" + 2);
+            nbrError++;
+        }
+        if (y <= 2) {
+            System.err.println(y + "<=" + 2);
+            nbrError++;
+        }
+
+        if (2 > y) {
+            System.err.println(y + ">" + 2);
+            nbrError++;
+        }
+        if (2 >= y) {
+            System.err.println(y + ">=" + 2);
+            nbrError++;
+        }
+        if (2 == y) {
+            System.err.println(y + "==" + 2);
+            nbrError++;
+        }
+        if (!(2 != y)) {
+            System.err.println(y + "!=" + 2);
+            nbrError++;
+        }
+        if (2 < y) {
+            System.err.println(y + "<" + 2);
+            nbrError++;
+        }
+        if (2 <= y) {
+            System.err.println(y + "<=" + 2);
+            nbrError++;
+        }
+
+        double j = Double.NaN;
+        if (y > y) {
+            System.err.println(y + ">" + y);
+            nbrError++;
+        }
+        if (y >= y) {
+            System.err.println(y + ">=" + y);
+            nbrError++;
+        }
+        if (y == j) {
+            System.err.println(y + "==" + j);
+            nbrError++;
+        }
+        if (!(y != j)) {
+            System.err.println(y + "!=" + j);
+            nbrError++;
+        }
+        if (y < y) {
+            System.err.println(y + "<" + y);
+            nbrError++;
+        }
+        if (y <= y) {
+            System.err.println(y + "<=" + y);
+            nbrError++;
+        }
+
+        System.out.println("----------------------------------------");
+        System.out.println(" End Comparison Test with " + nbrError + " error");
+        System.out.println("----------------------------------------");
+        return nbrError;
+    }
+
+    // ----------------------------------------------------
+    // ---------- COMPARISON TEST -------------------------
+    // ----------------------------------------------------
+
+    public static int runSymbolicTest() {
+        System.out.println("----------------------------------------");
+        System.out.println(" Start Symbolic Test");
+        System.out.println("----------------------------------------");
+        int nbrError = 0;
+        // run the Symbolic functions 1 to 15
+        double[] xs = new double[]{4.0, 4.0, 4.0, 1.0, 4.0, 4.0, 4.0, 4.0, 0.4,
+                4.0, 4.0, 4.0, 4.0, 1.0, 1.0};
+        for (int i = 1; i <= 13; i++) {
+            try {
+                nbrError += runFx(i, xs[i - 1]);
+            } catch (InvocationTargetException | IllegalAccessException
+                    | NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("----------------------------------------");
+        System.out.println(" End Symbolic Test with " + nbrError + " error");
+        System.out.println("----------------------------------------");
+        return nbrError;
+    }
+
+    // ----------------------------------------------------
+
+    public static int runFx(int fx, double x) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+
+        int nbrError = 0;
+
+        Method f = methods.get("f" + fx);
+        Method df = methods.get("df" + fx);
+
+        if (f == null || df == null) {
+            throw new NoSuchMethodException(fx + " not found...");
+        }
+
+        System.out.printf("Function %d\n", fx);
+        double unknwon = COJAC_MAGIC_asSymbolicUnknown(0);
+        double function = (double) f.invoke(SymbolicDemo.class, unknwon);
+        double derivative = COJAC_MAGIC_derivateSymbolic(function);
+
+        double funcStdEval = (double) f.invoke(SymbolicDemo.class, x);
+        double funcSymbEval = COJAC_MAGIC_evaluateSymbolicAt(function, x);
+        double funcBetterEval = COJAC_MAGIC_evaluateBetterSymbolicAt(function, x);
+
+        double derStdEval = (double) df.invoke(SymbolicDemo.class, x);
+        double derSymbEval = COJAC_MAGIC_evaluateSymbolicAt(derivative, x);
+        double derBetterEval = COJAC_MAGIC_evaluateBetterSymbolicAt(derivative, x);
+
+        System.out.printf("f%d(x) = %s \n", fx, COJAC_MAGIC_toString(function));
+        System.out.printf("f%d(%s) = %s Standard Eval\n", fx, x, funcStdEval);
+        System.out.printf("f%d(%s) = %s Symbolic Eval\n", fx, x, funcSymbEval);
+        System.out.printf("f%d(%s) = %s Better   Eval\n", fx, x, funcBetterEval);
+
+        System.out.printf("df%d(x) = %s \n", fx, COJAC_MAGIC_toString(derivative));
+        System.out.printf("df%d(%s) = %s Standard Eval\n", fx, x, derStdEval);
+        System.out.printf("df%d(%s) = %s Symbolic Eval\n", fx, x, derSymbEval);
+        System.out.printf("df%d(%s) = %s Better   Eval\n", fx, x, derBetterEval);
+
+        if (relativeError(funcStdEval, funcSymbEval) > epsilon ||
+                (Double.isNaN(funcStdEval) ^ Double.isNaN(funcSymbEval)))
+            nbrError++;
+
+        if (relativeError(funcStdEval, funcBetterEval) > epsilon ||
+                (Double.isNaN(funcStdEval) ^ Double.isNaN(funcBetterEval)))
+            nbrError++;
+
+        if (relativeError(derStdEval, derSymbEval) > epsilon ||
+                (Double.isNaN(derStdEval) ^ Double.isNaN(derSymbEval)))
+            nbrError++;
+
+        if (relativeError(derStdEval, derBetterEval) > epsilon ||
+                (Double.isNaN(derStdEval) ^ Double.isNaN(derBetterEval)))
+            nbrError++;
+
+        if (nbrError > 0)
+            System.err.println("Error at function" + fx);
+        return nbrError;
+    }
+
+    // ----------------------------------------------------
+    // ---------- TESTED FONCTIONS ------------------------
+    // ----------------------------------------------------
+
     public static double f1(double x) {
-        double j =100;
-        double i =100+j;
-        return 4.0 * Math.pow(x, 3.0)+i;
+        double j = 100;
+        double i = 100 + j;
+        return 4.0 * Math.pow(x, 3.0) + i;
     }
 
     public static double df1(double x) {
@@ -308,7 +361,7 @@ public class SymbolicDemo {
     }
 
     public static double df12(double x) {
-        return 1.0;
+        return Double.NaN;
     }
 
     public static double f13(double x) {
@@ -318,33 +371,18 @@ public class SymbolicDemo {
     public static double df13(double x) {
         return x < 0.0 ? -1.0 : 1.0;
     }
-    
-    public static double f14(double x) {
-        double i = 1e16;
-        i += 1;
-       i += 1e-16;
-      // i += 0.2e-16;
-    
-           //    i += 0.5e-16;
-       
-         double j=1e16;
-        i += -(j-1e-16);
-       // i += 1e-16;
-        
-        return i;
+
+    // ----------------------------------------------------
+    static double someFunction(double x, double a, double b) {
+        double res = a * x * x;
+        res = res * b + x;
+        res = res * 1;
+        return res;
     }
-    
-    public static double df14(double x) {
-        return x < 0.0 ? -1.0 : 1.0;
+
+    // ----------------------------------------------------
+    public static double relativeError(double a, double b) {
+        return Math.abs(a - b) / a;
     }
-    
-    public static double f15(double x) {
-        double     a=0.08,b=0.0491,c=0.3218;
-        return a+b+c+a+b+c+a+b+c+a+b+c;
-    }
-    
-    public static double df15(double x) {
-        return x < 0.0 ? -1.0 : 1.0;
-    }
-    
+
 }

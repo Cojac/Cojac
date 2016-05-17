@@ -20,7 +20,6 @@ package com.github.cojac.models.wrappers;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.function.DoubleBinaryOperator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,8 +30,10 @@ import com.github.cojac.symbolic.SymbUtils.SymbolicDerivationOperator;
 
 public class WrapperSymbolic extends ACojacWrapper {
 
-    private final SymbolicExpression expr;
+    private final SymbolicExpression expr; //
 
+    // -------------------------------------------------------------------------
+    // ----------------- Constructors ------------------------------------------
     // -------------------------------------------------------------------------
     private WrapperSymbolic() {
         this.expr = new SymbolicExpression();
@@ -46,10 +47,6 @@ public class WrapperSymbolic extends ACojacWrapper {
         this.expr = expr;
     }
 
-    private WrapperSymbolic(OP oper, SymbolicExpression left) {
-        this.expr = new SymbolicExpression(oper, left);
-    }
-
     private WrapperSymbolic(OP oper, SymbolicExpression left, SymbolicExpression right) {
         this.expr = new SymbolicExpression(oper, left, right);
     }
@@ -60,8 +57,10 @@ public class WrapperSymbolic extends ACojacWrapper {
     public WrapperSymbolic(ACojacWrapper w) {
         this(w == null ? null : asSymbWrapper(w).expr);
     }
-    // -------------------------------------------------------------------------
 
+    // -------------------------------------------------------------------------
+    // ----------------- Override operators ------------------------------------
+    // -------------------------------------------------------------------------
     @Override
     public ACojacWrapper dadd(ACojacWrapper w) {
         return new WrapperSymbolic(OP.ADD, this.expr, asSymbWrapper(w).expr);
@@ -89,87 +88,87 @@ public class WrapperSymbolic extends ACojacWrapper {
 
     @Override
     public ACojacWrapper dneg() {
-        return new WrapperSymbolic(OP.NEG, this.expr);
+        return new WrapperSymbolic(OP.NEG, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_sqrt() {
-        return new WrapperSymbolic(OP.SQRT, this.expr);
+        return new WrapperSymbolic(OP.SQRT, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_abs() {
-        return new WrapperSymbolic(OP.ABS, this.expr);
+        return new WrapperSymbolic(OP.ABS, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_sin() {
-        return new WrapperSymbolic(OP.SIN, this.expr);
+        return new WrapperSymbolic(OP.SIN, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_cos() {
-        return new WrapperSymbolic(OP.COS, this.expr);
+        return new WrapperSymbolic(OP.COS, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_tan() {
-        return new WrapperSymbolic(OP.TAN, this.expr);
+        return new WrapperSymbolic(OP.TAN, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_asin() {
-        return new WrapperSymbolic(OP.ASIN, this.expr);
+        return new WrapperSymbolic(OP.ASIN, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_acos() {
-        return new WrapperSymbolic(OP.ACOS, this.expr);
+        return new WrapperSymbolic(OP.ACOS, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_atan() {
-        return new WrapperSymbolic(OP.ATAN, this.expr);
+        return new WrapperSymbolic(OP.ATAN, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_sinh() {
-        return new WrapperSymbolic(OP.SINH, this.expr);
+        return new WrapperSymbolic(OP.SINH, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_cosh() {
-        return new WrapperSymbolic(OP.COSH, this.expr);
+        return new WrapperSymbolic(OP.COSH, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_tanh() {
-        return new WrapperSymbolic(OP.TANH, this.expr);
+        return new WrapperSymbolic(OP.TANH, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_exp() {
-        return new WrapperSymbolic(OP.EXP, this.expr);
+        return new WrapperSymbolic(OP.EXP, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_log() {
-        return new WrapperSymbolic(OP.LOG, this.expr);
+        return new WrapperSymbolic(OP.LOG, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_log10() {
-        return new WrapperSymbolic(OP.LOG10, this.expr);
+        return new WrapperSymbolic(OP.LOG10, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_toRadians() {
-        return new WrapperSymbolic(OP.RAD, this.expr);
+        return new WrapperSymbolic(OP.RAD, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_toDegrees() {
-        return new WrapperSymbolic(OP.DEG, this.expr);
+        return new WrapperSymbolic(OP.DEG, this.expr, null);
     }
 
     @Override
@@ -188,38 +187,35 @@ public class WrapperSymbolic extends ACojacWrapper {
     }
 
     // -------------------------------------------------------------------------
+    // ----------------- Comparison operator _----------------------------------
+    // -------------------------------------------------------------------------
+    @Override
+    public int dcmpl(ACojacWrapper w) {
+        // Averti que l'on ne peut pas comparer des fonctions
+        if (this.expr.containsUnknown || asSymbWrapper(w).expr.containsUnknown)
+            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "Can not compare symbolic expressions containing unknowns");
+        return super.dcmpl(w);
+    }
+
+    @Override
+    public int dcmpg(ACojacWrapper w) {
+        // Averti que l'on ne peut pas comparer des fonctions
+        if (this.expr.containsUnknown || asSymbWrapper(w).expr.containsUnknown)
+            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "Can not compare symbolic expressions containing unknowns");
+        return super.dcmpg(w);
+    }
+
+    // -------------------------------------------------------------------------
+    // ----------------- Necessary wrapper methods -----------------------------
+    // -------------------------------------------------------------------------
     @Override
     public double toDouble() {
         return expr.value;
     }
 
     @Override
-    public ACojacWrapper fromDouble(double a, boolean wasFromFloat) {
-
+    public ACojacWrapper fromDouble(double a, @SuppressWarnings("unused") boolean wasFromFloat) {
         return new WrapperSymbolic(a);
-    }
-
-    @Override
-    public int dcmpl(ACojacWrapper w) {
-        if (this.expr.containsUnknown || asSymbWrapper(w).expr.containsUnknown)
-            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "Can not compare symbolic expressions containing unknowns");
-        if (this.isNaN() || w.isNaN())
-            return -1;
-        return this.compareTo(w);
-    }
-
-    @Override
-    public int dcmpg(ACojacWrapper w) {
-        if (this.expr.containsUnknown || asSymbWrapper(w).expr.containsUnknown)
-            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "Can not compare symbolic expressions containing unknowns");
-        if (this.isNaN() || w.isNaN())
-            return 1;
-        return this.compareTo(w);
-    }
-
-    @Override
-    public int compareTo(ACojacWrapper w) {
-        return Double.compare(toDouble(), w.toDouble());
     }
 
     @Override
@@ -232,12 +228,15 @@ public class WrapperSymbolic extends ACojacWrapper {
         return "Symbolic";
     }
 
-    // ------------------------------------------------------------------------
-    public static boolean COJAC_MAGIC_isSymbolicUnknown(CommonDouble d) {
+    // -------------------------------------------------------------------------
+    // ----------------- Magic methods -----------------------------------------
+    // -------------------------------------------------------------------------
+
+    public static boolean COJAC_MAGIC_isSymbolicFunction(CommonDouble d) {
         return asSymbWrapper(d.val).expr.containsUnknown;
     }
 
-    public static boolean COJAC_MAGIC_isSymbolicUnknown(CommonFloat d) {
+    public static boolean COJAC_MAGIC_isSymbolicFunction(CommonFloat d) {
         return asSymbWrapper(d.val).expr.containsUnknown;
     }
 
@@ -286,22 +285,33 @@ public class WrapperSymbolic extends ACojacWrapper {
     }
 
     // -------------------------------------------------------------------------
+    // ----------------- Useful methods ----------------------------------------
+    // -------------------------------------------------------------------------
 
     private static WrapperSymbolic asSymbWrapper(ACojacWrapper w) {
         return (WrapperSymbolic) w;
     }
 
     // -------------------------------------------------------------------------
-
+    // ----------------- Symbolic expression tree ------------------------------
+    // -------------------------------------------------------------------------
     public static class SymbolicExpression {
-        private static final boolean COMPR = false;
-
+        // Active compression for constant sub trees
+        private static final boolean COMPRESSION_MODE = false;
+        // The value of the constant or the value of the sub tree if
+        // !containsUnknown
         public final double value;
+        // Indicate if the current sub contains at least one unknown
         public final boolean containsUnknown;
+        // Determine the current operator ( if the node is an unknown or a
+        // constant the operator is NOP)
         public final OP oper;
+        // Sub trees : both are NULL if the node is a constant or an unknown
+        // right is null if the node is an unary operator
         public final SymbolicExpression left;
         public final SymbolicExpression right;
 
+        // Constructor for unknown
         public SymbolicExpression() {
             this.value = Double.NaN;
             this.containsUnknown = true;
@@ -310,6 +320,7 @@ public class WrapperSymbolic extends ACojacWrapper {
             this.left = null;
         }
 
+        // Constructor for constant
         public SymbolicExpression(double value) {
             this.value = value;
             this.containsUnknown = false;
@@ -318,25 +329,29 @@ public class WrapperSymbolic extends ACojacWrapper {
             this.right = null;
         }
 
-        public SymbolicExpression(OP oper, SymbolicExpression left) {
-            this.value = oper.apply(left.value, Double.NaN);
-            this.containsUnknown = left.containsUnknown;
-            if (this.containsUnknown || !COMPR) {
-                this.oper = oper;
-                this.left = left;
-                this.right = null;
-            } else {
-                this.oper = OP.NOP;
-                this.left = null;
-                this.right = null;
-            }
-        }
+        // // Constructor for operators
+        // public SymbolicExpression(OP oper, SymbolicExpression left) {
+        // this.value = oper.apply(left.value, Double.NaN);
+        // this.containsUnknown = left.containsUnknown;
+        // if (this.containsUnknown || !COMPRESSION_MODE) {
+        // this.oper = oper;
+        // this.left = left;
+        // this.right = null;
+        // } else {
+        // this.oper = OP.NOP;
+        // this.left = null;
+        // this.right = null;
+        // }
+        // }
 
+        // Constructor operator
         public SymbolicExpression(OP oper, SymbolicExpression left, SymbolicExpression right) {
-            this.value = oper.apply(left.value, right.value);
-            this.containsUnknown = left.containsUnknown ||
-                    right.containsUnknown;
-            if (this.containsUnknown || !COMPR) {
+            // pre-compute the value of the tree
+            this.value = oper.apply(left.value, (right != null) ? right.value
+                    : Double.NaN);
+            this.containsUnknown = left.containsUnknown || ((right != null)
+                    ? right.containsUnknown : false);
+            if (this.containsUnknown || !COMPRESSION_MODE) {
                 this.oper = oper;
                 this.left = left;
                 this.right = right;
@@ -347,6 +362,7 @@ public class WrapperSymbolic extends ACojacWrapper {
             }
         }
 
+        // Evaluate the current sub-tree at "x"
         public double evaluate(double x) {
             if (containsUnknown && oper == OP.NOP)
                 return x;
@@ -357,10 +373,12 @@ public class WrapperSymbolic extends ACojacWrapper {
             return oper.apply(left.evaluate(x), Double.NaN);
         }
 
+        // Differentiate the current sub-tree
         public SymbolicExpression derivate() {
             return oper.derivate(this);
         }
 
+        // Mise à plat des opérateurs d'addition et de soustration
         public ArrayList<SymbolicExpression> flatOperatorForSummation() {
             ArrayList<SymbolicExpression> listOfSE = new ArrayList<SymbolicExpression>();
             if (oper == OP.ADD) {
@@ -369,23 +387,36 @@ public class WrapperSymbolic extends ACojacWrapper {
             } else if (oper == OP.SUB) {
                 listOfSE.addAll(left.flatOperatorForSummation());
                 for (SymbolicExpression se : right.flatOperatorForSummation())
-                    listOfSE.add(new SymbolicExpression(OP.NEG, se));
+                    listOfSE.add(new SymbolicExpression(OP.NEG, se, null));
             } else if (oper == OP.NEG) {
                 for (SymbolicExpression se : left.flatOperatorForSummation())
-                    listOfSE.add(new SymbolicExpression(OP.NEG, se));
+                    listOfSE.add(new SymbolicExpression(OP.NEG, se, null));
             } else {
                 listOfSE.add(this);
             }
             return listOfSE;
         }
 
+        /*
+         * Cette méthode permet d'évaluter l'arbre d'un manière plus précise.
+         * Elle met à plat l'opérateur d'addition et de soustration puis
+         * réordonne ceux-ci dans un ordre asbosolu décroissant et finalement
+         * applique la somme de Kahan
+         */
         public double evaluateBetter(double x) {
+            // Si l'on rencontre ADD ou SUB -> mise à plat -> Kahan
             if (oper == OP.ADD || oper == OP.SUB) {
                 ArrayList<SymbolicExpression> listOfSE = this.flatOperatorForSummation();
                 ArrayList<Double> list = new ArrayList<Double>();
                 for (SymbolicExpression se : listOfSE)
                     list.add(se.evaluateBetter(x));
-                list.sort(new AbsDescComparator());
+                // Trie les termes de manière absolue et dans un ordre descendent
+                list.sort(new Comparator<Double>() {
+                    @Override
+                    public int compare(Double d1, Double d2) {
+                        return Double.compare(Math.abs(d2), Math.abs(d1));
+                    };
+                });
 
                 double sum = 0;
                 double corr = 0;
@@ -397,9 +428,10 @@ public class WrapperSymbolic extends ACojacWrapper {
                 }
 
                 /*
-                 * double sum = 0; while (true) {
+                 * Somme les termes dans l'ordre les plus proches
+                 * (relatif/asbsolue) double sum = 0; while (true) {
                  * 
-                 * list.sort(new ABSComparator());
+                 * list.sort(new AbsAscComparator());
                  * 
                  * int shortestIndex = 1; double shortestDist =
                  * Double.POSITIVE_INFINITY; for (int i = 0; i + 1 <
@@ -410,7 +442,6 @@ public class WrapperSymbolic extends ACojacWrapper {
                  * list.remove(shortestIndex); if (list.isEmpty()) break;
                  * list.add(sum); }
                  */
-
                 return sum;
             }
 
@@ -423,6 +454,7 @@ public class WrapperSymbolic extends ACojacWrapper {
             return oper.apply(left.evaluateBetter(x), Double.NaN);
         }
 
+        // Retourne la distance relative absolue
         public double relativeDistance(double a, double b) {
             a = Math.abs(a);
             b = Math.abs(b);
@@ -431,6 +463,7 @@ public class WrapperSymbolic extends ACojacWrapper {
             return Math.abs(a - b) / b;
         }
 
+        // Retourne la réprentation de l'arbre sous la forme prefixe
         public String toString() {
             if (containsUnknown && oper == OP.NOP)
                 return "x";
@@ -441,14 +474,7 @@ public class WrapperSymbolic extends ACojacWrapper {
             return oper + "(" + left + ")";
         }
 
-        public static class AbsDescComparator implements Comparator<Double> {
-
-            @Override
-            public int compare(Double d1, Double d2) {
-                return Double.compare(Math.abs(d2), Math.abs(d1));
-            }
-        }
-
+        // Define all the operator managed by the wrapper
         public static enum OP {
             NOP(((x, y) -> Double.NaN), SymbUtils::derivateNOP),
             ADD(((x, y) -> x + y), SymbUtils::derivateADD),
@@ -477,18 +503,21 @@ public class WrapperSymbolic extends ACojacWrapper {
             MAX((x, y) -> Math.max(x, y), SymbUtils::derivateMAX),
             POW((x, y) -> Math.pow(x, y), SymbUtils::derivatePOW);
 
+            // Standard operator
             private final DoubleBinaryOperator binaryOp;
+            // Operator use for differentiating
             private final SymbolicDerivationOperator symbOP;
 
+            // Constructor, define the operators
             OP(DoubleBinaryOperator binaryOp, SymbolicDerivationOperator symbOP) {
                 this.binaryOp = binaryOp;
                 this.symbOP = symbOP;
             }
-
+            // Apply the standard operator
             public double apply(double left, double right) {
                 return binaryOp.applyAsDouble(left, right);
             }
-
+            // Apply the differentiation
             public SymbolicExpression derivate(SymbolicExpression se) {
                 return symbOP.derivate(se);
             }
