@@ -169,7 +169,7 @@ public class DoubleIntervalBehaviour {
        long dL = Double.doubleToRawLongBits(interval.inf);
        dL = dL & INF_MASK;// (Float.floatToRawIntBits(sup)& SUP_MASK);
        float gap = Math.nextUp(interval.sup - interval.inf);
-       if(interval.relativeError() > threshold){
+       if(interval.relativeError(threshold) > threshold){
            Reactions.react(UNSTABLE_INTERVAL_MESSAGE+ " Width: " +gap+", Threshold: "+threshold);
        }
        dL = dL | (Float.floatToRawIntBits(gap) >>> 2);

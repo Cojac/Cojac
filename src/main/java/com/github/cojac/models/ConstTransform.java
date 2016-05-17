@@ -5,7 +5,7 @@ import static com.github.cojac.models.Signatures.*;
 import static com.github.cojac.models.Parameters.*;
 public enum ConstTransform {
     doubleTransform(new Operation(Opcodes.INVOKESTATIC,"fromUninstrumentedDouble", DOUBLE_UNARY.description,
-            DOUBLE_BINARY_PARAMS.params), double.class),
+            DOUBLE_UNARY_PARAMS.params), double.class),
     floatTransform(new Operation(Opcodes.INVOKESTATIC,"fromUninstrumentedFloat", FLOAT_UNARY.description,
             FLOAT_BINARY_PARAMS.params), float.class),
     intTransform(new Operation(Opcodes.INVOKESTATIC,"fromUninstrumentedInt", INTEGER_UNARY.description,
@@ -21,9 +21,25 @@ public enum ConstTransform {
     }
     public static ConstTransform getMethodForClass(Class<?> c){
         for(ConstTransform ct: ConstTransform.values()){
-            if(ct.constType == c)
+            if(classEquals(ct.constType, c))
                 return ct;
         }
         return null;
     }
+    private static boolean classEquals(Class<?> a, Class<?> b){
+        return unwrap(a) == unwrap(b);
+    }
+    private static Class<?> unwrap(Class<?> a){
+        if(a == Double.class)
+            return double.class;
+        else if(a == Long.class)
+            return long.class;
+        else if(a == Integer.class)
+            return int.class;
+        else if(a == Float.class)
+            return float.class;
+        return a;
+        
+    }
+    
 }
