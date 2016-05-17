@@ -6,12 +6,9 @@ import java.util.logging.Logger;
 import com.github.cojac.models.wrappers.WrapperSymbolic.SymbolicExpression;
 import com.github.cojac.models.wrappers.WrapperSymbolic.SymbolicExpression.OP;
 
-
-
 public class SymbUtils {
-    
-    
-    //-------------------------------------------------------------------------
+
+    // -------------------------------------------------------------------------
 
     public static SymbolicExpression derivateNOP(SymbolicExpression se) {
         if (se.containsUnknown)
@@ -50,7 +47,7 @@ public class SymbUtils {
     }
 
     public static SymbolicExpression derivateNEG(SymbolicExpression se) {
-        return symbExpr(OP.NEG, se.left.derivate());
+        return symbExpr(OP.NEG, se.left.derivate(), null);
     }
 
     public static SymbolicExpression derivateREM(SymbolicExpression se) {
@@ -76,21 +73,21 @@ public class SymbUtils {
 
     // sin(u) -> cos(u) * u'
     public static SymbolicExpression derivateSIN(SymbolicExpression se) {
-        SymbolicExpression l = symbExpr(OP.COS, se.left);
+        SymbolicExpression l = symbExpr(OP.COS, se.left, null);
         return symbExpr(OP.MUL, l, se.left.derivate());
     }
 
     // cos(u) -> -sin(u) * u'
     public static SymbolicExpression derivateCOS(SymbolicExpression se) {
-        SymbolicExpression l1 = symbExpr(OP.SIN, se.left);
-        SymbolicExpression l2 = symbExpr(OP.NEG, l1);
+        SymbolicExpression l1 = symbExpr(OP.SIN, se.left, null);
+        SymbolicExpression l2 = symbExpr(OP.NEG, l1, null);
         return symbExpr(OP.MUL, l2, se.left.derivate());
     }
 
     // tan(u) -> u'/cos^2(u)
     public static SymbolicExpression derivateTAN(SymbolicExpression se) {
         SymbolicExpression n = se.left.derivate();
-        SymbolicExpression d = symbExpr(OP.COS, se.left);
+        SymbolicExpression d = symbExpr(OP.COS, se.left, null);
         d = symbExpr(OP.POW, d, symbExpr(2));
         return symbExpr(OP.DIV, n, d);
     }
@@ -100,16 +97,16 @@ public class SymbUtils {
         SymbolicExpression n = se.left.derivate();
         SymbolicExpression d = symbExpr(OP.POW, se.left, symbExpr(2));
         d = symbExpr(OP.SUB, symbExpr(1), d);
-        d = symbExpr(OP.SQRT, d);
+        d = symbExpr(OP.SQRT, d, null);
         return symbExpr(OP.DIV, n, d);
     }
 
     // acos(u) -> -u'/sqrt(1-u^2)
     public static SymbolicExpression derivateACOS(SymbolicExpression se) {
-        SymbolicExpression n = symbExpr(OP.NEG, se.left.derivate());
+        SymbolicExpression n = symbExpr(OP.NEG, se.left.derivate(), null);
         SymbolicExpression d = symbExpr(OP.POW, se.left, symbExpr(2));
         d = symbExpr(OP.SUB, symbExpr(1), d);
-        d = symbExpr(OP.SQRT, d);
+        d = symbExpr(OP.SQRT, d, null);
         return symbExpr(OP.DIV, n, d);
     }
 
@@ -123,20 +120,20 @@ public class SymbUtils {
 
     // sinh(u) -> cosh(u) * u'
     public static SymbolicExpression derivateSINH(SymbolicExpression se) {
-        SymbolicExpression l = symbExpr(OP.COSH, se.left);
+        SymbolicExpression l = symbExpr(OP.COSH, se.left, null);
         return symbExpr(OP.MUL, l, se.left.derivate());
     }
 
     // cosh(u) -> sinh(u) * u'
     public static SymbolicExpression derivateCOSH(SymbolicExpression se) {
-        SymbolicExpression l = symbExpr(OP.SINH, se.left);
+        SymbolicExpression l = symbExpr(OP.SINH, se.left, null);
         return symbExpr(OP.MUL, l, se.left.derivate());
     }
 
     // tanh(u) -> u'/cosh^2(u)
     public static SymbolicExpression derivateTANH(SymbolicExpression se) {
         SymbolicExpression n = se.left.derivate();
-        SymbolicExpression d = symbExpr(OP.COSH, se.left);
+        SymbolicExpression d = symbExpr(OP.COSH, se.left, null);
         d = symbExpr(OP.POW, d, symbExpr(2));
         return symbExpr(OP.DIV, n, d);
     }
@@ -154,17 +151,17 @@ public class SymbUtils {
     // log10(u) -> u'/(u*log(10))
     public static SymbolicExpression derivateLOG10(SymbolicExpression se) {
         SymbolicExpression n = se.left.derivate();
-        SymbolicExpression d = symbExpr(OP.LOG, symbExpr(10));
+        SymbolicExpression d = symbExpr(OP.LOG, symbExpr(10), null);
         d = symbExpr(OP.MUL, d, se.left);
         return symbExpr(OP.DIV, n, d);
     }
 
     public static SymbolicExpression derivateRAD(SymbolicExpression se) {
-        return symbExpr(OP.MUL, se.left, symbExpr(Math.PI/180)).derivate();
+        return symbExpr(OP.MUL, se.left, symbExpr(Math.PI / 180)).derivate();
     }
 
     public static SymbolicExpression derivateDEG(SymbolicExpression se) {
-        return symbExpr(OP.MUL, se.left, symbExpr(180/Math.PI)).derivate();
+        return symbExpr(OP.MUL, se.left, symbExpr(180 / Math.PI)).derivate();
     }
 
     public static SymbolicExpression derivateMIN(SymbolicExpression se) {
@@ -186,13 +183,13 @@ public class SymbUtils {
     // u^v = e^log(u^v) = e^(v*log(u))
     public static SymbolicExpression derivatePOW(SymbolicExpression se) {
         // distinger ?? a^x et x^a??
-        SymbolicExpression p = symbExpr(OP.LOG, se.left);
+        SymbolicExpression p = symbExpr(OP.LOG, se.left, null);
         p = symbExpr(OP.MUL, se.right, p);
-        p = symbExpr(OP.EXP, p);
+        p = symbExpr(OP.EXP, p, null);
         return p.derivate();
     }
-    
-    //-------------------------------------------------------------------------
+
+    // -------------------------------------------------------------------------
 
     public static SymbolicExpression symbExpr() {
         return new SymbolicExpression();
@@ -202,19 +199,16 @@ public class SymbUtils {
         return new SymbolicExpression(value);
     }
 
-    public static SymbolicExpression symbExpr(OP oper, SymbolicExpression left) {
-        return new SymbolicExpression(oper, left);
-    }
 
     public static SymbolicExpression symbExpr(OP oper, SymbolicExpression left, SymbolicExpression right) {
         return new SymbolicExpression(oper, left, right);
     }
-    
-    //-------------------------------------------------------------------------
-    
+
+    // -------------------------------------------------------------------------
+
     @FunctionalInterface
     public interface SymbolicDerivationOperator {
         SymbolicExpression derivate(SymbolicExpression se);
-        
+
     }
 }

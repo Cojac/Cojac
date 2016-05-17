@@ -47,10 +47,6 @@ public class WrapperSymbolic extends ACojacWrapper {
         this.expr = expr;
     }
 
-    private WrapperSymbolic(OP oper, SymbolicExpression left) {
-        this.expr = new SymbolicExpression(oper, left);
-    }
-
     private WrapperSymbolic(OP oper, SymbolicExpression left, SymbolicExpression right) {
         this.expr = new SymbolicExpression(oper, left, right);
     }
@@ -92,87 +88,87 @@ public class WrapperSymbolic extends ACojacWrapper {
 
     @Override
     public ACojacWrapper dneg() {
-        return new WrapperSymbolic(OP.NEG, this.expr);
+        return new WrapperSymbolic(OP.NEG, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_sqrt() {
-        return new WrapperSymbolic(OP.SQRT, this.expr);
+        return new WrapperSymbolic(OP.SQRT, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_abs() {
-        return new WrapperSymbolic(OP.ABS, this.expr);
+        return new WrapperSymbolic(OP.ABS, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_sin() {
-        return new WrapperSymbolic(OP.SIN, this.expr);
+        return new WrapperSymbolic(OP.SIN, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_cos() {
-        return new WrapperSymbolic(OP.COS, this.expr);
+        return new WrapperSymbolic(OP.COS, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_tan() {
-        return new WrapperSymbolic(OP.TAN, this.expr);
+        return new WrapperSymbolic(OP.TAN, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_asin() {
-        return new WrapperSymbolic(OP.ASIN, this.expr);
+        return new WrapperSymbolic(OP.ASIN, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_acos() {
-        return new WrapperSymbolic(OP.ACOS, this.expr);
+        return new WrapperSymbolic(OP.ACOS, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_atan() {
-        return new WrapperSymbolic(OP.ATAN, this.expr);
+        return new WrapperSymbolic(OP.ATAN, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_sinh() {
-        return new WrapperSymbolic(OP.SINH, this.expr);
+        return new WrapperSymbolic(OP.SINH, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_cosh() {
-        return new WrapperSymbolic(OP.COSH, this.expr);
+        return new WrapperSymbolic(OP.COSH, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_tanh() {
-        return new WrapperSymbolic(OP.TANH, this.expr);
+        return new WrapperSymbolic(OP.TANH, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_exp() {
-        return new WrapperSymbolic(OP.EXP, this.expr);
+        return new WrapperSymbolic(OP.EXP, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_log() {
-        return new WrapperSymbolic(OP.LOG, this.expr);
+        return new WrapperSymbolic(OP.LOG, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_log10() {
-        return new WrapperSymbolic(OP.LOG10, this.expr);
+        return new WrapperSymbolic(OP.LOG10, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_toRadians() {
-        return new WrapperSymbolic(OP.RAD, this.expr);
+        return new WrapperSymbolic(OP.RAD, this.expr, null);
     }
 
     @Override
     public ACojacWrapper math_toDegrees() {
-        return new WrapperSymbolic(OP.DEG, this.expr);
+        return new WrapperSymbolic(OP.DEG, this.expr, null);
     }
 
     @Override
@@ -333,26 +329,28 @@ public class WrapperSymbolic extends ACojacWrapper {
             this.right = null;
         }
 
-        // Constructor for unary operator
-        public SymbolicExpression(OP oper, SymbolicExpression left) {
-            this.value = oper.apply(left.value, Double.NaN);
-            this.containsUnknown = left.containsUnknown;
-            if (this.containsUnknown || !COMPRESSION_MODE) {
-                this.oper = oper;
-                this.left = left;
-                this.right = null;
-            } else {
-                this.oper = OP.NOP;
-                this.left = null;
-                this.right = null;
-            }
-        }
+        // // Constructor for operators
+        // public SymbolicExpression(OP oper, SymbolicExpression left) {
+        // this.value = oper.apply(left.value, Double.NaN);
+        // this.containsUnknown = left.containsUnknown;
+        // if (this.containsUnknown || !COMPRESSION_MODE) {
+        // this.oper = oper;
+        // this.left = left;
+        // this.right = null;
+        // } else {
+        // this.oper = OP.NOP;
+        // this.left = null;
+        // this.right = null;
+        // }
+        // }
 
-        // Constructor for binary opretor
+        // Constructor operator
         public SymbolicExpression(OP oper, SymbolicExpression left, SymbolicExpression right) {
-            this.value = oper.apply(left.value, right.value);
-            this.containsUnknown = left.containsUnknown ||
-                    right.containsUnknown;
+            // pre-compute the value of the tree
+            this.value = oper.apply(left.value, (right != null) ? right.value
+                    : Double.NaN);
+            this.containsUnknown = left.containsUnknown || ((right != null)
+                    ? right.containsUnknown : false);
             if (this.containsUnknown || !COMPRESSION_MODE) {
                 this.oper = oper;
                 this.left = left;
@@ -389,10 +387,10 @@ public class WrapperSymbolic extends ACojacWrapper {
             } else if (oper == OP.SUB) {
                 listOfSE.addAll(left.flatOperatorForSummation());
                 for (SymbolicExpression se : right.flatOperatorForSummation())
-                    listOfSE.add(new SymbolicExpression(OP.NEG, se));
+                    listOfSE.add(new SymbolicExpression(OP.NEG, se, null));
             } else if (oper == OP.NEG) {
                 for (SymbolicExpression se : left.flatOperatorForSummation())
-                    listOfSE.add(new SymbolicExpression(OP.NEG, se));
+                    listOfSE.add(new SymbolicExpression(OP.NEG, se, null));
             } else {
                 listOfSE.add(this);
             }
@@ -456,6 +454,7 @@ public class WrapperSymbolic extends ACojacWrapper {
             return oper.apply(left.evaluateBetter(x), Double.NaN);
         }
 
+        // Retourne la distance relative absolue
         public double relativeDistance(double a, double b) {
             a = Math.abs(a);
             b = Math.abs(b);
@@ -464,6 +463,7 @@ public class WrapperSymbolic extends ACojacWrapper {
             return Math.abs(a - b) / b;
         }
 
+        // Retourne la réprentation de l'arbre sous la forme prefixe
         public String toString() {
             if (containsUnknown && oper == OP.NOP)
                 return "x";
@@ -474,6 +474,7 @@ public class WrapperSymbolic extends ACojacWrapper {
             return oper + "(" + left + ")";
         }
 
+        // Define all the operator managed by the wrapper
         public static enum OP {
             NOP(((x, y) -> Double.NaN), SymbUtils::derivateNOP),
             ADD(((x, y) -> x + y), SymbUtils::derivateADD),
@@ -502,9 +503,12 @@ public class WrapperSymbolic extends ACojacWrapper {
             MAX((x, y) -> Math.max(x, y), SymbUtils::derivateMAX),
             POW((x, y) -> Math.pow(x, y), SymbUtils::derivatePOW);
 
+            // Standard operator
             private final DoubleBinaryOperator binaryOp;
+            // Operator use for differentiating
             private final SymbolicDerivationOperator symbOP;
 
+            // Constructor, define the operators
             OP(DoubleBinaryOperator binaryOp, SymbolicDerivationOperator symbOP) {
                 this.binaryOp = binaryOp;
                 this.symbOP = symbOP;
