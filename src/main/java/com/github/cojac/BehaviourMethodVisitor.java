@@ -74,7 +74,7 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
         IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opCode);
         //System.out.println("Has to be instrumented: "+references.hasToBeInstrumented(classPath, lineNb, instructionNb));
         //Delegate to parent
-        if (instrumenter != null && (instrumentMethod || references.hasToBeInstrumented(classPath, lineNb, instructionNb))) {
+        if ((references.hasToBeInstrumented(classPath, lineNb, instructionNb, opCode)||instrumentMethod) &&instrumenter != null ) {
             if(constLoadInst.get(opCode)){//the operation is a constant loading one
                 super.visitInsn(opCode);//load the constant
                 visitConstantLoading(Operations.getReturnType(opCode));//transform it
@@ -90,7 +90,7 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
         bcv.incInstructionCounter();
         int instructionNb = bcv.getInstructionCounter();
         //System.out.println("Has to be instrumented: "+references.hasToBeInstrumented(classPath, lineNb, instructionNb));
-        if ((instrumentMethod||references.hasToBeInstrumented(classPath, lineNb, instructionNb)) && instrumenter.wantsToInstrumentMethod(opcode, owner,name,desc)){
+        if ((references.hasToBeInstrumented(classPath, lineNb, instructionNb, opcode)||instrumentMethod) && instrumenter.wantsToInstrumentMethod(opcode, owner,name,desc)){
             instrumenter.instrumentMethod(mv,owner, name, desc);
         }else{
             super.visitMethodInsn(opcode, owner, name, desc, itf);
@@ -103,7 +103,7 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
         int instructionNb = bcv.getInstructionCounter();
         super.visitLdcInsn(cst);
         //System.out.println("Has to be instrumented: "+references.hasToBeInstrumented(classPath, lineNb, instructionNb));
-        if(instrumenter.wantsToInstrumentConstLoading(cst.getClass())&&(instrumentMethod||references.hasToBeInstrumented(classPath, lineNb, instructionNb))){
+        if((references.hasToBeInstrumented(classPath, lineNb, instructionNb, Opcodes.LDC)||instrumentMethod)&&instrumenter.wantsToInstrumentConstLoading(cst.getClass())){
             //instrumenter.instrumentLDC(mv, cst);
             visitConstantLoading(cst.getClass());
         }else{

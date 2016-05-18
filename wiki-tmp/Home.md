@@ -1,4 +1,4 @@
-<p align="center">
+﻿<p align="center">
 <img src="https://github.com/Cojac/Cojac/wiki/images/logo-cojac-512.png"
    width=256" />
 <h1 align="center">********** User Guide **********</h1>
@@ -780,7 +780,13 @@ Interval
 ![Interval](images/Interval.png "Interval")
 
 Example:
-`-Oi com.package.Foo{method(),`
+`-Oi com.package.Foo{method()I,1-25,34,99_22-27,100};com.package.Foobar`
+Will fully instrument class Foobar,
+and partially instrument class Foo, as following:
+
+* method()I fully
+* lines 1 to 25, 34 and 99
+* instructions 22 to 27 and 100
 
 --------------------------------------------------
 # 5 - Detailed usage
