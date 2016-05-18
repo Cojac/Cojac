@@ -24,7 +24,6 @@ import org.objectweb.asm.Opcodes;
 import com.github.cojac.Arg;
 import com.github.cojac.Args;
 import com.github.cojac.InstrumentationStats;
-import com.github.cojac.interval.FloatInterval;
 import com.github.cojac.models.ConstTransform;
 import com.github.cojac.models.FromClass;
 import com.github.cojac.models.MathMethods;
@@ -32,7 +31,6 @@ import com.github.cojac.models.Operation;
 import com.github.cojac.models.Operations;
 import com.github.cojac.models.Reactions;
 import com.github.cojac.models.UtilityMethod;
-import com.github.cojac.models.behaviours.DoubleIntervalBehaviour;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -60,7 +58,7 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
     private final InstrumentationStats stats;
     private final Map<Integer, InvokableMethod> invocations = new HashMap<Integer, InvokableMethod>(50);
     private final Map<String, InvokableMethod> methods = new HashMap<String, InvokableMethod>(50);
-
+    private boolean instrumentDouble = false;
     
     private final String[] BEHAVIOURS;
     private final String[] FULLY_QUALIFIED_BEHAVIOURS;
@@ -151,12 +149,9 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
                             }
                         } 
                         if(!matches)
-                            System.out.println(m.getName()+methodOperation.signature+
+                            Reactions.react(m.getName()+methodOperation.signature+
                                     " doesn't matches any math method nor any bytecode operation.");
                     }
-                    
-                    
-                    
                 }
             }
         } catch (SecurityException e) {
@@ -218,19 +213,22 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
         /*Populate Constant loading methods*/
         for(ConstTransform ct: ConstTransform.values()){
             Operation op = ct.operation;
+            //System.out.println("method \""+ct.name()+"\" check.");
             for (int i = 0; i < BEHAVIOURS.length; i++) {
                 try {
                     //behaviourClass.getClass().getMethod(op.opCodeName, op.parameters);
                     
                     Method m = Class.forName(FULLY_QUALIFIED_BEHAVIOURS[i]).getMethod(op.opCodeName, op.parameters);
                     if (m.isAnnotationPresent(UtilityMethod.class)){
-                       break;
+                       continue;
                     }
-                    
                     //NewDoubles.class.getMethod(op.opCodeName, op.parameters);
-                    //System.out.println("method \""+op.name()+"\" modified.");
+                   // System.out.println("method \""+ct.name()+"\" modified.");
+                    for(Operations tmp: Operations.getLoadConstOp(ct.constType)){
+                    //    System.out.println("\tmethod \""+tmp.name()+" val: "+tmp.opCodeVal+"\" redirected toward "+ op.opCodeName);
+                        invocations.put(tmp.opCodeVal, new InvokableMethod(BEHAVIOURS[i], op.opCodeName, op.signature));
+                    }
                     methods.put(op.opCodeName, new InvokableMethod(BEHAVIOURS[i], op.opCodeName, op.signature));
-                    
                     break;
                 } catch (NoSuchMethodException e) {
                     //Method not implemented, no problem.
@@ -323,6 +321,7 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
     }
     public boolean wantsToInstrumentConstLoading(Class<?> o){
         ConstTransform methodToUse = ConstTransform.getMethodForClass(o);
+        //System.out.println("wantsToInstrumentConstLoading? "+o+( methodToUse != null && methods.containsKey(methodToUse.operation.opCodeName)));
        return methodToUse != null && methods.containsKey(methodToUse.operation.opCodeName);
         
      

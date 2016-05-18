@@ -18,7 +18,6 @@
 
 package com.github.cojac.interval;
 
-import static com.github.cojac.models.FloatReplacerClasses.COJAC_STABILITY_THRESHOLD;
 import static java.lang.Math.PI;
 
 /**
@@ -41,7 +40,7 @@ public class FloatInterval implements Comparable<FloatInterval> {
     private static final float HALF_PI =  PIF / 2.0f;
     private static final float ONE_AND_HALF_PI =  PIF * 1.5f;
     private static final float TWO_PI = PIF * 2.0f;
-    
+    public static double STABILITY_THRESHOLD ;
     /**
      * Constructor
      *
@@ -606,18 +605,18 @@ public class FloatInterval implements Comparable<FloatInterval> {
      * (very close to) zero, which is yet quite common. Here we use a very
      * dirty trick to handle that. 
      */
-    public double relativeError() {
+    public double relativeError(double threshold) {
         float inf = this.inf, sup = this.sup;
         boolean containsZero = (inf<=0 && sup >= 0);
         double numerator=sup-inf;
         inf=Math.abs(inf);
         sup=Math.abs(sup);
         double denominator = Math.min(inf, sup);
-        if(containsZero && Math.max(inf, sup) < COJAC_STABILITY_THRESHOLD)
+        if(containsZero && Math.max(inf, sup) < threshold)
             return numerator;  // here we "bet" that the true value is zero...
-        if (denominator * COJAC_STABILITY_THRESHOLD < Double.MIN_NORMAL) {
+        if (denominator * threshold < Double.MIN_NORMAL) {
             denominator = Math.max(inf,  sup);
-            if (denominator * COJAC_STABILITY_THRESHOLD < Double.MIN_NORMAL)
+            if (denominator * threshold < Double.MIN_NORMAL)
                 return numerator;  // here we "bet" that the true value is zero...
         }
         return numerator / denominator;

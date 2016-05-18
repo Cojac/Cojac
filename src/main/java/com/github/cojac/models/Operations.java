@@ -49,8 +49,8 @@ public enum Operations {
             LDIV(Opcodes.LDIV,LONG_BINARY.description, LONG_BINARY_PARAMS.params),
             
             LNEG(Opcodes.LNEG,LONG_UNARY.description, LONG_UNARY_PARAMS.params),
-            LCONST_0(Opcodes.LCONST_0, LONG_VOID.description, VOID_PARAM.params, true, int.class),
-            LCONST_1(Opcodes.LCONST_1, LONG_VOID.description, VOID_PARAM.params, true, int.class),
+            LCONST_0(Opcodes.LCONST_0, LONG_VOID.description, VOID_PARAM.params, true, long.class),
+            LCONST_1(Opcodes.LCONST_1, LONG_VOID.description, VOID_PARAM.params, true, long.class),
             
             /*FLOATS*/
             FADD(Opcodes.FADD,FLOAT_BINARY.description, FLOAT_BINARY_PARAMS.params),
@@ -62,9 +62,9 @@ public enum Operations {
             FCMPG(Opcodes.FCMPG,FLOAT_CMP.description, FLOAT_BINARY_PARAMS.params),//  1 if NaN
             
             FNEG(Opcodes.FNEG,FLOAT_UNARY.description, FLOAT_UNARY_PARAMS.params),
-            FCONST_0(Opcodes.FCONST_0, FLOAT_VOID.description, VOID_PARAM.params, true, int.class),
-            FCONST_1(Opcodes.FCONST_1, FLOAT_VOID.description, VOID_PARAM.params, true, int.class),
-            FCONST_2(Opcodes.FCONST_2, FLOAT_VOID.description, VOID_PARAM.params, true, int.class),
+            FCONST_0(Opcodes.FCONST_0, FLOAT_VOID.description, VOID_PARAM.params, true, float.class),
+            FCONST_1(Opcodes.FCONST_1, FLOAT_VOID.description, VOID_PARAM.params, true, float.class),
+            FCONST_2(Opcodes.FCONST_2, FLOAT_VOID.description, VOID_PARAM.params, true, float.class),
             
             /*DOUBLES*/
             DADD(Opcodes.DADD,DOUBLE_BINARY.description, DOUBLE_BINARY_PARAMS.params),
@@ -76,8 +76,8 @@ public enum Operations {
             DCMPG(Opcodes.DCMPG,DOUBLE_CMP.description, DOUBLE_BINARY_PARAMS.params),//  1 if NaN
             
             DNEG(Opcodes.DNEG,DOUBLE_UNARY.description, DOUBLE_UNARY_PARAMS.params),
-            DCONST_0(Opcodes.DCONST_0, DOUBLE_VOID.description, VOID_PARAM.params, true, int.class),
-            DCONST_1(Opcodes.DCONST_1, DOUBLE_VOID.description, VOID_PARAM.params, true, int.class),
+            DCONST_0(Opcodes.DCONST_0, DOUBLE_VOID.description, VOID_PARAM.params, true, double.class),
+            DCONST_1(Opcodes.DCONST_1, DOUBLE_VOID.description, VOID_PARAM.params, true, double.class),
             
             /*CASTING*/
             
@@ -155,7 +155,7 @@ public enum Operations {
         Operations[] ops = new Operations[countLoadConstOp(returnType)];
         int i=0;
         for(Operations op: Operations.values()){
-            if(op.loadsConst && op.returnType==returnType)
+            if(op.loadsConst && op.returnType.equals(returnType))
                 ops[i++]=op;
         }
         return ops;
