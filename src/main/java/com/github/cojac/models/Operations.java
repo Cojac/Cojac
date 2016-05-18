@@ -134,7 +134,7 @@ public enum Operations {
      * @param opCodeVal the value of the opcode (specified by the JVM)
      * @param signature A String signature described in @see com.github.cojac.models.Signatures
      * @param parameters A Class<?> array representing the classes of the parameters @see com.github.cojac.models.Parameters
-     * @param loadsConst Does it load a constant
+     * @param loadsConst true if instruction loads a constant
      */
     private Operations(int opCodeVal, String signature, Class<?>[] parameters , boolean loadsConst, Class<?> returnType) {
        this.opCodeVal=opCodeVal;
@@ -144,6 +144,9 @@ public enum Operations {
        this.loadsConst = loadsConst;
        this.returnType = returnType;
     }
+    /**
+     * gives the return class of the instruction
+     */
     public static Class<?> getReturnType(int OpCode){
         for (Operations op : Operations.values()) {
             if(op.opCodeVal==OpCode)
@@ -151,6 +154,11 @@ public enum Operations {
         }
         return void.class;
     }
+    /**
+     * Gives an array of operations, that load a constant of the given type
+     * @param returnType the type of the return
+     * @return array of operations
+     */
     public static Operations[] getLoadConstOp(Class<?> returnType){
         Operations[] ops = new Operations[countLoadConstOp(returnType)];
         int i=0;
@@ -160,6 +168,11 @@ public enum Operations {
         }
         return ops;
     }
+    /**
+     * Gives the number of operations, that load a constant of the given type
+     * @param returnType the type of the return
+     * @return array of operations
+     */
     private static int countLoadConstOp(Class<?> returnType){
         int nb = 0;
         for(Operations op: Operations.values()){

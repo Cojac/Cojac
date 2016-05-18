@@ -50,10 +50,10 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
     private final CojacReferences references;
     private boolean instrumentMethod = false;
     private int lineNb=0;
-    private int instructionNb = 0;
+    private BehaviourClassVisitor bcv;
     BehaviourInstrumenter instrumenter ;
     BehaviourMethodVisitor(int access, String desc, MethodVisitor mv, InstrumentationStats stats, Args args, String classPath,
-            IOpcodeInstrumenterFactory factory, CojacReferences references, String MethodName) {
+            IOpcodeInstrumenterFactory factory, CojacReferences references, String MethodName, BehaviourClassVisitor behaviourClassVisitor) {
         super(Opcodes.ASM5, access, desc, mv);
 
         this.stats = stats;
@@ -64,11 +64,13 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
         this.references = references;
         instrumentMethod = references.hasToBeInstrumented(classPath, MethodName+desc);
         instrumenter = BehaviourInstrumenter.getInstance(args, stats);
+        this.bcv = behaviourClassVisitor;
     }
 
     @Override
     public void visitInsn(int opCode) {
-        ++instructionNb;
+        bcv.incInstructionCounter();
+        int instructionNb = bcv.getInstructionCounter();
         IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opCode);
         //System.out.println("Has to be instrumented: "+references.hasToBeInstrumented(classPath, lineNb, instructionNb));
         //Delegate to parent
@@ -85,7 +87,8 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
     }
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-        ++instructionNb;
+        bcv.incInstructionCounter();
+        int instructionNb = bcv.getInstructionCounter();
         //System.out.println("Has to be instrumented: "+references.hasToBeInstrumented(classPath, lineNb, instructionNb));
         if ((instrumentMethod||references.hasToBeInstrumented(classPath, lineNb, instructionNb)) && instrumenter.wantsToInstrumentMethod(opcode, owner,name,desc)){
             instrumenter.instrumentMethod(mv,owner, name, desc);
@@ -96,7 +99,8 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
     }
     @Override
     public void visitLdcInsn(Object cst){
-        ++instructionNb;
+        bcv.incInstructionCounter();
+        int instructionNb = bcv.getInstructionCounter();
         super.visitLdcInsn(cst);
         //System.out.println("Has to be instrumented: "+references.hasToBeInstrumented(classPath, lineNb, instructionNb));
         if(instrumenter.wantsToInstrumentConstLoading(cst.getClass())&&(instrumentMethod||references.hasToBeInstrumented(classPath, lineNb, instructionNb))){

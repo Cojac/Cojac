@@ -27,9 +27,10 @@ import org.objectweb.asm.MethodVisitor;
  *
  */
 public class BehaviourClassVisitor extends CojacClassVisitor {
+    private int instructionCounter;
     public BehaviourClassVisitor(ClassVisitor cv, CojacReferences references, CojacAnnotationVisitor cav) {
 		super(cv, references, cav);
-		
+		this.instructionCounter = 0;
     }
     /**
      * Method called each time a method is visited in an instrumented class.
@@ -50,7 +51,13 @@ public class BehaviourClassVisitor extends CojacClassVisitor {
     private MethodVisitor instrumentMethod(MethodVisitor parentMv, int access, String desc, String name) {
        // System.out.println("in NewClassVisitor.instrumentMethod");
         MethodVisitor mv=null;
-        mv = new BehaviourMethodVisitor(access, desc, parentMv, stats, args, crtClassName, factory, references, name);
+        mv = new BehaviourMethodVisitor(access, desc, parentMv, stats, args, crtClassName, factory, references, name, this);
         return mv;
+    }
+    int getInstructionCounter() {
+        return instructionCounter;
+    }
+    void incInstructionCounter() {
+        this.instructionCounter ++;
     }
 }
