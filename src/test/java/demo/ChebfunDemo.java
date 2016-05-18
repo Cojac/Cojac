@@ -21,36 +21,25 @@
 
 package demo;
 
-
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class ChebfunDemo {
 
-    // ----------------------------------------------------
+    private static final double epsilon = 1e-6;
+    private static Map<String, Method> methods;
 
-    public static void main(String[] args) {
-        smallTest();
+    static {
+        methods = new TreeMap<>();
+        for (Method method : ChebfunDemo.class.getDeclaredMethods()) {
+            methods.put(method.getName(), method);
+        }
     }
 
     // ----------------------------------------------------
-
-    public static void smallTest() {
-        double chebfun = COJAC_MAGIC_asChebfun(0.0);
-//        chebfun*=50;
-//        chebfun = Math.sin(chebfun);
-//        chebfun = Math.sin(chebfun);
-        chebfun = chebfun*chebfun;
-      //  chebfun = COJAC_MAGIC_derivateChebfun(chebfun);
-       ;
-
-       System.out.println(COJAC_MAGIC_evaluateChebfunAt(chebfun, 0.5));
-//        
-//        double r = COJAC_MAGIC_evaluateChebfunAt(chebfun, -0.5123);
-//        System.out.printf("f(x) = %s should be (%s) \n", r, Math.cos(0.5123));
-//        System.out.printf(COJAC_MAGIC_toString(chebfun));
-    }
-
-    // ----------------------------------------------------
-    // COJAC_MAGIC
+    // ---------- COJAC MAGIC -----------------------------
     // ----------------------------------------------------
     public static String COJAC_MAGIC_toString(double n) {
         return "";
@@ -67,10 +56,200 @@ public class ChebfunDemo {
     public static double COJAC_MAGIC_evaluateChebfunAt(double d, double x) {
         return d;
     }
+
     public static double COJAC_MAGIC_derivateChebfun(double d) {
         return d;
     }
 
+    // ----------------------------------------------------
+    // ---------- GLOBAL TEST -----------------------------
+    // ----------------------------------------------------
+
+    public static void main(String[] args) {
+
+        int nbrError = 0;
+        nbrError += comparisonTest();
+        nbrError += runChebfunTest();
+
+        if (nbrError == 0) {
+            System.out.println("----------------------------------------");
+            System.out.println(" Test finished successfully !");
+            System.out.println("----------------------------------------");
+        } else {
+            System.err.println("----------------------------------------");
+            System.err.println(" Test finished with " + nbrError + " error");
+            System.err.println("----------------------------------------");
+        }
+
+    }
+
+    // ----------------------------------------------------
+    // ---------- COMPARISON TEST -------------------------
+    // ----------------------------------------------------
+
+    public static int comparisonTest() {
+        System.out.println("----------------------------------------");
+        System.out.println(" Start Comparison Test");
+        System.out.println("----------------------------------------");
+
+        int nbrError = 0;
+
+        double x = COJAC_MAGIC_asChebfun(0.0);
+        Double y = someFunction(x, 3, 4);
+
+        if (y > 2) {
+            System.err.println(y + ">" + 2);
+            nbrError++;
+        }
+        if (y >= 2) {
+            System.err.println(y + ">=" + 2);
+            nbrError++;
+        }
+        if (y == 2) {
+            System.err.println(y + "==" + 2);
+            nbrError++;
+        }
+        if (!(y != 2)) {
+            System.err.println(y + "!=" + 2);
+            nbrError++;
+        }
+        if (y < 2) {
+            System.err.println(y + "<" + 2);
+            nbrError++;
+        }
+        if (y <= 2) {
+            System.err.println(y + "<=" + 2);
+            nbrError++;
+        }
+
+        if (2 > y) {
+            System.err.println(y + ">" + 2);
+            nbrError++;
+        }
+        if (2 >= y) {
+            System.err.println(y + ">=" + 2);
+            nbrError++;
+        }
+        if (2 == y) {
+            System.err.println(y + "==" + 2);
+            nbrError++;
+        }
+        if (!(2 != y)) {
+            System.err.println(y + "!=" + 2);
+            nbrError++;
+        }
+        if (2 < y) {
+            System.err.println(y + "<" + 2);
+            nbrError++;
+        }
+        if (2 <= y) {
+            System.err.println(y + "<=" + 2);
+            nbrError++;
+        }
+
+        double j = Double.NaN;
+        if (y > y) {
+            System.err.println(y + ">" + y);
+            nbrError++;
+        }
+        if (y >= y) {
+            System.err.println(y + ">=" + y);
+            nbrError++;
+        }
+        if (y == j) {
+            System.err.println(y + "==" + j);
+            nbrError++;
+        }
+        if (!(y != j)) {
+            System.err.println(y + "!=" + j);
+            nbrError++;
+        }
+        if (y < y) {
+            System.err.println(y + "<" + y);
+            nbrError++;
+        }
+        if (y <= y) {
+            System.err.println(y + "<=" + y);
+            nbrError++;
+        }
+
+        System.out.println("----------------------------------------");
+        System.out.println(" End Comparison Test with " + nbrError + " error");
+        System.out.println("----------------------------------------");
+        return nbrError;
+    }
+
+    // ----------------------------------------------------
+    // ---------- Chebfun TEST -------------------------
+    // ----------------------------------------------------
+
+    public static int runChebfunTest() {
+        System.out.println("----------------------------------------");
+        System.out.println(" Start Symbolic Test");
+        System.out.println("----------------------------------------");
+        int nbrError = 0;
+        // run the Symbolic functions 1 to 15
+        double[] xs = new double[]{0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
+                0.5, 0.5, 0.5, 0.5, 0.5, 0.5};
+        for (int i = 1; i <= 13; i++) {
+            try {
+                nbrError += runFx(i, xs[i - 1]);
+            } catch (InvocationTargetException | IllegalAccessException
+                    | NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("----------------------------------------");
+        System.out.println(" End Symbolic Test with " + nbrError + " error");
+        System.out.println("----------------------------------------");
+        return nbrError;
+    }
+
+    // ----------------------------------------------------
+
+    public static int runFx(int fx, double x) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+
+        int nbrError = 0;
+
+        Method f = methods.get("f" + fx);
+        Method df = methods.get("df" + fx);
+
+        if (f == null || df == null) {
+            throw new NoSuchMethodException(fx + " not found...");
+        }
+
+        System.out.printf("Function %d\n", fx);
+        double unknwon = COJAC_MAGIC_asChebfun(0);
+        double function = (double) f.invoke(ChebfunDemo.class, unknwon);
+        double derivative = COJAC_MAGIC_derivateChebfun(function);
+
+        double funcStdEval = (double) f.invoke(ChebfunDemo.class, x);
+        double funcSymbEval = COJAC_MAGIC_evaluateChebfunAt(function, x);
+
+        double derStdEval = (double) df.invoke(ChebfunDemo.class, x);
+        double derSymbEval = COJAC_MAGIC_evaluateChebfunAt(derivative, x);
+
+        System.out.printf("f%d(%s) = %s Standard Eval\n", fx, x, funcStdEval);
+        System.out.printf("f%d(%s) = %s Chebfun Eval\n", fx, x, funcSymbEval);
+
+        System.out.printf("df%d(%s) = %s Standard Eval\n", fx, x, derStdEval);
+        System.out.printf("df%d(%s) = %s Chebfun Eval\n", fx, x, derSymbEval);
+
+        if (relativeError(funcStdEval, funcSymbEval) > epsilon ||
+                (Double.isNaN(funcStdEval) ^ Double.isNaN(funcSymbEval)))
+            nbrError++;
+
+        if (relativeError(derStdEval, derSymbEval) > epsilon ||
+                (Double.isNaN(derStdEval) ^ Double.isNaN(derSymbEval)))
+            nbrError++;
+
+        if (nbrError > 0)
+            System.err.println("Error at function" + fx);
+        return nbrError;
+    }
+
+    // ----------------------------------------------------
+    // ---------- TESTED FONCTIONS ------------------------
     // ----------------------------------------------------
 
     public static double f1(double x) {
@@ -168,7 +347,7 @@ public class ChebfunDemo {
     }
 
     public static double df12(double x) {
-        return 1.0;
+        return Double.NaN;
     }
 
     public static double f13(double x) {
@@ -179,27 +358,19 @@ public class ChebfunDemo {
         return x < 0.0 ? -1.0 : 1.0;
     }
 
-    public static double f14(double x) {
-        double i = 1e16;
-        i += 2;
-        // i += 1e-16;
-        i += -1e16;
-        // i += 1e-16;
-
-        return i;
+    // ----------------------------------------------------
+    static double someFunction(double x, double a, double b) {
+        double res = a * x * x;
+        res = res * b + x;
+        res = res * 1;
+        return res;
     }
 
-    public static double df14(double x) {
-        return x < 0.0 ? -1.0 : 1.0;
+    // ----------------------------------------------------
+    public static double relativeError(double a, double b) {
+        return Math.abs(a - b) / a;
     }
 
-    public static double f15(double x) {
-        double a = 0.08, b = 0.0491, c = 0.3218;
-        return a + b + c;
-    }
-
-    public static double df15(double x) {
-        return x < 0.0 ? -1.0 : 1.0;
-    }
+    // ----------------------------------------------------
 
 }

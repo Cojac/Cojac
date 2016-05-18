@@ -42,7 +42,7 @@ public class WrapperChebfun extends ACompactWrapper {
     // initial degree of polynomial used for initialize the chebfun (p(x) = x)
     private static final int BASE_DEGREE = 32;
     // maximum degree of polynomial used for stop non converging polynomial
-    private static final int MAX_DEGREE = 65536;
+    private static final int MAX_DEGREE = 8192;// 65536
 
     // -------------------------------------------------------------------------
     // ----------------- Attributes --------------------------------------------
@@ -122,6 +122,13 @@ public class WrapperChebfun extends ACompactWrapper {
         return super.math_max(b);
     }
 
+    @Override
+    public ACojacWrapper drem(ACojacWrapper b) {
+        if (isChebfun() || asCheb(b).isChebfun())
+            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "The operation (%) should not be used with a Chefun");
+        return super.drem(b);
+    }
+
     // -------------------------------------------------------------------------
     // ----------------- Comparison operators ----------------------------------
     // -------------------------------------------------------------------------
@@ -155,7 +162,6 @@ public class WrapperChebfun extends ACompactWrapper {
     public double toDouble() {
         return this.value;
     }
-
 
     @Override
     public ACojacWrapper fromDouble(double a, @SuppressWarnings("unused") boolean wasFromFloat) {
@@ -308,7 +314,6 @@ public class WrapperChebfun extends ACompactWrapper {
             tmp = (j % 2 == 0) ? tmp : -tmp;
             den += (j == 0 || j == n) ? tmp / 2 : tmp;
         }
-
         return nom / den;
     }
 
@@ -476,10 +481,17 @@ public class WrapperChebfun extends ACompactWrapper {
     // Permet de déterminer si le degré du polynome est suffisant pour
     // repérenter la fonction de manière précise
     private static boolean isDegreeGoodEnough(double[] funcValues) {
-        if (Double.isNaN(funcValues[0]))
+        for (int i = 0; i < funcValues.length; i++) {
+            if (Double.isNaN(funcValues[i])) {
+                Logger.getLogger(WrapperChebfun.class.getPackage().getName()).log(Level.WARNING, "Chebfun contains NaN");
+                return true;
+            }
+        }
+
+        if (funcValues.length - 1 >= MAX_DEGREE) {
+            Logger.getLogger(WrapperChebfun.class.getPackage().getName()).log(Level.WARNING, "Chebfun not converging");
             return true;
-        if (funcValues.length - 1 >= MAX_DEGREE)
-            return true;
+        }
         double[] coeffs = fft(funcValues);
         return minReasonableDegree(coeffs) < coeffs.length - 1;
     }
