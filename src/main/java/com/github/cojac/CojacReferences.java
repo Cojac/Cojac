@@ -52,7 +52,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public final class CojacReferences {
-    private static final boolean DISPLAY_OPERATION_INFO = false; //change to get info for selective instrumentation
+    private static final boolean DISPLAY_OPERATION_INFO = true; //change to get info for selective instrumentation
     public static final String BYPASS_SEPARATOR = ";";
     public static final String OPT_IN_CLASS_SEPARATOR = "&";
     public static final String OPT_IN_METHOD_SEPARATOR = ",";
