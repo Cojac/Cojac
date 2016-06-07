@@ -193,7 +193,7 @@ public class WrapperSymbolic extends ACojacWrapper {
     public int dcmpl(ACojacWrapper w) {
         // Averti que l'on ne peut pas comparer des fonctions
         if (this.expr.containsUnknown || asSymbWrapper(w).expr.containsUnknown)
-            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "Can not compare symbolic expressions containing unknowns");
+            pkgLogger().log(Level.WARNING, "Can not compare symbolic expressions containing unknowns");
         return super.dcmpl(w);
     }
 
@@ -201,7 +201,7 @@ public class WrapperSymbolic extends ACojacWrapper {
     public int dcmpg(ACojacWrapper w) {
         // Averti que l'on ne peut pas comparer des fonctions
         if (this.expr.containsUnknown || asSymbWrapper(w).expr.containsUnknown)
-            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "Can not compare symbolic expressions containing unknowns");
+            pkgLogger().log(Level.WARNING, "Can not compare symbolic expressions containing unknowns");
         return super.dcmpg(w);
     }
 
@@ -288,10 +288,16 @@ public class WrapperSymbolic extends ACojacWrapper {
     // ----------------- Useful methods ----------------------------------------
     // -------------------------------------------------------------------------
 
+    private static Logger pkgLogger() {
+        return Logger.getLogger(WrapperChebfun.class.getPackage().getName());
+    }
+
     private static WrapperSymbolic asSymbWrapper(ACojacWrapper w) {
         return (WrapperSymbolic) w;
     }
 
+    //==========================================================================
+    
     // -------------------------------------------------------------------------
     // ----------------- Symbolic expression tree ------------------------------
     // -------------------------------------------------------------------------
@@ -400,7 +406,7 @@ public class WrapperSymbolic extends ACojacWrapper {
         /*
          * Cette méthode permet d'évaluter l'arbre d'un manière plus précise.
          * Elle met à plat l'opérateur d'addition et de soustration puis
-         * réordonne ceux-ci dans un ordre asbosolu décroissant et finalement
+         * réordonne ceux-ci dans un ordre absolu décroissant et finalement
          * applique la somme de Kahan
          */
         public double evaluateBetter(double x) {
@@ -411,12 +417,12 @@ public class WrapperSymbolic extends ACojacWrapper {
                 for (SymbolicExpression se : listOfSE)
                     list.add(se.evaluateBetter(x));
                 // Trie les termes de manière absolue et dans un ordre descendent
-                list.sort(new Comparator<Double>() {
-                    @Override
-                    public int compare(Double d1, Double d2) {
-                        return Double.compare(Math.abs(d2), Math.abs(d1));
-                    };
-                });
+                list.sort((d1,d2) -> Double.compare(Math.abs(d2), Math.abs(d1)));
+//                list.sort(new Comparator<Double>() {
+//                    @Override public int compare(Double d1, Double d2) {
+//                        return Double.compare(Math.abs(d2), Math.abs(d1));
+//                    };
+//                });
 
                 double sum = 0;
                 double corr = 0;
@@ -455,13 +461,12 @@ public class WrapperSymbolic extends ACojacWrapper {
         }
 
         // Retourne la distance relative absolue
-        public double relativeDistance(double a, double b) {
-            a = Math.abs(a);
-            b = Math.abs(b);
-            if (a >= b)
-                return Math.abs(a - b) / a;
-            return Math.abs(a - b) / b;
-        }
+//        private static double relativeDistance(double a, double b) {
+//            a = Math.abs(a);
+//            b = Math.abs(b);
+//            if (a >= b) return Math.abs(a - b) / a;
+//            return Math.abs(a - b) / b;
+//        }
 
         // Retourne la réprentation de l'arbre sous la forme prefixe
         public String toString() {
