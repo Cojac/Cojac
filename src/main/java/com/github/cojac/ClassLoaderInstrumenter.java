@@ -18,8 +18,12 @@
 
 package com.github.cojac;
 
+import java.io.File;
+
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+
+import com.github.cojac.utils.InstructionWriter;
 
 public final class ClassLoaderInstrumenter implements IClassInstrumenter {
     private final Args args;
@@ -39,7 +43,7 @@ public final class ClassLoaderInstrumenter implements IClassInstrumenter {
     public byte[] instrument(byte[] byteCode, ClassLoader loader) {
         ClassReader cr = new ClassReader(byteCode);
         ClassWriter cw = new ModifiedClassWriter(cr, CojacReferences.getFlags(args), loader);
-
+        System.out.println("ClassLoaderInstrumenter.instrument()");
         CojacAnnotationVisitor cav = new CojacAnnotationVisitor(stats);
         cr.accept(cav, ClassReader.EXPAND_FRAMES); 
         CojacClassVisitor ccv;
@@ -50,7 +54,10 @@ public final class ClassLoaderInstrumenter implements IClassInstrumenter {
         /*else 
             ccv = new CojacClassVisitor(cw, references, cav);*/
 		cr.accept(ccv, ClassReader.EXPAND_FRAMES);
-
+		System.out.println("ClassLoaderInstrumenter.instrument()");
+		if(args.isSpecified(Arg.LISTING_INSTRUCTIONS))
+		    //System.out.println(references.listingInstructionFilePath);
+		    InstructionWriter.getinstance().writeInstructionDocumentToFile(new File(references.listingInstructionFilePath));
         return cw.toByteArray();
     }
 }

@@ -77,6 +77,7 @@ public enum Arg {
     DOUBLE_INTERVAL("Di"),
 
     INSTRUMENT_SELECTIVELY("Oi"),
+    LISTING_INSTRUCTIONS("Li"), // -Li path/to/file (badoud)
     ROUND_NATIVELY_UP("Rnu"),
     ROUND_NATIVELY_DOWN("Rnd"),
     ROUND_NATIVELY_TO_ZERO("Rnz"),
@@ -349,6 +350,8 @@ public enum Arg {
                         "Will instrument fully methods m1(II)I, m3() and lines [1,12,112,25] from Class foo.Bar "+
                         "and lines 10 to 354 (inclusive) from Class foo.foobar.Bar").
                 create(Arg.INSTRUMENT_SELECTIVELY.shortOpt()));
+        //Badoud
+        options.addOption(OptionBuilder.withLongOpt("listingInstructions").withArgName("path").hasArg().withDescription("List all instrumentable instructions into a XML file.").create(Arg.LISTING_INSTRUCTIONS.shortOpt()));
         return options;
     }
 

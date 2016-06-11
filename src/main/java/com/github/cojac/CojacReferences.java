@@ -60,6 +60,7 @@ public final class CojacReferences {
     public static final String OPT_IN_DESCRIPTOR_START= "{";
     public static final String OPT_IN_DESCRIPTOR_END = "}";
     public static final String OPT_IN_INSTRUCTIONS_SEPARATOR= "_";
+    
     private final Args args;
     private final InstrumentationStats stats;
     private final IOpcodeInstrumenterFactory factory;
@@ -76,6 +77,7 @@ public final class CojacReferences {
     private final boolean checkUnstableComparisons;
     private final int arbitraryPrecisionBits;
     private HashMap<String, PartiallyInstrumentable> classesToInstrument = null;
+    public String listingInstructionFilePath;
 
     private CojacReferences(CojacReferencesBuilder builder) {
         this.args = builder.args;
@@ -94,6 +96,7 @@ public final class CojacReferences {
         this.checkUnstableComparisons = builder.checkUnstableComparisons;
         this.arbitraryPrecisionBits = builder.arbitraryPrecisionBits;
         this.classesToInstrument = builder.classesToInstrument;
+        this.listingInstructionFilePath = builder.listingInstructionFilePath;
     }
 
     public String getNgWrapper() {
@@ -240,6 +243,7 @@ public final class CojacReferences {
 
     // ========================================================================
     public static final class CojacReferencesBuilder {
+        private String listingInstructionFilePath;
         public HashMap<String, PartiallyInstrumentable> classesToInstrument;
         private final Args args;
         private ClassLoader loader;
@@ -386,7 +390,13 @@ public final class CojacReferences {
                 });
             }
             if(args.isSpecified(Arg.INSTRUMENT_SELECTIVELY)){
+                System.out.println("CojacReferences.CojacReferencesBuilder.build() : " + args.getValue(Arg.INSTRUMENT_SELECTIVELY));
                 this.classesToInstrument = parseClassesIndices(args.getValue(Arg.INSTRUMENT_SELECTIVELY));
+            }
+            
+            if(args.isSpecified(Arg.LISTING_INSTRUCTIONS)){
+                System.out.println(args.getValue(Arg.LISTING_INSTRUCTIONS));
+                this.listingInstructionFilePath = args.getValue(Arg.LISTING_INSTRUCTIONS);
             }
             
             if(args.isSpecified(Arg.DOUBLE2FLOAT)){
