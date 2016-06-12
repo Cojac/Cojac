@@ -78,6 +78,7 @@ public enum Arg {
 
     INSTRUMENT_SELECTIVELY("Oi"),
     LISTING_INSTRUCTIONS("Li"), // -Li path/to/file (badoud)
+    LOAD_BEHAVIOUR_MAP("Lbm"),
     ROUND_NATIVELY_UP("Rnu"),
     ROUND_NATIVELY_DOWN("Rnd"),
     ROUND_NATIVELY_TO_ZERO("Rnz"),
@@ -351,7 +352,8 @@ public enum Arg {
                         "and lines 10 to 354 (inclusive) from Class foo.foobar.Bar").
                 create(Arg.INSTRUMENT_SELECTIVELY.shortOpt()));
         //Badoud
-        options.addOption(OptionBuilder.withLongOpt("listingInstructions").withArgName("path").hasArg().withDescription("List all instrumentable instructions into a XML file.").create(Arg.LISTING_INSTRUCTIONS.shortOpt()));
+        options.addOption(OptionBuilder.withLongOpt("listingInstructions").withArgName("path").hasArg().withDescription("List all instrumentable instructions into a XML file.").create(Arg.LISTING_INSTRUCTIONS.shortOpt()));      
+        options.addOption(OptionBuilder.withLongOpt("loadBehaviourMap").withArgName("path").hasArg().withDescription("Load behaviour map from a XML file.").create(Arg.LOAD_BEHAVIOUR_MAP.shortOpt()));
         return options;
     }
 

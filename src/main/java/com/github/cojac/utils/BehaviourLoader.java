@@ -19,7 +19,6 @@ public class BehaviourLoader {
     private BehaviourMap behaviourMap = new BehaviourMap();
 
     private BehaviourLoader() {
-        initDocument();
     }
 
     public static BehaviourLoader getinstance() {
@@ -29,12 +28,12 @@ public class BehaviourLoader {
         return INSTANCE;
     }
 
-    private void initDocument() {
+    public void initDocument(String filePath) {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder;
         try {
             docBuilder = docFactory.newDocumentBuilder();
-            document = docBuilder.parse("/Users/remibadoud/Desktop/instructions.xml");
+            document = docBuilder.parse(filePath);
         } catch (SAXException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
