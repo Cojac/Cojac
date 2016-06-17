@@ -408,8 +408,7 @@ public final class CojacReferences {
             
             if(args.isSpecified(Arg.LOAD_BEHAVIOUR_MAP)){
                 System.out.println(args.getValue(Arg.LOAD_BEHAVIOUR_MAP));
-                this.behaviourMapFilePath = args.getValue(Arg.LOAD_BEHAVIOUR_MAP);
-                BehaviourLoader.getinstance().initDocument(behaviourMapFilePath);
+                BehaviourLoader.getinstance().loadInstructionMap(args); 
             }
             
             if(args.isSpecified(Arg.DOUBLE2FLOAT)){

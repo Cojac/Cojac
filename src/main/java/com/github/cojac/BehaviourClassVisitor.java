@@ -23,6 +23,7 @@ import java.util.HashMap;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 
+import com.github.cojac.utils.BehaviourLoader;
 import com.github.cojac.utils.Instruction;
 import com.github.cojac.utils.InstructionWriter;
 
@@ -35,14 +36,18 @@ import com.github.cojac.utils.InstructionWriter;
 public class BehaviourClassVisitor extends CojacClassVisitor {
     private int instructionCounter;
     private HashMap<String, HashMap<Integer, Instruction>> classMap;
+    private HashMap<String, HashMap<Integer, Instruction>> classBehaviourMap;
 
     public BehaviourClassVisitor(ClassVisitor cv, CojacReferences references, CojacAnnotationVisitor cav) {
         super(cv, references, cav);
         this.instructionCounter = 0;
         if (args.isSpecified(Arg.LISTING_INSTRUCTIONS))
             classMap = new HashMap<String, HashMap<Integer, Instruction>>();
+        if (args.isSpecified(Arg.LOAD_BEHAVIOUR_MAP))
+            if (BehaviourLoader.getinstance().containsClassBehaviourMap(crtClassName))
+                classBehaviourMap = BehaviourLoader.getinstance().getClassBehaviourMap(crtClassName);
     }
-    
+
     @Override
     public void visitEnd() {
         InstructionWriter.getinstance().putClassMap(crtClassName, classMap);
