@@ -280,6 +280,7 @@ public final class Args {
                 return behaviours.get(arg);
             }
         }
+        System.out.println("Args.getBehaviour(), berhaviour :" +behaviour);
         return behaviour;
     }
 

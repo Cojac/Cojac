@@ -22,13 +22,18 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.LocalVariablesSorter;
+import org.objectweb.asm.util.Printer;
+import org.objectweb.asm.util.Textifier;
 
 import com.github.cojac.instrumenters.IOpcodeInstrumenter;
 import com.github.cojac.instrumenters.BehaviourInstrumenter;
 import com.github.cojac.models.Operations;
 import com.github.cojac.utils.BehaviourLoader;
+import com.github.cojac.utils.Instruction;
 import com.github.cojac.utils.InstructionWriter;
 import com.github.cojac.instrumenters.IOpcodeInstrumenterFactory;
+
+import static org.objectweb.asm.util.Printer.OPCODES;
 
 /**
  * Class called for each instrumented method, which can change a variable for another, 
@@ -37,6 +42,7 @@ import com.github.cojac.instrumenters.IOpcodeInstrumenterFactory;
  */
 
 import java.util.BitSet;
+import java.util.HashMap;
 
 final class BehaviourMethodVisitor extends LocalVariablesSorter {
     private final IOpcodeInstrumenterFactory factory;
@@ -54,10 +60,16 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
     private final CojacReferences references;
     private boolean instrumentMethod = false;
     private int lineNb = 0;
+    private String methodName;
+    private String desc;
+
     private BehaviourClassVisitor bcv;
     BehaviourInstrumenter instrumenter;
 
-    BehaviourMethodVisitor(int access, String desc, MethodVisitor mv, InstrumentationStats stats, Args args, String classPath, IOpcodeInstrumenterFactory factory, CojacReferences references, String MethodName, BehaviourClassVisitor behaviourClassVisitor) {
+    private int localInstructionCounter;
+    private HashMap<Integer, Instruction> methodMap;
+
+    BehaviourMethodVisitor(int access, String desc, MethodVisitor mv, InstrumentationStats stats, Args args, String classPath, IOpcodeInstrumenterFactory factory, CojacReferences references, String methodName, BehaviourClassVisitor behaviourClassVisitor) {
         super(Opcodes.ASM5, access, desc, mv);
 
         this.stats = stats;
@@ -66,23 +78,40 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
 
         this.classPath = classPath;
         this.references = references;
-        instrumentMethod = references.hasToBeInstrumented(classPath, MethodName +
+        this.methodName = methodName;
+        this.desc = desc;
+        instrumentMethod = references.hasToBeInstrumented(classPath, methodName +
                 desc);
         instrumenter = BehaviourInstrumenter.getInstance(args, stats);
         this.bcv = behaviourClassVisitor;
+        if (args.isSpecified(Arg.LISTING_INSTRUCTIONS))
+            methodMap = new HashMap<Integer, Instruction>();
+    }
+
+    @Override
+    public void visitEnd() {
+        if (args.isSpecified(Arg.LISTING_INSTRUCTIONS))
+            bcv.putMethodMap(methodName + desc, methodMap);
+        super.visitEnd();
     }
 
     @Override
     public void visitInsn(int opCode) {
         System.out.println("BehaviourMethodVisitor.visitInsn()");
+        // incrémente le compteur global (au niveau de la classe)
         bcv.incInstructionCounter();
         int instructionNb = bcv.getInstructionCounter();
+        // incrémente le compteur local (au niveau de la méthode)
+        localInstructionCounter++;
+        // ----------------------------------------------------------
         if (args.isSpecified(Arg.LISTING_INSTRUCTIONS))
-            InstructionWriter.getinstance().appendInstruction(classPath, lineNb, instructionNb, opCode);
+            methodMap.put(localInstructionCounter, new Instruction(opCode, opCodeToString(opCode), lineNb, instructionNb, localInstructionCounter, "", "IGNORE"));
+        // ----------------------------------------------------------
+
         IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opCode);
 
         if (args.isSpecified(Arg.LOAD_BEHAVIOUR_MAP)) {
-            if (BehaviourLoader.getinstance().contains(classPath, lineNb, instructionNb, opCode) &&
+            if (BehaviourLoader.getinstance().isBehaviourFor(classPath, instructionNb) &&
                     instrumenter != null) {
                 if (constLoadInst.get(opCode)) {// the operation is a constant
                                                 // loading one
@@ -123,16 +152,19 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
         System.out.println("BehaviourMethodVisitor.visitMethodInsn()");
+        // incrémente le compteur global (au niveau de la classe)
         bcv.incInstructionCounter();
-
         int instructionNb = bcv.getInstructionCounter();
+        // incrémente le compteur local (au niveau de la méthode)
+        localInstructionCounter++;
+        // ----------------------------------------------------------
         if (args.isSpecified(Arg.LISTING_INSTRUCTIONS))
-            InstructionWriter.getinstance().appendInstruction(classPath, lineNb, instructionNb, opcode);
-        // System.out.println("Has to be instrumented:
-        // "+references.hasToBeInstrumented(classPath, lineNb, instructionNb));
+            methodMap.put(localInstructionCounter, new Instruction(opcode, opCodeToString(opcode), lineNb, instructionNb, localInstructionCounter, owner +
+                    "/" + name + desc, "IGNORE"));
+        // ----------------------------------------------------------
 
         if (args.isSpecified(Arg.LOAD_BEHAVIOUR_MAP)) {
-            if (BehaviourLoader.getinstance().contains(classPath, lineNb, instructionNb, opcode) &&
+            if (BehaviourLoader.getinstance().isBehaviourFor(classPath, instructionNb) &&
                     instrumenter.wantsToInstrumentMethod(opcode, owner, name, desc)) {
                 instrumenter.instrumentMethod(mv, owner, name, desc);
             } else {
@@ -153,13 +185,18 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
     @Override
     public void visitLdcInsn(Object cst) {
         System.out.println("BehaviourMethodVisitor.visitLdcInsn()");
+        // incrémente le compteur global (au niveau de la classe)
         bcv.incInstructionCounter();
         int instructionNb = bcv.getInstructionCounter();
+        // incrémente le compteur local (au niveau de la méthode)
+        localInstructionCounter++;
+        // ----------------------------------------------------------
         if (args.isSpecified(Arg.LISTING_INSTRUCTIONS))
-            InstructionWriter.getinstance().appendInstruction(classPath, lineNb, instructionNb, Opcodes.LDC);
+            methodMap.put(localInstructionCounter, new Instruction(Opcodes.LDC, opCodeToString(Opcodes.LDC), lineNb, instructionNb, localInstructionCounter, "", "IGNORE"));
+        // ----------------------------------------------------------
         super.visitLdcInsn(cst);
         if (args.isSpecified(Arg.LOAD_BEHAVIOUR_MAP)) {
-            if (BehaviourLoader.getinstance().contains(classPath, lineNb, instructionNb, Opcodes.LDC) &&
+            if (BehaviourLoader.getinstance().isBehaviourFor(classPath, instructionNb) &&
                     instrumenter.wantsToInstrumentConstLoading(cst.getClass())) {
                 // instrumenter.instrumentLDC(mv, cst);
                 visitConstantLoading(cst.getClass());
@@ -185,11 +222,18 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
         System.out.println("BehaviourMethodVisitor.visitConstantLoading()");
         instrumenter.instrumentConstLoading(mv, cl);
     }
+    
 
     @Override
     public void visitLineNumber(int line, Label start) {
         System.out.println("BehaviourMethodVisitor.visitLineNumber()");
         lineNb = line;
         super.visitLineNumber(line, start);
+    }
+    
+    private static String opCodeToString(int opCode) {
+        if (opCode < 0 || opCode >= OPCODES.length)
+            return "UNKNOWN";
+        return OPCODES[opCode];
     }
 }

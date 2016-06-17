@@ -29,11 +29,11 @@ public class BehaviourLoader {
     }
 
     public void initDocument(String filePath) {
-        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder docBuilder;
         try {
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder;
             docBuilder = docFactory.newDocumentBuilder();
-            document = docBuilder.parse(filePath);
+            document = docBuilder.parse(filePath); // Parse the XML file
         } catch (SAXException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -52,31 +52,43 @@ public class BehaviourLoader {
             int lineNb = Integer.parseInt(attributes.getNamedItem("lineNb").getNodeValue());
             int instructionNb = Integer.parseInt(attributes.getNamedItem("instructionNb").getNodeValue());
             int opCode = Integer.parseInt(attributes.getNamedItem("opCode").getNodeValue());
-            behaviourMap.put(classPath, lineNb, instructionNb, opCode);
+            String behaviour = attributes.getNamedItem("behaviour").getNodeValue();
+            behaviourMap.put(classPath, lineNb, instructionNb, opCode, behaviour);
         }
 
     }
 
-    public boolean contains(String classPath, int lineNb, int instructionNb, int opCode) {
-        return behaviourMap.contains(classPath, lineNb, instructionNb, opCode);
+    public boolean contains(String classPath, int instructionNb) {
+        return behaviourMap.contains(classPath, instructionNb);
+    }
+
+    public boolean isBehaviourFor(String classPath, int instructionNb) {
+        return behaviourMap.isBehaviourFor(classPath, instructionNb);
     }
 
     private class BehaviourMap {
 
         private HashMap<String, HashMap<Integer, Behaviour>> map = new HashMap<String, HashMap<Integer, Behaviour>>();
 
-        public void put(String classPath, int lineNb, int instructionNb, int opCode) {
+        public void put(String classPath, int lineNb, int instructionNb, int opCode, String behaviour) {
             if (map.containsKey(classPath))
-                map.get(classPath).put(instructionNb, new Behaviour(classPath, lineNb, instructionNb, opCode));
+                map.get(classPath).put(instructionNb, new Behaviour(classPath, lineNb, instructionNb, opCode, behaviour));
             else {
                 HashMap<Integer, Behaviour> subMap = new HashMap<Integer, Behaviour>();
-                subMap.put(instructionNb, new Behaviour(classPath, lineNb, instructionNb, opCode));
+                subMap.put(instructionNb, new Behaviour(classPath, lineNb, instructionNb, opCode, behaviour));
                 map.put(classPath, subMap);
             }
         }
 
-        public boolean contains(String classPath, int lineNb, int instructionNb, int opCode) {
-            return map.containsKey(classPath) && map.get(classPath).containsKey(instructionNb);
+        public boolean contains(String classPath, int instructionNb) {
+            return map.containsKey(classPath) &&
+                    map.get(classPath).containsKey(instructionNb);
+        }
+
+        public boolean isBehaviourFor(String classPath, int instructionNb) {
+            return map.containsKey(classPath) &&
+                    map.get(classPath).containsKey(instructionNb) &&
+                    !map.get(classPath).get(instructionNb).behaviour.equals("IGNORE");
         }
 
         private class Behaviour {
@@ -84,12 +96,14 @@ public class BehaviourLoader {
             private int lineNb;
             private int instructionNb;
             private int opCode;
+            private String behaviour;
 
-            public Behaviour(String classPath, int lineNb, int instructionNb, int opCode) {
+            public Behaviour(String classPath, int lineNb, int instructionNb, int opCode, String behaviour) {
                 this.classPath = classPath;
                 this.lineNb = lineNb;
                 this.instructionNb = instructionNb;
                 this.opCode = opCode;
+                this.behaviour = behaviour;
             }
 
         }

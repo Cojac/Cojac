@@ -71,13 +71,14 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
      */
     private BehaviourInstrumenter(Args args, InstrumentationStats stats) {
         super();
+        System.out.println("BehaviourInstrumenter.BehaviourInstrumenter(), behaviour : " +args.getBehaviour());
         BEHAVIOURS = args.getBehaviour().split(";");
         
         int i=0;
         FULLY_QUALIFIED_BEHAVIOURS = new String[BEHAVIOURS.length];
         for(String s: BEHAVIOURS){
             FULLY_QUALIFIED_BEHAVIOURS[i++] = s.replace('/', '.');
-           // System.out.println(FULLY_QUALIFIED_BEHAVIOURS[i-1]);
+           //System.out.println(FULLY_QUALIFIED_BEHAVIOURS[i-1]);
         }
         
         if (args.isSpecified(Arg.CALL_BACK))

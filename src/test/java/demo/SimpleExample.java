@@ -9,7 +9,7 @@
 lala ();
 lala ();
 /*09*/    System.out.println(" c -> " + c +" should be 3.0 ");
-/*10*/    System.out.println(" d -> " + e +" should be 1.0 ");
+/*10*/    System.out.println(" e -> " + e +" should be 1.0 ");
 /*11*/  }
     public static void lala() {
         int i =1;

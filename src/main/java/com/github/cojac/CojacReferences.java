@@ -32,6 +32,7 @@ import com.github.cojac.models.wrappers.BigDecimalDouble;
 import com.github.cojac.models.wrappers.BigDecimalFloat;
 import com.github.cojac.models.wrappers.WrapperBigDecimalWithNaN;
 import com.github.cojac.utils.BehaviourLoader;
+import com.github.cojac.utils.InstructionWriter;
 import com.github.cojac.utils.ReflectionUtils;
 
 
@@ -79,7 +80,7 @@ public final class CojacReferences {
     private final int arbitraryPrecisionBits;
     private HashMap<String, PartiallyInstrumentable> classesToInstrument = null;
     public String behaviourMapFilePath; // path to XML file that is used to load behaviours
-    public String listingInstructionFilePath; // path to XML file that use to list all instrumentable instruction
+   
 
     private CojacReferences(CojacReferencesBuilder builder) {
         this.args = builder.args;
@@ -99,7 +100,6 @@ public final class CojacReferences {
         this.arbitraryPrecisionBits = builder.arbitraryPrecisionBits;
         this.classesToInstrument = builder.classesToInstrument;
         this.behaviourMapFilePath = builder.behaviourMapFilePath;
-        this.listingInstructionFilePath = builder.listingInstructionFilePath;
     }
 
     public String getNgWrapper() {
@@ -247,7 +247,6 @@ public final class CojacReferences {
     // ========================================================================
     public static final class CojacReferencesBuilder {
         private String behaviourMapFilePath; // path to XML file that is used to load behaviours
-        private String listingInstructionFilePath; // path to XML file that use to list all instrumentable instruction
         public HashMap<String, PartiallyInstrumentable> classesToInstrument;
         private final Args args;
         private ClassLoader loader;
@@ -399,8 +398,12 @@ public final class CojacReferences {
             }
             
             if(args.isSpecified(Arg.LISTING_INSTRUCTIONS)){
-                System.out.println(args.getValue(Arg.LISTING_INSTRUCTIONS));
-                this.listingInstructionFilePath = args.getValue(Arg.LISTING_INSTRUCTIONS);
+                System.out.println(args.getValue(Arg.LISTING_INSTRUCTIONS));         
+                Runtime.getRuntime().addShutdownHook(new Thread() {
+                    @Override public void run() {
+                        InstructionWriter.getinstance().writeInstructionDocumentToFile(args);   
+                    }
+                });
             }
             
             if(args.isSpecified(Arg.LOAD_BEHAVIOUR_MAP)){
