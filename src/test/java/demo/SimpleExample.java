@@ -6,14 +6,9 @@
 /*06*/    double c = b + 2;
 /*07*/    double d = a + b;
 /*08*/    double e = d - a;
-lala ();
-lala ();
 /*09*/    System.out.println(" c -> " + c +" should be 3.0 ");
 /*10*/    System.out.println(" e -> " + e +" should be 1.0 ");
 /*11*/  }
-    public static void lala() {
-        int i =1;
-    }
 /*12*/}
 
 ///*01*/package demo;

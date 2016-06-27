@@ -77,7 +77,7 @@ public class BehaviourLoader {
                     HashMap<Integer, Instruction> methodMap = new HashMap<>();
                     String methodName = methodMapElement.getAttributeNode("methodName").getValue();
 
-                    NodeList instructionNodes = methodMapElement.getElementsByTagName("insctruction");
+                    NodeList instructionNodes = methodMapElement.getElementsByTagName("instruction");
                     for (int k = 0; k < instructionNodes.getLength(); k++) {
                         Node instructionNode = instructionNodes.item(k);
                         if (instructionNode.getNodeType() != Node.ELEMENT_NODE)

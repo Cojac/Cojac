@@ -54,7 +54,7 @@ public class InstructionWriter {
                     Element methodMapElement = document.createElement("methodMap");
                     methodMapElement.setAttribute("methodName", methodName);
                     for (Integer localInstructionNumber : instructionMap.get(className).get(methodName).keySet()) {
-                        Element instructionElement = document.createElement("insctruction");
+                        Element instructionElement = document.createElement("instruction");
                         Instruction instruction = instructionMap.get(className).get(methodName).get(localInstructionNumber);
                         instructionElement.setAttribute("opCode", "" +
                                 instruction.getOpCode());
