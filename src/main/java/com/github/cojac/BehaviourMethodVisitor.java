@@ -103,7 +103,7 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
 
     @Override
     public void visitInsn(int opCode) {
-        System.out.println("BehaviourMethodVisitor.visitInsn()");
+      //  System.out.println("BehaviourMethodVisitor.visitInsn()");
         // incrémente le compteur global (au niveau de la classe)
         bcv.incInstructionCounter();
         int instructionNb = bcv.getInstructionCounter();
@@ -156,7 +156,7 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
 
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-        System.out.println("BehaviourMethodVisitor.visitMethodInsn()");
+       // System.out.println("BehaviourMethodVisitor.visitMethodInsn()");
         // incrémente le compteur global (au niveau de la classe)
         bcv.incInstructionCounter();
         int instructionNb = bcv.getInstructionCounter();
@@ -190,7 +190,7 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
 
     @Override
     public void visitLdcInsn(Object cst) {
-        System.out.println("BehaviourMethodVisitor.visitLdcInsn()");
+       // System.out.println("BehaviourMethodVisitor.visitLdcInsn()");
         // incrémente le compteur global (au niveau de la classe)
         bcv.incInstructionCounter();
         int instructionNb = bcv.getInstructionCounter();
@@ -226,13 +226,13 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
     }
 
     private void visitConstantLoading(Class<?> cl) {
-        System.out.println("BehaviourMethodVisitor.visitConstantLoading()");
+        //System.out.println("BehaviourMethodVisitor.visitConstantLoading()");
         instrumenter.instrumentConstLoading(mv, cl);
     }
 
     @Override
     public void visitLineNumber(int line, Label start) {
-        System.out.println("BehaviourMethodVisitor.visitLineNumber()");
+       // System.out.println("BehaviourMethodVisitor.visitLineNumber()");
         lineNb = line;
         super.visitLineNumber(line, start);
     }

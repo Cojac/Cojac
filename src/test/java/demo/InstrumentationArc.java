@@ -34,7 +34,7 @@ public class InstrumentationArc {
         if (!(BigDecimal.valueOf(5.79577632241304).subtract(BigDecimal.valueOf(s1)).divide(BigDecimal.valueOf(5.79577632241304), 10, BigDecimal.ROUND_HALF_UP).abs().compareTo(BigDecimal.valueOf(1e-4)) <= 0))
             fail = true;
         if (fail) {
-            System.out.println("lala");
+            System.out.println("Failed");
             System.exit(1);
         }
         // }

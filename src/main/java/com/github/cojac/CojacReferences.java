@@ -225,9 +225,10 @@ public final class CojacReferences {
         return true;
     }
     public boolean hasToBeInstrumented(String className, int lineNb, int instructionNb, int opcode) {
-        if(DISPLAY_OPERATION_INFO){
-            System.out.println("Class "+className+", line: "+lineNb+", instruction offset: "+instructionNb + " opcode: "+opcode);
-        }
+        // if(DISPLAY_OPERATION_INFO){
+        // System.out.println("Class "+className+", line: "+lineNb+",
+        // instruction offset: "+instructionNb + " opcode: "+opcode);
+        // }
         if(classesToInstrument != null){
             if (!hasToBeInstrumented(className))
                 return false; 
@@ -407,7 +408,6 @@ public final class CojacReferences {
             }
             
             if(args.isSpecified(Arg.LOAD_BEHAVIOUR_MAP)){
-                System.out.println(args.getValue(Arg.LOAD_BEHAVIOUR_MAP));
                 BehaviourLoader.getinstance().loadInstructionMap(args); 
             }
             

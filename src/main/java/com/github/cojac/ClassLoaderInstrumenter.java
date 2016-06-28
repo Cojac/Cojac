@@ -41,7 +41,6 @@ public final class ClassLoaderInstrumenter implements IClassInstrumenter {
     public byte[] instrument(byte[] byteCode, ClassLoader loader) {
         ClassReader cr = new ClassReader(byteCode);
         ClassWriter cw = new ModifiedClassWriter(cr, CojacReferences.getFlags(args), loader);
-        System.out.println("ClassLoaderInstrumenter.instrument()");
         CojacAnnotationVisitor cav = new CojacAnnotationVisitor(stats);
         cr.accept(cav, ClassReader.EXPAND_FRAMES); 
         CojacClassVisitor ccv;
@@ -52,7 +51,6 @@ public final class ClassLoaderInstrumenter implements IClassInstrumenter {
         /*else 
             ccv = new CojacClassVisitor(cw, references, cav);*/
 		cr.accept(ccv, ClassReader.EXPAND_FRAMES);
-		System.out.println("ClassLoaderInstrumenter.instrument()");
         return cw.toByteArray();
     }
 }

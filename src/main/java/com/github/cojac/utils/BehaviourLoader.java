@@ -83,7 +83,7 @@ public class BehaviourLoader {
                         if (instructionNode.getNodeType() != Node.ELEMENT_NODE)
                             continue;
                         Element instructionElement = (Element) instructionNode;
-                        System.out.println(instructionElement.getNodeName());
+                        
                         Instruction instruction = new Instruction();
                         int opCode = Integer.parseInt(instructionElement.getAttributeNode("opCode").getValue());
                         instruction.setOpCode(opCode);
