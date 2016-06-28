@@ -109,12 +109,11 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
         int instructionNb = bcv.getInstructionCounter();
         // incrémente le compteur local (au niveau de la méthode)
         localInstructionCounter++;
+        IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opCode);
         // ----------------------------------------------------------
-        if (args.isSpecified(Arg.LISTING_INSTRUCTIONS))
+        if (args.isSpecified(Arg.LISTING_INSTRUCTIONS) && instrumenter != null)
             methodMap.put(localInstructionCounter, new Instruction(opCode, opCodeToString(opCode), lineNb, instructionNb, localInstructionCounter, "", "IGNORE"));
         // ----------------------------------------------------------
-
-        IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opCode);
 
         if (args.isSpecified(Arg.LOAD_BEHAVIOUR_MAP)) {
             if (isBehaviourDefinesFor(localInstructionCounter) &&
@@ -164,7 +163,8 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
         // incrémente le compteur local (au niveau de la méthode)
         localInstructionCounter++;
         // ----------------------------------------------------------
-        if (args.isSpecified(Arg.LISTING_INSTRUCTIONS))
+        if (args.isSpecified(Arg.LISTING_INSTRUCTIONS) &&
+                instrumenter.wantsToInstrumentMethod(opcode, owner, name, desc))
             methodMap.put(localInstructionCounter, new Instruction(opcode, opCodeToString(opcode), lineNb, instructionNb, localInstructionCounter, owner +
                     "/" + name + desc, "IGNORE"));
         // ----------------------------------------------------------
@@ -197,7 +197,8 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
         // incrémente le compteur local (au niveau de la méthode)
         localInstructionCounter++;
         // ----------------------------------------------------------
-        if (args.isSpecified(Arg.LISTING_INSTRUCTIONS))
+        if (args.isSpecified(Arg.LISTING_INSTRUCTIONS) &&
+                instrumenter.wantsToInstrumentConstLoading(cst.getClass()))
             methodMap.put(localInstructionCounter, new Instruction(Opcodes.LDC, opCodeToString(Opcodes.LDC), lineNb, instructionNb, localInstructionCounter, "", "IGNORE"));
         // ----------------------------------------------------------
         super.visitLdcInsn(cst);

@@ -293,6 +293,13 @@ public class ConversionBehaviour {
         }
         return outTransform(Math.ulp(inTransform(a)));
     }
+    // uncomment for instrument constant loading
+    // public static double fromUninstrumentedDouble(double a){
+    // return inTransform(a);
+    // }
+    // public static float fromUninstrumentedFloat(float a){
+    // return inTransform(a);
+    // }
     /**
      * Transformation applied on double parameters (depends on "c") 
      * @param a the parameter on which the transformation occur

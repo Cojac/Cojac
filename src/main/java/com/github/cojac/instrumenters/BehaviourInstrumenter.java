@@ -199,7 +199,7 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
                         }
                         
                         //NewDoubles.class.getMethod(op.opCodeName, op.parameters);
-                        //System.out.println("method \""+op.name()+"\" modified.");
+                        System.out.println("method \""+op.name()+"\" modified.");
                         invocations.put(op.opCodeVal, new InvokableMethod(BEHAVIOURS[i], op.name(), op.signature));
                         break;
                     } catch (NoSuchMethodException e) {
@@ -214,19 +214,19 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
         /*Populate Constant loading methods*/
         for(ConstTransform ct: ConstTransform.values()){
             Operation op = ct.operation;
-            //System.out.println("method \""+ct.name()+"\" check.");
+            System.out.println("method \""+ct.name()+"\" check.");
             for (int i = 0; i < BEHAVIOURS.length; i++) {
                 try {
                     //behaviourClass.getClass().getMethod(op.opCodeName, op.parameters);
-                    
+                    System.out.println(op.opCodeName);
                     Method m = Class.forName(FULLY_QUALIFIED_BEHAVIOURS[i]).getMethod(op.opCodeName, op.parameters);
                     if (m.isAnnotationPresent(UtilityMethod.class)){
                        continue;
                     }
                     //NewDoubles.class.getMethod(op.opCodeName, op.parameters);
-                   // System.out.println("method \""+ct.name()+"\" modified.");
+                    System.out.println("method \""+ct.name()+"\" modified.");
                     for(Operations tmp: Operations.getLoadConstOp(ct.constType)){
-                    //    System.out.println("\tmethod \""+tmp.name()+" val: "+tmp.opCodeVal+"\" redirected toward "+ op.opCodeName);
+                       System.out.println("\tmethod \""+tmp.name()+" val: "+tmp.opCodeVal+"\" redirected toward "+ op.opCodeName);
                         invocations.put(tmp.opCodeVal, new InvokableMethod(BEHAVIOURS[i], op.opCodeName, op.signature));
                     }
                     methods.put(op.opCodeName, new InvokableMethod(BEHAVIOURS[i], op.opCodeName, op.signature));
