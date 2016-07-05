@@ -69,6 +69,12 @@ public final class Agent implements ClassFileTransformer {
                 }
 				return setGlobalFields(classfileBuffer, loader);
 			}
+			if("com/github/cojac/utils/PolyBehaviourLogger".equals(className)) {
+                if (VERBOSE) {
+                    System.out.println("Agent handling the PolyBehaviourLogger under "+loader);
+                }
+                return setGlobalFields(classfileBuffer, loader);
+            }
             if (!references.hasToBeInstrumented(className)) {
                 if (VERBOSE) {
                     System.out.println("Agent NOT instrumenting "+className +" under "+loader);

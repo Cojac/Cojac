@@ -8,7 +8,8 @@ public class Simpsons {
     public static void main(String[] args) {
 
         int k, n = 1000000;
-        double a, b, h, s1, x;
+        double a, b, h, x;
+        double s1;
 
         a = 0;
         b = 1;
@@ -20,23 +21,27 @@ public class Simpsons {
 
         for (k = 1; k <= n; k++) {
             x = a + (2 * k - 1) * h;
-            s1 = s1 + 4 * fun(x);
+            double tmp = 4 * fun(x);
+            s1 = s1 + tmp;
+
             if (k == n)
                 break;
             x = x + h;
-            s1 = s1 + 2 * fun(x);
+            tmp = 2 * fun(x);
+            s1 = s1 + tmp;
         }
 
         x = x + h;
-        s1 = s1 + fun(x);
+        double tmp = fun(x);
+        s1 = s1 + tmp;
         s1 = h * s1 / 3;
         System.out.println("s1->" + s1 + " sould be 0.636619772367581");
 
         // write (6, '(1p,d25.16)') x, h * s1 / 3.d0
         boolean fail = false;
-        System.out.println(BigDecimal.valueOf(0.636619772367581).subtract(BigDecimal.valueOf(s1)).divide(BigDecimal.valueOf(0.636619772367581), 10, BigDecimal.ROUND_HALF_UP).abs());
+        System.out.println(BigDecimal.valueOf(0.636619772367581).subtract(BigDecimal.valueOf(s1)).divide(BigDecimal.valueOf(0.636619772367581), 16, BigDecimal.ROUND_HALF_UP).abs());
         // try {
-        if (!(BigDecimal.valueOf(0.636619772367581).subtract(BigDecimal.valueOf(s1)).divide(BigDecimal.valueOf(0.636619772367581), 10, BigDecimal.ROUND_HALF_UP).abs().compareTo(BigDecimal.valueOf(1e-4)) <= 0))
+        if (!(BigDecimal.valueOf(0.636619772367581).subtract(BigDecimal.valueOf(s1)).divide(BigDecimal.valueOf(0.636619772367581), 16, BigDecimal.ROUND_HALF_UP).abs().compareTo(BigDecimal.valueOf(1e-6)) <= 0))
             fail = true;
         if (fail) {
             System.out.println("Failed");

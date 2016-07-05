@@ -55,6 +55,8 @@ public enum Arg {
     CHEBFUN("Rcheb"),   // -Rchebfun
     DISABLE_UNSTABLE_COMPARISONS_CHECK("R_noUnstableComparisons"),
     STABILITY_THRESHOLD("R_unstableAt"),
+    POLY_BEHAVIOURAL_LOGGING("Rpbl"),
+    POLY_BEHAVIOURAL_LOAD("Rpbload"),
 
     ALL("Ca"),
     NONE("Cn"),
@@ -287,7 +289,7 @@ public enum Arg {
         options.addOption(Arg.SYMBOLIC.shortOpt(),
                 "symbolic",false,"Use symbolic wrapping");
         options.addOption(Arg.CHEBFUN.shortOpt(),
-                "chebfun",false,"Use chefun wrapping");  
+                "chebfun",false,"Use chefun wrapping");
         options.addOption(Arg.DISABLE_UNSTABLE_COMPARISONS_CHECK.shortOpt(),
                 false,"Disable unstability checks in comparisons, for the Interval or Stochastic wrappers");
         options.addOption(OptionBuilder.
@@ -295,7 +297,10 @@ public enum Arg {
                 hasArg().
                 withDescription("Relative precision considered unstable, for Interval/Stochastic wrappers (default 0.00001)").
                 create(STABILITY_THRESHOLD.shortOpt()));
-
+        // badoud
+        options.addOption(OptionBuilder.withLongOpt("Rpblogging").withArgName("path").hasArg().withDescription("Log the lines that can be associated with a behaviour into a XML file.").create(Arg.POLY_BEHAVIOURAL_LOGGING.shortOpt()));
+        options.addOption(OptionBuilder.withLongOpt("Rpbload").withArgName("path").hasArg().withDescription("Load behaviours from a XML file  and use poly behavioural wrapping").create(Arg.POLY_BEHAVIOURAL_LOAD.shortOpt())); 
+        
         options.addOption(Arg.ALL.shortOpt(),
                 "all", false, "Sniff everywhere (this is the default behavior)");
         options.addOption(Arg.NONE.shortOpt(),

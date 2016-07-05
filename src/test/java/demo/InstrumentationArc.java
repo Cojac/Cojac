@@ -8,7 +8,8 @@ public class InstrumentationArc {
         double d1 = 1.0;
         for (int k = 1; k <= 5; k++) {
             d1 = 2.0 * d1;
-            t1 = t1 + Math.sin(d1 * x) / d1;//add
+            double tmp = Math.sin(d1 * x) / d1;
+            t1 = t1 + tmp;
         }
         return t1;
     }
@@ -23,13 +24,14 @@ public class InstrumentationArc {
 
         for (int i = 1; i <= n; i++) {
             t2 = fun(i * h);
-            s1 = s1 + Math.sqrt(h * h + (t2 - t1) * (t2 - t1)); //add
+            double tmp = Math.sqrt(h * h + (t2 - t1) * (t2 - t1));
+            s1 = s1 + tmp;
             t1 = t2;
         }
         System.out.println("s1 -> " + s1 + " should be 5.79577632241304 ");
 
         boolean fail = false;
-        System.out.println(BigDecimal.valueOf(5.79577632241304).subtract(BigDecimal.valueOf(s1)).divide(BigDecimal.valueOf(5.79577632241304),10, BigDecimal.ROUND_HALF_UP).abs());
+        System.out.println(BigDecimal.valueOf(5.79577632241304).subtract(BigDecimal.valueOf(s1)).divide(BigDecimal.valueOf(5.79577632241304), 10, BigDecimal.ROUND_HALF_UP).abs());
         // try {
         if (!(BigDecimal.valueOf(5.79577632241304).subtract(BigDecimal.valueOf(s1)).divide(BigDecimal.valueOf(5.79577632241304), 10, BigDecimal.ROUND_HALF_UP).abs().compareTo(BigDecimal.valueOf(1e-4)) <= 0))
             fail = true;

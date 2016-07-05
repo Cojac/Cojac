@@ -40,25 +40,6 @@ public class BehaviourLoader {
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
             Document document = docBuilder.parse(filePath); // Parse the XML
                                                             // file
-
-            // NodeList nodeList =
-            // document.getDocumentElement().getElementsByTagName("instruction");
-            // for (int i = 0; i < nodeList.getLength(); i++) {
-            // NamedNodeMap attributes = nodeList.item(i).getAttributes();
-            // String classPath =
-            // attributes.getNamedItem("classPath").getNodeValue();
-            // int lineNb =
-            // Integer.parseInt(attributes.getNamedItem("lineNb").getNodeValue());
-            // int instructionNb =
-            // Integer.parseInt(attributes.getNamedItem("instructionNb").getNodeValue());
-            // int opCode =
-            // Integer.parseInt(attributes.getNamedItem("opCode").getNodeValue());
-            // String behaviour =
-            // attributes.getNamedItem("behaviour").getNodeValue();
-            // behaviourMap.put(classPath, lineNb, instructionNb, opCode,
-            // behaviour);
-            // }
-
             NodeList classMapNodes = document.getDocumentElement().getElementsByTagName("classMap");
             for (int i = 0; i < classMapNodes.getLength(); i++) {
                 Node classMapNode = classMapNodes.item(i);

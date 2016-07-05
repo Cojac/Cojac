@@ -33,6 +33,8 @@ import com.github.cojac.models.wrappers.BigDecimalFloat;
 import com.github.cojac.models.wrappers.WrapperBigDecimalWithNaN;
 import com.github.cojac.utils.BehaviourLoader;
 import com.github.cojac.utils.InstructionWriter;
+import com.github.cojac.utils.PolyBehaviourLoader;
+import com.github.cojac.utils.PolyBehaviourLogger;
 import com.github.cojac.utils.ReflectionUtils;
 
 
@@ -342,7 +344,22 @@ public final class CojacReferences {
 //                args.setValue(Arg.DOUBLE_WRAPPER, "com.github.cojac.models.wrappers.SymbolicDouble");
                 args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperChebfun");
    }
-
+            if (args.isSpecified(Arg.POLY_BEHAVIOURAL_LOGGING)) {
+                args.specify(Arg.REPLACE_FLOATS);
+                args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperPolyBehaviouralLogger");
+                Runtime.getRuntime().addShutdownHook(new Thread() {
+                    @Override public void run() {
+                        PolyBehaviourLogger.getinstance().writeLogs(args);
+                    }
+                });
+            }
+            
+            if (args.isSpecified(Arg.POLY_BEHAVIOURAL_LOAD)) {
+                args.specify(Arg.REPLACE_FLOATS);
+                args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperPolyBehavioural");
+                PolyBehaviourLoader.getinstance().loadBehaviours(args);
+            }
+                
             if (args.isSpecified(Arg.REPLACE_FLOATS)) { 
                 sbBypassList.append(BYPASS_SEPARATOR);  // Only for proxy tests
                 sbBypassList.append("com.github.cojac.unit.replace.FloatProxyNotInstrumented");
