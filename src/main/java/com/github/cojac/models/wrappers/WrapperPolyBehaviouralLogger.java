@@ -35,6 +35,11 @@ public class WrapperPolyBehaviouralLogger extends ACompactWrapper {
     // -------------------------------------------------------------------------
     public WrapperPolyBehaviouralLogger(ACojacWrapper w) {
         this(w == null ? 0.0 : ((WrapperPolyBehaviouralLogger) w).value);
+        System.out.println("-----");
+        for (StackTraceElement ste : Thread.currentThread().getStackTrace()) {
+            System.out.println(ste);
+        }
+        System.out.println("-----");
     }
 
     // -------------------------------------------------------------------------
@@ -68,7 +73,7 @@ public class WrapperPolyBehaviouralLogger extends ACompactWrapper {
 
     @Override
     public String wrapperName() {
-        return "Basic";
+        return "PolyBehaviouralLogger";
     }
     // -------------------------------------------------------------------------
 

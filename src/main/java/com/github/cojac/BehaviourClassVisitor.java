@@ -34,25 +34,27 @@ import com.github.cojac.utils.InstructionWriter;
  *
  */
 public class BehaviourClassVisitor extends CojacClassVisitor {
-    private int instructionCounter;
-    private HashMap<String, HashMap<Integer, Instruction>> classMap;
-    private HashMap<String, HashMap<Integer, Instruction>> classBehaviourMap;
+    private int instructionCounter = 0;
+//    private HashMap<String, HashMap<Integer, Instruction>> classMap;
+//    private HashMap<String, HashMap<Integer, Instruction>> classBehaviourMap;
 
     public BehaviourClassVisitor(ClassVisitor cv, CojacReferences references, CojacAnnotationVisitor cav) {
         super(cv, references, cav);
         this.instructionCounter = 0;
-        if (args.isSpecified(Arg.LISTING_INSTRUCTIONS))
-            classMap = new HashMap<String, HashMap<Integer, Instruction>>();
-        if (args.isSpecified(Arg.LOAD_BEHAVIOUR_MAP))
-            if (BehaviourLoader.getinstance().containsClassBehaviourMap(crtClassName))
-                classBehaviourMap = BehaviourLoader.getinstance().getClassBehaviourMap(crtClassName);
+        // if (args.isSpecified(Arg.LISTING_INSTRUCTIONS))
+        // classMap = new HashMap<String, HashMap<Integer, Instruction>>();
+        // if (args.isSpecified(Arg.LOAD_BEHAVIOUR_MAP))
+        // if
+        // (BehaviourLoader.getinstance().containsClassBehaviourMap(crtClassName))
+        // classBehaviourMap =
+        // BehaviourLoader.getinstance().getClassBehaviourMap(crtClassName);
     }
 
-    @Override
-    public void visitEnd() {
-        InstructionWriter.getinstance().putClassMap(crtClassName, classMap);
-        super.visitEnd();
-    }
+    // @Override
+    // public void visitEnd() {
+    // InstructionWriter.getinstance().putClassMap(crtClassName, classMap);
+    // super.visitEnd();
+    // }
 
     /**
      * Method called each time a method is visited in an instrumented class.
@@ -86,7 +88,8 @@ public class BehaviourClassVisitor extends CojacClassVisitor {
         this.instructionCounter++;
     }
 
-    void putMethodMap(String methodName, HashMap<Integer, Instruction> methodMap) {
-        classMap.put(methodName, methodMap);
-    }
+    // void putMethodMap(String methodName, HashMap<Integer, Instruction>
+    // methodMap) {
+    // classMap.put(methodName, methodMap);
+    // }
 }

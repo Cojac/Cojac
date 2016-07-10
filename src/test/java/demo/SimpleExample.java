@@ -1,6 +1,7 @@
 /*01*/package demo;
 /*02*/public class SimpleExample {
 /*03*/  public static void main(String[] args) {
+    double x;
 /*04*/    double a = 1e8;
 /*05*/    double b = 1;
 /*06*/    double c = b + 2;
@@ -10,6 +11,8 @@
 /*10*/    System.out.println(" e -> " + e +" should be 1.0 ");
 /*11*/  }
 /*12*/}
+
+
 
 ///*01*/package demo;
 ///*02*/public class SimpleExample {

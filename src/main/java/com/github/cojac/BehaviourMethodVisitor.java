@@ -60,6 +60,7 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
     private final CojacReferences references;
     private boolean instrumentMethod = false;
     private int lineNb = 0;
+    private int insnNb = 0;
     private String methodName;
     private String desc;
 
@@ -85,39 +86,52 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
                 desc);
         instrumenter = BehaviourInstrumenter.getInstance(args, stats);
         this.bcv = behaviourClassVisitor;
-        if (args.isSpecified(Arg.LISTING_INSTRUCTIONS))
-            methodMap = new HashMap<Integer, Instruction>();
-        if (args.isSpecified(Arg.LOAD_BEHAVIOUR_MAP))
-            if (BehaviourLoader.getinstance().containsMethodBehaviourMap(classPath, methodName +
-                    desc))
-                methodBehaviourMap = BehaviourLoader.getinstance().getMethodBehaviourMap(classPath, methodName +
-                        desc);
+        // if (args.isSpecified(Arg.LISTING_INSTRUCTIONS))
+        // methodMap = new HashMap<Integer, Instruction>();
+        // if (args.isSpecified(Arg.LOAD_BEHAVIOUR_MAP))
+        // if
+        // (BehaviourLoader.getinstance().containsMethodBehaviourMap(classPath,
+        // methodName +
+        // desc))
+        // methodBehaviourMap =
+        // BehaviourLoader.getinstance().getMethodBehaviourMap(classPath,
+        // methodName +
+        // desc);
     }
-
-    @Override
-    public void visitEnd() {
-        if (args.isSpecified(Arg.LISTING_INSTRUCTIONS))
-            bcv.putMethodMap(methodName + desc, methodMap);
-        super.visitEnd();
-    }
+    //
+    // @Override
+    // public void visitEnd() {
+    // if (args.isSpecified(Arg.LISTING_INSTRUCTIONS))
+    // bcv.putMethodMap(methodName + desc, methodMap);
+    // super.visitEnd();
+    // }
 
     @Override
     public void visitInsn(int opCode) {
-      //  System.out.println("BehaviourMethodVisitor.visitInsn()");
+        // System.out.println("BehaviourMethodVisitor.visitInsn()");
         // incrémente le compteur global (au niveau de la classe)
         bcv.incInstructionCounter();
         int instructionNb = bcv.getInstructionCounter();
         // incrémente le compteur local (au niveau de la méthode)
         localInstructionCounter++;
+        insnNb++;
         IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opCode);
         // ----------------------------------------------------------
+        // if (args.isSpecified(Arg.LISTING_INSTRUCTIONS) && instrumenter !=
+        // null)
+        // methodMap.put(localInstructionCounter, new Instruction(opCode,
+        // opCodeToString(opCode), lineNb, instructionNb,
+        // localInstructionCounter, "", "IGNORE"));
         if (args.isSpecified(Arg.LISTING_INSTRUCTIONS) && instrumenter != null)
-            methodMap.put(localInstructionCounter, new Instruction(opCode, opCodeToString(opCode), lineNb, instructionNb, localInstructionCounter, "", "IGNORE"));
+            InstructionWriter.getinstance().logInstruction(classPath, methodName +
+                    this.desc, lineNb, insnNb, opCode, opCodeToString(opCode), "");
+        // methodMap.put(localInstructionCounter, new Instruction(opCode,
+        // opCodeToString(opCode), lineNb, instructionNb,
+        // localInstructionCounter, "", "IGNORE"));
         // ----------------------------------------------------------
 
         if (args.isSpecified(Arg.LOAD_BEHAVIOUR_MAP)) {
-            if (isBehaviourDefinesFor(localInstructionCounter) &&
-                    instrumenter != null) {
+            if (isSpecifiedBehaviour() && instrumenter != null) {
                 if (constLoadInst.get(opCode)) {// the operation is a constant
                                                 // loading one
                     super.visitInsn(opCode);// load the constant
@@ -156,21 +170,27 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
 
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-       // System.out.println("BehaviourMethodVisitor.visitMethodInsn()");
+        // System.out.println("BehaviourMethodVisitor.visitMethodInsn()");
         // incrémente le compteur global (au niveau de la classe)
         bcv.incInstructionCounter();
         int instructionNb = bcv.getInstructionCounter();
         // incrémente le compteur local (au niveau de la méthode)
         localInstructionCounter++;
+        insnNb++;
         // ----------------------------------------------------------
         if (args.isSpecified(Arg.LISTING_INSTRUCTIONS) &&
                 instrumenter.wantsToInstrumentMethod(opcode, owner, name, desc))
-            methodMap.put(localInstructionCounter, new Instruction(opcode, opCodeToString(opcode), lineNb, instructionNb, localInstructionCounter, owner +
-                    "/" + name + desc, "IGNORE"));
+            InstructionWriter.getinstance().logInstruction(classPath, methodName +
+                    this.desc, lineNb, insnNb, opcode, opCodeToString(opcode), owner +
+                            "/" + name + desc);
+        // methodMap.put(localInstructionCounter, new Instruction(opcode,
+        // opCodeToString(opcode), lineNb, instructionNb,
+        // localInstructionCounter, owner +
+        // "/" + name + desc, "IGNORE"));
         // ----------------------------------------------------------
 
         if (args.isSpecified(Arg.LOAD_BEHAVIOUR_MAP)) {
-            if (isBehaviourDefinesFor(localInstructionCounter) &&
+            if (isSpecifiedBehaviour() &&
                     instrumenter.wantsToInstrumentMethod(opcode, owner, name, desc)) {
                 instrumenter.instrumentMethod(mv, owner, name, desc);
             } else {
@@ -190,20 +210,25 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
 
     @Override
     public void visitLdcInsn(Object cst) {
-       // System.out.println("BehaviourMethodVisitor.visitLdcInsn()");
+        // System.out.println("BehaviourMethodVisitor.visitLdcInsn()");
         // incrémente le compteur global (au niveau de la classe)
         bcv.incInstructionCounter();
         int instructionNb = bcv.getInstructionCounter();
         // incrémente le compteur local (au niveau de la méthode)
         localInstructionCounter++;
+        insnNb++;
         // ----------------------------------------------------------
         if (args.isSpecified(Arg.LISTING_INSTRUCTIONS) &&
                 instrumenter.wantsToInstrumentConstLoading(cst.getClass()))
-            methodMap.put(localInstructionCounter, new Instruction(Opcodes.LDC, opCodeToString(Opcodes.LDC), lineNb, instructionNb, localInstructionCounter, "", "IGNORE"));
+            InstructionWriter.getinstance().logInstruction(classPath, methodName +
+                    this.desc, lineNb, insnNb, Opcodes.LDC, opCodeToString(Opcodes.LDC), "");
+        // methodMap.put(localInstructionCounter, new Instruction(Opcodes.LDC,
+        // opCodeToString(Opcodes.LDC), lineNb, instructionNb,
+        // localInstructionCounter, "", "IGNORE"));
         // ----------------------------------------------------------
         super.visitLdcInsn(cst);
         if (args.isSpecified(Arg.LOAD_BEHAVIOUR_MAP)) {
-            if (isBehaviourDefinesFor(localInstructionCounter) &&
+            if (isSpecifiedBehaviour() &&
                     instrumenter.wantsToInstrumentConstLoading(cst.getClass())) {
                 // instrumenter.instrumentLDC(mv, cst);
                 visitConstantLoading(cst.getClass());
@@ -226,14 +251,15 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
     }
 
     private void visitConstantLoading(Class<?> cl) {
-        //System.out.println("BehaviourMethodVisitor.visitConstantLoading()");
+        // System.out.println("BehaviourMethodVisitor.visitConstantLoading()");
         instrumenter.instrumentConstLoading(mv, cl);
     }
 
     @Override
     public void visitLineNumber(int line, Label start) {
-       // System.out.println("BehaviourMethodVisitor.visitLineNumber()");
+        // System.out.println("BehaviourMethodVisitor.visitLineNumber()");
         lineNb = line;
+        insnNb = 0;
         super.visitLineNumber(line, start);
     }
 
@@ -243,11 +269,17 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
         return OPCODES[opCode];
     }
 
-    private boolean isBehaviourDefinesFor(int localInstructionNumber) {
-        if (methodBehaviourMap == null)
-            return false;
-        return methodBehaviourMap.containsKey(localInstructionNumber) &&
-                !methodBehaviourMap.get(localInstructionNumber).behaviour.equals("IGNORE");
+    private boolean isSpecifiedBehaviour() {
+        return BehaviourLoader.getinstance().isSpecifiedBehaviour(classPath, methodName +
+                desc, lineNb, insnNb) &&
+                !BehaviourLoader.getinstance().getSpecifiedBehaviour(classPath, methodName +
+                        desc, lineNb, insnNb).equals("IGNORE");
     }
+    // private boolean isBehaviourDefinesFor(int localInstructionNumber) {
+    // if (methodBehaviourMap == null)
+    // return false;
+    // return methodBehaviourMap.containsKey(localInstructionNumber) &&
+    // !methodBehaviourMap.get(localInstructionNumber).behaviour.equals("IGNORE");
+    // }
 
 }
