@@ -1,6 +1,6 @@
 /*
  * *
- *    Copyright 2011-2016 Valentin Gazzola & Frédéric Bapst
+ *    Copyright 2011-2016 Valentin Gazzola & Frédéric Bapst & Badoud
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -65,13 +65,9 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
     private String desc;
 
     private BehaviourClassVisitor bcv;
-    BehaviourInstrumenter instrumenter;
+    private BehaviourInstrumenter instrumenter;
 
-    private int localInstructionCounter;
-    private HashMap<Integer, Instruction> methodMap;
-    private HashMap<Integer, Instruction> methodBehaviourMap;
-
-    BehaviourMethodVisitor(int access, String desc, MethodVisitor mv, InstrumentationStats stats, Args args, String classPath, IOpcodeInstrumenterFactory factory, CojacReferences references, String methodName, BehaviourClassVisitor behaviourClassVisitor) {
+    public BehaviourMethodVisitor(int access, String desc, MethodVisitor mv, InstrumentationStats stats, Args args, String classPath, IOpcodeInstrumenterFactory factory, CojacReferences references, String methodName, BehaviourClassVisitor behaviourClassVisitor) {
         super(Opcodes.ASM5, access, desc, mv);
 
         this.stats = stats;
@@ -86,178 +82,160 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
                 desc);
         instrumenter = BehaviourInstrumenter.getInstance(args, stats);
         this.bcv = behaviourClassVisitor;
-        // if (args.isSpecified(Arg.LISTING_INSTRUCTIONS))
-        // methodMap = new HashMap<Integer, Instruction>();
-        // if (args.isSpecified(Arg.LOAD_BEHAVIOUR_MAP))
-        // if
-        // (BehaviourLoader.getinstance().containsMethodBehaviourMap(classPath,
-        // methodName +
-        // desc))
-        // methodBehaviourMap =
-        // BehaviourLoader.getinstance().getMethodBehaviourMap(classPath,
-        // methodName +
-        // desc);
     }
-    //
-    // @Override
-    // public void visitEnd() {
-    // if (args.isSpecified(Arg.LISTING_INSTRUCTIONS))
-    // bcv.putMethodMap(methodName + desc, methodMap);
-    // super.visitEnd();
-    // }
 
     @Override
     public void visitInsn(int opCode) {
-        // System.out.println("BehaviourMethodVisitor.visitInsn()");
-        // incrémente le compteur global (au niveau de la classe)
+        // increment global instruction counter (class level)
         bcv.incInstructionCounter();
         int instructionNb = bcv.getInstructionCounter();
-        // incrémente le compteur local (au niveau de la méthode)
-        localInstructionCounter++;
+        // increment local instruction counter (line level)
         insnNb++;
+        // if the has no behaviour define in behaviour class ( the operation is
+        // not instrumentable)
         IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opCode);
+        if (instrumenter == null) {
+            super.visitInsn(opCode);
+            return;
+        }
         // ----------------------------------------------------------
-        // if (args.isSpecified(Arg.LISTING_INSTRUCTIONS) && instrumenter !=
-        // null)
-        // methodMap.put(localInstructionCounter, new Instruction(opCode,
-        // opCodeToString(opCode), lineNb, instructionNb,
-        // localInstructionCounter, "", "IGNORE"));
-        if (args.isSpecified(Arg.LISTING_INSTRUCTIONS) && instrumenter != null)
+        // log the current instruction (badoud)
+        // ----------------------------------------------------------
+        if (args.isSpecified(Arg.LISTING_INSTRUCTIONS))
             InstructionWriter.getinstance().logInstruction(classPath, methodName +
                     this.desc, lineNb, insnNb, opCode, opCodeToString(opCode), "");
-        // methodMap.put(localInstructionCounter, new Instruction(opCode,
-        // opCodeToString(opCode), lineNb, instructionNb,
-        // localInstructionCounter, "", "IGNORE"));
         // ----------------------------------------------------------
-
+        // instrument as defined in file (badoud)
+        // ----------------------------------------------------------
         if (args.isSpecified(Arg.LOAD_BEHAVIOUR_MAP)) {
-            if (isSpecifiedBehaviour() && instrumenter != null) {
-                if (constLoadInst.get(opCode)) {// the operation is a constant
-                                                // loading one
-                    super.visitInsn(opCode);// load the constant
-                    visitConstantLoading(Operations.getReturnType(opCode));// transform
-                                                                           // it
-                } else {
-                    instrumenter.instrument(mv, opCode); // , classPath,
-                                                         // methods, reaction,
-                                                         // this);
-                }
-            } else {
+            if (!isSpecifiedBehaviour()) {
                 super.visitInsn(opCode);
+                return;
             }
-        } // System.out.println("Has to be instrumented:
-          // "+references.hasToBeInstrumented(classPath, lineNb,
-          // instructionNb));
-          // Delegate to parent
+            // if the operation is constant loading operation
+            if (constLoadInst.get(opCode)) {
+                // load the constant and transform it
+                super.visitInsn(opCode);
+                this.instrumenter.instrumentConstLoading(mv, Operations.getReturnType(opCode));
+            }
+            // instrument the operation
+            else
+                instrumenter.instrument(mv, opCode);
+        }
+        // ----------------------------------------------------------
+        // instrument as defined in syntax (gazzola)
+        // ----------------------------------------------------------
+        else if ((references.hasToBeInstrumented(classPath, lineNb, instructionNb, opCode) ||
+                instrumentMethod)) {
+            // if the operation is constant loading operation
+            if (constLoadInst.get(opCode)) {
+                // load the constant and transform it
+                super.visitInsn(opCode);
+                this.instrumenter.instrumentConstLoading(mv, Operations.getReturnType(opCode));
+            }
+            // instrument the operation
+            else
+                instrumenter.instrument(mv, opCode);
+        }
+        // ----------------------------------------------------------
+        // no instrumentation (continue visiting)
+        // ----------------------------------------------------------
         else {
-            if ((references.hasToBeInstrumented(classPath, lineNb, instructionNb, opCode) ||
-                    instrumentMethod) && instrumenter != null) {
-                if (constLoadInst.get(opCode)) {// the operation is a constant
-                                                // loading one
-                    super.visitInsn(opCode);// load the constant
-                    visitConstantLoading(Operations.getReturnType(opCode));// transform
-                                                                           // it
-                } else {
-                    instrumenter.instrument(mv, opCode); // , classPath,
-                                                         // methods, reaction,
-                                                         // this);
-                }
-            } else {
-                super.visitInsn(opCode);
-            }
+            super.visitInsn(opCode);
         }
     }
 
     @Override
     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf) {
-        // System.out.println("BehaviourMethodVisitor.visitMethodInsn()");
-        // incrémente le compteur global (au niveau de la classe)
+        // increment global instruction counter (class level)
         bcv.incInstructionCounter();
         int instructionNb = bcv.getInstructionCounter();
-        // incrémente le compteur local (au niveau de la méthode)
-        localInstructionCounter++;
+        // increment local instruction counter (line level)
         insnNb++;
+        // if the has no behaviour define in behaviour class ( the operation is
+        // not instrumentable)
+        if (!instrumenter.wantsToInstrumentMethod(opcode, owner, name, desc)) {
+            super.visitMethodInsn(opcode, owner, name, desc, itf);
+            return;
+        }
         // ----------------------------------------------------------
-        if (args.isSpecified(Arg.LISTING_INSTRUCTIONS) &&
-                instrumenter.wantsToInstrumentMethod(opcode, owner, name, desc))
+        // log the current instruction (badoud)
+        // ----------------------------------------------------------
+        if (args.isSpecified(Arg.LISTING_INSTRUCTIONS))
             InstructionWriter.getinstance().logInstruction(classPath, methodName +
                     this.desc, lineNb, insnNb, opcode, opCodeToString(opcode), owner +
                             "/" + name + desc);
-        // methodMap.put(localInstructionCounter, new Instruction(opcode,
-        // opCodeToString(opcode), lineNb, instructionNb,
-        // localInstructionCounter, owner +
-        // "/" + name + desc, "IGNORE"));
         // ----------------------------------------------------------
-
+        // instrument as defined in file (badoud)
+        // ----------------------------------------------------------
         if (args.isSpecified(Arg.LOAD_BEHAVIOUR_MAP)) {
-            if (isSpecifiedBehaviour() &&
-                    instrumenter.wantsToInstrumentMethod(opcode, owner, name, desc)) {
-                instrumenter.instrumentMethod(mv, owner, name, desc);
-            } else {
+            if (!isSpecifiedBehaviour()) {
                 super.visitMethodInsn(opcode, owner, name, desc, itf);
+                return;
             }
-        } else {
-            if ((references.hasToBeInstrumented(classPath, lineNb, instructionNb, opcode) ||
-                    instrumentMethod) &&
-                    instrumenter.wantsToInstrumentMethod(opcode, owner, name, desc)) {
-                instrumenter.instrumentMethod(mv, owner, name, desc);
-            } else {
-                super.visitMethodInsn(opcode, owner, name, desc, itf);
-            }
+            instrumenter.instrumentMethod(mv, owner, name, desc);
         }
+        // ----------------------------------------------------------
+        // instrument as defined in syntax (gazzola)
+        // ----------------------------------------------------------
+        else if (references.hasToBeInstrumented(classPath, lineNb, instructionNb, opcode) ||
+                instrumentMethod) {
+            instrumenter.instrumentMethod(mv, owner, name, desc);
+        }
+        // ----------------------------------------------------------
+        // no instrumentation (continue visiting)
+        // ----------------------------------------------------------
+        else
+            super.visitMethodInsn(opcode, owner, name, desc, itf);
 
     }
 
     @Override
     public void visitLdcInsn(Object cst) {
-        // System.out.println("BehaviourMethodVisitor.visitLdcInsn()");
-        // incrémente le compteur global (au niveau de la classe)
+        // increment global instruction counter (class level)
         bcv.incInstructionCounter();
         int instructionNb = bcv.getInstructionCounter();
-        // incrémente le compteur local (au niveau de la méthode)
-        localInstructionCounter++;
+        // increment local instruction counter (line level)
         insnNb++;
+        // if the has no behaviour define in behaviour class ( the operation is
+        // not instrumentable)
+        if (!instrumenter.wantsToInstrumentConstLoading(cst.getClass())) {
+            super.visitLdcInsn(cst);
+            return;
+        }
         // ----------------------------------------------------------
-        if (args.isSpecified(Arg.LISTING_INSTRUCTIONS) &&
-                instrumenter.wantsToInstrumentConstLoading(cst.getClass()))
+        // log the current instruction (badoud)
+        // ----------------------------------------------------------
+        if (args.isSpecified(Arg.LISTING_INSTRUCTIONS))
             InstructionWriter.getinstance().logInstruction(classPath, methodName +
                     this.desc, lineNb, insnNb, Opcodes.LDC, opCodeToString(Opcodes.LDC), "");
-        // methodMap.put(localInstructionCounter, new Instruction(Opcodes.LDC,
-        // opCodeToString(Opcodes.LDC), lineNb, instructionNb,
-        // localInstructionCounter, "", "IGNORE"));
         // ----------------------------------------------------------
-        super.visitLdcInsn(cst);
+        // instrument as defined in file (badoud)
+        // ----------------------------------------------------------
         if (args.isSpecified(Arg.LOAD_BEHAVIOUR_MAP)) {
-            if (isSpecifiedBehaviour() &&
-                    instrumenter.wantsToInstrumentConstLoading(cst.getClass())) {
-                // instrumenter.instrumentLDC(mv, cst);
-                visitConstantLoading(cst.getClass());
-            } else {
-                // super.visitLdcInsn(cst);
-            }
+            super.visitLdcInsn(cst);
+            if (!isSpecifiedBehaviour())
+                return;
+            instrumenter.instrumentConstLoading(mv, cst.getClass());
         }
-        // System.out.println("Has to be instrumented:
-        // "+references.hasToBeInstrumented(classPath, lineNb, instructionNb));
+        // ----------------------------------------------------------
+        // instrument as defined in syntax (gazzola)
+        // ----------------------------------------------------------
+        else if (references.hasToBeInstrumented(classPath, lineNb, instructionNb, Opcodes.LDC) ||
+                instrumentMethod) {
+            super.visitLdcInsn(cst);
+            instrumenter.instrumentConstLoading(mv, cst.getClass());
+        }
+        // ----------------------------------------------------------
+        // no instrumentation (continue visiting)
+        // ----------------------------------------------------------
         else {
-            if ((references.hasToBeInstrumented(classPath, lineNb, instructionNb, Opcodes.LDC) ||
-                    instrumentMethod) &&
-                    instrumenter.wantsToInstrumentConstLoading(cst.getClass())) {
-                // instrumenter.instrumentLDC(mv, cst);
-                visitConstantLoading(cst.getClass());
-            } else {
-                // super.visitLdcInsn(cst);
-            }
+            super.visitLdcInsn(cst);
         }
-    }
-
-    private void visitConstantLoading(Class<?> cl) {
-        // System.out.println("BehaviourMethodVisitor.visitConstantLoading()");
-        instrumenter.instrumentConstLoading(mv, cl);
     }
 
     @Override
     public void visitLineNumber(int line, Label start) {
-        // System.out.println("BehaviourMethodVisitor.visitLineNumber()");
         lineNb = line;
         insnNb = 0;
         super.visitLineNumber(line, start);
@@ -269,17 +247,11 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
         return OPCODES[opCode];
     }
 
+    // check there is a behaviour associated with the current instruction
     private boolean isSpecifiedBehaviour() {
         return BehaviourLoader.getinstance().isSpecifiedBehaviour(classPath, methodName +
                 desc, lineNb, insnNb) &&
                 !BehaviourLoader.getinstance().getSpecifiedBehaviour(classPath, methodName +
                         desc, lineNb, insnNb).equals("IGNORE");
     }
-    // private boolean isBehaviourDefinesFor(int localInstructionNumber) {
-    // if (methodBehaviourMap == null)
-    // return false;
-    // return methodBehaviourMap.containsKey(localInstructionNumber) &&
-    // !methodBehaviourMap.get(localInstructionNumber).behaviour.equals("IGNORE");
-    // }
-
 }

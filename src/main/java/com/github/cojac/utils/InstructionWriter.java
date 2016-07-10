@@ -21,11 +21,14 @@ import com.github.cojac.Args;
 
 public class InstructionWriter {
 
+    // elements tag
     private static String ROOT_ELT = "classes";
     private static String CLASS_ELT = "class";
     private static String METHOD_ELT = "method";
     private static String LINE_ELT = "line";
     private static String INSTRUCTION_ELT = "instruction";
+
+    // attributes tag
     private static String CLASS_NAME_ATTR = "className";
     private static String METHOD_NAME_ATTR = "methodName";
     private static String LINE_NUMBER_ATTR = "lineNumber";
@@ -36,15 +39,18 @@ public class InstructionWriter {
     private static String BEHAVIOUR_ATTR = "behaviour";
     private static String DEFAULT_BEHAVIOUR_VALUE = "IGNORE";
 
-    // private HashMap<String, HashMap<String, HashMap<Integer, Instruction>>>
-    // instructionMap;
+    // Structure that contains all instructions
+    // classeName - methodName - lineNumber - instructionNumber -
+    // instructionMeta
     private HashMap<String, HashMap<String, HashMap<Integer, HashMap<Integer, InstructionMeta>>>> classMap;
     private static InstructionWriter INSTANCE;
 
+    // constructor (private cause singleton)
     private InstructionWriter() {
         classMap = new HashMap<>();
     }
 
+    // getter (cause singleton)
     public static InstructionWriter getinstance() {
         if (INSTANCE == null) {
             INSTANCE = new InstructionWriter();
@@ -64,86 +70,9 @@ public class InstructionWriter {
             // ----------------------------------------------------------------------
             // fill the XML document with instructions
             Element rootElement = document.createElement(ROOT_ELT);
+            // convert internal structure to XML representation
             classMapToXML(document, rootElement, classMap);
             document.appendChild(rootElement);
-            //
-            // Element rootElement = document.createElement(ROOT_ELT);
-            // for (String className : classMap.keySet()) {
-            // Element classElement = document.createElement(CLASS_ELT);
-            // classElement.setAttribute(CLASS_NAME_ATTR, className);
-            // for (String methodName : classMap.get(className).keySet()) {
-            // Element methodElement = document.createElement(METHOD_ELT);
-            // methodElement.setAttribute(METHOD_NAME_ATTR, methodName);
-            // for (Integer lineNumber :
-            // classMap.get(className).get(methodName).keySet()) {
-            // Element lineElement = document.createElement(LINE_ELT);
-            // lineElement.setAttribute(LINE_NUMBER_ATTR,
-            // lineNumber.toString());
-            // for (Integer instructionNumber :
-            // classMap.get(className).get(methodName).get(lineNumber).keySet())
-            // {
-            // Element instructionElement =
-            // document.createElement(INSTRUCTION_ELT);
-            // instructionElement.setAttribute(INSTRUCTION_NUMBER_ATTR,
-            // instructionNumber.toString());
-            // InstructionMeta instructionMeta =
-            // classMap.get(className).get(methodName).get(lineNumber).get(instructionNumber);
-            //
-            // instructionElement.setAttribute(OP_CODE_ATTR, "" +
-            // instructionMeta.getOpCode());
-            // instructionElement.setAttribute(OP_NAME_ATTR,
-            // instructionMeta.getOpName());
-            //
-            // instructionElement.setAttribute(INVOKED_METHOD,
-            // instructionMeta.getInvokedMethod());
-            // instructionElement.setAttribute(BEHAVIOUR_ATTR,
-            // instructionMeta.getBehaviour());
-            // lineElement.appendChild(instructionElement);
-            // }
-            // methodElement.appendChild(lineElement);
-            // }
-            // classElement.appendChild(methodElement);
-            // }
-            // rootElement.appendChild(classElement);
-            // }
-            // document.appendChild(rootElement);
-
-            // Element instructionMapElement =
-            // document.createElement("instructionMap");
-            // for (String className : instructionMap.keySet()) {
-            // Element classMapElement = document.createElement("classMap");
-            // classMapElement.setAttribute("className", className);
-            // for (String methodName : instructionMap.get(className).keySet())
-            // {
-            // Element methodMapElement = document.createElement("methodMap");
-            // methodMapElement.setAttribute("methodName", methodName);
-            // for (Integer localInstructionNumber :
-            // instructionMap.get(className).get(methodName).keySet()) {
-            // Element instructionElement =
-            // document.createElement("instruction");
-            // Instruction instruction =
-            // instructionMap.get(className).get(methodName).get(localInstructionNumber);
-            // instructionElement.setAttribute("opCode", "" +
-            // instruction.getOpCode());
-            // instructionElement.setAttribute("opName", "" +
-            // instruction.getOpName());
-            // instructionElement.setAttribute("lineNumber", "" +
-            // instruction.getLineNumber());
-            // instructionElement.setAttribute("globalInstructionNumber", "" +
-            // instruction.getGlobalInstructionNumber());
-            // instructionElement.setAttribute("localInstructionNumber", "" +
-            // instruction.getLocalInstructionNumber());
-            // instructionElement.setAttribute("invokedMethod", "" +
-            // instruction.getInvokedMethod());
-            // instructionElement.setAttribute("behaviour", "" +
-            // instruction.getBehaviour());
-            // methodMapElement.appendChild(instructionElement);
-            // }
-            // classMapElement.appendChild(methodMapElement);
-            // }
-            // instructionMapElement.appendChild(classMapElement);
-            // }
-            // document.appendChild(instructionMapElement);
             // ----------------------------------------------------------------------
             // prepare to write the XML document
             TransformerFactory tFactory = TransformerFactory.newInstance();
@@ -167,7 +96,6 @@ public class InstructionWriter {
     }
 
     private void classMapToXML(Document document, Element rootElement, HashMap<String, HashMap<String, HashMap<Integer, HashMap<Integer, InstructionMeta>>>> classMap) {
-
         for (String className : classMap.keySet()) {
             Element classElement = document.createElement(CLASS_ELT);
             classElement.setAttribute(CLASS_NAME_ATTR, className);
@@ -183,42 +111,30 @@ public class InstructionWriter {
             lineMapToXML(document, methodElement, methodMap.get(methodName));
             classElement.appendChild(methodElement);
         }
-
     }
 
     private void lineMapToXML(Document document, Element methodElement, HashMap<Integer, HashMap<Integer, InstructionMeta>> lineMap) {
-
         for (Integer lineNumber : lineMap.keySet()) {
             Element lineElement = document.createElement(LINE_ELT);
             lineElement.setAttribute(LINE_NUMBER_ATTR, lineNumber.toString());
             instructionMapToXML(document, lineElement, lineMap.get(lineNumber));
             methodElement.appendChild(lineElement);
         }
-
     }
 
     private void instructionMapToXML(Document document, Element lineElement, HashMap<Integer, InstructionMeta> instructionMap) {
-
         for (Integer instructionNumber : instructionMap.keySet()) {
             Element instructionElement = document.createElement(INSTRUCTION_ELT);
             instructionElement.setAttribute(INSTRUCTION_NUMBER_ATTR, instructionNumber.toString());
             InstructionMeta instructionMeta = instructionMap.get(instructionNumber);
-
             instructionElement.setAttribute(OP_CODE_ATTR, "" +
                     instructionMeta.getOpCode());
             instructionElement.setAttribute(OP_NAME_ATTR, instructionMeta.getOpName());
-
             instructionElement.setAttribute(INVOKED_METHOD, instructionMeta.getInvokedMethod());
             instructionElement.setAttribute(BEHAVIOUR_ATTR, instructionMeta.getBehaviour());
             lineElement.appendChild(instructionElement);
         }
-
     }
-
-    // public synchronized void putClassMap(String className, HashMap<String,
-    // HashMap<Integer, Instruction>> classMap) {
-    // instructionMap.put(className, classMap);
-    // }
 
     public synchronized void logInstruction(String className, String methodName, int lineNumber, int instructionNumber, int opCode, String opName, String invokedMethod) {
         if (!classMap.containsKey(className))
