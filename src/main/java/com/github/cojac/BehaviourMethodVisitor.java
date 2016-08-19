@@ -18,21 +18,6 @@
 
 package com.github.cojac;
 
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.commons.LocalVariablesSorter;
-import org.objectweb.asm.util.Printer;
-import org.objectweb.asm.util.Textifier;
-
-import com.github.cojac.instrumenters.IOpcodeInstrumenter;
-import com.github.cojac.instrumenters.BehaviourInstrumenter;
-import com.github.cojac.models.Operations;
-import com.github.cojac.utils.BehaviourLoader;
-import com.github.cojac.utils.Instruction;
-import com.github.cojac.utils.InstructionWriter;
-import com.github.cojac.instrumenters.IOpcodeInstrumenterFactory;
-
 import static org.objectweb.asm.util.Printer.OPCODES;
 
 /**
@@ -42,7 +27,18 @@ import static org.objectweb.asm.util.Printer.OPCODES;
  */
 
 import java.util.BitSet;
-import java.util.HashMap;
+
+import org.objectweb.asm.Label;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.commons.LocalVariablesSorter;
+
+import com.github.cojac.instrumenters.BehaviourInstrumenter;
+import com.github.cojac.instrumenters.IOpcodeInstrumenter;
+import com.github.cojac.instrumenters.IOpcodeInstrumenterFactory;
+import com.github.cojac.models.Operations;
+import com.github.cojac.utils.BehaviourLoader;
+import com.github.cojac.utils.InstructionWriter;
 
 final class BehaviourMethodVisitor extends LocalVariablesSorter {
     private final IOpcodeInstrumenterFactory factory;
@@ -249,9 +245,9 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
 
     // check there is a behaviour associated with the current instruction
     private boolean isSpecifiedBehaviour() {
-        return BehaviourLoader.getinstance().isSpecifiedBehaviour(classPath, methodName +
-                desc, lineNb, insnNb) &&
-                !BehaviourLoader.getinstance().getSpecifiedBehaviour(classPath, methodName +
-                        desc, lineNb, insnNb).equals("IGNORE");
+        BehaviourLoader bl=BehaviourLoader.getinstance();
+        String m=methodName + desc;
+        return bl.isSpecifiedBehaviour(classPath, m, lineNb, insnNb) &&
+             ! bl.getSpecifiedBehaviour(classPath, m, lineNb, insnNb).equals("IGNORE");
     }
 }

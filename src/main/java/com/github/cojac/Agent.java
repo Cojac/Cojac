@@ -63,13 +63,13 @@ public final class Agent implements ClassFileTransformer {
         if (className==null) 
             className=extractedClassname(classfileBuffer);
         try {
-			if("com/github/cojac/models/FloatReplacerClasses".equals(className)) {
+            if("com/github/cojac/models/FloatReplacerClasses".equals(className)) {
                 if (VERBOSE) {
                     System.out.println("Agent handling the FloatReplacerClasses under "+loader);
                 }
-				return setGlobalFields(classfileBuffer, loader);
-			}
-			if("com/github/cojac/utils/PolyBehaviourLogger".equals(className)) {
+                return setGlobalFields(classfileBuffer, loader);
+            }
+            if("com/github/cojac/utils/PolyBehaviourLogger".equals(className)) {
                 if (VERBOSE) {
                     System.out.println("Agent NOT instrumenting  PolyBehaviourLogger");
                 }

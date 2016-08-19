@@ -137,16 +137,11 @@ public class BehaviourLoader {
     }
 
     private InstructionMeta instructionMetaFromXML(Element instructionElement) {
-        InstructionMeta instructionMeta = new InstructionMeta();
         Integer opCode = Integer.parseInt(instructionElement.getAttributeNode(OP_CODE_ATTR).getValue());
-        instructionMeta.setOpCode(opCode);
         String opName = instructionElement.getAttributeNode(OP_NAME_ATTR).getValue();
-        instructionMeta.setOpName(opName);
         String invokedMethod = instructionElement.getAttributeNode(INVOKED_METHOD).getValue();
-        instructionMeta.setInvokedMethod(invokedMethod);
         String behaviour = instructionElement.getAttributeNode(BEHAVIOUR_ATTR).getValue();
-        instructionMeta.setBehaviour(behaviour);
-        return instructionMeta;
+        return new InstructionMeta(opCode, opName, invokedMethod, behaviour);
     }
 
     public boolean isSpecifiedBehaviour(String className, String methodName, int lineNumber, int instructionNumber) {

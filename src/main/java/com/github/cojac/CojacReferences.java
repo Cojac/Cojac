@@ -80,8 +80,9 @@ public final class CojacReferences {
     private final double stabilityThreshold;
     private final boolean checkUnstableComparisons;
     private final int arbitraryPrecisionBits;
-    private HashMap<String, PartiallyInstrumentable> classesToInstrument = null;
-    public String behaviourMapFilePath; // path to XML file that is used to load behaviours
+    private final HashMap<String, PartiallyInstrumentable> classesToInstrument;
+    //TODO: remove behaviourMapFilePath?
+    private final String behaviourMapFilePath; // path to XML file that is used to load behaviours
    
 
     private CojacReferences(CojacReferencesBuilder builder) {
@@ -618,10 +619,11 @@ public final class CojacReferences {
     }
     
     public interface PartiallyInstrumentable{
-        public boolean instrumentMethod(String methodName); 
-        public boolean instrumentLine(int lineNb);
-        public boolean instrumentInstruction(int lineNb, int instructionNumber);
+        boolean instrumentMethod(String methodName); 
+        boolean instrumentLine(int lineNb);
+        boolean instrumentInstruction(int lineNb, int instructionNumber);
     }
+    
     public static class ClassFullyInstrumented implements PartiallyInstrumentable{
         public String name;
         public ClassFullyInstrumented(String name) {

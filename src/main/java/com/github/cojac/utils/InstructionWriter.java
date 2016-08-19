@@ -138,12 +138,15 @@ public class InstructionWriter {
 
     public synchronized void logInstruction(String className, String methodName, int lineNumber, int instructionNumber, int opCode, String opName, String invokedMethod) {
         if (!classMap.containsKey(className))
-            classMap.put(className, new HashMap<>());
-        if (!classMap.get(className).containsKey(methodName))
-            classMap.get(className).put(methodName, new HashMap<>());
-        if (!classMap.get(className).get(methodName).containsKey(lineNumber))
-            classMap.get(className).get(methodName).put(lineNumber, new HashMap<>());
-        if (!classMap.get(className).get(methodName).get(lineNumber).containsKey(instructionNumber))
-            classMap.get(className).get(methodName).get(lineNumber).put(instructionNumber, new InstructionMeta(opCode, opName, invokedMethod, DEFAULT_BEHAVIOUR_VALUE));
+            classMap.put(className, new HashMap<>()); 
+        HashMap<String, HashMap<Integer, HashMap<Integer, InstructionMeta>>> c = classMap.get(className);
+        if (!c.containsKey(methodName))
+            c.put(methodName, new HashMap<>());
+        HashMap<Integer, HashMap<Integer, InstructionMeta>> m = c.get(methodName);
+        if (!m.containsKey(lineNumber))
+            m.put(lineNumber, new HashMap<>());
+        HashMap<Integer, InstructionMeta> l = m.get(lineNumber);
+        if (!l.containsKey(instructionNumber))
+            l.put(instructionNumber, new InstructionMeta(opCode, opName, invokedMethod, DEFAULT_BEHAVIOUR_VALUE));
     }
 }
