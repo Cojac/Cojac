@@ -2,9 +2,9 @@ package com.github.cojac.symbolic;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import com.github.cojac.models.wrappers.SymbolicExpression.OP;
 
-import com.github.cojac.models.wrappers.WrapperSymbolic.SymbolicExpression;
-import com.github.cojac.models.wrappers.WrapperSymbolic.SymbolicExpression.OP;
+import com.github.cojac.models.wrappers.SymbolicExpression;
 
 public class SymbUtils {
 
@@ -209,6 +209,5 @@ public class SymbUtils {
     @FunctionalInterface
     public interface SymbolicDerivationOperator {
         SymbolicExpression derivate(SymbolicExpression se);
-
     }
 }
