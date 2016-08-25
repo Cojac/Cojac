@@ -32,7 +32,6 @@ public class DerivationDemo{
     private static final double epsilon = 0.1;
     private static Map<String, Method> methods;
 
-
     static{
         methods = new TreeMap<>();
         for( Method method : DerivationDemo.class.getDeclaredMethods() ){
@@ -54,17 +53,13 @@ public class DerivationDemo{
         }
     }
 
-
     // ----------------------------------------------------
-
-
     static double someFunction( double x, double a, double b ){
         double res = a * x * x;
         res = res + b * x;
         res = res + 1;
         return res;
     }
-
 
     public static void main1( String[] args ){
         // TODO : why the args ??
@@ -74,7 +69,6 @@ public class DerivationDemo{
         System.out.println( "f(2):  " + y );
         System.out.println( "f'(2): " + COJAC_MAGIC_getDerivation( y ) );
     }
-
 
     public static void runDerivationTest(){
         // run the derivation functions 1 to 13
@@ -90,8 +84,6 @@ public class DerivationDemo{
     }
 
     // ----------------------------------------------------
-
-
     public static void runFx( int fx, double x ) throws InvocationTargetException, IllegalAccessException,
             NoSuchMethodException{
 
@@ -114,11 +106,9 @@ public class DerivationDemo{
             System.out.println( "Test ok" );
             nbrTestPassed++;
         }
-
     }
 
     // ----------------------------------------------------
-
 
     /*
      * Magic method, see cojac implementation of those in the DerivationDouble
@@ -127,140 +117,112 @@ public class DerivationDemo{
         return 0;
     }
 
-
     public static double COJAC_MAGIC_asDerivationTarget( double a ){
         return a;
     }
-
 
     public static double f1( double x ){
         return 4.0 * Math.pow( x, 3.0 );
     }
 
-
     public static double df1( double x ){
         return 12.0 * Math.pow( x, 2.0 );
     }
-
 
     public static double f2( double x ){
         return Math.pow( x, x );
     }
 
-
     public static double df2( double x ){
         return Math.pow( x, x ) * ( Math.log( x ) + 1.0 );
     }
-
 
     public static double f3( double x ){
         return Math.sin( x ) + 4.0 * x;
     }
 
-
     public static double df3( double x ){
         return Math.cos( x ) + 4.0;
     }
-
 
     public static double f4( double x ){
         return Math.cos( Math.pow( x, 2.0 ) ) - 4.0 * x + 3;
     }
 
-
     public static double df4( double x ){
         return -Math.sin( Math.pow( x, 2.0 ) ) * 2.0 * x - 4.0;
     }
-
 
     public static double f5( double x ){
         return 4.0 * x + Math.tan( x );
     }
 
-
     public static double df5( double x ){
         return 1.0 + Math.pow( Math.tan( x ), 2.0 ) + 4.0;
     }
-
 
     public static double f6( double x ){
         return 1 / Math.sqrt( x );
     }
 
-
     public static double df6( double x ){
         return -1.0 / ( 2.0 * Math.pow( x, 3.0 / 2.0 ) );
     }
-
 
     public static double f7( double x ){
         return -Math.log( x );
     }
 
-
     public static double df7( double x ){
         return -1.0 / x;
     }
-
 
     public static double f8( double x ){
         return Math.sinh( x ) + Math.cosh( x ) + Math.tanh( x );
     }
 
-
     public static double df8( double x ){
         return Math.sinh( x ) + Math.cosh( x ) + 1.0 - Math.pow( Math.tanh( x ), 2.0 );
     }
-
 
     public static double f9( double x ){
         return Math.asin( x ) + Math.acos( x ) + Math.atan( x );
     }
 
-
     public static double df9( double x ){
         return 1.0 / ( Math.pow( x, 2.0 ) + 1.0 );
     }
-
 
     public static double f10( double x ){
         return Math.exp( Math.pow( x, 2.0 ) );
     }
 
-
     public static double df10( double x ){
         return Math.exp( Math.pow( x, 2.0 ) ) * 2.0 * x;
     }
-
 
     public static double f11( double x ){
         return 3.0 % x;
     }
 
-
     public static double df11( double x ){
         return Double.NaN;
     }
-
 
     public static double f12( double x ){
         return x % 3.0;
     }
 
-
     public static double df12( double x ){
         return 1.0;
     }
-
 
     public static double f13( double x ){
         return Math.abs( x );
     }
 
-
     public static double df13( double x ){
         return x < 0.0 ? -1.0 : 1.0;
     }
-
 
 }

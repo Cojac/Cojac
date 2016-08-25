@@ -188,7 +188,7 @@ public class WrapperSymbolic extends ACojacWrapper {
     public int dcmpl(ACojacWrapper w) {
         // Averti que l'on ne peut pas comparer des fonctions
         if (this.expr.containsUnknown || asSymbWrapper(w).expr.containsUnknown)
-            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "Can not compare symbolic expressions containing unknowns");
+            pkgLogger().log(Level.WARNING, "Can not compare symbolic expressions containing unknowns");
         return super.dcmpl(w);
     }
 
@@ -196,7 +196,7 @@ public class WrapperSymbolic extends ACojacWrapper {
     public int dcmpg(ACojacWrapper w) {
         // Averti que l'on ne peut pas comparer des fonctions
         if (this.expr.containsUnknown || asSymbWrapper(w).expr.containsUnknown)
-            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "Can not compare symbolic expressions containing unknowns");
+            pkgLogger().log(Level.WARNING, "Can not compare symbolic expressions containing unknowns");
         return super.dcmpg(w);
     }
 
@@ -283,8 +283,14 @@ public class WrapperSymbolic extends ACojacWrapper {
     // ----------------- Useful methods ----------------------------------------
     // -------------------------------------------------------------------------
 
+    private static Logger pkgLogger() {
+        return Logger.getLogger(WrapperChebfun.class.getPackage().getName());
+    }
+
     private static WrapperSymbolic asSymbWrapper(ACojacWrapper w) {
         return (WrapperSymbolic) w;
     }
 
+    //==========================================================================
+    
 }

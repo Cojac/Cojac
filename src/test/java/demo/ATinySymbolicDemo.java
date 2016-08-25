@@ -31,6 +31,15 @@ public class ATinySymbolicDemo {
         res = res + 5;
         return res; 
     }
+    
+    // f(x) = ...
+    static double myFunction2(double x, int n) {
+        double res=0.0;
+        for(int i=0; i<n; i++) 
+            res += Math.sin(x*i-x*x);
+        return res; 
+    }
+
 
     public static void main(String[] args) {
         double x = COJAC_MAGIC_asSymbolicUnknown(0.0); // define the unknown
@@ -54,6 +63,8 @@ public class ATinySymbolicDemo {
         BigDecimal d = new BigDecimal(""+0.3218);
         BigDecimal r = b.add(c).add(d);
         System.out.println(r);
+        f=myFunction2(3.0, 5);
+        System.out.println("f(x)  = " + COJAC_MAGIC_toString(f));  // print the function "f"
     }
     
 }

@@ -44,13 +44,15 @@ public class WrapperChebfun extends ACompactWrapper {
     // maximum degree of polynomial used for stop non converging polynomial
     private static final int MAX_DEGREE = 8192;// 65536
 
+    private static final DftNormalization FFT_NORMALIZATION=DftNormalization.STANDARD; //UNITARY;
     // -------------------------------------------------------------------------
     // ----------------- Attributes --------------------------------------------
     // -------------------------------------------------------------------------
     // value of the constant if !isChebfun else NAN
+    // TODO decide whether it is better to store constants as {x,x} chebfun...
     private final double value;
     // values of the function at the chebyshev points if isChebfun else NULL
-    private final double funcValues[];
+    private final double[] funcValues;
 
     // -------------------------------------------------------------------------
     // ----------------- Constructor -------------------------------------------
@@ -64,8 +66,8 @@ public class WrapperChebfun extends ACompactWrapper {
     // ----------------- Necessary constructor ---------------------------------
     // -------------------------------------------------------------------------
     public WrapperChebfun(ACojacWrapper w) {
-        this(w == null ? 0.0 : asCheb(w).value, w == null ? null
-                : asCheb(w).funcValues);
+        this(w == null ? 0.0  : asCheb(w).value,
+             w == null ? null : asCheb(w).funcValues);
     }
 
     // -------------------------------------------------------------------------
@@ -104,28 +106,32 @@ public class WrapperChebfun extends ACompactWrapper {
     @Override
     public ACojacWrapper math_abs() {
         if (isChebfun())
-            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "The operation (abs) should not be used with a Chefun");
+            pkgLogger().log(Level.WARNING, "The operation (abs) should not be used with a Chefun");
         return super.math_abs();
+    }
+
+    private static Logger pkgLogger() {
+        return Logger.getLogger(WrapperChebfun.class.getPackage().getName());
     }
 
     @Override
     public ACojacWrapper math_min(ACojacWrapper b) {
         if (isChebfun() || asCheb(b).isChebfun())
-            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "The operation (min) should not be used with a Chefun");
+            pkgLogger().log(Level.WARNING, "The operation (min) should not be used with a Chefun");
         return super.math_min(b);
     }
 
     @Override
     public ACojacWrapper math_max(ACojacWrapper b) {
         if (isChebfun() || asCheb(b).isChebfun())
-            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "The operation (max) should not be used with a Chefun");
+            pkgLogger().log(Level.WARNING, "The operation (max) should not be used with a Chefun");
         return super.math_max(b);
     }
 
     @Override
     public ACojacWrapper drem(ACojacWrapper b) {
         if (isChebfun() || asCheb(b).isChebfun())
-            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "The operation (%) should not be used with a Chefun");
+            pkgLogger().log(Level.WARNING, "The operation (%) should not be used with a Chefun");
         return super.drem(b);
     }
 
@@ -135,7 +141,7 @@ public class WrapperChebfun extends ACompactWrapper {
     @Override
     public int dcmpl(ACojacWrapper w) {
         if (this.isChebfun() || asCheb(w).isChebfun())
-            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "Can not compare Chebfuns");
+            pkgLogger().log(Level.WARNING, "Can not compare Chebfuns");
         if (this.isNaN() || w.isNaN())
             return -1;
         return this.compareTo(w);
@@ -144,7 +150,7 @@ public class WrapperChebfun extends ACompactWrapper {
     @Override
     public int dcmpg(ACojacWrapper w) {
         if (this.isChebfun() || asCheb(w).isChebfun())
-            Logger.getLogger(this.getClass().getPackage().getName()).log(Level.WARNING, "Can not compare Chebfuns");
+            pkgLogger().log(Level.WARNING, "Can not compare Chebfuns");
         if (this.isNaN() || w.isNaN())
             return 1;
         return this.compareTo(w);
@@ -172,14 +178,12 @@ public class WrapperChebfun extends ACompactWrapper {
     @Override
     public String asInternalString() {
         if (!isChebfun())
-            return "" + this.value;
+            return "Chebfun(" + this.value+")";
 
-        String s = "Real poly degree : " + (funcValues.length - 1) + "\n";
-        s += "Min poly degree : " + (minReasonableDegree(fft(funcValues))) +
-                "\n";
-        s += "Poly values at Cheb points :  \n";
-        for (double d : funcValues)
-            s += d + "\n";
+        String s = "Chebfun(deg:" + (funcValues.length - 1) + ", ";
+        s += "effective deg: " + (minReasonableDegree(fft(funcValues))) + ", ";
+        s += Arrays.toString(funcValues);
+        s += ", fft: "+Arrays.toString(fft(funcValues));
         return s;
     }
 
@@ -300,7 +304,7 @@ public class WrapperChebfun extends ACompactWrapper {
             if (Math.abs(x - chebPoint(j, n)) < EPSILON)
                 return funcValues[j];
 
-        // Applique la formule d'interpolation baricentrique sur le polynôme
+        // Applique la formule d'interpolation barycentrique sur le polynôme
         double nom = 0;
         for (int j = 0; j <= n; j++) {
             double tmp = 1 / (x - chebPoint(j, n)) * funcValues[j];
@@ -332,7 +336,7 @@ public class WrapperChebfun extends ACompactWrapper {
             dataRI[0][n + j] = f[n - j];
 
         // applique la FFT le vecteur étendu
-        FastFourierTransformer.transformInPlace(dataRI, DftNormalization.UNITARY, TransformType.FORWARD);
+        FastFourierTransformer.transformInPlace(dataRI, FFT_NORMALIZATION, TransformType.FORWARD);
 
         // extraction des N+1 premiers éléments (de 0 à N compris)
         double[] a = new double[n + 1];
@@ -370,7 +374,7 @@ public class WrapperChebfun extends ACompactWrapper {
             dataRI1[0][n + j] = a[n - j];
 
         // applique la IFFT le vecteur étendu
-        FastFourierTransformer.transformInPlace(dataRI1, DftNormalization.UNITARY, TransformType.INVERSE);
+        FastFourierTransformer.transformInPlace(dataRI1, FFT_NORMALIZATION, TransformType.INVERSE);
 
         // extraction des N+1 premiers éléments (de 0 à N compris)
         double[] f = new double[n + 1];
@@ -468,6 +472,16 @@ public class WrapperChebfun extends ACompactWrapper {
 
     // Permet d'étendre le degré polynome par un facteur de 2
     private static double[] extendDegree(double[] funcValues) {
+        double[] f=fft(funcValues);
+        int extendedDegree = (funcValues.length - 1) * 2;
+        double[] extendedFft = new double[extendedDegree + 1];
+        System.arraycopy(f, 0, extendedFft, 0, f.length);
+        double[] extendedValues = ifft(extendedFft);
+        return extendedValues;
+    }
+
+    // idem but with the naïve evaluation method, in O(n2)
+    private static double[] extendDegree0(double[] funcValues) {
         int extendedDegree = (funcValues.length - 1) * 2;
         double[] extendedValues = new double[extendedDegree + 1];
 
@@ -483,13 +497,13 @@ public class WrapperChebfun extends ACompactWrapper {
     private static boolean isDegreeGoodEnough(double[] funcValues) {
         for (int i = 0; i < funcValues.length; i++) {
             if (Double.isNaN(funcValues[i])) {
-                Logger.getLogger(WrapperChebfun.class.getPackage().getName()).log(Level.WARNING, "Chebfun contains NaN");
+                pkgLogger().log(Level.WARNING, "Chebfun contains NaN");
                 return true;
             }
         }
 
         if (funcValues.length - 1 >= MAX_DEGREE) {
-            Logger.getLogger(WrapperChebfun.class.getPackage().getName()).log(Level.WARNING, "Chebfun not converging");
+            pkgLogger().log(Level.WARNING, "Chebfun not converging");
             return true;
         }
         double[] coeffs = fft(funcValues);
@@ -497,12 +511,14 @@ public class WrapperChebfun extends ACompactWrapper {
     }
 
     private static int minReasonableDegree(double[] p) {
-        int n = p.length - 1;
+        double max=0.0;
+        for(double d:p) max=Math.max(max, Math.abs(d));
+        if (max<1E-100) return 1; // vector considered as zero
         int j;
-        for (j = 0; j < n; j++)
-            if (Math.abs(p[j]) < EPSILON && Math.abs(p[j + 1]) < EPSILON)
+        for(j = p.length-1; j >= 0; j--)
+            if (Math.abs(p[j])/max >= EPSILON)
                 break;
-        return j;
+        return j+1;
     }
 
     private static double[] derivate(double[] funcValues) {
@@ -520,5 +536,23 @@ public class WrapperChebfun extends ACompactWrapper {
 
         return ifft(b);
     }
-
+    //=========================================================================
+    public static void main(String...a) {
+        double[] d=new double[]{5000, 5000};
+        WrapperChebfun w=new WrapperChebfun(3, d);
+        System.out.println(w.asInternalString());
+        System.out.println("fi "+Arrays.toString(d));
+        System.out.println("evalAt: "+evaluateAt(d, -0.6));
+        System.out.println(isDegreeGoodEnough(d));
+        System.out.println(" fft: "+Arrays.toString(fft(d)));
+        System.out.println("ifft: "+Arrays.toString(ifft(fft(d))));
+        
+        d=extendDegree(d); System.out.println(" --- extending ---");
+        d=extendDegree(d); System.out.println(" --- extending ---");
+        System.out.println("fi "+Arrays.toString(d));
+        System.out.println("evalAt: "+evaluateAt(d, -0.6));
+        System.out.println(" fft: "+Arrays.toString(fft(d)));
+        System.out.println("ifft: "+Arrays.toString(ifft(fft(d))));
+        System.out.println(isDegreeGoodEnough(d));
+    }
 }

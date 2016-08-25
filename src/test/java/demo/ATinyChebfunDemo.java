@@ -33,7 +33,7 @@ public class ATinyChebfunDemo {
         return res;
     }
 
-    // f(x) = 3x^2 + 2x + 5
+    // f(x) = ... a complicated function ;)
     static double myComplexFunction(double x) {
         double f = Math.sin(Math.PI * x);
         double s = f;
