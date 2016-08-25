@@ -189,6 +189,7 @@ public class SymbolicExpression {
         return oper + "(" + left + ")";
     }
 
+    //=======================================================================
     // Define all the operator managed by the wrapper
     public static enum OP {
         NOP(((x, y) -> Double.NaN), SymbUtils::derivateNOP),
