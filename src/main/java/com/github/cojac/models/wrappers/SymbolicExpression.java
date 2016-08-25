@@ -115,7 +115,7 @@ public class SymbolicExpression {
     /*
      * Cette méthode permet d'évaluter l'arbre d'un manière plus précise.
      * Elle met à plat l'opérateur d'addition et de soustration puis
-     * réordonne ceux-ci dans un ordre asbosolu décroissant et finalement
+     * réordonne ceux-ci dans un ordre absolu décroissant et finalement
      * applique la somme de Kahan
      */
     public double evaluateBetter(double x) {
@@ -126,12 +126,13 @@ public class SymbolicExpression {
             for (SymbolicExpression se : listOfSE)
                 list.add(se.evaluateBetter(x));
             // Trie les termes de manière absolue et dans un ordre descendent
-            list.sort(new Comparator<Double>() {
-                @Override
-                public int compare(Double d1, Double d2) {
-                    return Double.compare(Math.abs(d2), Math.abs(d1));
-                };
-            });
+            list.sort((d1,d2) -> Double.compare(Math.abs(d2), Math.abs(d1)));
+//            list.sort(new Comparator<Double>() {
+//                @Override
+//                public int compare(Double d1, Double d2) {
+//                    return Double.compare(Math.abs(d2), Math.abs(d1));
+//                };
+//            });
 
             double sum = 0;
             double corr = 0;
@@ -170,13 +171,13 @@ public class SymbolicExpression {
     }
 
     // Retourne la distance relative absolue
-    public double relativeDistance(double a, double b) {
-        a = Math.abs(a);
-        b = Math.abs(b);
-        if (a >= b)
-            return Math.abs(a - b) / a;
-        return Math.abs(a - b) / b;
-    }
+//    public double relativeDistance(double a, double b) {
+//        a = Math.abs(a);
+//        b = Math.abs(b);
+//        if (a >= b)
+//            return Math.abs(a - b) / a;
+//        return Math.abs(a - b) / b;
+//    }
 
     // Retourne la réprentation de l'arbre sous la forme prefixe
     public String toString() {
