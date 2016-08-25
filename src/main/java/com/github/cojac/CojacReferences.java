@@ -28,8 +28,8 @@ import com.github.cojac.models.behaviours.DoubleIntervalBehaviour;
 import com.github.cojac.models.behaviours.PseudoRoundingBehaviour;
 import com.github.cojac.models.behaviours.ConversionBehaviour.Conversion;
 import com.github.cojac.models.behaviours.PseudoRoundingBehaviour.Rounding;
-import com.github.cojac.models.wrappers.BigDecimalDouble;
-import com.github.cojac.models.wrappers.BigDecimalFloat;
+import com.github.cojac.models.wrappers.CommonDouble;
+import com.github.cojac.models.wrappers.CommonFloat;
 import com.github.cojac.models.wrappers.WrapperBigDecimalWithNaN;
 import com.github.cojac.utils.BehaviourLoader;
 import com.github.cojac.utils.InstructionWriter;
@@ -473,7 +473,7 @@ public final class CojacReferences {
                 floatWrapper = args.getValue(Arg.FLOAT_WRAPPER);
                 floatWrapper = afterStandardPrefixExpansion(floatWrapper);                
             } else { // default float wrapper
-                floatWrapper = BigDecimalFloat.class.getCanonicalName();
+                floatWrapper = CommonFloat.class.getCanonicalName();
             }
 
             if (args.isSpecified(Arg.DOUBLE_WRAPPER) &&
@@ -481,7 +481,7 @@ public final class CojacReferences {
                 doubleWrapper = args.getValue(Arg.DOUBLE_WRAPPER);
                 doubleWrapper = afterStandardPrefixExpansion(doubleWrapper);                
             } else { // default double wrapper
-                doubleWrapper = BigDecimalDouble.class.getCanonicalName();
+                doubleWrapper = CommonDouble.class.getCanonicalName();
             }
             
             if (args.isSpecified(Arg.NG_WRAPPER) &&
