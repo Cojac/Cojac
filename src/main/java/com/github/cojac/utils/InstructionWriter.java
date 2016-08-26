@@ -16,9 +16,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.github.cojac.Arg;
-import com.github.cojac.Args;
-
 public class InstructionWriter {
 
     // elements tag
@@ -58,11 +55,8 @@ public class InstructionWriter {
         return INSTANCE;
     }
 
-    public void writeInstructionDocumentToFile(Args args) {
+    public void writeInstructionDocumentToFile(String filePath) {
         try {
-            // get the path to XML file
-            String filePath = args.getValue(Arg.LISTING_INSTRUCTIONS);
-            // ----------------------------------------------------------------------
             // prepare the XML document
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
@@ -92,7 +86,6 @@ public class InstructionWriter {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
     }
 
     private void classMapToXML(Document document, Element rootElement, HashMap<String, HashMap<String, HashMap<Integer, HashMap<Integer, InstructionMeta>>>> classMap) {

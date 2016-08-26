@@ -40,9 +40,8 @@ public class PolyBehaviourLoader {
         return INSTANCE;
     }
 
-    public void loadBehaviours(Args args) {
+    public void loadBehaviours(String filePath) {
         try {
-            String filePath = args.getValue(Arg.POLY_BEHAVIOURAL_LOAD);
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
             Document document = docBuilder.parse(filePath); // Parse the XML

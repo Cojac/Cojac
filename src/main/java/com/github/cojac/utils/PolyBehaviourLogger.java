@@ -44,12 +44,7 @@ public class PolyBehaviourLogger {
         return INSTANCE;
     }
 
-    public void writeLogs(Args args) {
-        // try {
-        // get the path to XML file
-        // String filePath = args.getValue(Arg.LISTING_INSTRUCTIONS);
-        String filePath = args.getValue(Arg.POLY_BEHAVIOURAL_LOGGING);
-
+    public void writeLogs(String filePath) {
         try {
             // ----------------------------------------------------------------------
             // prepare the XML document

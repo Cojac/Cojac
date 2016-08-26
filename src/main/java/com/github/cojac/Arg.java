@@ -298,8 +298,17 @@ public enum Arg {
                 withDescription("Relative precision considered unstable, for Interval/Stochastic wrappers (default 0.00001)").
                 create(STABILITY_THRESHOLD.shortOpt()));
         // badoud
-        options.addOption(OptionBuilder.withLongOpt("Rpblogging").withArgName("path").hasArg().withDescription("Log the lines that can be associated with a behaviour into a XML file.").create(Arg.POLY_BEHAVIOURAL_LOGGING.shortOpt()));
-        options.addOption(OptionBuilder.withLongOpt("Rpbload").withArgName("path").hasArg().withDescription("Load behaviours from a XML file  and use poly behavioural wrapping").create(Arg.POLY_BEHAVIOURAL_LOAD.shortOpt())); 
+        options.addOption(OptionBuilder.
+                withLongOpt("Rpblogging").
+                withArgName("path").
+                hasArg().
+                withDescription("Log the lines that can be associated with a behaviour into a XML file.").
+                create(Arg.POLY_BEHAVIOURAL_LOGGING.shortOpt()));
+        options.addOption(OptionBuilder.withLongOpt("Rpbload").
+                withArgName("path").
+                hasArg().
+                withDescription("Load behaviours from a XML file  and use poly behavioural wrapping").
+                create(Arg.POLY_BEHAVIOURAL_LOAD.shortOpt())); 
         
         options.addOption(Arg.ALL.shortOpt(),
                 "all", false, "Sniff everywhere (this is the default behavior)");
@@ -357,8 +366,18 @@ public enum Arg {
                         "and lines 10 to 354 (inclusive) from Class foo.foobar.Bar").
                 create(Arg.INSTRUMENT_SELECTIVELY.shortOpt()));
         //Badoud
-        options.addOption(OptionBuilder.withLongOpt("listingInstructions").withArgName("path").hasArg().withDescription("List all instrumentable instructions into a XML file.").create(Arg.LISTING_INSTRUCTIONS.shortOpt()));      
-        options.addOption(OptionBuilder.withLongOpt("loadBehaviourMap").withArgName("path").hasArg().withDescription("Load behaviour map from a XML file.").create(Arg.LOAD_BEHAVIOUR_MAP.shortOpt()));
+        options.addOption(OptionBuilder.
+                withLongOpt("listingInstructions").
+                withArgName("path").
+                hasArg().
+                withDescription("List all instrumentable instructions into a XML file.").
+                create(Arg.LISTING_INSTRUCTIONS.shortOpt()));      
+        options.addOption(OptionBuilder.
+                withLongOpt("loadBehaviourMap").
+                withArgName("path").
+                hasArg().
+                withDescription("Load behaviour map from a XML file.").
+                create(Arg.LOAD_BEHAVIOUR_MAP.shortOpt()));
         return options;
     }
 

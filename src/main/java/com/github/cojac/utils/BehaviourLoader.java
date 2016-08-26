@@ -59,10 +59,8 @@ public class BehaviourLoader {
 
     // initialize the structure that contains all instructions with the
     // informations founded in the file
-    public void loadInstructionMap(Args args) {
+    public void loadInstructionMap(String filePath) {
         try {
-            // parse the specified XML file
-            String filePath = args.getValue(Arg.LOAD_BEHAVIOUR_MAP);
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
             Document document = docBuilder.parse(filePath);

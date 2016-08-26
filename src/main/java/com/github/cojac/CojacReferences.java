@@ -216,6 +216,7 @@ public final class CojacReferences {
         }
         return true;
     }
+    
     public boolean hasToBeInstrumented(String className, String methodName) {
         if(classesToInstrument != null){
             if (!hasToBeInstrumented(className))
@@ -227,6 +228,7 @@ public final class CojacReferences {
         }
         return true;
     }
+    
     public boolean hasToBeInstrumented(String className, int lineNb, int instructionNb, int opcode) {
         // if(DISPLAY_OPERATION_INFO){
         // System.out.println("Class "+className+", line: "+lineNb+",
@@ -263,7 +265,7 @@ public final class CojacReferences {
         private String floatWrapper;
         private String doubleWrapper;
         private String ngWrapper;
-       private int bigDecimalPrecision;
+        private int bigDecimalPrecision;
         private double stabilityThreshold;
         private boolean checkUnstableComparisons=true;
         private int arbitraryPrecisionBits;
@@ -297,7 +299,7 @@ public final class CojacReferences {
         public CojacReferences build() {
             this.stats = new InstrumentationStats();
             this.sbBypassList = new StringBuilder(STANDARD_PACKAGES);
-            args.setValue(Arg.FLOAT_WRAPPER, "com.github.cojac.models.wrappers.CommonFloat");
+            args.setValue(Arg.FLOAT_WRAPPER,  "com.github.cojac.models.wrappers.CommonFloat");
             args.setValue(Arg.DOUBLE_WRAPPER, "com.github.cojac.models.wrappers.CommonDouble");
 
             if (args.isSpecified(Arg.NG_WRAPPER)) {
@@ -314,43 +316,37 @@ public final class CojacReferences {
 
             if (args.isSpecified(Arg.INTERVAL)) {
                 args.specify(Arg.REPLACE_FLOATS);
-//                args.setValue(Arg.FLOAT_WRAPPER, "com.github.cojac.models.wrappers.IntervalFloat");
-//                args.setValue(Arg.DOUBLE_WRAPPER, "com.github.cojac.models.wrappers.IntervalDouble");
                 args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperInterval");
             }
 
             if (args.isSpecified(Arg.STOCHASTIC)) {
                 args.specify(Arg.REPLACE_FLOATS);
-//                args.setValue(Arg.FLOAT_WRAPPER, "com.github.cojac.models.wrappers.StochasticFloat");
-//                args.setValue(Arg.DOUBLE_WRAPPER, "com.github.cojac.models.wrappers.StochasticDouble");
                 args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperStochastic");
-   }
+            }
 
             if (args.isSpecified(Arg.AUTOMATIC_DERIVATION)) {
                 args.specify(Arg.REPLACE_FLOATS);
-//                args.setValue(Arg.FLOAT_WRAPPER, "com.github.cojac.models.wrappers.DerivationFloat");
-//                args.setValue(Arg.DOUBLE_WRAPPER, "com.github.cojac.models.wrappers.DerivationDouble");
                 args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperDerivation");
-   }
+            }
             
             if (args.isSpecified(Arg.SYMBOLIC)) {
                 args.specify(Arg.REPLACE_FLOATS);
-//                args.setValue(Arg.FLOAT_WRAPPER, "com.github.cojac.models.wrappers.SymbolicFloat");
-//                args.setValue(Arg.DOUBLE_WRAPPER, "com.github.cojac.models.wrappers.SymbolicDouble");
                 args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperSymbolic");
-   }
+            }
             if (args.isSpecified(Arg.CHEBFUN)) {
                 args.specify(Arg.REPLACE_FLOATS);
-//                args.setValue(Arg.FLOAT_WRAPPER, "com.github.cojac.models.wrappers.SymbolicFloat");
-//                args.setValue(Arg.DOUBLE_WRAPPER, "com.github.cojac.models.wrappers.SymbolicDouble");
                 args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperChebfun");
-   }
+            }
             if (args.isSpecified(Arg.POLY_BEHAVIOURAL_LOGGING)) {
                 args.specify(Arg.REPLACE_FLOATS);
                 args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperPolyBehaviouralLogger");
+                // try {
+                // get the path to XML file
+                // String filePath = args.getValue(Arg.LISTING_INSTRUCTIONS);
+                String filePath = args.getValue(Arg.POLY_BEHAVIOURAL_LOGGING);
                 Runtime.getRuntime().addShutdownHook(new Thread() {
                     @Override public void run() {
-                        PolyBehaviourLogger.getinstance().writeLogs(args);
+                        PolyBehaviourLogger.getinstance().writeLogs(filePath);
                     }
                 });
             }
@@ -358,7 +354,8 @@ public final class CojacReferences {
             if (args.isSpecified(Arg.POLY_BEHAVIOURAL_LOAD)) {
                 args.specify(Arg.REPLACE_FLOATS);
                 args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperPolyBehavioural");
-                PolyBehaviourLoader.getinstance().loadBehaviours(args);
+                String filePath = args.getValue(Arg.POLY_BEHAVIOURAL_LOAD);
+                PolyBehaviourLoader.getinstance().loadBehaviours(filePath);
             }
                 
             if (args.isSpecified(Arg.REPLACE_FLOATS)) { 
@@ -417,16 +414,18 @@ public final class CojacReferences {
             }
             
             if(args.isSpecified(Arg.LISTING_INSTRUCTIONS)){
-                System.out.println(args.getValue(Arg.LISTING_INSTRUCTIONS));         
+                // get the path to XML file
+                String filePath = args.getValue(Arg.LISTING_INSTRUCTIONS);
                 Runtime.getRuntime().addShutdownHook(new Thread() {
                     @Override public void run() {
-                        InstructionWriter.getinstance().writeInstructionDocumentToFile(args);   
+                        InstructionWriter.getinstance().writeInstructionDocumentToFile(filePath);   
                     }
                 });
             }
             
-            if(args.isSpecified(Arg.LOAD_BEHAVIOUR_MAP)){
-                BehaviourLoader.getinstance().loadInstructionMap(args); 
+            if(args.isSpecified(Arg.LOAD_BEHAVIOUR_MAP)) {
+                String filePath = args.getValue(Arg.LOAD_BEHAVIOUR_MAP);
+                BehaviourLoader.getinstance().loadInstructionMap(filePath); 
             }
             
             if(args.isSpecified(Arg.DOUBLE2FLOAT)){
@@ -551,39 +550,39 @@ public final class CojacReferences {
                 e.printStackTrace();
             }
         }
+        
         private static HashMap<String, PartiallyInstrumentable> parseClassesIndices(String arg){
             HashMap<String, PartiallyInstrumentable> classesToInstrument = new HashMap<String, PartiallyInstrumentable>();
             CojacClassToInstrumentSplitter sp = new CojacClassToInstrumentSplitter();
-            if(arg != null){
-                String[] classes = sp.split(arg.replaceAll("\\s+",""));
-                
-                for(String classe: classes){
-                     if(classe.contains(OPT_IN_DESCRIPTOR_START)){
-                        int openingCurlyIndex = classe.indexOf(OPT_IN_DESCRIPTOR_START);
-                        int closingCurlyIndex = classe.indexOf(OPT_IN_DESCRIPTOR_END);
-                        if(openingCurlyIndex+1 < closingCurlyIndex){
-                            String name = classe.substring(0, openingCurlyIndex).replace("/", ".");
-                            String tmp = classe.substring(openingCurlyIndex+1, closingCurlyIndex);
-                            String[] methodsLinesInstructions = tmp.split(OPT_IN_INSTRUCTIONS_SEPARATOR);
-                            if(methodsLinesInstructions.length ==0){
-                                continue; // I'm kind enough to test "class{_}"...
-                            }
-                            PartiallyInstrumentable pi;
-                            if(tmp.startsWith(OPT_IN_INSTRUCTIONS_SEPARATOR)){
-                                
-                                pi = new ClassPartiallyInstrumented(name,"" ,methodsLinesInstructions[0]);
-                            }else if(tmp.endsWith(OPT_IN_INSTRUCTIONS_SEPARATOR) || !classe.contains(OPT_IN_INSTRUCTIONS_SEPARATOR)){
-                                pi = new ClassPartiallyInstrumented(name,methodsLinesInstructions[0],"");
-                            }else{
-                                pi = new ClassPartiallyInstrumented(name, methodsLinesInstructions[0],methodsLinesInstructions[1]);
-                            }
-                            classesToInstrument.put(name,pi);
-                        }//else: nothing to instrument
-                    }else{
-                        classesToInstrument.put(classe.replace("/", "."), new ClassFullyInstrumented(classe.replace("/", ".")));
-                    }
-                    
+            if(arg == null) return classesToInstrument;
+            String[] classes = sp.split(arg.replaceAll("\\s+",""));
+
+            for(String classe: classes){
+                if(classe.contains(OPT_IN_DESCRIPTOR_START)){
+                    int openingCurlyIndex = classe.indexOf(OPT_IN_DESCRIPTOR_START);
+                    int closingCurlyIndex = classe.indexOf(OPT_IN_DESCRIPTOR_END);
+                    if(openingCurlyIndex+1 < closingCurlyIndex){
+                        String name = classe.substring(0, openingCurlyIndex).replace("/", ".");
+                        String tmp = classe.substring(openingCurlyIndex+1, closingCurlyIndex);
+                        String[] methodsLinesInstructions = tmp.split(OPT_IN_INSTRUCTIONS_SEPARATOR);
+                        if(methodsLinesInstructions.length ==0){
+                            continue; // I'm kind enough to test "class{_}"...
+                        }
+                        PartiallyInstrumentable pi;
+                        if(tmp.startsWith(OPT_IN_INSTRUCTIONS_SEPARATOR)){
+
+                            pi = new ClassPartiallyInstrumented(name,"" ,methodsLinesInstructions[0]);
+                        }else if(tmp.endsWith(OPT_IN_INSTRUCTIONS_SEPARATOR) || !classe.contains(OPT_IN_INSTRUCTIONS_SEPARATOR)){
+                            pi = new ClassPartiallyInstrumented(name,methodsLinesInstructions[0],"");
+                        }else{
+                            pi = new ClassPartiallyInstrumented(name, methodsLinesInstructions[0],methodsLinesInstructions[1]);
+                        }
+                        classesToInstrument.put(name,pi);
+                    }//else: nothing to instrument
+                }else{
+                    classesToInstrument.put(classe.replace("/", "."), new ClassFullyInstrumented(classe.replace("/", ".")));
                 }
+
             }
             return classesToInstrument;
         }
@@ -706,7 +705,7 @@ public final class CojacReferences {
             return lines.get(lineNb);
         }
         @Override
-        public boolean instrumentInstruction(int lineNb, @SuppressWarnings("unused") int instructionNumber) {
+        public boolean instrumentInstruction(int lineNb, int instructionNumber) {
             return instrumentLine(lineNb)|| instructions.get(instructionNumber);
         }
     }
