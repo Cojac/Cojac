@@ -37,11 +37,11 @@ public class RumpPolynomialAndChebfun {
         return r;
     }
 
-    public static double rumpPolynomial(double x, double y) {
+    public static double rumpPolynomial1(double x, double y) {
         return x+y;
     }
 
-    public static double rumpPolynomial1(double x, double y) {
+    public static double rumpPolynomial(double x, double y) {
         return 1335.0*(pow(y, 6))/4.0 
                 + x*x*(11.0*x*x*y*y -pow(y, 6) -121.0*pow(y, 4) -2.0)
                 + 11.0*pow(y, 8)/2.0 
@@ -54,17 +54,20 @@ public class RumpPolynomialAndChebfun {
         System.out.println("direct eval: f("+x+" , "+y+") = " + r);
         double xx=COJAC_MAGIC_asChebfun(dummy);
         r=rumpPolynomial(xx, y);
+        System.out.println("as Chebfun(x): f("+x+" , "+y+") = " + COJAC_MAGIC_toString(r));
         r=COJAC_MAGIC_evaluateChebfunAt(r, x);
-        System.out.println("as Chebfun(x): f("+x+" , "+y+") = " + r);
-        double yy=COJAC_MAGIC_asChebfun(dummy);
-        r=rumpPolynomial(x, yy);
-        r=COJAC_MAGIC_evaluateChebfunAt(r, y);
-        System.out.println("as Chebfun(y): f("+x+" , "+y+") = " + r);
+        System.out.println("     it gives: f("+x+" , "+y+") = " + r);
+//        double yy=COJAC_MAGIC_asChebfun(dummy);
+//        r=rumpPolynomial(x, yy);
+//        r=COJAC_MAGIC_evaluateChebfunAt(r, y);
+//        System.out.println("as Chebfun(y): f("+x+" , "+y+") = " + r);
     }
     
     public static void main(String[] args) {
         compute(0.3, 0.8); 
-        //compute(2.0, 3.0); 
-        //compute(77617, 33096);
+//        compute(0.3, 2.1); // unfortunately, the rest is not very successful...
+//        compute(0.3, 3.1); 
+//        compute(2.0, 3.0); 
+//        compute(77617, 33096);
     }
 }

@@ -38,17 +38,17 @@ public class WrapperChebfun extends ACompactWrapper {
     // -------------------------------------------------------------------------
     // ----------------- Constants ---------------------------------------------
     // -------------------------------------------------------------------------
-    private static final double EPSILON = 1E-16;
+    private static final double EPSILON = 1E-15;
     // initial degree of polynomial used for initialize the chebfun (p(x) = x)
     private static final int BASE_DEGREE = 32;
     // maximum degree of polynomial used for stop non converging polynomial
-    private static final int MAX_DEGREE = 8192;// 65536
+    private static final int MAX_DEGREE = 65536; //8192;// 65536
 
     // TODO: correctly implement Chebfun with domain different from -1..+1
     private static final double domainMin = -1.0;
     private static final double domainMax = +1.0;
 
-    private static final DftNormalization FFT_NORMALIZATION=DftNormalization.STANDARD; //UNITARY;
+    private static final DftNormalization FFT_NORMALIZATION=DftNormalization.STANDARD; //STANDARD; //UNITARY;
     // -------------------------------------------------------------------------
     // ----------------- Attributes --------------------------------------------
     // -------------------------------------------------------------------------
@@ -478,8 +478,8 @@ public class WrapperChebfun extends ACompactWrapper {
     }
 
     private static double[] extendDegree(double[] funcValues) {
-        return extendDegreeViaFft(funcValues);
-        //return extendDegreeViaEvaluate(funcValues); // just for debugging
+        //return extendDegreeViaFft(funcValues);
+        return extendDegreeViaEvaluate(funcValues); // just for debugging
     }
     
     // Permet d'étendre le degré polynome par un facteur de 2
@@ -519,7 +519,12 @@ public class WrapperChebfun extends ACompactWrapper {
             return true;
         }
         double[] coeffs = fft(funcValues);
-        return minReasonableDegree(coeffs) < coeffs.length - 1;
+//        int mm1= minReasonableDegreeBadoud(coeffs);
+//        int mm2= minReasonableDegree      (coeffs);
+//        if(mm1!=mm2) {
+//            System.out.println("OUUUPS: "+mm1+" "+mm2+Arrays.toString(coeffs));
+//        }        
+        return minReasonableDegreeBadoud(coeffs) < coeffs.length - 1;
     }
 
     private static int minReasonableDegree(double[] p) {
@@ -528,9 +533,18 @@ public class WrapperChebfun extends ACompactWrapper {
         if (max<1E-100) return 1; // vector considered as zero
         int j;
         for(j = p.length-1; j >= 0; j--)
-            if (Math.abs(p[j])/max >= EPSILON)
+            if (Math.abs(p[j])/max >= 1e1*EPSILON)
                 break;
         return j+1;
+    }
+
+    private static int minReasonableDegreeBadoud(double[] p) {
+        int n = p.length - 1;
+        int j;
+        for (j = 0; j < n; j++)
+            if (Math.abs(p[j]) < EPSILON && Math.abs(p[j + 1]) < EPSILON)
+                break;
+        return j;
     }
 
     private static double[] derivate(double[] funcValues) {
@@ -556,6 +570,7 @@ public class WrapperChebfun extends ACompactWrapper {
     //=========================================================================
     public static void main(String...a) {
         double[] d=new double[]{5000, 5000};
+        //d=new double[]{5E-15, 5E-15};
         WrapperChebfun w=new WrapperChebfun(3, d);
         System.out.println(w.asInternalString());
         System.out.println("fi "+Arrays.toString(d));

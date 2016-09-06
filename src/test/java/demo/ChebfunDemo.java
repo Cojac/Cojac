@@ -68,7 +68,7 @@ public class ChebfunDemo {
     public static void main(String[] args) {
 
         int nbrError = 0;
-        nbrError += comparisonTest();
+        //nbrError += comparisonTest();
         nbrError += runChebfunTest();
 
         if (nbrError == 0) {
@@ -89,7 +89,7 @@ public class ChebfunDemo {
 
     public static int comparisonTest() {
         System.out.println("----------------------------------------");
-        System.out.println(" Start Comparison Test");
+        System.out.println(" Start Comparison Test (warning are expected!)");
         System.out.println("----------------------------------------");
 
         int nbrError = 0;
@@ -185,22 +185,22 @@ public class ChebfunDemo {
 
     public static int runChebfunTest() {
         System.out.println("----------------------------------------");
-        System.out.println(" Start Symbolic Test");
+        System.out.println(" Start Chebfun Test");
         System.out.println("----------------------------------------");
         int nbrError = 0;
-        // run the Symbolic functions 1 to 15
+        int[] fId={1, 3, 4, 5, 8, 10};
         double[] xs = new double[]{0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
                 0.5, 0.5, 0.5, 0.5, 0.5, 0.5};
-        for (int i = 1; i <= 13; i++) {
+        for (int i = 0; i < fId.length; i++) {
             try {
-                nbrError += runFx(i, xs[i - 1]);
+                nbrError += runFx(fId[i], xs[i]);
             } catch (InvocationTargetException | IllegalAccessException
                     | NoSuchMethodException e) {
                 e.printStackTrace();
             }
         }
         System.out.println("----------------------------------------");
-        System.out.println(" End Symbolic Test with " + nbrError + " error");
+        System.out.println(" End Chebfun Test with " + nbrError + " error");
         System.out.println("----------------------------------------");
         return nbrError;
     }
