@@ -44,6 +44,10 @@ public class WrapperChebfun extends ACompactWrapper {
     // maximum degree of polynomial used for stop non converging polynomial
     private static final int MAX_DEGREE = 8192;// 65536
 
+    // TODO: correctly implement Chebfun with domain different from -1..+1
+    private static final double domainMin = -1.0;
+    private static final double domainMax = +1.0;
+
     private static final DftNormalization FFT_NORMALIZATION=DftNormalization.STANDARD; //UNITARY;
     // -------------------------------------------------------------------------
     // ----------------- Attributes --------------------------------------------
@@ -51,8 +55,9 @@ public class WrapperChebfun extends ACompactWrapper {
     // value of the constant if !isChebfun else NAN
     // TODO decide whether it is better to store constants as {x,x} chebfun...
     private final double value;
-    // values of the function at the chebyshev points if isChebfun else NULL
+    // values of the function at the Chebyshev points if isChebfun else NULL
     private final double[] funcValues;
+    
 
     // -------------------------------------------------------------------------
     // ----------------- Constructor -------------------------------------------
@@ -108,10 +113,6 @@ public class WrapperChebfun extends ACompactWrapper {
         if (isChebfun())
             pkgLogger().log(Level.WARNING, "The operation (abs) should not be used with a Chefun");
         return super.math_abs();
-    }
-
-    private static Logger pkgLogger() {
-        return Logger.getLogger(WrapperChebfun.class.getPackage().getName());
     }
 
     @Override
@@ -174,7 +175,6 @@ public class WrapperChebfun extends ACompactWrapper {
         return new WrapperChebfun(a, null);
     }
 
-    // TODO: implémenter
     @Override
     public String asInternalString() {
         if (!isChebfun())
@@ -203,6 +203,7 @@ public class WrapperChebfun extends ACompactWrapper {
         return asCheb(d.val).isChebfun();
     }
 
+    // TODO: consider removing the parameter: COJAC_MAGIC_asChebfunIdentityDouble()
     public static CommonDouble COJAC_MAGIC_asChebfun(@SuppressWarnings("unused") CommonDouble d) {
         WrapperChebfun res = new WrapperChebfun(Double.NaN, initChebun(BASE_DEGREE));
         return new CommonDouble(res);
@@ -214,38 +215,42 @@ public class WrapperChebfun extends ACompactWrapper {
     }
 
     public static CommonDouble COJAC_MAGIC_evaluateChebfunAt(CommonDouble d, CommonDouble x) {
-        if (!asCheb(d.val).isChebfun()) {
-            Logger.getLogger(asCheb(d.val).getClass().getPackage().getName()).log(Level.WARNING, "Only Chefuns can be evaluate");
+        WrapperChebfun dd = asCheb(d.val);
+        WrapperChebfun xx = asCheb(x.val);
+        if (!dd.isChebfun()) {
+            pkgLogger().log(Level.WARNING, "Only Chefuns can be evaluate");
             WrapperChebfun res = new WrapperChebfun(Double.NaN, null);
             return new CommonDouble(res);
-        } else if (asCheb(d.val).value < -1 || asCheb(d.val).value > 1) {
-            Logger.getLogger(asCheb(d.val).getClass().getPackage().getName()).log(Level.WARNING, "A Chebfun can only be evaluate on [-1, 1]");
+        } else if (xx.value < domainMin || xx.value > domainMax) {
+            pkgLogger().log(Level.WARNING, "A Chebfun can only be evaluate on [-1, 1]");
             WrapperChebfun res = new WrapperChebfun(Double.NaN, null);
             return new CommonDouble(res);
         }
-        double result = evaluateAt(asCheb(d.val).funcValues, asCheb(x.val).value);
+        double result = evaluateAt(dd.funcValues, xx.value);
         WrapperChebfun res = new WrapperChebfun(result, null);
         return new CommonDouble(res);
     }
 
     public static CommonFloat COJAC_MAGIC_evaluateChebfunAt(CommonFloat d, CommonFloat x) {
-        if (!asCheb(d.val).isChebfun()) {
-            Logger.getLogger(asCheb(d.val).getClass().getPackage().getName()).log(Level.WARNING, "Only Chefuns can be evaluate");
+        WrapperChebfun dd = asCheb(d.val);
+        WrapperChebfun xx = asCheb(x.val);
+        if (!dd.isChebfun()) {
+            pkgLogger().log(Level.WARNING, "Only Chefuns can be evaluate");
             WrapperChebfun res = new WrapperChebfun(Double.NaN, null);
             return new CommonFloat(res);
-        } else if (asCheb(d.val).value < -1 || asCheb(d.val).value > 1) {
-            Logger.getLogger(asCheb(d.val).getClass().getPackage().getName()).log(Level.WARNING, "A Chebfun can only be evaluate on [-1, 1]");
+        } else if (xx.value < domainMin || xx.value > domainMax) {
+            pkgLogger().log(Level.WARNING, "A Chebfun can only be evaluate on [-1, 1]");
             WrapperChebfun res = new WrapperChebfun(Double.NaN, null);
             return new CommonFloat(res);
         }
-        double result = evaluateAt(asCheb(d.val).funcValues, asCheb(x.val).value);
+        double result = evaluateAt(dd.funcValues, xx.value);
         WrapperChebfun res = new WrapperChebfun(result, null);
         return new CommonFloat(res);
     }
 
     public static CommonDouble COJAC_MAGIC_derivateChebfun(CommonDouble d) {
         if (!asCheb(d.val).isChebfun()) {
-            Logger.getLogger(asCheb(d.val).getClass().getPackage().getName()).log(Level.WARNING, "Only Chefuns can be derivate");
+            pkgLogger().log(Level.WARNING, "Only Chefuns can be derivate");
             WrapperChebfun res = new WrapperChebfun(Double.NaN, null);
             return new CommonDouble(res);
         }
@@ -256,7 +261,7 @@ public class WrapperChebfun extends ACompactWrapper {
 
     public static CommonFloat COJAC_MAGIC_derivateChebfun(CommonFloat d) {
         if (!asCheb(d.val).isChebfun()) {
-            Logger.getLogger(asCheb(d.val).getClass().getPackage().getName()).log(Level.WARNING, "Only Chebfuns can be derivate");
+            pkgLogger().log(Level.WARNING, "Only Chebfuns can be derivate");
             WrapperChebfun res = new WrapperChebfun(Double.NaN, null);
             return new CommonFloat(res);
         }
@@ -296,7 +301,9 @@ public class WrapperChebfun extends ACompactWrapper {
 
     // Permet d'évaluer le polynome au point x
     // voir page 14 fig. 3.3-3.5 de la référence [1]
-    private static double evaluateAt(double[] funcValues, double x) {
+    private static double evaluateAt(double[] funcValues, double x0) {
+        double x=2*(x0-domainMin)/(domainMax-domainMin) - 1.0;
+        //x=x0;
         int n = funcValues.length - 1;
         // si x est un point de chebyshev retourne directement la valeur
         // correspondante
@@ -470,8 +477,13 @@ public class WrapperChebfun extends ACompactWrapper {
         return resFuncValues;
     }
 
-    // Permet d'étendre le degré polynome par un facteur de 2
     private static double[] extendDegree(double[] funcValues) {
+        return extendDegreeViaFft(funcValues);
+        //return extendDegreeViaEvaluate(funcValues); // just for debugging
+    }
+    
+    // Permet d'étendre le degré polynome par un facteur de 2
+    private static double[] extendDegreeViaFft(double[] funcValues) {
         double[] f=fft(funcValues);
         int extendedDegree = (funcValues.length - 1) * 2;
         double[] extendedFft = new double[extendedDegree + 1];
@@ -481,7 +493,7 @@ public class WrapperChebfun extends ACompactWrapper {
     }
 
     // idem but with the naïve evaluation method, in O(n2)
-    private static double[] extendDegree0(double[] funcValues) {
+    private static double[] extendDegreeViaEvaluate(double[] funcValues) {
         int extendedDegree = (funcValues.length - 1) * 2;
         double[] extendedValues = new double[extendedDegree + 1];
 
@@ -536,6 +548,11 @@ public class WrapperChebfun extends ACompactWrapper {
 
         return ifft(b);
     }
+    
+    private static Logger pkgLogger() {
+        return Logger.getLogger(WrapperChebfun.class.getPackage().getName());
+    }
+
     //=========================================================================
     public static void main(String...a) {
         double[] d=new double[]{5000, 5000};

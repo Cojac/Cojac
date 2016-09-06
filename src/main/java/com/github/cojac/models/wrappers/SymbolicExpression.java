@@ -192,6 +192,7 @@ public class SymbolicExpression {
 
     //=======================================================================
     // Define all the operator managed by the wrapper
+    // TODO: consider refactoring symbOP as an abstract derivate() method.
     public static enum OP {
         NOP(((x, y) -> Double.NaN), SymbUtils::derivateNOP),
         ADD(((x, y) -> x + y), SymbUtils::derivateADD),
