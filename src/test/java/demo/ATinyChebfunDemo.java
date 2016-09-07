@@ -18,6 +18,9 @@ public class ATinyChebfunDemo {
         return d;
     }
 
+    // Still experimental...
+    public static void COJAC_MAGIC_setChebfunDomain(double min, double max) {}
+    
     // f(x) = 3x^2 + 2x + 5
     static double myFunction(double x) {
         double res = 3 * x * x;
@@ -54,12 +57,21 @@ public class ATinyChebfunDemo {
 
         double df = COJAC_MAGIC_derivateChebfun(f);
         double resdf = COJAC_MAGIC_evaluateChebfunAt(df, 0.5);
-        System.out.println("f(0.5)  = " + resdf + "  (" + myDerivative(0.5) +  ")");
+        System.out.println("f'(0.5) = " + resdf + "  (" + myDerivative(0.5) +  ")");
 
         double cf = myComplexFunction(x);
         double rescf = COJAC_MAGIC_evaluateChebfunAt(cf, 0.5);
-        System.out.println("f(0.5)  = " + rescf + "  (" + myComplexFunction(0.5) + ")");
+        System.out.println("g(0.5)  = " + rescf + "  (" + myComplexFunction(0.5) + ")");
 
+        // Caution: this has a global effect, and as a side effect, the above
+        // "Chebfun" numbers are no more valid!
+        COJAC_MAGIC_setChebfunDomain(-10.0, 20.0);
+        f=myFunction(COJAC_MAGIC_asChebfun(0.0));
+        df = COJAC_MAGIC_derivateChebfun(f);
+        for(double z:new double[]{-9, -1, 0.25, 0.5, 1, 2, 5, 10}) {
+            System.out.println("f("+z+")  = " + COJAC_MAGIC_evaluateChebfunAt(f, z) + "  (" + myFunction(z) +  ")");
+            System.out.println("f'("+z+") = " + COJAC_MAGIC_evaluateChebfunAt(df, z) + "  (" + myDerivative(z) +  ")");
+        }
         // //
         // // System.out.printf("f(x) = %s \n",COJAC_MAGIC_evaluateChebfunAt(df,
         // // 0.5));

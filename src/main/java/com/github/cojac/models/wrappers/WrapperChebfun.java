@@ -44,9 +44,9 @@ public class WrapperChebfun extends ACompactWrapper {
     // maximum degree of polynomial used for stop non converging polynomial
     private static final int MAX_DEGREE = 65536; //8192;// 65536
 
-    // TODO: correctly implement Chebfun with domain different from -1..+1
-    private static final double domainMin = -1.0;
-    private static final double domainMax = +1.0;
+    // TODO: Chebfun domains other than -1..+1 have been only superficially tested...
+    private static double domainMin = -1.0;
+    private static double domainMax = +1.0;
 
     private static final DftNormalization FFT_NORMALIZATION=DftNormalization.STANDARD; //STANDARD; //UNITARY;
     // -------------------------------------------------------------------------
@@ -186,6 +186,8 @@ public class WrapperChebfun extends ACompactWrapper {
         s += "effective deg: " + deg + ", ";
         s += toTruncatedStr(funcValues, nmax);
         s += ", fft: "+toTruncatedStr(fft(funcValues), nmax);
+//        s += "\n, i(f): "+toTruncatedStr(ifft(fft(funcValues)), nmax);
+//        s += "\n, ext: "+toTruncatedStr(extendDegree(funcValues), nmax);
         return s;
     }
     
@@ -277,6 +279,15 @@ public class WrapperChebfun extends ACompactWrapper {
         return new CommonFloat(res);
     }
 
+    /** Caution: this has a global effect, and any Chebfun computed before
+     * is not valid anymore. Maybe it should be moved as a Cojac option. 
+     */
+    public static void COJAC_MAGIC_setChebfunDomain(CommonDouble min, CommonDouble max) {
+        domainMin=asCheb(min.val).value;
+        domainMax=asCheb(max.val).value;
+    }
+
+    
     // -------------------------------------------------------------------------
     // ----------------- Useful methods ----------------------------------------
     // -------------------------------------------------------------------------
@@ -293,13 +304,18 @@ public class WrapperChebfun extends ACompactWrapper {
     private static double[] initChebun(int n) {
         double p[] = new double[n + 1];
         for (int j = 0; j <= n; j++)
-            p[j] = chebPoint(j, n);
+            p[j] = remappedInMinMaxDomain(chebPoint(j, n));
         return p;
     }
 
-    // Retourne le j(ième) point de chebyshev sur n
+    // Retourne le j(ième) sur n point de chebyshev, entre -1 et +1. 
     private static double chebPoint(int j, int n) {
-        return Math.cos(j * Math.PI / n);
+        double c=Math.cos(j * Math.PI / n);
+        return c;
+    }
+
+    private static double remappedInMinMaxDomain(double c) {
+        return (c+1)*0.5*(domainMax-domainMin) + domainMin;
     }
 
     // -------------------------------------------------------------------------
@@ -365,7 +381,7 @@ public class WrapperChebfun extends ACompactWrapper {
 
         return a;
     }
-
+    
     // Permet de passer de la représentation fréquentielle/{a0,...,aN}/coeffs
     // à la représentation temporelle/{f0,...,fN}/funcValues
     // voir page 1755 ou 13 de la référence [2]
@@ -402,7 +418,7 @@ public class WrapperChebfun extends ACompactWrapper {
 
         double[] resFuncValues; // polynôme résultant
 
-        // égualise les tailles des 2 polynôme
+        // égalise les tailles des 2 polynômes
         while (funcValuesA.length > funcValuesB.length)
             funcValuesB = extendDegree(funcValuesB);
         while (funcValuesA.length < funcValuesB.length)
@@ -446,7 +462,7 @@ public class WrapperChebfun extends ACompactWrapper {
         return resFuncValues;
     }
 
-    // Permet d'appliquer une opération entre un Chefun et une constante
+    // Permet d'appliquer une opération entre une constante et un Chefun
     private static double[] applyOp(double constant, double[] funcValues, DoubleBinaryOperator op) {
 
         double[] resFuncValues; // polynôme résultant
@@ -563,7 +579,11 @@ public class WrapperChebfun extends ACompactWrapper {
         for (int k = n - 1; k >= 2; k--)
             b[k - 1] = b[k + 1] + 2 * k * a[k];
         b[0] = b[2] / 2 + a[1];
-        return ifft(b);
+        double[] bi=ifft(b);
+        double scale = 2 / (domainMax-domainMin);
+        for(int i=0; i<bi.length; i++)
+            bi[i] = bi[i]*scale;
+        return bi;
     }
     
     private static Logger pkgLogger() {

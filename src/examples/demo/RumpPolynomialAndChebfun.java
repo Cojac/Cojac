@@ -29,10 +29,13 @@ public class RumpPolynomialAndChebfun {
     public static double COJAC_MAGIC_derivateChebfun(double d) {
         return d;
     }
+    
+    public static void COJAC_MAGIC_setChebfunDomain(double min, double max) {}
+
     //---------------------------------------------------------------------
     
     static double pow(double base, int exp) {
-        if(true) return Math.pow(base, exp);
+        if(false) return Math.pow(base, exp);
         double r=1.0;
         while(exp-- > 0) r*=base;
         return r;
@@ -64,12 +67,19 @@ public class RumpPolynomialAndChebfun {
 //        System.out.println("as Chebfun(y): f("+x+" , "+y+") = " + r);
     }
     
+    public static void main0(String[] args) {
+        double x=COJAC_MAGIC_asChebfun(0.0);
+        double r=5*x;
+        System.out.println(COJAC_MAGIC_toString(r));
+    }
+    
     public static void main(String[] args) {
+        COJAC_MAGIC_setChebfunDomain(0, 80000);
+
         compute(0.3, 0.8); 
-        compute(0.3, 2.1); // unfortunately, the rest is not very successful...
+        compute(0.3, 2.1); 
         compute(0.3, 3.1); 
-        compute(0.3, 33096); 
-//       compute(2.0, 3.0); 
-//        compute(77617, 33096);
+        // unfortunately, it is not successful around the "bad point"...
+        compute(77617, 33096);
     }
 }
