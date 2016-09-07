@@ -179,12 +179,19 @@ public class WrapperChebfun extends ACompactWrapper {
     public String asInternalString() {
         if (!isChebfun())
             return "Chebfun(" + this.value+")";
-
+        double[] fv=fft(funcValues);
+        int deg=minReasonableDegree(fv);
+        int nmax=64;
         String s = "Chebfun(deg:" + (funcValues.length - 1) + ", ";
-        s += "effective deg: " + (minReasonableDegree(fft(funcValues))) + ", ";
-        s += Arrays.toString(funcValues);
-        s += ", fft: "+Arrays.toString(fft(funcValues));
+        s += "effective deg: " + deg + ", ";
+        s += toTruncatedStr(funcValues, nmax);
+        s += ", fft: "+toTruncatedStr(fft(funcValues), nmax);
         return s;
+    }
+    
+    private static String toTruncatedStr(double[] t, int n) {
+        if(t.length<n) return Arrays.toString(t);
+        return Arrays.toString(Arrays.copyOf(t, n))+"etc. ";
     }
 
     @Override
@@ -478,8 +485,8 @@ public class WrapperChebfun extends ACompactWrapper {
     }
 
     private static double[] extendDegree(double[] funcValues) {
-        //return extendDegreeViaFft(funcValues);
-        return extendDegreeViaEvaluate(funcValues); // just for debugging
+        return extendDegreeViaFft(funcValues);
+        //return extendDegreeViaEvaluate(funcValues); // just for debugging
     }
     
     // Permet d'étendre le degré polynome par un facteur de 2
@@ -505,7 +512,7 @@ public class WrapperChebfun extends ACompactWrapper {
     }
 
     // Permet de déterminer si le degré du polynome est suffisant pour
-    // repérenter la fonction de manière précise
+    // représenter la fonction de manière précise
     private static boolean isDegreeGoodEnough(double[] funcValues) {
         for (int i = 0; i < funcValues.length; i++) {
             if (Double.isNaN(funcValues[i])) {
@@ -524,7 +531,7 @@ public class WrapperChebfun extends ACompactWrapper {
 //        if(mm1!=mm2) {
 //            System.out.println("OUUUPS: "+mm1+" "+mm2+Arrays.toString(coeffs));
 //        }        
-        return minReasonableDegreeBadoud(coeffs) < coeffs.length - 1;
+        return minReasonableDegree(coeffs) < coeffs.length - 1;
     }
 
     private static int minReasonableDegree(double[] p) {
@@ -548,18 +555,14 @@ public class WrapperChebfun extends ACompactWrapper {
     }
 
     private static double[] derivate(double[] funcValues) {
-
         int n = funcValues.length - 1;
-
         double[] a = fft(funcValues);
         double[] b = new double[a.length];
-
         b[n] = 0;
         b[n - 1] = 2 * n * a[n];
         for (int k = n - 1; k >= 2; k--)
             b[k - 1] = b[k + 1] + 2 * k * a[k];
         b[0] = b[2] / 2 + a[1];
-
         return ifft(b);
     }
     

@@ -32,6 +32,7 @@ public class RumpPolynomialAndChebfun {
     //---------------------------------------------------------------------
     
     static double pow(double base, int exp) {
+        if(true) return Math.pow(base, exp);
         double r=1.0;
         while(exp-- > 0) r*=base;
         return r;
@@ -51,7 +52,7 @@ public class RumpPolynomialAndChebfun {
     private static void compute(double x, double y) {
         double dummy=0.0;
         double r=rumpPolynomial(x, y);
-        System.out.println("direct eval: f("+x+" , "+y+") = " + r);
+        System.out.println("direct eval:   f("+x+" , "+y+") = " + r);
         double xx=COJAC_MAGIC_asChebfun(dummy);
         r=rumpPolynomial(xx, y);
         System.out.println("as Chebfun(x): f("+x+" , "+y+") = " + COJAC_MAGIC_toString(r));
@@ -65,9 +66,10 @@ public class RumpPolynomialAndChebfun {
     
     public static void main(String[] args) {
         compute(0.3, 0.8); 
-//        compute(0.3, 2.1); // unfortunately, the rest is not very successful...
-//        compute(0.3, 3.1); 
-//        compute(2.0, 3.0); 
+        compute(0.3, 2.1); // unfortunately, the rest is not very successful...
+        compute(0.3, 3.1); 
+        compute(0.3, 33096); 
+//       compute(2.0, 3.0); 
 //        compute(77617, 33096);
     }
 }

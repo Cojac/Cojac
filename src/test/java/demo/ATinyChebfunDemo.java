@@ -54,8 +54,7 @@ public class ATinyChebfunDemo {
 
         double df = COJAC_MAGIC_derivateChebfun(f);
         double resdf = COJAC_MAGIC_evaluateChebfunAt(df, 0.5);
-        System.out.println("f(0.5)  = " + resdf + "  (" + myDerivative(0.5) +
-                ")");
+        System.out.println("f(0.5)  = " + resdf + "  (" + myDerivative(0.5) +  ")");
 
         double cf = myComplexFunction(x);
         double rescf = COJAC_MAGIC_evaluateChebfunAt(cf, 0.5);
