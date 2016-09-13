@@ -45,6 +45,7 @@ public class WrapperChebfun extends ACompactWrapper {
     private static final int MAX_DEGREE = 65536; //8192;// 65536
 
     // TODO: Chebfun domains other than -1..+1 have been only superficially tested...
+    // TODO: consider ensuring thread-safety when setting demainMin/Max via magic method
     private static double domainMin = -1.0;
     private static double domainMax = +1.0;
 

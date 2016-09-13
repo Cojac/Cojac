@@ -11,7 +11,7 @@
 ///*11*/  }
 ///*12*/}
 
-package demo;
+package demo.deltaDebugging;
 
 import java.math.BigDecimal;
 

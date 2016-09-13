@@ -9,7 +9,7 @@
  *  David H Bailey    2008-01-09
  *  ----------------------------------------------------------------------------
  */
-package demo;
+package demo.deltaDebugging;
 
 import java.math.BigDecimal;
 

@@ -1,9 +1,9 @@
 package com.github.cojac.models.wrappers;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.function.DoubleBinaryOperator;
 
+import static com.github.cojac.models.wrappers.WrapperSymbolic.drop_const_subtrees_mode;
 import com.github.cojac.symbolic.SymbUtils;
 import com.github.cojac.symbolic.SymbUtils.SymbolicDerivationOperator;
 
@@ -11,11 +11,9 @@ import com.github.cojac.symbolic.SymbUtils.SymbolicDerivationOperator;
 // ----------------- Symbolic expression tree ------------------------------
 // -------------------------------------------------------------------------
 public class SymbolicExpression {
-    // Active compression for constant sub trees
-    private static final boolean COMPRESSION_MODE = false;
     // The value of the constant or the value of the sub tree if
     // !containsUnknown
-    public final double value;
+    private final double value;
     // Indicate if the current sub contains at least one unknown
     public final boolean containsUnknown;
     // Determine the current operator ( if the node is an unknown or a
@@ -44,21 +42,6 @@ public class SymbolicExpression {
         this.right = null;
     }
 
-    // // Constructor for operators
-    // public SymbolicExpression(OP oper, SymbolicExpression left) {
-    // this.value = oper.apply(left.value, Double.NaN);
-    // this.containsUnknown = left.containsUnknown;
-    // if (this.containsUnknown || !COMPRESSION_MODE) {
-    // this.oper = oper;
-    // this.left = left;
-    // this.right = null;
-    // } else {
-    // this.oper = OP.NOP;
-    // this.left = null;
-    // this.right = null;
-    // }
-    // }
-
     // Constructor operator
     public SymbolicExpression(SymbolicExpression.OP oper, SymbolicExpression left, SymbolicExpression right) {
         // pre-compute the value of the tree
@@ -66,7 +49,7 @@ public class SymbolicExpression {
                 : Double.NaN);
         this.containsUnknown = left.containsUnknown || ((right != null)
                 ? right.containsUnknown : false);
-        if (this.containsUnknown || !COMPRESSION_MODE) {
+        if (this.containsUnknown || !drop_const_subtrees_mode) {
             this.oper = oper;
             this.left = left;
             this.right = right;
@@ -77,8 +60,12 @@ public class SymbolicExpression {
         }
     }
 
+    protected double evaluate() {
+        return evaluate(Double.NaN); // typically the "unknown" won't appear...
+    }
+    
     // Evaluate the current sub-tree at "x"
-    public double evaluate(double x) {
+    protected double evaluate(double x) {
         if (containsUnknown && oper == OP.NOP)
             return x;
         if (oper == OP.NOP)
@@ -170,7 +157,7 @@ public class SymbolicExpression {
         return oper.apply(left.evaluateBetter(x), Double.NaN);
     }
 
-    // Retourne la distance relative absolue
+    // Retourne une certaine forme de "distance" 
 //    public double relativeDistance(double a, double b) {
 //        a = Math.abs(a);
 //        b = Math.abs(b);
@@ -179,7 +166,7 @@ public class SymbolicExpression {
 //        return Math.abs(a - b) / b;
 //    }
 
-    // Retourne la réprentation de l'arbre sous la forme prefixe
+    // Retourne la réprésentation de l'arbre sous la forme préfixe
     public String toString() {
         if (containsUnknown && oper == OP.NOP)
             return "x";
@@ -192,7 +179,7 @@ public class SymbolicExpression {
 
     //=======================================================================
     // Define all the operator managed by the wrapper
-    // TODO: consider refactoring symbOP as an abstract derivate() method.
+    // TODO: consider refactoring symbOP as an abstract OP.derivate() method.
     public static enum OP {
         NOP(((x, y) -> Double.NaN), SymbUtils::derivateNOP),
         ADD(((x, y) -> x + y), SymbUtils::derivateADD),
@@ -242,4 +229,3 @@ public class SymbolicExpression {
     }
 
 }
-// -------------------------------------------------------------------------

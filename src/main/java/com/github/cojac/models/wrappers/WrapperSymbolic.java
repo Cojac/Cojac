@@ -24,8 +24,12 @@ import com.github.cojac.models.wrappers.SymbolicExpression.OP;
 
 
 public class WrapperSymbolic extends ACojacWrapper {
+    // In "smart" mode, terms are reordered (slower, but often more precise) 
+    public static boolean smart_evaluation_mode=true;
+    // If constant subtrees are dropped, we lose a 
+    public static boolean drop_const_subtrees_mode = false;
 
-    private final SymbolicExpression expr; //
+    private final SymbolicExpression expr;
 
     // -------------------------------------------------------------------------
     // ----------------- Constructors ------------------------------------------
@@ -205,7 +209,7 @@ public class WrapperSymbolic extends ACojacWrapper {
     // -------------------------------------------------------------------------
     @Override
     public double toDouble() {
-        return expr.value;
+        return expr.evaluate();
     }
 
     @Override
@@ -246,25 +250,25 @@ public class WrapperSymbolic extends ACojacWrapper {
     }
 
     public static CommonDouble COJAC_MAGIC_evaluateSymbolicAt(CommonDouble d, CommonDouble x) {
-        double result = asSymbWrapper(d.val).expr.evaluate(asSymbWrapper(x.val).expr.value);
+        double result = asSymbWrapper(d.val).expr.evaluate(asSymbWrapper(x.val).expr.evaluate());
         WrapperSymbolic res = new WrapperSymbolic(result);
         return new CommonDouble(res);
     }
 
     public static CommonFloat COJAC_MAGIC_evaluateSymbolicAt(CommonFloat d, CommonFloat x) {
-        double result = asSymbWrapper(d.val).expr.evaluate(asSymbWrapper(x.val).expr.value);
+        double result = asSymbWrapper(d.val).expr.evaluate(asSymbWrapper(x.val).expr.evaluate());
         WrapperSymbolic res = new WrapperSymbolic(result);
         return new CommonFloat(res);
     }
 
     public static CommonDouble COJAC_MAGIC_evaluateBetterSymbolicAt(CommonDouble d, CommonDouble x) {
-        double result = asSymbWrapper(d.val).expr.evaluateBetter(asSymbWrapper(x.val).expr.value);
+        double result = asSymbWrapper(d.val).expr.evaluateBetter(asSymbWrapper(x.val).expr.evaluate());
         WrapperSymbolic res = new WrapperSymbolic(result);
         return new CommonDouble(res);
     }
 
     public static CommonFloat COJAC_MAGIC_evaluateBetterSymbolicAt(CommonFloat d, CommonFloat x) {
-        double result = asSymbWrapper(d.val).expr.evaluateBetter(asSymbWrapper(x.val).expr.value);
+        double result = asSymbWrapper(d.val).expr.evaluateBetter(asSymbWrapper(x.val).expr.evaluate());
         WrapperSymbolic res = new WrapperSymbolic(result);
         return new CommonFloat(res);
     }
@@ -277,6 +281,10 @@ public class WrapperSymbolic extends ACojacWrapper {
     public static CommonFloat COJAC_MAGIC_derivateSymbolic(CommonFloat d) {
         WrapperSymbolic res = new WrapperSymbolic(asSymbWrapper(d.val).expr.derivate());
         return new CommonFloat(res);
+    }
+
+    public static void COJAC_MAGIC_setSymbolicEvaluationMode(boolean smartMode) {
+        smart_evaluation_mode=smartMode;
     }
 
     // -------------------------------------------------------------------------
