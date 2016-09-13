@@ -25,9 +25,9 @@ import com.github.cojac.models.wrappers.SymbolicExpression.OP;
 
 public class WrapperSymbolic extends ACojacWrapper {
     // In "smart" mode, terms are reordered (slower, but often more precise) 
-    public static boolean smart_evaluation_mode=true;
-    // If constant subtrees are dropped, we lose a 
-    public static boolean drop_const_subtrees_mode = false;
+    public static boolean smart_evaluation_mode = true;
+    // If constant subtrees are dropped, we lose an opportunity to improve precision (via smart mode)
+    public static boolean keep_constant_subtrees_mode = true;
 
     private final SymbolicExpression expr;
 

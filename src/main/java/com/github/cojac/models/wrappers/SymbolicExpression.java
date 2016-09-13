@@ -3,7 +3,9 @@ package com.github.cojac.models.wrappers;
 import java.util.ArrayList;
 import java.util.function.DoubleBinaryOperator;
 
-import static com.github.cojac.models.wrappers.WrapperSymbolic.drop_const_subtrees_mode;
+import static com.github.cojac.models.wrappers.WrapperSymbolic.keep_constant_subtrees_mode;
+import static com.github.cojac.models.wrappers.WrapperSymbolic.smart_evaluation_mode;
+
 import com.github.cojac.symbolic.SymbUtils;
 import com.github.cojac.symbolic.SymbUtils.SymbolicDerivationOperator;
 
@@ -42,14 +44,14 @@ public class SymbolicExpression {
         this.right = null;
     }
 
-    // Constructor operator
+    // Constructor for an operator
     public SymbolicExpression(SymbolicExpression.OP oper, SymbolicExpression left, SymbolicExpression right) {
         // pre-compute the value of the tree
         this.value = oper.apply(left.value, (right != null) ? right.value
                 : Double.NaN);
         this.containsUnknown = left.containsUnknown || ((right != null)
                 ? right.containsUnknown : false);
-        if (this.containsUnknown || !drop_const_subtrees_mode) {
+        if (this.containsUnknown || keep_constant_subtrees_mode) {
             this.oper = oper;
             this.left = left;
             this.right = right;
@@ -60,47 +62,73 @@ public class SymbolicExpression {
         }
     }
 
-    protected double evaluate() {
-        return evaluate(Double.NaN); // typically the "unknown" won't appear...
-    }
-    
-    // Evaluate the current sub-tree at "x"
-    protected double evaluate(double x) {
-        if (containsUnknown && oper == OP.NOP)
-            return x;
-        if (oper == OP.NOP)
-            return value;
-        if (right != null)
-            return oper.apply(left.evaluate(x), right.evaluate(x));
-        return oper.apply(left.evaluate(x), Double.NaN);
-    }
-
     // Differentiate the current sub-tree
     public SymbolicExpression derivate() {
         return oper.derivate(this);
     }
 
     // Mise à plat des opérateurs d'addition et de soustration
-    public ArrayList<SymbolicExpression> flatOperatorForSummation() {
+    // Example: ADD(ADD(a,b),NEG(ADD(c,SUB(d,e))))
+    //        -> [a,b,-c,-d,e]
+    public ArrayList<SymbolicExpression> flattenedTermList() {
         ArrayList<SymbolicExpression> listOfSE = new ArrayList<SymbolicExpression>();
         if (oper == OP.ADD) {
-            listOfSE.addAll(left.flatOperatorForSummation());
-            listOfSE.addAll(right.flatOperatorForSummation());
+            listOfSE.addAll(left.flattenedTermList());
+            listOfSE.addAll(right.flattenedTermList());
         } else if (oper == OP.SUB) {
-            listOfSE.addAll(left.flatOperatorForSummation());
-            for (SymbolicExpression se : right.flatOperatorForSummation())
-                listOfSE.add(new SymbolicExpression(OP.NEG, se, null));
+            listOfSE.addAll(left.flattenedTermList());
+            for (SymbolicExpression se : right.flattenedTermList())
+                listOfSE.add(smartNegate(se));
         } else if (oper == OP.NEG) {
-            for (SymbolicExpression se : left.flatOperatorForSummation())
-                listOfSE.add(new SymbolicExpression(OP.NEG, se, null));
+            for (SymbolicExpression se : left.flattenedTermList())
+                listOfSE.add(smartNegate(se));
         } else {
             listOfSE.add(this);
         }
         return listOfSE;
     }
 
+    private static SymbolicExpression smartNegate(SymbolicExpression se) {
+        if(se.oper==OP.NEG) return se.left; // NEG(NEG(a)) --> a
+        return new SymbolicExpression(OP.NEG, se, null);
+    }
+
+    protected double evaluate() {
+        return evaluate(Double.NaN); // typically the "unknown" won't appear...
+    }
+    
+    // Evaluate the current sub-tree at "x"
+    protected double evaluate(double x) {
+        if (oper == OP.NOP)
+            return containsUnknown ? x : value;
+        if (smart_evaluation_mode && (oper == OP.ADD || oper == OP.SUB))
+            return evaluateTermsSmarter(x);            
+        if (right != null)
+            return oper.apply(left.evaluate(x), right.evaluate(x));
+        return oper.apply(left.evaluate(x), Double.NaN);
+    }
+
+    private double evaluateTermsSmarter(double x) {
+        ArrayList<SymbolicExpression> terms = this.flattenedTermList();
+        ArrayList<Double> termsValues = new ArrayList<Double>();
+        for (SymbolicExpression se : terms)
+            termsValues.add(se.evaluate(x));
+        // TODO: consider other ways to sort terms (M. Badoud used decreasing abs value)
+        termsValues.sort((d1,d2) -> Double.compare(Math.abs(d2), Math.abs(d1)));
+        // sum them with Kahan algorithm:
+        double sum = 0;
+        double corr = 0;
+        for (double term : termsValues) {
+            double corrTerm = term - corr;
+            double tmpSum = sum + corrTerm;
+            corr = (tmpSum - sum) - corrTerm;
+            sum = tmpSum;
+        }
+        return sum;
+    }
+
     /*
-     * Cette méthode permet d'évaluter l'arbre d'un manière plus précise.
+     * Cette méthode permet d'évaluer l'arbre d'un manière plus précise.
      * Elle met à plat l'opérateur d'addition et de soustration puis
      * réordonne ceux-ci dans un ordre absolu décroissant et finalement
      * applique la somme de Kahan
@@ -108,11 +136,11 @@ public class SymbolicExpression {
     public double evaluateBetter(double x) {
         // Si l'on rencontre ADD ou SUB -> mise à plat -> Kahan
         if (oper == OP.ADD || oper == OP.SUB) {
-            ArrayList<SymbolicExpression> listOfSE = this.flatOperatorForSummation();
+            ArrayList<SymbolicExpression> listOfSE = this.flattenedTermList();
             ArrayList<Double> list = new ArrayList<Double>();
             for (SymbolicExpression se : listOfSE)
                 list.add(se.evaluateBetter(x));
-            // Trie les termes de manière absolue et dans un ordre descendent
+            // Trie les termes de manière absolue et dans un ordre descendant
             list.sort((d1,d2) -> Double.compare(Math.abs(d2), Math.abs(d1)));
 //            list.sort(new Comparator<Double>() {
 //                @Override
@@ -178,7 +206,7 @@ public class SymbolicExpression {
     }
 
     //=======================================================================
-    // Define all the operator managed by the wrapper
+    // Define all the operators managed by the wrapper
     // TODO: consider refactoring symbOP as an abstract OP.derivate() method.
     public static enum OP {
         NOP(((x, y) -> Double.NaN), SymbUtils::derivateNOP),
