@@ -11,6 +11,10 @@ package demo;
 public class HelloPolynomial1 {
 
     static double pow(double base, int exp) {
+        return Math.pow(base, exp);
+    }
+
+    static double pow1(double base, int exp) {
         double r=1.0;
         while(exp-- > 0) r*=base;
         return r;
@@ -29,6 +33,7 @@ public class HelloPolynomial1 {
         
         r=somePolynomial(x, y);
         System.out.println("f("+x+" , "+y+") = " + r);
+        System.out.println();
         x=77617; y=33096;
         r=somePolynomial(x, y);
         System.out.println("f("+x+" , "+y+") = " + r);

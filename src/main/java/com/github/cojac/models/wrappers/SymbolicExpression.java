@@ -113,8 +113,25 @@ public class SymbolicExpression {
         ArrayList<Double> termsValues = new ArrayList<Double>();
         for (SymbolicExpression se : terms)
             termsValues.add(se.evaluate(x));
-        // TODO: consider other ways to sort terms (M. Badoud used decreasing abs value)
+        return smartSum(termsValues);
+    }
+
+    private double smartSum(ArrayList<Double> termsValues) {
+        // TODO: reconsider how to sort terms (M. Badoud used decreasing abs value)
+        /* Possible algorithm: 
+         * - if all have the same sign: 
+         *     possibly sort (increasing), then use Kahan
+         * - if strong cancellation (sum of abs(xi) >> abs(sum of xi)): 
+         *     ???
+         *   else 
+         *     ???
+         */
+        
         termsValues.sort((d1,d2) -> Double.compare(Math.abs(d2), Math.abs(d1)));
+        //termsValues.sort((d1,d2) -> Double.compare(Math.abs(d1), Math.abs(d2)));
+//        System.out.println(this.toString());
+//        System.out.println("  "+terms);
+//        System.out.println("  "+termsValues);
         // sum them with Kahan algorithm:
         double sum = 0;
         double corr = 0;
