@@ -209,19 +209,9 @@ public class WrapperChebfun extends ACompactWrapper {
         return asCheb(d.val).isChebfun();
     }
 
-    public static boolean COJAC_MAGIC_isChebfun(CommonFloat d) {
-        return asCheb(d.val).isChebfun();
-    }
-
-    // TODO: consider removing the parameter: COJAC_MAGIC_asChebfunIdentityDouble()
-    public static CommonDouble COJAC_MAGIC_asChebfun(@SuppressWarnings("unused") CommonDouble d) {
+    public static CommonDouble COJAC_MAGIC_asChebfun() {
         WrapperChebfun res = new WrapperChebfun(Double.NaN, initChebun(BASE_DEGREE));
         return new CommonDouble(res);
-    }
-
-    public static CommonFloat COJAC_MAGIC_asChebfun(@SuppressWarnings("unused") CommonFloat d) {
-        WrapperChebfun res = new WrapperChebfun(Double.NaN, initChebun(BASE_DEGREE));
-        return new CommonFloat(res);
     }
 
     public static CommonDouble COJAC_MAGIC_evaluateChebfunAt(CommonDouble d, CommonDouble x) {
@@ -241,23 +231,6 @@ public class WrapperChebfun extends ACompactWrapper {
         return new CommonDouble(res);
     }
 
-    public static CommonFloat COJAC_MAGIC_evaluateChebfunAt(CommonFloat d, CommonFloat x) {
-        WrapperChebfun dd = asCheb(d.val);
-        WrapperChebfun xx = asCheb(x.val);
-        if (!dd.isChebfun()) {
-            pkgLogger().log(Level.WARNING, "Only Chefuns can be evaluate");
-            WrapperChebfun res = new WrapperChebfun(Double.NaN, null);
-            return new CommonFloat(res);
-        } else if (xx.value < domainMin || xx.value > domainMax) {
-            pkgLogger().log(Level.WARNING, "A Chebfun can only be evaluate on [-1, 1]");
-            WrapperChebfun res = new WrapperChebfun(Double.NaN, null);
-            return new CommonFloat(res);
-        }
-        double result = evaluateAt(dd.funcValues, xx.value);
-        WrapperChebfun res = new WrapperChebfun(result, null);
-        return new CommonFloat(res);
-    }
-
     public static CommonDouble COJAC_MAGIC_derivateChebfun(CommonDouble d) {
         if (!asCheb(d.val).isChebfun()) {
             pkgLogger().log(Level.WARNING, "Only Chefuns can be derivate");
@@ -269,25 +242,13 @@ public class WrapperChebfun extends ACompactWrapper {
         return new CommonDouble(res);
     }
 
-    public static CommonFloat COJAC_MAGIC_derivateChebfun(CommonFloat d) {
-        if (!asCheb(d.val).isChebfun()) {
-            pkgLogger().log(Level.WARNING, "Only Chebfuns can be derivate");
-            WrapperChebfun res = new WrapperChebfun(Double.NaN, null);
-            return new CommonFloat(res);
-        }
-        double[] result = derivate(asCheb(d.val).funcValues);
-        WrapperChebfun res = new WrapperChebfun(Double.NaN, result);
-        return new CommonFloat(res);
-    }
-
     /** Caution: this has a global effect, and any Chebfun computed before
-     * is not valid anymore. Maybe it should be moved as a Cojac option. 
+     * becomes de facto invalid. Maybe it should be moved as a Cojac option. 
      */
     public static void COJAC_MAGIC_setChebfunDomain(CommonDouble min, CommonDouble max) {
         domainMin=asCheb(min.val).value;
         domainMax=asCheb(max.val).value;
     }
-
     
     // -------------------------------------------------------------------------
     // ----------------- Useful methods ----------------------------------------
@@ -318,10 +279,6 @@ public class WrapperChebfun extends ACompactWrapper {
     private static double remappedInMinMaxDomain(double c) {
         return (c+1)*0.5*(domainMax-domainMin) + domainMin;
     }
-
-    // -------------------------------------------------------------------------
-    // ----------------- Useful methods ----------------------------------------
-    // -------------------------------------------------------------------------
 
     // Permet d'évaluer le polynome au point x
     // voir page 14 fig. 3.3-3.5 de la référence [1]
@@ -517,7 +474,7 @@ public class WrapperChebfun extends ACompactWrapper {
     }
 
     // idem but with the naïve evaluation method, in O(n2)
-    private static double[] extendDegreeViaEvaluate(double[] funcValues) {
+    private static double[] extendDegreeViaEvaluation(double[] funcValues) {
         int extendedDegree = (funcValues.length - 1) * 2;
         double[] extendedValues = new double[extendedDegree + 1];
 

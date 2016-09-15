@@ -7,22 +7,16 @@ public class ATinySymbolicDemo {
     public static String COJAC_MAGIC_toString(double n) {
         return "";
     }
-
     public static double COJAC_MAGIC_asSymbolicUnknown(double a) {
         return a;
     }
-
     public static double COJAC_MAGIC_evaluateSymbolicAt(double d, double x) {
         return d;
     }
-
-    public static double COJAC_MAGIC_evaluateBetterSymbolicAt(double d, double x) {
-        return d;
-    }
-
     public static double COJAC_MAGIC_derivateSymbolic(double d) {
         return d;
     }
+    public static void COJAC_MAGIC_setSymbolicEvaluationMode(boolean smartMode) {}
 
     // f(x) = 3x^2 + 2x + 5
     static double myFunction(double x) {
@@ -53,8 +47,9 @@ public class ATinySymbolicDemo {
         double[] t = {+2, 1E-16, 1E-16, 1E-16, 5E-17, 5E-17, +5, -3, -2};
         double sum = 0;
         for(double e:t) sum += e;
-        System.out.println("sum  = " + COJAC_MAGIC_evaluateSymbolicAt(sum, 0.0));      // compute the sum (standard)
-        System.out.println("sum  = " + COJAC_MAGIC_evaluateBetterSymbolicAt(sum, 0.0));// compute the sum (better)
+        System.out.println("sum  = " + COJAC_MAGIC_evaluateSymbolicAt(sum, 0.0));      // compute the sum (smart sum-of-floats)
+        COJAC_MAGIC_setSymbolicEvaluationMode(false);
+        System.out.println("sum  = " + COJAC_MAGIC_evaluateSymbolicAt(sum, 0.0));      // compute the sum (naive sum-of-floats)
         double g = 2*x;
         g = COJAC_MAGIC_derivateSymbolic(g);
         System.out.println(COJAC_MAGIC_toString(g));

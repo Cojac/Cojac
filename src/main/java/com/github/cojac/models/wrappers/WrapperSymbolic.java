@@ -235,18 +235,9 @@ public class WrapperSymbolic extends ACojacWrapper {
         return asSymbWrapper(d.val).expr.containsUnknown;
     }
 
-    public static boolean COJAC_MAGIC_isSymbolicFunction(CommonFloat d) {
-        return asSymbWrapper(d.val).expr.containsUnknown;
-    }
-
-    public static CommonDouble COJAC_MAGIC_asSymbolicUnknown(CommonDouble d) {
+    public static CommonDouble COJAC_MAGIC_asSymbolicUnknown() {
         WrapperSymbolic res = new WrapperSymbolic();
         return new CommonDouble(res);
-    }
-
-    public static CommonFloat COJAC_MAGIC_asSymbolicUnknown(CommonFloat d) {
-        WrapperSymbolic res = new WrapperSymbolic();
-        return new CommonFloat(res);
     }
 
     public static CommonDouble COJAC_MAGIC_evaluateSymbolicAt(CommonDouble d, CommonDouble x) {
@@ -255,38 +246,19 @@ public class WrapperSymbolic extends ACojacWrapper {
         return new CommonDouble(res);
     }
 
-    public static CommonFloat COJAC_MAGIC_evaluateSymbolicAt(CommonFloat d, CommonFloat x) {
-        double result = asSymbWrapper(d.val).expr.evaluate(asSymbWrapper(x.val).expr.evaluate());
-        WrapperSymbolic res = new WrapperSymbolic(result);
-        return new CommonFloat(res);
-    }
-
-    public static CommonDouble COJAC_MAGIC_evaluateBetterSymbolicAt(CommonDouble d, CommonDouble x) {
-        double result = asSymbWrapper(d.val).expr.evaluateBetter(asSymbWrapper(x.val).expr.evaluate());
-        WrapperSymbolic res = new WrapperSymbolic(result);
-        return new CommonDouble(res);
-    }
-
-    public static CommonFloat COJAC_MAGIC_evaluateBetterSymbolicAt(CommonFloat d, CommonFloat x) {
-        double result = asSymbWrapper(d.val).expr.evaluateBetter(asSymbWrapper(x.val).expr.evaluate());
-        WrapperSymbolic res = new WrapperSymbolic(result);
-        return new CommonFloat(res);
-    }
-
     public static CommonDouble COJAC_MAGIC_derivateSymbolic(CommonDouble d) {
         WrapperSymbolic res = new WrapperSymbolic(asSymbWrapper(d.val).expr.derivate());
         return new CommonDouble(res);
-    }
-
-    public static CommonFloat COJAC_MAGIC_derivateSymbolic(CommonFloat d) {
-        WrapperSymbolic res = new WrapperSymbolic(asSymbWrapper(d.val).expr.derivate());
-        return new CommonFloat(res);
     }
 
     public static void COJAC_MAGIC_setSymbolicEvaluationMode(boolean smartMode) {
         smart_evaluation_mode=smartMode;
     }
 
+    public static void COJAC_MAGIC_setConstantSubtreeMode(boolean keepTreeMode) {
+        keep_constant_subtrees_mode=keepTreeMode;
+    }
+    
     // -------------------------------------------------------------------------
     // ----------------- Useful methods ----------------------------------------
     // -------------------------------------------------------------------------
