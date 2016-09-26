@@ -103,11 +103,23 @@ public class SymbolicExpression {
             return containsUnknown ? x : value;
         if (smart_evaluation_mode && (oper == OP.ADD || oper == OP.SUB))
             return evaluateTermsSmarter(x);            
+        if (smart_evaluation_mode && (oper == OP.MUL))
+            return evaluateProductSmarter(x);            
         if (right != null)
             return oper.apply(left.evaluate(x), right.evaluate(x));
         return oper.apply(left.evaluate(x), Double.NaN);
     }
 
+    // just for (fun!) the demo, detect one of the following patterns:
+    //   a*(b/a) == (b/a)*a == b
+    private double evaluateProductSmarter(double x) {
+        if(right.oper==OP.DIV && right.left.value!=0.0 && right.right.value==left.value)
+            return right.left.evaluate(x);
+        if(left.oper==OP.DIV && left.left.value!=0.0 && left.right.value==right.value)
+            return left.left.evaluate(x);
+        return oper.apply(left.evaluate(x), right.evaluate(x)); 
+    }
+    
     private double evaluateTermsSmarter(double x) {
         ArrayList<SymbolicExpression> terms = this.flattenedTermList();
         ArrayList<Double> termsValues = new ArrayList<Double>();
