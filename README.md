@@ -19,6 +19,16 @@
   
 - No recompilation needed, easy to use (you want 100 significant digits? `java -javaagent:cojac.jar="-Rb 100" ...`)
 
+### Java numbers with a fresh eye and a cool tool...
+
+... Don't miss the opportunity: 
+- watch our small demos on [YouTube](https://youtu.be/DqAFQfbWZOU?list=PLHLKWUtT0B7kNos1e48vKhFlGAXR1AAkF)
+- read the [User Guide](https://github.com/Cojac/Cojac/wiki)
+- download [cojac.jar](https://github.com/Cojac/Cojac/releases/download/v1.4.1/cojac.jar)
+
+Developed at the [School of Engineering of Fribourg](https://www.heia-fr.ch), 
+Switzerland.
+
 ### Recent improvements
 
 The following features have been implemented, and are impatient to appear in the next release:
@@ -33,14 +43,6 @@ The following features have been implemented, and are impatient to appear in the
 
 - a Delta-Debugging infrastructure for the debugging features above, so that you can automatically find the portion of code that causes the instabilities.
 
-### Java numbers with a fresh eye and a cool tool...
-
-... Don't miss the opportunity: 
-- watch our small demos on [YouTube](https://youtu.be/DqAFQfbWZOU?list=PLHLKWUtT0B7kNos1e48vKhFlGAXR1AAkF)
-- read the [User Guide](https://github.com/Cojac/Cojac/wiki)
-- download [cojac.jar](https://github.com/Cojac/Cojac/releases/download/v1.4.1/cojac.jar)
-
-Developed at the [School of Engineering of Fribourg](https://www.heia-fr.ch), 
-Switzerland.
+--------------------------
 
 Distributed under the "Apache License, v2.0".
