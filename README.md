@@ -21,10 +21,7 @@
 
 ### Java numbers with a fresh eye and a cool tool...
 
-... Don't miss the opportunity: 
-- watch our small demos on [YouTube](https://youtu.be/DqAFQfbWZOU?list=PLHLKWUtT0B7kNos1e48vKhFlGAXR1AAkF)
-- read the [User Guide](https://github.com/Cojac/Cojac/wiki)
-- download [cojac.jar](https://github.com/Cojac/Cojac/releases/download/v1.4.1/cojac.jar)
+... Don't miss the opportunity: Watch our small [demos on YouTube](https://youtu.be/DqAFQfbWZOU?list=PLHLKWUtT0B7kNos1e48vKhFlGAXR1AAkF), read the [User Guide](https://github.com/Cojac/Cojac/wiki), and download [cojac.jar](https://github.com/Cojac/Cojac/releases/download/v1.4.1/cojac.jar)
 
 
 ### Recent improvements
@@ -35,7 +32,7 @@ The following features have been implemented, and are impatient to appear in the
 
 - symbolic functions: a step further, where you can tag a number as being the *unknown*.
 
-- Chebfun representation: a completely different way to represent symbolic functions that provides a good compromise of accuracy/efficiency (see [Matlab's Chebfun](http://www.chebfun.org/). But here completely transparently: with COJAC the same computation code can be run numerically, symbolically, or as Chebfuns
+- Chebfun representation: a completely different way to represent symbolic functions, with a good compromise of accuracy/efficiency (see [Matlab's Chebfun](http://www.chebfun.org/)). But here completely transparently: with COJAC the same computation code can be run numerically, symbolically, or as Chebfuns.
 
 - a couple of well-known *debugging tools* useful to track possible instabilities: forcing doubles to act like floats, changing the rounding mode, negating the comparisons when the numbers are too close together. 
 
