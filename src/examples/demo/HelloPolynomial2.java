@@ -9,6 +9,7 @@ package demo;
 public class HelloPolynomial2 {
 
     static double pow(double base, int exp) {
+        //if(true) return Math.pow(base,  exp);
         double r=1.0;
         while(exp-- > 0) r*=base;
         return r;
