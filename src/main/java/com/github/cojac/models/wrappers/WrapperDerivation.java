@@ -206,11 +206,13 @@ public class WrapperDerivation extends ACompactWrapper {
         return new CommonDouble(res);
     }
     
+    // TODO: consider renaming COJAC_MAGIC_derivative(d)
     public static CommonFloat COJAC_MAGIC_getDerivation(CommonFloat d) {
         WrapperDerivation res=new WrapperDerivation(der(d.val).deriv, 0);
         return new CommonFloat(res);
     }
     
+    // TODO: consider renaming COJAC_MAGIC_asDependentVar(d)
     public static CommonDouble COJAC_MAGIC_asDerivationTarget(CommonDouble d) {
         WrapperDerivation res=new WrapperDerivation(der(d.val).value, 1.0);
         return new CommonDouble(res);

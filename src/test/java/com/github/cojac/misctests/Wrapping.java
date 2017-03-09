@@ -271,7 +271,8 @@ public class Wrapping {
   private static void ok(boolean b) {
     if (!b) throw new RuntimeException("bad news...");
   }
-  // demo/Wrapping/myCallback
+  
+  // Just to try the option "-Sk com/github/cojac/misctests/Wrapping/myCallback"
   public static void myCallback(String s) {
       System.out.println("__CALLBACK__: "+s);
   }

@@ -47,12 +47,12 @@ public enum Arg {
     DOUBLE_WRAPPER("Wd"),
     NG_WRAPPER("W"),
     
-    BIG_DECIMAL_PRECISION("Rb"),  // -RbigDecimal nbOfDigits
-    INTERVAL("Ri"),                 // -Rinterval
-    STOCHASTIC("Rs"),             // -RstochasticArithmetic
-    AUTOMATIC_DERIVATION("Ra"),    // -Rautodiff
-    SYMBOLIC("Rsy"),    // -Rsymbolic
-    CHEBFUN("Rcheb"),   // -Rchebfun
+    BIG_DECIMAL_PRECISION("Rb"),   // BigDecimal nbOfDigits
+    INTERVAL("Ri"),                // Interval computation
+    STOCHASTIC("Rs"),              // StochasticArithmetic
+    AUTOMATIC_DERIVATION("Ra"),    // AutoDiff "backward mode"
+    SYMBOLIC("Rsy"), 
+    CHEBFUN("Rcheb"),
     DISABLE_UNSTABLE_COMPARISONS_CHECK("R_noUnstableComparisons"),
     STABILITY_THRESHOLD("R_unstableAt"),
     POLY_BEHAVIOURAL_LOGGING("Rpbl"),

@@ -45,8 +45,8 @@ public class SymbolicDemo {
         return "";
     }
 
-    public static double COJAC_MAGIC_asSymbolicUnknown(double a) {
-        return a;
+    public static double COJAC_MAGIC_asSymbolicUnknown() {
+        return 0.0;
     }
 
     public static double COJAC_MAGIC_evaluateSymbolicAt(double d, double x) {
@@ -94,7 +94,7 @@ public class SymbolicDemo {
 
         int nbrError = 0;
 
-        double x = COJAC_MAGIC_asSymbolicUnknown(0.0);
+        double x = COJAC_MAGIC_asSymbolicUnknown();
         Double y = someFunction(x, 3, 4);
 
         if (y > 2) {
@@ -219,7 +219,7 @@ public class SymbolicDemo {
         }
 
         System.out.printf("Function %d\n", fx);
-        double unknwon = COJAC_MAGIC_asSymbolicUnknown(0);
+        double unknwon = COJAC_MAGIC_asSymbolicUnknown();
         double function = (double) f.invoke(SymbolicDemo.class, unknwon);
         double derivative = COJAC_MAGIC_derivateSymbolic(function);
 

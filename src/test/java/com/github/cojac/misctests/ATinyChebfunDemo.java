@@ -1,3 +1,5 @@
+// Run with "Chebfun" Wrapper: ... cojac.jar="-Rcheb"
+
 package com.github.cojac.misctests;
 
 public class ATinyChebfunDemo {
@@ -6,8 +8,8 @@ public class ATinyChebfunDemo {
         return "";
     }
 
-    public static double COJAC_MAGIC_asChebfun(double a) {
-        return a;
+    public static double COJAC_MAGIC_asChebfun() {
+        return 0.0;
     }
 
     public static double COJAC_MAGIC_evaluateChebfunAt(double d, double x) {
@@ -49,7 +51,7 @@ public class ATinyChebfunDemo {
 
     public static void main(String[] args) {
 
-        double x = COJAC_MAGIC_asChebfun(0.0); // define a function x=x
+        double x = COJAC_MAGIC_asChebfun(); // define a function x=x
 
         double f = myFunction(x);
         double resf = COJAC_MAGIC_evaluateChebfunAt(f, 0.5);
@@ -66,7 +68,7 @@ public class ATinyChebfunDemo {
         // Caution: this has a global effect, and as a side effect, the above
         // "Chebfun" numbers are no more valid!
         COJAC_MAGIC_setChebfunDomain(-10.0, 20.0);
-        f=myFunction(COJAC_MAGIC_asChebfun(0.0));
+        f=myFunction(COJAC_MAGIC_asChebfun());
         df = COJAC_MAGIC_derivateChebfun(f);
         for(double z:new double[]{-9, -1, 0.25, 0.5, 1, 2, 5, 10}) {
             System.out.println("f("+z+")  = " + COJAC_MAGIC_evaluateChebfunAt(f, z) + "  (" + myFunction(z) +  ")");

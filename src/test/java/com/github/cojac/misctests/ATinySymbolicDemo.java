@@ -1,3 +1,5 @@
+// Run with "Symbolic" Wrapper: ... cojac.jar="-Rsy"
+
 package com.github.cojac.misctests;
 
 import java.math.BigDecimal;
@@ -7,8 +9,8 @@ public class ATinySymbolicDemo {
     public static String COJAC_MAGIC_toString(double n) {
         return "";
     }
-    public static double COJAC_MAGIC_asSymbolicUnknown(double a) {
-        return a;
+    public static double COJAC_MAGIC_asSymbolicUnknown() {
+        return 0.0;
     }
     public static double COJAC_MAGIC_evaluateSymbolicAt(double d, double x) {
         return d;
@@ -36,7 +38,7 @@ public class ATinySymbolicDemo {
 
 
     public static void main(String[] args) {
-        double x = COJAC_MAGIC_asSymbolicUnknown(0.0); // define the unknown
+        double x = COJAC_MAGIC_asSymbolicUnknown();    // define the unknown
         double f = myFunction(x);                      // define the function
         double df = COJAC_MAGIC_derivateSymbolic(f);   // compute the derivative
         System.out.println("f(x)  = " + COJAC_MAGIC_toString(f));  // print the function "f"

@@ -16,8 +16,8 @@
  *
  */
 
-// compile this to a jar and launch it with the following command :
-// java -javaagent:cojac.jar="-Ra"
+// Run with AutoDiff Wrapper: 
+//  java -javaagent:cojac.jar="-Ra"
 
 
 package com.github.cojac.misctests;

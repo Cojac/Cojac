@@ -16,8 +16,7 @@
  *
  */
 
-// compile this to a jar and launch it with the following command :
-// java -javaagent:cojac.jar="-Ra"
+// Run with "Chebfun" Wrapper: ... cojac.jar="-Rcheb"
 
 package com.github.cojac.misctests;
 
