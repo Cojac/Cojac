@@ -12,13 +12,16 @@ import com.github.cojac.deltadebugging.utils.*;
  * 
  * @author Remi Badoud
  *
+ * Example:
+ * java -cp d:\Git-MyRepository\cojac\target\cojac.jar com.github.cojac.deltadebugging.App -h
+ * 
  */
 public class App {
 
 	/**
 	 * Main method.
 	 * 
-	 * @param args Agrument of the program see {@link Opt}.
+	 * @param args Argument of the program see {@link Opt}.
 	 */
 	public static void main(String[] args) {
 
@@ -27,6 +30,7 @@ public class App {
 		try {
 			Opt.paseArgs(args);
 		} catch (ParseException e) {
+		    System.out.println(e.getMessage());
 			Opt.printHelp();
 			System.exit(0);
 		}

@@ -83,23 +83,23 @@ public enum Opt {
 		opts = new Options();
 
 		Option opt = new Option(JAVA.name, true,
-				"Indicates the path to java virtal machine use to execute the program.");
+				"Indicates the path to java virtual machine used to execute the program.");
 		opt.setRequired(false);
 		opt.setArgName("path");
 		opts.addOption(opt);
 
-		opt = new Option(COJAC.name, true, "Indicates the path to COJAC");
+		opt = new Option(COJAC.name, true, "Indicates the path to COJAC jar");
 		opt.setRequired(true);
 		opt.setArgName("path");
 		opts.addOption(opt);
 
-		opt = new Option(CLASSPATH.name, true, "Indicates the classpath use to execute the program.");
+		opt = new Option(CLASSPATH.name, true, "Indicates the classpath used to execute the program.");
 		opt.setRequired(false);
 		opt.setArgName("path");
 		opts.addOption(opt);
 
 		OptionGroup optionGroup = new OptionGroup(); // Mutual exclusivity between MAINCLASS option and JAR option
-		opt = new Option(MAINCLASS.name, true, "Indicates the name of the main class. Ex : \"package.MainClass\".");
+		opt = new Option(MAINCLASS.name, true, "Indicates the name of the main class, eg \"package.MainClass\".");
 		opt.setRequired(true);
 		opt.setArgName("classname");
 		optionGroup.addOption(opt);
@@ -111,12 +111,12 @@ public enum Opt {
 		opts.addOptionGroup(optionGroup); // End of group
 
 		opt = new Option(BEHAVIOURSFILE.name, true,
-				"Indicates the path to the XML file that will contains the reslut.");
+				"Indicates the path to the XML file that will contain the result.");
 		opt.setRequired(true);
 		opt.setArgName("file");
 		opts.addOption(opt);
 
-		opt = new Option(MODE.name, true, "Indicates the mode to use std or wrap");
+		opt = new Option(MODE.name, true, "Indicates the mode to use: std or wrap");
 		opt.setRequired(true);
 		opt.setArgName("mode");
 		opts.addOption(opt);
