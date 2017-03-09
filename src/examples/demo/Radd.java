@@ -1,8 +1,5 @@
 /* 
- * To be run: 
- * - without Cojac:
- *     java demo.Radd
- * - with AutoDiff-forward wrapper:   
+ * To be run: with AutoDiff-forward wrapper:   
  *     java -javaagent:cojac.jar="-W cojac.WrapperRad" demo.Radd
  */
 

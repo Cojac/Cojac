@@ -53,9 +53,7 @@ public class SymbolicDemo {
         return d;
     }
 
-    public static double COJAC_MAGIC_evaluateBetterSymbolicAt(double d, double x) {
-        return d;
-    }
+    public static void COJAC_MAGIC_setSymbolicEvaluationMode(boolean smartMode) {}
 
     public static double COJAC_MAGIC_derivateSymbolic(double d) {
         return d;
@@ -225,36 +223,40 @@ public class SymbolicDemo {
 
         double funcStdEval = (double) f.invoke(SymbolicDemo.class, x);
         double funcSymbEval = COJAC_MAGIC_evaluateSymbolicAt(function, x);
-        double funcBetterEval = COJAC_MAGIC_evaluateBetterSymbolicAt(function, x);
+        COJAC_MAGIC_setSymbolicEvaluationMode(false);
+        double funcNaiveEval = COJAC_MAGIC_evaluateSymbolicAt(function, x);
+        COJAC_MAGIC_setSymbolicEvaluationMode(true);
 
         double derStdEval = (double) df.invoke(SymbolicDemo.class, x);
         double derSymbEval = COJAC_MAGIC_evaluateSymbolicAt(derivative, x);
-        double derBetterEval = COJAC_MAGIC_evaluateBetterSymbolicAt(derivative, x);
+        COJAC_MAGIC_setSymbolicEvaluationMode(false);
+        double derNaiveEval = COJAC_MAGIC_evaluateSymbolicAt(derivative, x);
+        COJAC_MAGIC_setSymbolicEvaluationMode(true);
 
         System.out.printf("f%d(x) = %s \n", fx, COJAC_MAGIC_toString(function));
         System.out.printf("f%d(%s) = %s Standard Eval\n", fx, x, funcStdEval);
         System.out.printf("f%d(%s) = %s Symbolic Eval\n", fx, x, funcSymbEval);
-        System.out.printf("f%d(%s) = %s Better   Eval\n", fx, x, funcBetterEval);
+        System.out.printf("f%d(%s) = %s SymNaive Eval\n", fx, x, funcNaiveEval);
 
         System.out.printf("df%d(x) = %s \n", fx, COJAC_MAGIC_toString(derivative));
         System.out.printf("df%d(%s) = %s Standard Eval\n", fx, x, derStdEval);
         System.out.printf("df%d(%s) = %s Symbolic Eval\n", fx, x, derSymbEval);
-        System.out.printf("df%d(%s) = %s Better   Eval\n", fx, x, derBetterEval);
+        System.out.printf("df%d(%s) = %s SymNaive Eval\n", fx, x, derNaiveEval);
 
         if (relativeError(funcStdEval, funcSymbEval) > epsilon ||
                 (Double.isNaN(funcStdEval) ^ Double.isNaN(funcSymbEval)))
             nbrError++;
 
-        if (relativeError(funcStdEval, funcBetterEval) > epsilon ||
-                (Double.isNaN(funcStdEval) ^ Double.isNaN(funcBetterEval)))
+        if (relativeError(funcStdEval, funcNaiveEval) > epsilon ||
+                (Double.isNaN(funcStdEval) ^ Double.isNaN(funcNaiveEval)))
             nbrError++;
 
         if (relativeError(derStdEval, derSymbEval) > epsilon ||
                 (Double.isNaN(derStdEval) ^ Double.isNaN(derSymbEval)))
             nbrError++;
 
-        if (relativeError(derStdEval, derBetterEval) > epsilon ||
-                (Double.isNaN(derStdEval) ^ Double.isNaN(derBetterEval)))
+        if (relativeError(derStdEval, derNaiveEval) > epsilon ||
+                (Double.isNaN(derStdEval) ^ Double.isNaN(derNaiveEval)))
             nbrError++;
 
         if (nbrError > 0)

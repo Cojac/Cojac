@@ -1,3 +1,6 @@
+// Run with "Symbolic" Wrapper: ... cojac.jar="-Rsy"
+
+
 package demo;
 
 public class HelloSymbolic {
