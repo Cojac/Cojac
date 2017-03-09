@@ -20,7 +20,7 @@
 // java -javaagent:cojac.jar="-Ra"
 
 
-package demo;
+package com.github.cojac.misctests;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

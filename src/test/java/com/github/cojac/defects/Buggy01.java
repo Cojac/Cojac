@@ -1,4 +1,4 @@
-package defects;
+package com.github.cojac.defects;
 
 // didn't work with Wrapping...
 // Fixed 24.03.16

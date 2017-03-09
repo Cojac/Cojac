@@ -19,21 +19,21 @@
 // compile this to a jar and launch it with the following command :
 // java -javaagent:cojac.jar="-Ra"
 
-package demo;
+package com.github.cojac.misctests;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class SymbolicDemo {
+public class ChebfunDemo {
 
-    private static final double epsilon = 1e-15;
+    private static final double epsilon = 1e-6;
     private static Map<String, Method> methods;
 
     static {
         methods = new TreeMap<>();
-        for (Method method : SymbolicDemo.class.getDeclaredMethods()) {
+        for (Method method : ChebfunDemo.class.getDeclaredMethods()) {
             methods.put(method.getName(), method);
         }
     }
@@ -45,19 +45,19 @@ public class SymbolicDemo {
         return "";
     }
 
-    public static double COJAC_MAGIC_asSymbolicUnknown(double a) {
-        return a;
+    public static boolean COJAC_MAGIC_isChebfun(double a) {
+        return false;
     }
 
-    public static double COJAC_MAGIC_evaluateSymbolicAt(double d, double x) {
+    public static double COJAC_MAGIC_asChebfun() {
+        return 0;
+    }
+
+    public static double COJAC_MAGIC_evaluateChebfunAt(double d, double x) {
         return d;
     }
 
-    public static double COJAC_MAGIC_evaluateBetterSymbolicAt(double d, double x) {
-        return d;
-    }
-
-    public static double COJAC_MAGIC_derivateSymbolic(double d) {
+    public static double COJAC_MAGIC_derivateChebfun(double d) {
         return d;
     }
 
@@ -68,8 +68,8 @@ public class SymbolicDemo {
     public static void main(String[] args) {
 
         int nbrError = 0;
-        nbrError += comparisonTest();
-        nbrError += runSymbolicTest();
+        //nbrError += comparisonTest();
+        nbrError += runChebfunTest();
 
         if (nbrError == 0) {
             System.out.println("----------------------------------------");
@@ -89,12 +89,12 @@ public class SymbolicDemo {
 
     public static int comparisonTest() {
         System.out.println("----------------------------------------");
-        System.out.println(" Start Comparison Test");
+        System.out.println(" Start Comparison Test (warning are expected!)");
         System.out.println("----------------------------------------");
 
         int nbrError = 0;
 
-        double x = COJAC_MAGIC_asSymbolicUnknown(0.0);
+        double x = COJAC_MAGIC_asChebfun();
         Double y = someFunction(x, 3, 4);
 
         if (y > 2) {
@@ -180,27 +180,27 @@ public class SymbolicDemo {
     }
 
     // ----------------------------------------------------
-    // ---------- COMPARISON TEST -------------------------
+    // ---------- Chebfun TEST -------------------------
     // ----------------------------------------------------
 
-    public static int runSymbolicTest() {
+    public static int runChebfunTest() {
         System.out.println("----------------------------------------");
-        System.out.println(" Start Symbolic Test");
+        System.out.println(" Start Chebfun Test");
         System.out.println("----------------------------------------");
         int nbrError = 0;
-        // run the Symbolic functions 1 to 15
-        double[] xs = new double[]{4.0, 4.0, 4.0, 1.0, 4.0, 4.0, 4.0, 4.0, 0.4,
-                4.0, 4.0, 4.0, 4.0, 1.0, 1.0};
-        for (int i = 1; i <= 13; i++) {
+        int[] fId={1, 3, 4, 5, 8, 10};
+        double[] xs = new double[]{0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
+                0.5, 0.5, 0.5, 0.5, 0.5, 0.5};
+        for (int i = 0; i < fId.length; i++) {
             try {
-                nbrError += runFx(i, xs[i - 1]);
+                nbrError += runFx(fId[i], xs[i]);
             } catch (InvocationTargetException | IllegalAccessException
                     | NoSuchMethodException e) {
                 e.printStackTrace();
             }
         }
         System.out.println("----------------------------------------");
-        System.out.println(" End Symbolic Test with " + nbrError + " error");
+        System.out.println(" End Chebfun Test with " + nbrError + " error");
         System.out.println("----------------------------------------");
         return nbrError;
     }
@@ -219,42 +219,28 @@ public class SymbolicDemo {
         }
 
         System.out.printf("Function %d\n", fx);
-        double unknwon = COJAC_MAGIC_asSymbolicUnknown(0);
-        double function = (double) f.invoke(SymbolicDemo.class, unknwon);
-        double derivative = COJAC_MAGIC_derivateSymbolic(function);
+        double unknwon = COJAC_MAGIC_asChebfun();
+        double function = (double) f.invoke(ChebfunDemo.class, unknwon);
+        double derivative = COJAC_MAGIC_derivateChebfun(function);
 
-        double funcStdEval = (double) f.invoke(SymbolicDemo.class, x);
-        double funcSymbEval = COJAC_MAGIC_evaluateSymbolicAt(function, x);
-        double funcBetterEval = COJAC_MAGIC_evaluateBetterSymbolicAt(function, x);
+        double funcStdEval = (double) f.invoke(ChebfunDemo.class, x);
+        double funcSymbEval = COJAC_MAGIC_evaluateChebfunAt(function, x);
 
-        double derStdEval = (double) df.invoke(SymbolicDemo.class, x);
-        double derSymbEval = COJAC_MAGIC_evaluateSymbolicAt(derivative, x);
-        double derBetterEval = COJAC_MAGIC_evaluateBetterSymbolicAt(derivative, x);
+        double derStdEval = (double) df.invoke(ChebfunDemo.class, x);
+        double derSymbEval = COJAC_MAGIC_evaluateChebfunAt(derivative, x);
 
-        System.out.printf("f%d(x) = %s \n", fx, COJAC_MAGIC_toString(function));
         System.out.printf("f%d(%s) = %s Standard Eval\n", fx, x, funcStdEval);
-        System.out.printf("f%d(%s) = %s Symbolic Eval\n", fx, x, funcSymbEval);
-        System.out.printf("f%d(%s) = %s Better   Eval\n", fx, x, funcBetterEval);
+        System.out.printf("f%d(%s) = %s Chebfun Eval\n", fx, x, funcSymbEval);
 
-        System.out.printf("df%d(x) = %s \n", fx, COJAC_MAGIC_toString(derivative));
         System.out.printf("df%d(%s) = %s Standard Eval\n", fx, x, derStdEval);
-        System.out.printf("df%d(%s) = %s Symbolic Eval\n", fx, x, derSymbEval);
-        System.out.printf("df%d(%s) = %s Better   Eval\n", fx, x, derBetterEval);
+        System.out.printf("df%d(%s) = %s Chebfun Eval\n", fx, x, derSymbEval);
 
         if (relativeError(funcStdEval, funcSymbEval) > epsilon ||
                 (Double.isNaN(funcStdEval) ^ Double.isNaN(funcSymbEval)))
             nbrError++;
 
-        if (relativeError(funcStdEval, funcBetterEval) > epsilon ||
-                (Double.isNaN(funcStdEval) ^ Double.isNaN(funcBetterEval)))
-            nbrError++;
-
         if (relativeError(derStdEval, derSymbEval) > epsilon ||
                 (Double.isNaN(derStdEval) ^ Double.isNaN(derSymbEval)))
-            nbrError++;
-
-        if (relativeError(derStdEval, derBetterEval) > epsilon ||
-                (Double.isNaN(derStdEval) ^ Double.isNaN(derBetterEval)))
             nbrError++;
 
         if (nbrError > 0)
@@ -384,5 +370,7 @@ public class SymbolicDemo {
     public static double relativeError(double a, double b) {
         return Math.abs(a - b) / a;
     }
+
+    // ----------------------------------------------------
 
 }

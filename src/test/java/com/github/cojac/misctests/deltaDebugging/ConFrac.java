@@ -9,7 +9,7 @@
  *  David H Bailey    2008-01-04
  *  ----------------------------------------------------------------------------
  */
-package demo.deltaDebugging;
+package com.github.cojac.misctests.deltaDebugging;
 
 import java.math.BigDecimal;
 

@@ -20,7 +20,7 @@
 //    java -javaagent:cojac.jar="-Ri"     or
 //    java -javaagent:cojac.jar="-Rs"
 
-package demo;
+package com.github.cojac.misctests;
 
 public class StochasticOrIntervalDemo {
     public static void main(String[] args) {

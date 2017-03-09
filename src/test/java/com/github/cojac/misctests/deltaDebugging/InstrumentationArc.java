@@ -10,7 +10,7 @@
  *  ----------------------------------------------------------------------------
  */
 
-package demo.deltaDebugging;
+package com.github.cojac.misctests.deltaDebugging;
 
 import java.math.BigDecimal;
 

@@ -16,7 +16,7 @@
  *
  */
 
-package demo;
+package com.github.cojac.misctests;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;

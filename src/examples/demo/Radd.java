@@ -1,7 +1,9 @@
 /* 
  * To be run: 
- * - without Cojac:             java demo.HelloPolynomial2
- * - with Derivation wrapper:   java -javaagent:cojac.jar="-Ra" demo.HelloPolynomial1
+ * - without Cojac:
+ *     java demo.Radd
+ * - with AutoDiff-forward wrapper:   
+ *     java -javaagent:cojac.jar="-W cojac.WrapperRad" demo.Radd
  */
 
 package demo;
@@ -17,6 +19,9 @@ public class Radd {
 
     public static double somePolynomial0(double x, double y) {
         return 3*x*x + 2*y;
+//        System.out.println("... should be: ");
+//        System.out.println("df/dx: "+ 6*x);
+//        System.out.println("df/dy: "+ 2);
     }
 
     //derivative 1335.0*(y^6)/4.0  + x*x*(11.0*x*x*y*y -y^6 -121.0*y^4 -2.0) + 11.0*y^8/2.0 + x/(2.0*y)
@@ -37,16 +42,18 @@ public class Radd {
 
     public static void main(String[] args) {
         double r, x, y;
-        x=2.0; y=3.0;
+        x=2.0; y=3.0; 
         r=somePolynomial(x, y);
         System.out.println("f(x,y): "+r);
         COJAC_MAGIC_computePartialDerivatives(r);
         
         System.out.println("df/dx: "+COJAC_MAGIC_partialDerivativeAgainst(x));
         System.out.println("df/dy: "+COJAC_MAGIC_partialDerivativeAgainst(y));
-        
-        System.out.println("... should be: ");
-        System.out.println("df/dx: "+ 6*x);
-        System.out.println("df/dy: "+ 2);
     }
 }
+//df/dx: 356207.9
+//df/dy: -9380076.5
+//f'(x,y): 356198.0
+//f'(x,y): -1.13559756E8
+
+

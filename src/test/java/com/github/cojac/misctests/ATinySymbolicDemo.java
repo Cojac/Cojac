@@ -1,4 +1,4 @@
-package demo;
+package com.github.cojac.misctests;
 
 import java.math.BigDecimal;
 

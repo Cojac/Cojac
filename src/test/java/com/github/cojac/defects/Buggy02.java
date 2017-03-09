@@ -1,4 +1,4 @@
-package defects;
+package com.github.cojac.defects;
 
 import javafx.concurrent.Task;
 
