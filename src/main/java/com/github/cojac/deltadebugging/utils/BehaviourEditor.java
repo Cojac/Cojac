@@ -75,15 +75,12 @@ public class BehaviourEditor implements Editor {
 			document = docBuilder.parse(filePath); // Parse the XML file
 			NodeList intructionNodes = document.getDocumentElement().getElementsByTagName(tagName);
 			nbrOfInstructions = intructionNodes.getLength();
-			System.out.println(nbrOfInstructions);
+			System.out.println("new BehaviourEditor, #instructions="+nbrOfInstructions);
 		} catch (SAXException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -93,7 +90,7 @@ public class BehaviourEditor implements Editor {
 	 * function of the BitSet.
 	 * 
 	 * @param instrumentationSet BitSet that represent instructions behaviours:
-	 *            1-> "INGORE", 0 -> "BD2F", bitIndex -> index of instruction as
+	 *            1-> "IGNORE", 0 -> "BD2F", bitIndex -> index of instruction as
 	 *            appeared in file.
 	 */
 	public void editBehaviours(BitSet instrumentationSet) {
@@ -127,7 +124,6 @@ public class BehaviourEditor implements Editor {
 			transformer.transform(source, result);
 			// ----------------------------------------------------------------------
 		} catch (TransformerException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

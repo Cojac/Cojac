@@ -44,10 +44,13 @@ public class InstrumentationArc {
         System.out.println("s1 -> " + s1 + " should be 5.79577632241304 ");
 
         System.out.println(BigDecimal.valueOf(5.79577632241304).subtract(BigDecimal.valueOf(s1)).divide(BigDecimal.valueOf(5.79577632241304), 10, BigDecimal.ROUND_HALF_UP).abs());
-        if (!isValid(s1, "5.79577632241304", "1e-4"))
+        if (!isValid(s1, "5.79577632241304", "1e-4")) {
+            System.out.println("too inaccurate...");
             System.exit(-1);
-        else
+        } else { 
+            System.out.println("accurate enough...");
             System.exit(0);
+        }
     }
 
     public static boolean isValid(double res, String exp, String tol) {

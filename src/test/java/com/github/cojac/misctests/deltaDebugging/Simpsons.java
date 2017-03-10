@@ -51,9 +51,10 @@ public class Simpsons {
         System.out.println(BigDecimal.valueOf(0.636619772367581).subtract(BigDecimal.valueOf(s1)).divide(BigDecimal.valueOf(0.636619772367581), 16, BigDecimal.ROUND_HALF_UP).abs());
 
         if (!isValid(s1, "0.636619772367581", "1e-6")) {
-            System.out.println("Failed");
+            System.out.println("Simpsons too inaccurate");
             System.exit(-1);
         } else {
+            System.out.println("Simpsons accurate enough");
             System.exit(0);
         }
 

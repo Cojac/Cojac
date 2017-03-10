@@ -58,8 +58,9 @@ public class ConFrac {
         // Validation
         // --------------------------------------------------
         System.out.println(numerator + " / " + denominator);
-        if (!(new BigDecimal(numerator).equals(new BigDecimal("4.0")) &&
-                new BigDecimal(denominator).equals(new BigDecimal("7.0")))) {
+        boolean numOk=new BigDecimal(numerator).compareTo(new BigDecimal("4.0"))==0;
+        boolean denOk=new BigDecimal(denominator).compareTo(new BigDecimal("7.0"))==0;
+        if (!(numOk && denOk)) {
             System.out.println("fail");
             System.exit(-1);
         } else {

@@ -9,11 +9,12 @@ import com.github.cojac.deltadebugging.utils.Executor;
 import java.lang.Math;
 
 public class DeltaDebugger {
-
+    private static final boolean TRACE=true;
+    
 	private Editor		be;
 	private Executor	eu;
 
-	public DeltaDebugger(Editor be, Executor eu) throws IllegalArgumentException {
+	public DeltaDebugger(Editor be, Executor eu) {
 		this.be = be;
 		this.eu = eu;
 	}
@@ -98,7 +99,18 @@ public class DeltaDebugger {
 	 */
 	public boolean isSetValid(BitSet set) {
 		be.editBehaviours(set);
-		return eu.executeWithCOJACBehaviours();
+		boolean valid = eu.executeWithCOJACBehaviours();
+		if(TRACE && be.getNbrOfInstructions()<80) 
+		    System.out.println("DDMIN "+(valid?"OK":"KO")+" "+toStr(set));
+		return valid;
+	}
+	
+	private String toStr(BitSet s) {
+	    String r="";
+	    for(int i=0; i<be.getNbrOfInstructions(); i++)
+	        r += s.get(i) ? "1":"0";
+        //return s.toString();
+        return r;
 	}
 
 }

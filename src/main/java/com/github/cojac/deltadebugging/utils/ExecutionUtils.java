@@ -123,10 +123,8 @@ public enum ExecutionUtils implements Executor {
 			if (p.exitValue() == 0) success = true;
 			p.destroy();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return success;
@@ -145,10 +143,8 @@ public enum ExecutionUtils implements Executor {
 			printStream(p);
 			p.destroy();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

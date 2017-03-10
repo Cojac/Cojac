@@ -35,37 +35,39 @@ public class App {
 			System.exit(0);
 		}
 
+		ExecutionUtils eu=ExecutionUtils.INSTANCE;
+		BehaviourEditor be = BehaviourEditor.getInstance();
+
 		// TODO : lancer le programme java sans COJAC et vérifier que l'éxécution soit vailde
 
 		/* Execute the java program with COJAC to initialize the file that
 		 * contains all instructions and behaviors */
-		ExecutionUtils.getinstance().executeWithCOJACListing();
+		eu.executeWithCOJACListing();
 
 		/* Execute the java program with COJAC and all behaviours define as
 		 * float. If the execution is valid, no need to launch Delta Debugging */
-		BehaviourEditor.getInstance().editBehaviours(new BitSet());
-		if (ExecutionUtils.getinstance().executeWithCOJACBehaviours()) {
+		be.editBehaviours(new BitSet());
+		if (eu.executeWithCOJACBehaviours()) {
 			System.out.println("Delta Debugging succeed");
 			System.exit(0);
 		}
 
 		/* Initialize and launch Delta Debugging process on the specified java
 		 * program */
-		DeltaDebugger ddbg = new DeltaDebugger(BehaviourEditor.getInstance(), ExecutionUtils.getinstance());
+		DeltaDebugger ddbg = new DeltaDebugger(BehaviourEditor.getInstance(), eu);
 		BitSet b = ddbg.launchDeltaDebugging();
 		BehaviourEditor.getInstance().editBehaviours(b);
 
 		// TODO : mettre au propre, ajouter options
-		new Colorizor().colorizeClass(
-				"/Users/remibadoud/Documents/Git_badoud_sp6/cojac/src/test/java/demo/Simpsons.java",
-				"/Users/remibadoud/Desktop/maClass.html", "demo/Simpsons");
+//		new Colorizor().colorizeClass(
+//				"/Users/remibadoud/Documents/Git_badoud_sp6/cojac/src/test/java/demo/Simpsons.java",
+//				"/Users/remibadoud/Desktop/maClass.html", "demo/Simpsons");
 
-		if (ExecutionUtils.getinstance().executeWithCOJACBehaviours()) {
+		boolean ok=eu.executeWithCOJACBehaviours();
+		if (ok) {
 			System.out.println("Delta Debugging succeed");
-
 		} else {
 			System.out.println("Delta Debugging failed");
-
 		}
 	}
 
