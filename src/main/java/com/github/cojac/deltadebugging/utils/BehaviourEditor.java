@@ -28,7 +28,7 @@ import com.github.cojac.deltadebugging.Opt;
  *
  */
 
-// TODO (Bapst): refactor as not-a-singleton, and parameterized with
+// TODO (Bapst): refactor as not-a-singleton,  parameterized with
 //               Opt.BEHAVIOURSFILE.getValue() Opt.MODE.getValue()...
 
 public class BehaviourEditor implements Editor {

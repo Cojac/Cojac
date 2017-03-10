@@ -15,6 +15,50 @@ import com.github.cojac.deltadebugging.utils.*;
  * Example:
  * java -cp d:\Git-MyRepository\cojac\target\cojac.jar com.github.cojac.deltadebugging.App -h
  * 
+ * ----------------BAPST-------------------
+ * TO BE DOCUMENTED... General idea: 
+ * 
+ * You have a computation code using "double" and giving accurate results.
+ * You want to know if parts of the computation could be performed in "float"
+ * without loosing to much accuracy.
+ * 
+ * 1) Prepare a "judge", a program that tests on some data that the computation 
+ *    is accurate enough (exit code=0) or not (exit code != 0). 
+ *    The testing code should NOT use doubles (use BigDecimal instead). 
+ *    Examples: ConFrac, Simpsons...
+ *              See in com.github.cojac.misctests.deltaDebugging
+ *              
+ * 2) Run your "judge" under Cojac, with the options: 
+ * 
+ *      java -jar:cojac.jar=" -BD2F -Li /path/to/Simpsons.xml " dd.Simpsons
+ *      
+ *    As everything is computed as "float", it typically fails. An XML file
+ *    holding every "double" statements is produced
+ *    
+ * 3) Run this Delta-Debugging App: 
+ * 
+ *      java -cp cojac.jar com.github.cojac.deltadebugging.App 
+ *               -behavioursfile /path/to/Simpsons.xml 
+ *               -cojac /path/to/cojac.jar 
+ *               -mode std 
+ *               -mainclass dd.Simpsons 
+ *               -classpath classPathForSimpsons
+ * 
+ *    It will launch your judge several times (using dd_min algorithm), to find 
+ *    a "minimal" set of "double" statements that satisfies the judge.
+ *    The XML file is modified to hold the solution
+ *    
+ * 4) Run the Colorizor to produce a colorized version of your source code
+ * 
+ *    java -cp cojac.jar com.github.cojac.deltadebugging.Colorizor
+ *                /path/to/Simpsons.xml
+ *                /path/to/dd/Simpsons.java
+ *                /path/to/Simpsons.java.html
+ *                dd/Simpsons                   <-- "internal" classname
+ *     
+ * 5) Inspect the html result manually to guess where you can act on the source
+ *    code, i.e. which variable declarations could be changed from "double" to 
+ *    "float"
  */
 public class App {
 

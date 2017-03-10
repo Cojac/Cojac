@@ -137,26 +137,6 @@ public enum Opt {
 
 		for (Opt opt : Opt.values())
 			if (cmdLine.hasOption(opt.name)) opt.value = cmdLine.getOptionValue(opt.name);
-
-		//		}
-		//		if (cmdLine.hasOption(JAVA.name)) {
-		//			JAVA.value = cmdLine.getOptionValue(JAVA.name);
-		//		}
-		//		if (cmdLine.hasOption(COJAC.name)) {
-		//			COJAC.value = cmdLine.getOptionValue("cojac");
-		//		}
-		//		if (cmdLine.hasOption(CLASSPATH.name)) {
-		//			CLASSPATH.value = cmdLine.getOptionValue(CLASSPATH.name);
-		//		}
-		//		if (cmdLine.hasOption(MAINCLASS.name)) {
-		//			MAINCLASS.value = cmdLine.getOptionValue(MAINCLASS.name);
-		//		}
-		//		if (cmdLine.hasOption(JAR.name)) {
-		//			JAR.value = cmdLine.getOptionValue(JAR.name);
-		//		}
-		//		if (cmdLine.hasOption(BEHAVIOURSFILE.name)) {
-		//			BEHAVIOURSFILE.value = cmdLine.getOptionValue(BEHAVIOURSFILE.name);
-		//		}
 	}
 
 	/**
