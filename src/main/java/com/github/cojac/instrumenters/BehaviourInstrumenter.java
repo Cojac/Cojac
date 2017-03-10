@@ -58,10 +58,11 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
     private final InstrumentationStats stats;
     private final Map<Integer, InvokableMethod> invocations = new HashMap<Integer, InvokableMethod>(50);
     private final Map<String, InvokableMethod> methods = new HashMap<String, InvokableMethod>(50);
-    private boolean instrumentDouble = false;
+    // private boolean instrumentDouble = false;
     
     private final String[] BEHAVIOURS;
-    private final String[] FULLY_QUALIFIED_BEHAVIOURS;
+    private final String[] FULLY_QUALIFIED_BEHAVIOURS; // the same, but pkg.MyClass instead of pkg/MyClass...
+    
     private static BehaviourInstrumenter instance= null;
     /**
      * Constructor, private because only a singleton is available. 
@@ -76,7 +77,7 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
         
         int i=0;
         FULLY_QUALIFIED_BEHAVIOURS = new String[BEHAVIOURS.length];
-        for(String s: BEHAVIOURS){
+        for(String s: BEHAVIOURS) {
             FULLY_QUALIFIED_BEHAVIOURS[i++] = s.replace('/', '.');
            //System.out.println(FULLY_QUALIFIED_BEHAVIOURS[i-1]);
         }
@@ -110,7 +111,7 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
     private void checkMethods() {
         try {
             for (int i = 0; i < BEHAVIOURS.length; i++) {
-                for(Method m:Class.forName(FULLY_QUALIFIED_BEHAVIOURS[i]).getMethods()){
+                for(Method m:behaviorClass(i).getMethods()) {
                     //Operation op = MathMethods.toStaticOperation(m);
                     if (m.isAnnotationPresent(UtilityMethod.class)){
                         break;
@@ -126,10 +127,9 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
                             Class.forName(classQualifier.replace('/', '.')).getMethod(m.getName(), m.getParameterTypes());
                             
                         } catch (NoSuchMethodException e) {
-                            // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
-                    }else{
+                    } else {
                         boolean matches = false;
                         for(Method mathm : Math.class.getMethods()){
                             modifiers = mathm.getModifiers();
@@ -156,13 +156,21 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
                 }
             }
         } catch (SecurityException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
+    
+    private Class<?> behaviorClass(int i)  {
+        try {
+            return Class.forName(FULLY_QUALIFIED_BEHAVIOURS[i]);
+        } catch(ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
     /**
      * check if two sets of parameters match
      * @param a the first set
@@ -177,9 +185,7 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
             if(!a[i].getType().equals(b[i].getType()))
                 return false;
         }
-        return true;
-        
-        
+        return true;    
     }
     /**
      * for every method in the behaviour classes that correspond to an Opcode or a Java.lang.Math method,
@@ -188,28 +194,26 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
     private void fillMethods() {
         /*Populate operations*/
         for(Operations op: Operations.values()){
-            if(!op.loadsConst){
-                for (int i = 0; i < BEHAVIOURS.length; i++) {
-                    try {
-                        //behaviourClass.getClass().getMethod(op.opCodeName, op.parameters);
-                        
-                        Method m = Class.forName(FULLY_QUALIFIED_BEHAVIOURS[i]).getMethod(op.name(), op.parameters);
-                        if (m.isAnnotationPresent(UtilityMethod.class)){
-                           break;
-                        }
-                        
-                        //NewDoubles.class.getMethod(op.opCodeName, op.parameters);
-                        //System.out.println("method \""+op.name()+"\" modified.");
-                        invocations.put(op.opCodeVal, new InvokableMethod(BEHAVIOURS[i], op.name(), op.signature));
+            if(op.loadsConst) continue;
+            for (int i = 0; i < BEHAVIOURS.length; i++) {
+                try {
+                    //behaviourClass.getClass().getMethod(op.opCodeName, op.parameters);
+
+                    Method m = behaviorClass(i).getMethod(op.name(), op.parameters);
+                    if (m.isAnnotationPresent(UtilityMethod.class)){
                         break;
-                    } catch (NoSuchMethodException e) {
-                        //Method not implemented, no problem.
-                    }catch(Exception e){
-                        e.printStackTrace();
                     }
+
+                    //NewDoubles.class.getMethod(op.opCodeName, op.parameters);
+                    //System.out.println("method \""+op.name()+"\" modified.");
+                    invocations.put(op.opCodeVal, new InvokableMethod(BEHAVIOURS[i], op.name(), op.signature));
+                    break;
+                } catch (NoSuchMethodException e) {
+                    //Method not implemented, no problem.
+                }catch(Exception e){
+                    e.printStackTrace();
                 }
-            }
-            
+            }            
         }
         /*Populate Constant loading methods*/
         for(ConstTransform ct: ConstTransform.values()){
@@ -219,7 +223,7 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
                 try {
                     //behaviourClass.getClass().getMethod(op.opCodeName, op.parameters);
                    
-                    Method m = Class.forName(FULLY_QUALIFIED_BEHAVIOURS[i]).getMethod(op.opCodeName, op.parameters);
+                    Method m = behaviorClass(i).getMethod(op.opCodeName, op.parameters);
                     if (m.isAnnotationPresent(UtilityMethod.class)){
                        continue;
                     }
@@ -241,7 +245,7 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
         /* Populate methods (math and others) */
         for (int i = 0; i < BEHAVIOURS.length; i++) {
             try {
-                for(Method m:Class.forName(FULLY_QUALIFIED_BEHAVIOURS[i]).getMethods()){
+                for(Method m:behaviorClass(i).getMethods()){
                     //Operation op = MathMethods.toStaticOperation(m);
                     if (m.isAnnotationPresent(UtilityMethod.class)){
                         break;
@@ -266,14 +270,12 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
                             // System.out.println("method \""+op.opCodeName+op.signature+"\" from "+classQualifier+" modified.");
                             methods.put(classQualifier+op.opCodeName+op.signature, new InvokableMethod(BEHAVIOURS[i], op.opCodeName, op.signature));
                         } catch (NoSuchMethodException e) {
-                            // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
                     }
                     
                 }
             } catch (SecurityException | ClassNotFoundException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -290,7 +292,7 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
         if (arg != null) {
             stats.incrementCounterValue(opCode);// arg*/
        // System.out.println("instrumenting opcode: "+opCode);
-            invocations.get(opCode).invokeStatic(mv);
+        invocations.get(opCode).invokeStatic(mv);
        // }
     }
     
@@ -304,11 +306,13 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
         //System.out.println("instrumenting method: "+name);
         methods.get(owner+name+signature).invokeStatic(mv);
     }
+
     public boolean wantsToInstrumentMethod(int opcode,String owner, String name, String signature) {
         //System.out.println("Wants to instrument method: "+name+signature+" from "+owner+" "+methods.containsKey(owner+name+signature));
         return (opcode == Opcodes.INVOKESTATIC) && methods.containsKey(owner+name+signature);
         
     }
+
     public void instrumentConstLoading(MethodVisitor mv, Class<?> cst){
         /*if(cst instanceof Double){
             double c = (double) cst;
@@ -320,11 +324,10 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
         ConstTransform methodToUse = ConstTransform.getMethodForClass(cst);
         methods.get(methodToUse.operation.opCodeName).invoke(mv);
     }
+
     public boolean wantsToInstrumentConstLoading(Class<?> o){
         ConstTransform methodToUse = ConstTransform.getMethodForClass(o);
         //System.out.println("wantsToInstrumentConstLoading? "+o+( methodToUse != null && methods.containsKey(methodToUse.operation.opCodeName)));
-       return methodToUse != null && methods.containsKey(methodToUse.operation.opCodeName);
-        
-     
+       return methodToUse != null && methods.containsKey(methodToUse.operation.opCodeName); 
     }
 }

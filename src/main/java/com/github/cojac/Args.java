@@ -28,8 +28,13 @@ import com.github.cojac.models.ReactionType;
 import com.github.cojac.models.behaviours.ConversionBehaviour;
 import com.github.cojac.models.behaviours.ConversionBehaviour.Conversion;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public final class Args {
     private final Options options = Arg.createOptions();
@@ -41,34 +46,31 @@ public final class Args {
     static final String DEFAULT_JMX_NAME = "COJAC";
     static final String DEFAULT_STABILITY_THRESHOLD = "0.0001";
     static final String BEHAVIOUR_PACKAGE = "com/github/cojac/models/behaviours/";
-    private static Map<Arg, String> behaviours = new EnumMap<>(Arg.class);
+    
+    private final static Map<Arg, String> behaviours = new EnumMap<>(Arg.class);
+
     static{
-        behaviours.put(Arg.DOUBLE2FLOAT, BEHAVIOUR_PACKAGE + "ConversionBehaviour");
-        behaviours.put(Arg.ALL, BEHAVIOUR_PACKAGE + "CheckedMathBehaviour;"+BEHAVIOUR_PACKAGE+"CheckedCastBehaviour;"
-                +BEHAVIOUR_PACKAGE + "CheckedDoubleBehaviour;"+BEHAVIOUR_PACKAGE+"CheckedFloatBehaviour;"
-                +BEHAVIOUR_PACKAGE + "CheckedIntBehaviour;"+BEHAVIOUR_PACKAGE+"CheckedLongBehaviour;");
-        behaviours.put(Arg.OPCODES, BEHAVIOUR_PACKAGE + "CheckedCastBehaviour;"
-                +BEHAVIOUR_PACKAGE + "CheckedDoubleBehaviour;"+BEHAVIOUR_PACKAGE+"CheckedFloatBehaviour;"
-                +BEHAVIOUR_PACKAGE + "CheckedIntBehaviour;"+BEHAVIOUR_PACKAGE+"CheckedLongBehaviour;");
-        behaviours.put(Arg.INTS, BEHAVIOUR_PACKAGE + "CheckedIntBehaviour");
-        behaviours.put(Arg.DOUBLES, BEHAVIOUR_PACKAGE + "CheckedDoubleBehaviour");
-        behaviours.put(Arg.FLOATS, BEHAVIOUR_PACKAGE + "CheckedFloatBehaviour");
-        behaviours.put(Arg.LONGS, BEHAVIOUR_PACKAGE + "CheckedLongBehaviour");
-        behaviours.put(Arg.CASTS, BEHAVIOUR_PACKAGE + "CheckedCastBehaviour");
-        behaviours.put(Arg.MATHS, BEHAVIOUR_PACKAGE + "CheckedMathBehaviour");
-        behaviours.put(Arg.ROUND_BIASED_UP, BEHAVIOUR_PACKAGE + "PseudoRoundingBehaviour");
-        behaviours.put(Arg.ROUND_BIASED_DOWN, BEHAVIOUR_PACKAGE + "PseudoRoundingBehaviour");
-        behaviours.put(Arg.ROUND_BIASED_RANDOM, BEHAVIOUR_PACKAGE + "PseudoRoundingBehaviour");
-        behaviours.put(Arg.ARBITRARY_PRECISION, BEHAVIOUR_PACKAGE + "ConversionBehaviour");
-        behaviours.put(Arg.DOUBLE_INTERVAL, BEHAVIOUR_PACKAGE + "DoubleIntervalBehaviour");
-        behaviours.put(Arg.ROUND_NATIVELY_UP, BEHAVIOUR_PACKAGE + "ConversionBehaviour");
-        behaviours.put(Arg.ROUND_NATIVELY_DOWN, BEHAVIOUR_PACKAGE + "ConversionBehaviour");
-        behaviours.put(Arg.ROUND_NATIVELY_TO_ZERO, BEHAVIOUR_PACKAGE + "ConversionBehaviour");
+        behaviours.put(Arg.INTS,    "CheckedIntBehaviour");
+        behaviours.put(Arg.DOUBLES, "CheckedDoubleBehaviour");
+        behaviours.put(Arg.FLOATS,  "CheckedFloatBehaviour");
+        behaviours.put(Arg.LONGS,   "CheckedLongBehaviour");
+        behaviours.put(Arg.CASTS,   "CheckedCastBehaviour");
+        behaviours.put(Arg.MATHS,   "CheckedMathBehaviour");
+        behaviours.put(Arg.ROUND_BIASED_UP,     "PseudoRoundingBehaviour");
+        behaviours.put(Arg.ROUND_BIASED_DOWN,   "PseudoRoundingBehaviour");
+        behaviours.put(Arg.ROUND_BIASED_RANDOM, "PseudoRoundingBehaviour");
+        behaviours.put(Arg.ARBITRARY_PRECISION,    "ConversionBehaviour");
+        behaviours.put(Arg.ROUND_NATIVELY_UP,      "ConversionBehaviour");
+        behaviours.put(Arg.ROUND_NATIVELY_DOWN,    "ConversionBehaviour");
+        behaviours.put(Arg.ROUND_NATIVELY_TO_ZERO, "ConversionBehaviour");
+        behaviours.put(Arg.DOUBLE2FLOAT,           "ConversionBehaviour");
+        behaviours.put(Arg.DOUBLE_INTERVAL, "DoubleIntervalBehaviour");
     }
-    private static String USAGE =
+    
+    private static final String USAGE =
              "java -javaagent:cojac.jar=\"[OPTIONS]\" YourApp [appArgs]\n"
-           + "(version 1.4 - 2015 Nov 17)";
-    private static String HEADER =
+           + "(version 1.4.2 - 2017 Mar 10)";
+    private static final String HEADER =
             "\nTwo nice tools to enrich Java arithmetic capabilities, on-the-fly:"
             +"\n - Numerical Problem Sniffer: detects and signals arithmetic poisons like "
             +"integer overflows, aborption and catastrophic cancellation, NaN or infinite results."
@@ -76,9 +78,11 @@ public final class Args {
             +"models include BigDecimal (you choose the precision), "
             +"interval computation, discrete stochastic arithmetic, and even automatic differentiation."
             +"\n----------------- OPTIONS -----------------\n";
-    private static String FOOTER =
+    private static final String FOOTER =
             "\n------> https://github.com/Cojac/Cojac <------";
-    private String behaviour = behaviours.get(Arg.ALL);
+    
+    // private String behaviour = behaviours.get(Arg.ALL);
+    
     public Args() {
         super();
 
@@ -192,7 +196,7 @@ public final class Args {
         specify(Arg.DOUBLES);
         specify(Arg.MATHS);
         specify(Arg.CASTS);
-        behaviour = behaviours.get(Arg.ALL);
+        //behaviour = behaviours.get(Arg.ALL);
     }
 
     private boolean areSomeCategoriesSelected() {
@@ -228,16 +232,16 @@ public final class Args {
     }
 
     public boolean specify(Arg arg) {
-        if(behaviours.containsKey(arg)){
-            behaviour = behaviours.get(arg);
-        }
+//        if(behaviours.containsKey(arg)){
+//            behaviour = behaviours.get(arg);
+//        }
         return values.get(arg).setSpecified();
     }
 
     public boolean unspecify(Arg arg) {
-        if(behaviours.containsKey(arg)){
-            behaviour = null;
-        }
+//        if(behaviours.containsKey(arg)){
+//            behaviour = null;
+//        }
         return values.get(arg).setSpecified(false);
     }
 
@@ -269,19 +273,34 @@ public final class Args {
         } else if (isSpecified(Arg.CALL_BACK)) {
             return ReactionType.CALLBACK;
         }
-
         throw new RuntimeException("no reaction is defined!");
     }
-    public String getBehaviour(){
-        
+    
+    public String getBehaviour() {
+        Set<Arg> args=EnumSet.noneOf(Arg.class);
+        if(isSpecified(Arg.ALL) || isSpecified(Arg.OPCODES)) {
+            args.add(Arg.CASTS);
+            args.add(Arg.INTS);
+            args.add(Arg.LONGS);
+            args.add(Arg.DOUBLES);
+            args.add(Arg.FLOATS);
+        }
+        if(isSpecified(Arg.ALL)) {
+            args.add(Arg.MATHS);
+        }
         for (Arg arg : Arg.values()) {
-            if (!arg.isOperator() && isSpecified(arg) && 
+            if (!arg.isOperator() && isSpecified(arg) &&  
                     behaviours.containsKey(arg)) {
-                return behaviours.get(arg);
+                args.add(arg);
             }
         }
-        System.out.println("Args.getBehaviour(), berhaviour :" +behaviour);
-        return behaviour;
+        
+        String result = args.stream()
+                .map(a -> behaviours.get(a))
+                .map(s -> BEHAVIOUR_PACKAGE + s)
+                .collect(Collectors.joining(";"));
+
+        return result;
     }
 
     //========================================================================
