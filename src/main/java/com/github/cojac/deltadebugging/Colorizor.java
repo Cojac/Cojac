@@ -15,21 +15,34 @@ import com.github.cojac.deltadebugging.utils.BehaviourEditor;
 
 import java.util.HashMap;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 public class Colorizor {
 
-	private static final String							START_FILE	= "<!DOCTYPE html><html><body><pre>";
-	private static final String							END_FILE	= "</pre></body></html>";
+	private static final String BLACK = "black";
+    private static final String GREEN = "green";
+    private static final String ORANGE = "orange";
+    private static final String RED = "red";
+    private static final String IGNORE = "IGNORE";
+    private static final String START_FILE = "<!DOCTYPE html><html><body><pre>";
+	private static final String	  END_FILE = "</pre></body></html>";
 
-	private HashMap<String, HashMap<Integer, String>>	colorMap;
+	private HashMap<String, HashMap<Integer, String>> colorMap;
+	//              className   ->  (lineNumber -> Color)
 
-	public Colorizor() {
-		initColor();
+	public Colorizor(String filePath) throws Exception {
+		initColor(filePath);
 	}
 
-	private void initColor() {
+	private void initColor(String filePath) throws Exception {
 		colorMap = new HashMap<>();
 
-		Document document = BehaviourEditor.getInstance().getDocument();
+		Document document;
+		if (filePath==null) 
+		    document = BehaviourEditor.getInstance().getDocument();
+		else
+		    document = openXMLDocument(filePath);
 
 		NodeList classNodes = document.getDocumentElement().getElementsByTagName("class");
 		for (int i = 0; i < classNodes.getLength(); i++) {
@@ -57,72 +70,70 @@ public class Colorizor {
 			}
 			colorMap.put(className, subColorMap);
 		}
-
-		//		NodeList classMapNodes = document.getDocumentElement().getElementsByTagName("classMap");
-		//		for (int i = 0; i < classMapNodes.getLength(); i++) {
-		//			Node classMapNode = classMapNodes.item(i);
-		//			if (classMapNode.getNodeType() != Node.ELEMENT_NODE) continue;
-		//			Element classMapElement = (Element) classMapNode;
-		//			HashMap<Integer, String> subColorMap = new HashMap<>();
-		//			String className = classMapElement.getAttributeNode("className").getValue();
-		//			
-		//			NodeList instructionNodes = classMapElement.getElementsByTagName("instruction");
-		//			for (int k = 0; k < instructionNodes.getLength(); k++) {
-		//				Node instructionNode = instructionNodes.item(k);
-		//				if (instructionNode.getNodeType() != Node.ELEMENT_NODE) continue;
-		//				Element instructionElement = (Element) instructionNode;
-		//
-		//				int lineNumber = Integer.parseInt(instructionElement.getAttributeNode("lineNumber").getValue());
-		//				String behaviour = instructionElement.getAttributeNode("behaviour").getValue();
-		//				putBehaviourColor(subColorMap, lineNumber, behaviour);
-		//			}
-		//			colorMap.put(className, subColorMap);
-		//		}
-
+	}
+	
+	private static Document openXMLDocument(String filePath) throws Exception {
+        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+        Document document = docBuilder.parse(filePath); // Parse the XML file
+        return document;
 	}
 
 	private void putBehaviourColor(HashMap<Integer, String> subColorMap, Integer lineNumber, String behaviour) {
 		if (!subColorMap.containsKey(lineNumber)) {
-			if (behaviour.equals("IGNORE")) subColorMap.put(lineNumber, "red");
-			else subColorMap.put(lineNumber, "green");
+			if (behaviour.equals(IGNORE)) subColorMap.put(lineNumber, RED);
+			else subColorMap.put(lineNumber, GREEN);
 		} else {
-			String crtColor = subColorMap.get(lineNumber);
-			if (crtColor.equals("red") && !behaviour.equals("IGNORE")
-					|| crtColor.equals("green") && behaviour.equals("IGNORE"))
-				subColorMap.put(lineNumber, "orange");
+		    String crtColor = subColorMap.get(lineNumber);
+		    if (crtColor.equals(RED) && !behaviour.equals(IGNORE)
+		            || crtColor.equals(GREEN) && behaviour.equals(IGNORE))
+		        subColorMap.put(lineNumber, ORANGE);
 		}
 	}
 
-	public void colorizeClass(String javaFilePath, String htmlFilePath, String className) {
-		try {
-			BufferedReader br = Files.newBufferedReader(Paths.get(javaFilePath));
-			BufferedWriter bw = Files.newBufferedWriter(Paths.get(htmlFilePath));
-			// BufferedWriter bw =
-			// Files.newBufferedWriter(Paths.get("/Users/remibadoud/Desktop/maClass.html"));
+	public void colorizeClass(String javaFilePath, 
+	        String htmlFilePath, String className) throws Exception {
+	    BufferedReader br = Files.newBufferedReader(Paths.get(javaFilePath));
+	    BufferedWriter bw = Files.newBufferedWriter(Paths.get(htmlFilePath));
+	    // BufferedWriter bw =
+	    // Files.newBufferedWriter(Paths.get("/Users/remibadoud/Desktop/maClass.html"));
 
-			bw.write(START_FILE);
-			bw.newLine();
-			int lineNumber = 1;
-			String line;
-			while ((line = br.readLine()) != null) {
-				line = "<span style=\"color:gray\">" + String.format("%03d", lineNumber) + "|</span>"
-						+ "<span style=\"color:" + getColorFor(className, lineNumber++) + "\">" + line + "</span>";
-				bw.write(line);
-				bw.newLine();
-			}
+	    bw.write(START_FILE);
+	    bw.newLine();
+	    int lineNumber = 1;
+	    String line;
+	    while ((line = br.readLine()) != null) {
+	        line = "<span style=\"color:gray\">" + String.format("%03d", lineNumber) + "|</span>"
+	                + "<span style=\"color:" + getColorFor(className, lineNumber++) + "\">" + line + "</span>";
+	        bw.write(line);
+	        bw.newLine();
+	    }
 
-			bw.write(END_FILE);
-			bw.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	    bw.write(END_FILE);
+	    bw.close();
 	}
 
 	private String getColorFor(String className, int lineNumber) {
 		if (colorMap.containsKey(className) && colorMap.get(className).containsKey(lineNumber))
 			return colorMap.get(className).get(lineNumber);
-		return "black";
+		return BLACK;
+	}
+	
+	//----------------------------------------------------------------------
+	
+	public static void main(String[] args) throws Exception {
+	    String xmlFilePath = "E:\\_temp\\ConFrac.txt";
+	    String sourceCodeFilePath = "D:\\workspace_plugins\\UsingCojac\\src\\dd\\ConFrac.java";
+	    String htmlOutputFilePath = "E:\\_temp\\ConFrac.java.html";
+        String klassName = "dd/ConFrac"; 
+	    if(args.length>0) {
+	        xmlFilePath = args[0];
+	        sourceCodeFilePath = args[1];
+	        htmlOutputFilePath = args[2];
+	        klassName = args[3];
+	    }
+	    Colorizor co = new Colorizor(xmlFilePath);
+	    co.colorizeClass(sourceCodeFilePath, htmlOutputFilePath, klassName);
 	}
 
 }

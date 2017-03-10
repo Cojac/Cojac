@@ -32,6 +32,10 @@ import com.github.cojac.deltadebugging.Opt;
  * @author remibadoud
  *
  */
+
+// TODO (Bapst): refactor as not-a-singleton, and parameterized with
+//               Opt.BEHAVIOURSFILE.getValue() Opt.MODE.getValue()...
+
 public class BehaviourEditor implements Editor {
 
 	private static final String		LINE_ELT			= "line";

@@ -59,7 +59,7 @@ public class App {
 		be.editBehaviours(b);
 
 		// TODO : mettre au propre, ajouter options
-//		new Colorizor().colorizeClass(
+//		new Colorizor(null).colorizeClass(
 //				"/Users/remibadoud/Documents/Git_badoud_sp6/cojac/src/test/java/demo/Simpsons.java",
 //				"/Users/remibadoud/Desktop/maClass.html", "demo/Simpsons");
 
