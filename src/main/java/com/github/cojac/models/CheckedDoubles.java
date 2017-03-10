@@ -22,7 +22,7 @@ import static java.lang.Double.NEGATIVE_INFINITY;
 import static java.lang.Double.POSITIVE_INFINITY;
 
 public final class CheckedDoubles {
-    public static final String PRECISION_MSG = "Smearing: ";
+    public static final String PRECISION_MSG = "Absorption: ";
     public static final String RESULT_IS_POS_INF_MSG = "Result is +Infinity: ";
     public static final String RESULT_IS_NEG_INF_MSG = "Result is -Infinity: ";
     public static final String UNDERFLOW_MSG = "Underflow: ";
