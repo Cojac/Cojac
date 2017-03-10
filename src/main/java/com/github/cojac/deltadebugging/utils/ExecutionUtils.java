@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import com.github.cojac.deltadebugging.Opt;
 
@@ -14,10 +15,12 @@ public enum ExecutionUtils implements Executor {
 
 	private static final String		JAVA_DEFAULT				= "java";
 	private static final String		AGENT_OPTION				= "-javaagent:";
-	private static final String		COJAC_START_OPTION			= "=\" ";
-	private static final String		COJAC_END_OPTION			= " \"";
-	private static final String		COJAC_OPTION_BEHAVIOUR		= "-BD2F -Lbm ";
-	private static final String		COJAC_OPTION_LISTING		= "-BD2F -Li ";
+	// BAPST: strange, I had to surround with ' instead of " on Windows... Why??
+	private static final String		COJAC_START_OPTION			= "=\'"; //  = "=\"";
+	private static final String		COJAC_END_OPTION			= " \'";
+	// BAPST: strange, the initial space is mandatory on Windows... Wyy??
+	private static final String		COJAC_OPTION_BEHAVIOUR		= " -BD2F -Lbm ";
+	private static final String		COJAC_OPTION_LISTING		= " -BD2F -Li ";
 	private static final String		COJAC_OPTION_WRAP_PBLOAD	= "-Rpbload ";
 	private static final String		COJAC_OPTION_WRAP_PBL		= "-Rpbl ";
 	private static final String		JAR_OPTION					= "-jar";
@@ -117,7 +120,10 @@ public enum ExecutionUtils implements Executor {
 	public boolean executeWithCOJACBehaviours() {
 		boolean success = false;
 		try {
-			Process p = Runtime.getRuntime().exec(cmdExecuteWithBehaviours);
+		    System.out.println("COMMAND: "+ Arrays.toString(cmdExecuteWithBehaviours));
+		    ProcessBuilder pb=new ProcessBuilder(cmdExecuteWithBehaviours);
+            //Process p = Runtime.getRuntime().exec(cmdExecuteWithBehaviours);
+            Process p = pb.start();
 			p.waitFor();
 			printStream(p);
 			if (p.exitValue() == 0) success = true;
@@ -138,7 +144,9 @@ public enum ExecutionUtils implements Executor {
 	 */
 	public void executeWithCOJACListing() {
 		try {
-			Process p = Runtime.getRuntime().exec(cmdExecuteListing);
+		    System.out.println("COMMANDL: "+ Arrays.toString(cmdExecuteListing));
+            ProcessBuilder pb=new ProcessBuilder(cmdExecuteListing);
+			Process p = pb.start(); // Runtime.getRuntime().exec(cmdExecuteListing);
 			p.waitFor();
 			printStream(p);
 			p.destroy();
@@ -156,15 +164,19 @@ public enum ExecutionUtils implements Executor {
 	 * @throws IOException
 	 */
 	private void printStream(Process p) throws IOException {
-		InputStream in = p.getInputStream();
-		BufferedReader br = new BufferedReader(new InputStreamReader(in));
-		String line;
-		while ((line = br.readLine()) != null) {
-			System.out.println(line);
-		}
-		br.close();
-		in.close();
-
+	    try(InputStream in = p.getInputStream();
+	        InputStream err= p.getErrorStream();
+	        BufferedReader bin = new BufferedReader(new InputStreamReader(in));
+	        BufferedReader berr = new BufferedReader(new InputStreamReader(err)) 
+	       ) {
+	        String line;
+	        while ((line = bin.readLine()) != null) {
+	            System.out.println(line);
+	        }
+            while ((line = berr.readLine()) != null) {
+                System.out.println(line);
+            }
+	    }
 	}
 
 }

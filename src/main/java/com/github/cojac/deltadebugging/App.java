@@ -54,9 +54,9 @@ public class App {
 
 		/* Initialize and launch Delta Debugging process on the specified java
 		 * program */
-		DeltaDebugger ddbg = new DeltaDebugger(BehaviourEditor.getInstance(), eu);
+		DeltaDebugger ddbg = new DeltaDebugger(be, eu);
 		BitSet b = ddbg.launchDeltaDebugging();
-		BehaviourEditor.getInstance().editBehaviours(b);
+		be.editBehaviours(b);
 
 		// TODO : mettre au propre, ajouter options
 //		new Colorizor().colorizeClass(

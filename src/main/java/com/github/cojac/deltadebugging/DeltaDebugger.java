@@ -58,6 +58,8 @@ public class DeltaDebugger {
 
 		//else the set is one of the local minimum
 		be.editBehaviours(set);
+        if(TRACE && be.getNbrOfInstructions()<80) 
+            System.out.println("DDMIN RE "+toStr(set));
 		return set;
 	}
 
