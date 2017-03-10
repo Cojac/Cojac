@@ -41,7 +41,7 @@ public class DeltaDebugger {
 			// try with an empty set
 			BitSet emptySet = new BitSet();
 			if (isSetValid(emptySet)) return emptySet;
-			else return set;
+			return set;
 		}
 		// split the set to n nearly equals subset
 		List<BitSet> subsetList = splitSet(set, n);
