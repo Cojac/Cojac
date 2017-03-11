@@ -23,8 +23,7 @@ import org.junit.Test;
 import com.github.cojac.models.Reactions;
 import com.github.cojac.models.ReactionType;
 
-import static com.github.cojac.models.CheckedDoubles.*;
-import  com.github.cojac.models.behaviours.CheckedMathBehaviour;
+import static com.github.cojac.models.behaviours.CheckedBehaviourConstants.*;
 import static java.lang.Double.*;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
