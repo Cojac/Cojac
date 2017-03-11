@@ -293,6 +293,11 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
         if (arg != null) {
             stats.incrementCounterValue(opCode);// arg*/
        // System.out.println("instrumenting opcode: "+opCode);
+        Arg arg = Arg.fromOpCode(opCode);
+        if (arg != null) {
+            stats.incrementCounterValue(opCode);// arg
+        }
+
         invocations.get(opCode).invokeStatic(mv);
        // }
     }
