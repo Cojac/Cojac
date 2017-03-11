@@ -44,14 +44,12 @@ public class MathMethods {
         for(Method method:methods){
             int modifiers = method.getModifiers();
             if(Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers)){
-                
                 operations.add(toStaticOperation(method));
             }
         }
     }
-    public static Operation toStaticOperation(Method m){
-
-       
+    
+    public static Operation toStaticOperation(Method m){   
         String signature ="";
         
         signature += "(";

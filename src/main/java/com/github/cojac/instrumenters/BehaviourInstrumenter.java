@@ -259,6 +259,7 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
                             Math.class.getMethod(m.getName(), m.getParameterTypes());
                             Operation op = MathMethods.toStaticOperation(m);
                             methods.put("java/lang/Math"+op.opCodeName+op.signature, new InvokableMethod(BEHAVIOURS[i], op.opCodeName, op.signature));
+                            methods.put("java/lang/StrictMath"+op.opCodeName+op.signature, new InvokableMethod(BEHAVIOURS[i], op.opCodeName, op.signature));
                         } catch (NoSuchMethodException e) {
                             // not a Math method.
                         }

@@ -42,7 +42,7 @@ import com.github.cojac.utils.InstructionWriter;
 
 final class BehaviourMethodVisitor extends LocalVariablesSorter {
     private final IOpcodeInstrumenterFactory factory;
-    private static BitSet constLoadInst = new BitSet(255);// there is 255
+    private static BitSet constLoadInst = new BitSet(255);// there are 255
                                                           // possible opcodes
     static {
         for (Operations op : Operations.values()) {

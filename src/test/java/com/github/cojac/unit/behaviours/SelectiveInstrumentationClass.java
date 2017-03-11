@@ -23,7 +23,7 @@ package com.github.cojac.unit.behaviours;
  * 
  * */
 public class SelectiveInstrumentationClass {
-    double x =Math.PI;
+    double x = Math.PI;
     double y = Math.E;
     public double[] method0() {
         double[] d= new double[2];

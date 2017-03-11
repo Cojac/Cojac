@@ -31,6 +31,8 @@ import java.util.List;
 
 import static org.objectweb.asm.Opcodes.*;
 
+// NOT USED ANYMORE (replaced by the "behaviour" mechanism)
+
 final class CojacCheckerMethodVisitor extends LocalVariablesSorter {
     private final IOpcodeInstrumenterFactory factory;
     private final InstrumentationStats stats;

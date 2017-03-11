@@ -31,6 +31,8 @@ import java.util.Map;
 
 import static org.objectweb.asm.Opcodes.*;
 
+//NOT USED ANYMORE (replaced by the "behaviour" mechanism)
+
 final class DirectInstrumenter implements IOpcodeInstrumenter {
     private final ReactionType reaction;
     private final InstrumentationStats stats;
