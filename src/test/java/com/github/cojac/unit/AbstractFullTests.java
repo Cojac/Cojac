@@ -1030,10 +1030,10 @@ public abstract class AbstractFullTests {
         assertEquals(StrictMath.exp(2), exp);
     }
 
-    @Test(expected = ArithmeticException.class)
-    public void exp2() throws Exception {
-        getTests().exp(Double.POSITIVE_INFINITY);
-    }
+//    @Test(expected = ArithmeticException.class)
+//    public void exp2() throws Exception {
+//        getTests().exp(Double.POSITIVE_INFINITY);
+//    }
 
     @Test
     public void log1() throws Exception {

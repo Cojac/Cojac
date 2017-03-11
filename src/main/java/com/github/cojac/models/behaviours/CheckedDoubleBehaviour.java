@@ -137,4 +137,5 @@ public class CheckedDoubleBehaviour {
         }
         return r;
     }
+    
 }
