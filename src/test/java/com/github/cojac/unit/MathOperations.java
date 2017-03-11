@@ -18,9 +18,6 @@
 
 package com.github.cojac.unit;
 
-import com.github.cojac.models.CheckedCasts;
-import com.github.cojac.models.ReactionType;
-
 public interface MathOperations {
     int iadd(int a, int b) throws Exception;
 

@@ -64,7 +64,7 @@ public final class Args {
         behaviours.put(Arg.ROUND_NATIVELY_DOWN,    "ConversionBehaviour");
         behaviours.put(Arg.ROUND_NATIVELY_TO_ZERO, "ConversionBehaviour");
         behaviours.put(Arg.DOUBLE2FLOAT,           "ConversionBehaviour");
-        behaviours.put(Arg.DOUBLE_INTERVAL, "DoubleIntervalBehaviour");
+        behaviours.put(Arg.DOUBLE_INTERVAL,    "DoubleIntervalBehaviour");
     }
     
     private static final String USAGE =

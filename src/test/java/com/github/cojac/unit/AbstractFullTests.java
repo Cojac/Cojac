@@ -20,7 +20,11 @@ package com.github.cojac.unit;
 
 import org.junit.Test;
 
+import com.github.cojac.models.Reactions;
+import com.github.cojac.models.ReactionType;
+
 import static com.github.cojac.models.CheckedDoubles.*;
+import  com.github.cojac.models.behaviours.CheckedMathBehaviour;
 import static java.lang.Double.*;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
@@ -28,6 +32,10 @@ import static junit.framework.Assert.assertTrue;
 //import static junit.framework.Assert.fail;
 
 public abstract class AbstractFullTests {
+    static {
+        Reactions.theReactionType=ReactionType.EXCEPTION;
+    }
+    
     public abstract Tests getTests();
 
     @Test(expected = ArithmeticException.class)

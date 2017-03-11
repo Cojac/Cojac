@@ -27,7 +27,7 @@ import java.util.Map;
 
 import org.objectweb.asm.Opcodes;
 public class MathMethods {
-    private static Map<Class<?>, String> types = new HashMap<Class<?>, String>();
+    private final static Map<Class<?>, String> types = new HashMap<Class<?>, String>();
     static{
         types.put(int.class, "I");
         types.put(float.class, "F");
