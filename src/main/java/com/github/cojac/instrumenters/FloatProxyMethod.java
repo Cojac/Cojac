@@ -176,6 +176,7 @@ public class FloatProxyMethod {
         mv.visitInsn(DUP);
         // stack >> target allParamsArr nullOrMeth nullOrMeth
         
+        @SuppressWarnings("unchecked")
         ArrayList<Object> scl=new ArrayList<Object>(aaAfter.stack); 
         scl.remove(scl.size()-1); // remove the last nullOrMeth
         Object[] stackContent=scl.toArray(); //target allParamsArr nullOrMeth
@@ -650,6 +651,7 @@ public class FloatProxyMethod {
 		mv.visitTypeInsn(CHECKCAST, afterFloatReplacement(aType).getInternalName());
 	}
 	
+    @SuppressWarnings("unused")
     public void setUsefulPartners(AnalyzerAdapter aaAfter, MyLocalAdder mla) {
         this.aaAfter=aaAfter;
         // this.mla=mla;

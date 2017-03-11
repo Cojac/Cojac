@@ -39,7 +39,7 @@ import com.github.cojac.models.FloatNumbers;
 
 
 final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
-    private final InstrumentationStats stats;
+    // private final InstrumentationStats stats;
 	
 	public static final String FN_NAME = Type.getType(FloatNumbers.class).getInternalName();
 	public static final String DN_NAME = Type.getType(DoubleNumbers.class).getInternalName();
@@ -72,10 +72,11 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
 
    // public static final 
 
+    @SuppressWarnings("unused")
     ReplaceFloatsInstrumenter(Args args, InstrumentationStats stats) {
         super();
 		fillDescriptors();
-        this.stats = stats;
+        // this.stats = stats;
         fillMethods();
     }
 

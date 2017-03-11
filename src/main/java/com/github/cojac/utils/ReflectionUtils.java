@@ -20,10 +20,7 @@ package com.github.cojac.utils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.regex.Pattern;
-
-import demo.HelloCojac;
 
 public final class ReflectionUtils {
     private static final Class<?>[] CALLBACK_PARAM_TYPES = {String.class};

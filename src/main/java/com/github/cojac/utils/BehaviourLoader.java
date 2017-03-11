@@ -9,18 +9,14 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.github.cojac.Arg;
-import com.github.cojac.Args;
-
 public class BehaviourLoader {
 
     // elements tag
-    private static final String ROOT_ELT = "classes";
+    // private static final String ROOT_ELT = "classes";
     private static final String CLASS_ELT = "class";
     private static final String METHOD_ELT = "method";
     private static final String LINE_ELT = "line";
@@ -35,7 +31,7 @@ public class BehaviourLoader {
     private static final String OP_NAME_ATTR = "opName";
     private static final String INVOKED_METHOD = "invokedMethod";
     private static final String BEHAVIOUR_ATTR = "behaviour";
-    private static final String DEFAULT_BEHAVIOUR_VALUE = "IGNORE";
+    // private static final String DEFAULT_BEHAVIOUR_VALUE = "IGNORE";
 
     // singleton instance
     private static BehaviourLoader INSTANCE;
@@ -67,13 +63,10 @@ public class BehaviourLoader {
             // initialize the structure (
             classMap = classMapFromXML(document);
         } catch (SAXException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (ParserConfigurationException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

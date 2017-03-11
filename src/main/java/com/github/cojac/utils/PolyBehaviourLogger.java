@@ -16,9 +16,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.github.cojac.Arg;
-import com.github.cojac.Args;
-
 public class PolyBehaviourLogger {
 
     private static String ROOT_ELT = "classes";
@@ -82,10 +79,8 @@ public class PolyBehaviourLogger {
             transformer.transform(source, result);
             // ----------------------------------------------------------------------
         } catch (ParserConfigurationException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (TransformerException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
