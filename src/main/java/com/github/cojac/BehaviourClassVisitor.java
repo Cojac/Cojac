@@ -18,14 +18,8 @@
 
 package com.github.cojac;
 
-import java.util.HashMap;
-
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
-
-import com.github.cojac.utils.BehaviourLoader;
-import com.github.cojac.utils.Instruction;
-import com.github.cojac.utils.InstructionWriter;
 
 /**
  * Class visitor specification using the @see com.github.cojac.NewMethodVisitor

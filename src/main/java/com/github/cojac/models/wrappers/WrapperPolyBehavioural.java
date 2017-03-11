@@ -69,6 +69,7 @@ public class WrapperPolyBehavioural extends ACompactWrapper {
         return value;
     }
 
+    @SuppressWarnings("unused")
     @Override
     public ACojacWrapper fromDouble(double a, boolean wasFromFloat) {
         return new WrapperPolyBehavioural(a);

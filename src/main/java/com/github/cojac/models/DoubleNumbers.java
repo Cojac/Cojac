@@ -20,8 +20,6 @@ package com.github.cojac.models;
 
 import static com.github.cojac.models.FloatReplacerClasses.*;
 
-import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -378,28 +376,28 @@ public class DoubleNumbers {
 	    return null;
 	}
     
-    private static Object[] unwrapped(Object[] args) {
-        try {
-            int n=args.length;
-            Object[] nArgs=new Object[n];
-            System.arraycopy(args, 0, nArgs, 0, n);
-            for(int i=0; i<n; i++) {
-                Object a=nArgs[i];
-                if (isCojacWrapper(a))
-                    nArgs[i]=convertFromObjectToReal(a);                
-            }
-            return nArgs;
-        } catch(Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    private static Object[] unwrapped(Object[] args) {
+//        try {
+//            int n=args.length;
+//            Object[] nArgs=new Object[n];
+//            System.arraycopy(args, 0, nArgs, 0, n);
+//            for(int i=0; i<n; i++) {
+//                Object a=nArgs[i];
+//                if (isCojacWrapper(a))
+//                    nArgs[i]=convertFromObjectToReal(a);                
+//            }
+//            return nArgs;
+//        } catch(Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
     
-    private static boolean isCojacWrapper(Object a) {
-        if (a==null) return false;
-        String prefix="com.github.cojac.models.wrappers";
-        String className=a.getClass().getName();
-        return className.startsWith(prefix);
-    }
+//    private static boolean isCojacWrapper(Object a) {
+//        if (a==null) return false;
+//        String prefix="com.github.cojac.models.wrappers";
+//        String className=a.getClass().getName();
+//        return className.startsWith(prefix);
+//    }
     
     /* Methods that get redirected. See ReplaceFloatMethods. 
      * Here is just an example with printf() - commented because we now 

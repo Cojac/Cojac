@@ -27,11 +27,13 @@ import org.objectweb.asm.Opcodes;
 class EmptyVisitor extends ClassVisitor {
     AnnotationVisitor av = new AnnotationVisitor(Opcodes.ASM5) {
 
+        @SuppressWarnings("unused")
         @Override
         public AnnotationVisitor visitAnnotation(String name, String desc) {
             return this;
         }
 
+        @SuppressWarnings("unused")
         @Override
         public AnnotationVisitor visitArray(String name) {
             return this;
@@ -42,11 +44,13 @@ class EmptyVisitor extends ClassVisitor {
         super(Opcodes.ASM5);
     }
 
+    @SuppressWarnings("unused")
     @Override
     public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
         return av;
     }
 
+    @SuppressWarnings("unused")
     @Override
     public FieldVisitor visitField(int access, String name, String desc,
                                    String signature, Object value) {
@@ -59,6 +63,7 @@ class EmptyVisitor extends ClassVisitor {
         };
     }
 
+    @SuppressWarnings("unused")
     @Override
     public MethodVisitor visitMethod(int access, String name, String desc,
                                      String signature, String[] exceptions) {

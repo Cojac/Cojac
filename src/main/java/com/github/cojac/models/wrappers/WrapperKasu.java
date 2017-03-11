@@ -222,6 +222,7 @@ public class WrapperKasu extends ACompactWrapper {
         return value;
     }
 
+    @SuppressWarnings("unused")
     @Override
     public ACojacWrapper fromDouble(double a, boolean wasFromFloat) {
         return new WrapperKasu(a, 0.0);

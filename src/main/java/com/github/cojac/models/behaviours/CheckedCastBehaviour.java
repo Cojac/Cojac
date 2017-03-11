@@ -96,6 +96,7 @@ public class CheckedCastBehaviour {
         return (float) a;
     }
     
+    @SuppressWarnings("cast")
     public static float I2F(int a) {
         if ((int)((float)a) != a) {
             Reactions.react( "Loss of precision : I2F");
@@ -104,6 +105,7 @@ public class CheckedCastBehaviour {
         return (float) a;
     }
     
+    @SuppressWarnings("cast")
     public static double L2D(long a) {
         if ((long)((double)a) != a) {
             Reactions.react( "Loss of precision : L2D");

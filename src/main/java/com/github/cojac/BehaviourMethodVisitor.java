@@ -50,6 +50,7 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
                 constLoadInst.set(op.opCodeVal);
         }
     }
+    @SuppressWarnings("unused")
     private final InstrumentationStats stats;
     private final Args args;
     private final String classPath;

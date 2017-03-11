@@ -113,6 +113,7 @@ public class WrapperRad extends ACojacWrapper {
         return value;
     }
 
+    @SuppressWarnings("unused")
     @Override
     public ACojacWrapper fromDouble(double a, boolean wasFromFloat) {
         return new WrapperRad(a, null, 0.0);

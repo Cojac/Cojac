@@ -56,7 +56,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public final class CojacReferences {
-    private static final boolean DISPLAY_OPERATION_INFO = true; //change to get info for selective instrumentation
+    // private static final boolean DISPLAY_OPERATION_INFO = true; //change to get info for selective instrumentation
     public static final String BYPASS_SEPARATOR = ";";
     public static final String OPT_IN_CLASS_SEPARATOR = "&";
     public static final String OPT_IN_METHOD_SEPARATOR = ",";
@@ -82,7 +82,7 @@ public final class CojacReferences {
     private final int arbitraryPrecisionBits;
     private final HashMap<String, PartiallyInstrumentable> classesToInstrument;
     //TODO: remove behaviourMapFilePath?
-    private final String behaviourMapFilePath; // path to XML file that is used to load behaviours
+    //private final String behaviourMapFilePath; // path to XML file that is used to load behaviours
    
 
     private CojacReferences(CojacReferencesBuilder builder) {
@@ -102,7 +102,7 @@ public final class CojacReferences {
         this.checkUnstableComparisons = builder.checkUnstableComparisons;
         this.arbitraryPrecisionBits = builder.arbitraryPrecisionBits;
         this.classesToInstrument = builder.classesToInstrument;
-        this.behaviourMapFilePath = builder.behaviourMapFilePath;
+        //this.behaviourMapFilePath = builder.behaviourMapFilePath;
     }
 
     public String getNgWrapper() {
@@ -229,6 +229,7 @@ public final class CojacReferences {
         return true;
     }
     
+    @SuppressWarnings("unused")
     public boolean hasToBeInstrumented(String className, int lineNb, int instructionNb, int opcode) {
         // if(DISPLAY_OPERATION_INFO){
         // System.out.println("Class "+className+", line: "+lineNb+",
@@ -252,7 +253,7 @@ public final class CojacReferences {
 
     // ========================================================================
     public static final class CojacReferencesBuilder {
-        private String behaviourMapFilePath; // path to XML file that is used to load behaviours
+        //private String behaviourMapFilePath; // path to XML file that is used to load behaviours
         public HashMap<String, PartiallyInstrumentable> classesToInstrument;
         private final Args args;
         private ClassLoader loader;

@@ -18,6 +18,12 @@
 
 package com.github.cojac;
 
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -25,16 +31,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import com.github.cojac.models.ReactionType;
-import com.github.cojac.models.behaviours.ConversionBehaviour;
-import com.github.cojac.models.behaviours.ConversionBehaviour.Conversion;
-
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public final class Args {
     private final Options options = Arg.createOptions();

@@ -187,6 +187,7 @@ public class WrapperDerivation extends ACompactWrapper {
         return value;
     }
 
+    @SuppressWarnings("unused")
     @Override
     public ACojacWrapper fromDouble(double a, boolean wasFromFloat) {
         return new WrapperDerivation(a, 0.0);

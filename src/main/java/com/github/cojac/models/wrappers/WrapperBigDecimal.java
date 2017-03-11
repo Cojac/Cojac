@@ -106,6 +106,7 @@ public class WrapperBigDecimal extends ACompactWrapper {
         return value.doubleValue();
     }
 
+    @SuppressWarnings("unused")
     @Override
     public ACojacWrapper fromDouble(double a, boolean wasFromFloat) {
         return new WrapperBigDecimal(a);

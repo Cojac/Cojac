@@ -49,6 +49,7 @@ public final class Agent implements ClassFileTransformer {
         }
     }
 
+    @SuppressWarnings("unused")
     @Override
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
         // TODO: verify if we correctly handle lambdas... : for them className==null;
@@ -139,7 +140,7 @@ public final class Agent implements ClassFileTransformer {
 	 * "CojacReferences" !
 	 * This is used when there is more than one classloader in the application
 	 */
-	private byte[] setGlobalFields(byte[] byteCode, ClassLoader loader) {
+	private byte[] setGlobalFields(byte[] byteCode, @SuppressWarnings("unused") ClassLoader loader) {
         ClassReader cr = new ClassReader(byteCode);
         ClassWriter cw = new ClassWriter(cr, ClassWriter.COMPUTE_FRAMES);
         ClassVisitor cv = new ClassVisitor(Opcodes.ASM5, cw) {

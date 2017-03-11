@@ -474,16 +474,16 @@ public class WrapperChebfun extends ACompactWrapper {
     }
 
     // idem but with the naïve evaluation method, in O(n2)
-    private static double[] extendDegreeViaEvaluation(double[] funcValues) {
-        int extendedDegree = (funcValues.length - 1) * 2;
-        double[] extendedValues = new double[extendedDegree + 1];
-
-        for (int i = 0; i < extendedValues.length; i++)
-            extendedValues[i] = (i % 2 == 0) ? funcValues[i / 2]
-                    : evaluateAt(funcValues, chebPoint(i, extendedDegree));
-
-        return extendedValues;
-    }
+//    private static double[] extendDegreeViaEvaluation(double[] funcValues) {
+//        int extendedDegree = (funcValues.length - 1) * 2;
+//        double[] extendedValues = new double[extendedDegree + 1];
+//
+//        for (int i = 0; i < extendedValues.length; i++)
+//            extendedValues[i] = (i % 2 == 0) ? funcValues[i / 2]
+//                    : evaluateAt(funcValues, chebPoint(i, extendedDegree));
+//
+//        return extendedValues;
+//    }
 
     // Permet de déterminer si le degré du polynome est suffisant pour
     // représenter la fonction de manière précise
@@ -519,14 +519,14 @@ public class WrapperChebfun extends ACompactWrapper {
         return j+1;
     }
 
-    private static int minReasonableDegreeBadoud(double[] p) {
-        int n = p.length - 1;
-        int j;
-        for (j = 0; j < n; j++)
-            if (Math.abs(p[j]) < EPSILON && Math.abs(p[j + 1]) < EPSILON)
-                break;
-        return j;
-    }
+//    private static int minReasonableDegreeBadoud(double[] p) {
+//        int n = p.length - 1;
+//        int j;
+//        for (j = 0; j < n; j++)
+//            if (Math.abs(p[j]) < EPSILON && Math.abs(p[j + 1]) < EPSILON)
+//                break;
+//        return j;
+//    }
 
     private static double[] derivate(double[] funcValues) {
         int n = funcValues.length - 1;
