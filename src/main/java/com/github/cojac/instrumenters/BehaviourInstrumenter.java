@@ -280,26 +280,13 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
                 e.printStackTrace();
             }
         }
-        
     }
 
     @Override
     public void instrument(MethodVisitor mv, int opCode) { 
-       /* mv.visitLdcInsn(reaction.value());
-        mv.visitLdcInsn(logFileName);*/
-        
-       /* Arg arg = Arg.fromOpCode(opCode);
-        //System.out.println("instrument: "+opCode);
-        if (arg != null) {
-            stats.incrementCounterValue(opCode);// arg*/
-       // System.out.println("instrumenting opcode: "+opCode);
-        Arg arg = Arg.fromOpCode(opCode);
-        if (arg != null) {
+        if (Arg.fromOpCode(opCode) != null)
             stats.incrementCounterValue(opCode);// arg
-        }
-
         invocations.get(opCode).invokeStatic(mv);
-       // }
     }
     
     @Override
@@ -316,7 +303,6 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
     public boolean wantsToInstrumentMethod(int opcode,String owner, String name, String signature) {
         //System.out.println("Wants to instrument method: "+name+signature+" from "+owner+" "+methods.containsKey(owner+name+signature));
         return (opcode == Opcodes.INVOKESTATIC) && methods.containsKey(owner+name+signature);
-        
     }
 
     public void instrumentConstLoading(MethodVisitor mv, Class<?> cst){

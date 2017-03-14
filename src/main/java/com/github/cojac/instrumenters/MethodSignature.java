@@ -22,9 +22,9 @@ import java.util.Objects;
 
 public class MethodSignature {
     
-    String owner;
-    String name;
-    String desc;
+    final String owner;
+    final String name;
+    final String desc;
     
     public MethodSignature(String owner, String name, String desc) {
         this.owner = owner;

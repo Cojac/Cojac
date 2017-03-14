@@ -18,11 +18,9 @@
 
 package com.github.cojac.unit.behaviours;
 
-import java.lang.instrument.UnmodifiableClassException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.junit.*;
+import org.junit.Assert;
 
 import com.github.cojac.Agent;
 import com.github.cojac.Arg;

@@ -17,8 +17,6 @@
  */
 
 package com.github.cojac.unit;
-import java.util.ArrayList;
-import java.util.LinkedList;
 
 //TODO: a reasonable/coherent test example for FloatReplace
 

@@ -17,9 +17,16 @@
  */
 package com.github.cojac.models;
 
+import static com.github.cojac.models.Parameters.DOUBLE_UNARY_PARAMS;
+import static com.github.cojac.models.Parameters.FLOAT_BINARY_PARAMS;
+import static com.github.cojac.models.Parameters.INTEGER_BINARY_PARAMS;
+import static com.github.cojac.models.Parameters.LONG_BINARY_PARAMS;
+import static com.github.cojac.models.Signatures.DOUBLE_UNARY;
+import static com.github.cojac.models.Signatures.FLOAT_UNARY;
+import static com.github.cojac.models.Signatures.INTEGER_UNARY;
+import static com.github.cojac.models.Signatures.LONG_UNARY;
+
 import org.objectweb.asm.Opcodes;
-import static com.github.cojac.models.Signatures.*;
-import static com.github.cojac.models.Parameters.*;
 
 /**
  * Enumeration of the constant-transforming methods, with the type they are associed to. 
