@@ -3,7 +3,7 @@
 
 package demo;
 
-public class HelloSymbolic {
+public class HelloSymbolicExpressions {
     public static String COJAC_MAGIC_toString(double n) { return ""; }
 
     public static void main(String[] args) {

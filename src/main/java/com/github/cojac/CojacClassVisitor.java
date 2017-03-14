@@ -40,14 +40,15 @@ public class CojacClassVisitor extends ClassVisitor {
         this.cav = cav;
     }
 
- // NOT USED ANYMORE (replaced by the "behaviour" mechanism)
 
-//    @Override
-//    public void visit(int version, int access, String name, String signature, String supername, String[] interfaces) {
-//        crtClassName = name;
-//        super.visit(version, access, name, signature, supername, interfaces);
-//    }
-//
+    @Override
+    public void visit(int version, int access, String name, String signature, String supername, String[] interfaces) {
+        crtClassName = name;
+        super.visit(version, access, name, signature, supername, interfaces);
+    }
+
+// NOT USED ANYMORE (replaced by the "behaviour" mechanism)
+
 //    @Override
 //    public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
 //        //boolean isNative = (access & Opcodes.ACC_NATIVE) > 0;

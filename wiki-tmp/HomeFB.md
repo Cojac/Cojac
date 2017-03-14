@@ -19,22 +19,24 @@
   5. [Example](home#25---example)
   6. [JMX feature](home#26---jmx-feature)
   
-3. [COJAC: the enriching wrapper](home#3---cojac-the-enriching-wrapper)
+3. [COJAC: the numerical sniffer](home#3---cojac-the-arithmetic-behavior-toolkit)
 
-  1. [Our wrapping mechanism](home#31---our-wrapping-mechanism)
-  2. [Number model "BigDecimal"](home#32---number-model-bigdecimal)
-  3. [Number model "Interval computation"](home#33---number-model-interval-computation)
-  4. [Number model "Discrete stochastic arithmetic"](home#34---number-model-discrete-stochastic-arithmetic)
-  5. [Number model "Automatic differentiation"](home#35---number-model-automatic-differentiation)
+4. [COJAC: the enriching wrapper](home#4---cojac-the-enriching-wrapper)
 
-4. [Detailed usage](home#4---detailed-usage)
+  1. [Our wrapping mechanism](home#41---our-wrapping-mechanism)
+  2. [Number model "BigDecimal"](home#42---number-model-bigdecimal)
+  3. [Number model "Interval computation"](home#43---number-model-interval-computation)
+  4. [Number model "Discrete stochastic arithmetic"](home#44---number-model-discrete-stochastic-arithmetic)
+  5. [Number model "Automatic differentiation"](home#45---number-model-automatic-differentiation)
 
-5. [Limitations and known issues](home#5---limitations-and-known-issues)
+5. [Detailed usage](home#5---detailed-usage)
 
-  1. [Issues with the sniffer](home#51---issues-with-the-sniffer)
-  2. [Issues with the wrapper](home#52---issues-with-the-wrapper)
+6. [Limitations and known issues](home#6---limitations-and-known-issues)
 
-6. [And now...](home#6---and-now)
+  1. [Issues with the sniffer](home#61---issues-with-the-sniffer)
+  2. [Issues with the wrapper](home#62---issues-with-the-wrapper)
+
+7. [And now...](home#6---and-now)
 
 --------------------------------------------------
 # 1 - Introduction
@@ -51,7 +53,7 @@ following:
 - `C`hecking `O`verflows in `JA`va `C`ode
 
 ## 1.1 - Overview
-COJAC is in fact a two-fold tool: 
+COJAC is in fact a three-fold tool: 
 
 - a **_"numerical sniffer"_** that detects anomalies arising in arithmetic operations, 
 on both integers (eg overflow) and floating point numbers (eg 
@@ -60,14 +62,21 @@ involving annoying events that normally happen silently in the Java Virtual
 Machine. See [§2](home#2---cojac-the-numerical-sniffer). This tool is pretty 
 stable and efficient (but can't handle constant expressions evaluated at compile-time).
 
+- a collection of **_new arithmetic behaviors_** that mimic well-known tricks
+that help to increase the confidence against numerical instabilities. This includes: 
+computing as if every `double` was declared as a `float`, changing the 
+default rounding mode, or inverse the result of comparisons when the operands are
+very close together.
+
 - an **_"enriching wrapper"_** that automatically converts every float/double data 
 into richer number types, so that you can experiment, at a very low programming cost,
-and in a very elegant way, some
-beautiful models such as arbitrary precision numbers, interval computation,
-the marvelous automatic differentiation, even symbolic expressions and functions 
-or Chebfun. 
-See [§3](home#3---cojac-the-enriching-wrapper). This enriching wrapper is fun and a bit experimental (some
-[limitations](home#52---issues-with-the-wrapper) such as quite naive models implementation, 
+and in the most elegant way, some beautiful models such as arbitrary precision 
+numbers, interval computation, the marvelous automatic differentiation, even 
+symbolic expressions and functions or Chebfun. 
+See [§4](home#4---cojac-the-enriching-wrapper). This enriching wrapper is fun 
+and a bit experimental (some
+[limitations](home#62---issues-with-the-wrapper) such as quite naive models 
+implementation, 
 strong slowdown, poorly tested support for Java8 lambdas, problem when user-code 
 is "called back" from Java library...).
 
@@ -299,7 +308,10 @@ as jconsole. This can be great to watch long-term running applications or
 web services.
 
 --------------------------------------------------
-# 3 - COJAC: the enriching wrapper
+# 3 - COJAC: the arithmetic behavior toolkit
+
+--------------------------------------------------
+# 4 - COJAC: the enriching wrapper
 
 We have been working on the automatic replacement of the primitive types 
 float/double (as well as their "standard wrapper" counterpart Float/Double) by 
@@ -308,7 +320,7 @@ objects that realize richer number models.
 Now our poor old floating point numbers can be enriched in various ways, 
 that we only start to study. There are still limitations, but... yes we did it!
 
-## 3.1 - Our wrapping mechanism
+## 4.1 - Our wrapping mechanism
 
 Our wrapping mechanism... is automatic! Just tell us which number model you want to 
 activate, and there you go. Everywhere there are float/Float/double/Double data 
@@ -341,7 +353,7 @@ public static String COJAC_MAGIC_toString(double n); // internal representation
   
 ```
 
-## 3.2 - Number model "BigDecimal"
+## 4.2 - Number model "BigDecimal"
 
 Our first "enriched number" type provides arbitrary precision numbers, where
 the number of significant digits is specified at runtime. The implementation 
@@ -407,7 +419,7 @@ prompt> java -javaagent:cojac.jar="-Rb 2" HelloMrCojac
 3.3 3.3
 ```
 
-## 3.3 - Number model "Interval computation"
+## 4.3 - Number model "Interval computation"
 
 The traditional float/double types compute approximate results (due to possible 
 rounding), but they can give no information at all about how far we get from 
@@ -428,7 +440,7 @@ instance, we systematically round up/down instead of adjusting the
 rounding mode. Nevertheless, the strength and simplicity of the automatic wrapping 
 should not be underestimated.
 
-## 3.4 - Number model "Discrete stochastic arithmetic"
+## 4.4 - Number model "Discrete stochastic arithmetic"
 
 Interval computation is known to offer strong guarantees, but also to be overly 
 pessimistic in the estimation of the relative error (the interval is often far 
@@ -447,7 +459,7 @@ This wrapper is activated with the option `-Rs`.
 That wrapper offers the same magic methods as our interval computation model, 
 and is similar in its way of signaling high relative errors.
 
-## 3.5 - Number model "Automatic differentiation" ("forward" mode)
+## 4.5 - Number model "Automatic differentiation" ("forward" mode)
 
 *Automatic differentiation* is an awesome idea (never heard of it? You _should_ have 
 a look!). One reason the technique is not in widespread use lies in the fact that 
@@ -496,7 +508,7 @@ f'(x): 16.0
 
 As you can check, the results are those expected!
 
-## 3.6 - Number model "Automatic differentiation" ("backward" mode)
+## 4.6 - Number model "Automatic differentiation" ("backward" mode)
 
 Just to insist: Autodiff is an awesome idea. In the "backward mode" Autodiff 
 model, you perform your various computations, and then you tell one of the results 
@@ -529,7 +541,7 @@ public class AutodiffBackwardDemo {
 
 ```
 
-## 3.7 - Number model "Symbolic" expressions (and functions!)
+## 4.7 - Number model "Symbolic" expressions (and functions!)
 
 Symbolic computation is the jewel concept at the heart of brilliant environments 
 like Mathematica or WolframAlpha. Apparently, the way C or Java processes `float`
@@ -563,7 +575,7 @@ Normally in Java, the computation of `c` is applied numerically, and in this
 particular case there will be a tiny rounding error: 
 
 ```
-$ java demo.HelloSymbolic
+$ java demo.HelloSymbolicExpressions
 3.1000000000000005
 
 ```
@@ -571,295 +583,237 @@ $ java demo.HelloSymbolic
 Just activate the "Symbolic" wrapper to radically change the way the computation 
 is done: 
 
-------------------------------------------
--------
-# 4 - Detail
-
-
-usage
-
-
-Here is the full manpage-like description of COJAC, as produced by the help argument (`java -javaagent:cojac.jar=
-
-h"`
-: 
-
 ```
-usage: java -javaagent:cojac.jar="[OPTIONS]" YourApp [
-ppArgs]
-            (version 1.4 - 2015
-
-ct 21)
-
-Two nice tools to enrich Java arithmetic capabilities, on-
-he-fly:
-- Numerical Problem Sniffer: detects and signals arithmetic poisons like
-integer
-  overflows, smearing and catastrophic cancellation, NaN or infinite 
-esults.
-- Enriching Wrapper for float/double: wraps every double/float in richer o
-jects. 
-  Current models include BigDecimal (you choose the precision), interval comp
-tation,
-  discrete stochastic arithmetic, and even automatic differen
-iat
-on.
-```
-```
------------------ OPTIONS ---------
--------
- -Ca,--all                   Sniff everywhere (this is the default b
-havior)
- -Ccasts                     Sniff in casts
-opcodes
- -Cdoubles                   Sniff in doubles
-opcodes
- -Cfloats                    Sniff in floats
-opcodes
- -Cints                      Sniff in ints
-opcodes
- -Clongs                     Sniff in longs
-opcodes
- -Cmath                      Sniff in (Strict)Math.xyz()
-methods
- -Cn,--none                  Don't snif
- at all
- -Copcodes <arg>             Sniff in those (comma separated) opco
-es; eg:
-                             iadd,idiv,iinc,isub,imul,ineg,ladd,lsub,lmu
-,ldiv,l
-                             neg,dadd,dsub,dmul,ddiv,drem,dcmp,fadd,fsub
-fmul,fd
-                             iv,frem,fcmp,l2i,i2s,i2c,i2b,d2f,d2i,d2l
-f2i,f2l
- -h,--help                   Print the help of the program 
-nd exit
- -jmxenable                  Enable JMX
-feature
- -jmxhost <host>             Set remote JMX connection host (default: lo
-alhost)
- -jmxname <MBean-id>         Set remote MBean name (default
- COJAC)
- -jmxport <port>             Set remote JMX connection port (defaul
-: 5017)
- -R_noUnstableComparisons    Disable unstability checks in comparisons,
-for the
-                             Interval or Stochastic 
-rappers
- -R_unstableAt <epsilon>     Relative precision considered unsta
-le, for
-                             Interval/Stochastic wrappers (default 
-.00001)
- -Ra,--autodiff              Use automatic differentiation 
-rapping
- -Rb,--bigdecimal <digits>   Use BigDecimal wrapping with a certain p
-ecision
-                             (number of 
-igits).
-                             Example: -Rb 100 will w
-ap with
-                             100-significant-digit Big
-ecimals
- -Ri,--interval              Use interval computation 
-rapping
- -Rs,--stochastic            Use discrete stochastic arithmetic 
-rapping
- -Sc,--console               Signal problems with console messages t
- stderr
-                             (default signaling
-policy)
- -Sd,--detailed              Log the full stack trace (combined with -Cc
-or -Cl)
- -Se,--exception             Signal problems by throwing an ArithmeticE
-ception
- -Sk,--callback <meth>       Signal problems by calling a user-supplie
- method
-                             matching this si
-nature:
-                             ...public static void f(Str
-ng msg)
-                             (Give a fully qualified identifier in t
-e form:
-                             pkgA/myPkg/myClass/m
-Method)
- -Sl,--logfile <path>        Signal problems by writing to a l
-g file.
-                             Default filename is: COJAC_Rep
-rt.log.
- -v,--verbose                Display some interna
- traces
- -Xb,--bypass <prefixes>     Bypass classes starting with one of these 
-refixes
-                             (semi-colon separate
- list).
-                             Example: -Xb foo;
-ar.util
-                             will skip classes with name foo* or b
-r.util*
- -Xf,--filter                Report each problem only once per fau
-ty line
- -Xs,--summary               Print runtime st
-tistics
- -Xt,--stats                 Print instrumentation st
-
-istics
-
-------> https://github.com/Cojac/Cojac 
----
-
-- 
+$ java -javaagent:cojac.jar="-Rsy" demo.HelloSymbolicExpressions
+3.1
+MUL(SUB(3.1,0.1),DIV(3.1,SUB(3.1,0.1)))
 ```
 
-------------------------------------------
--------
-# 5 - Limitations and know
+You can see how the `double c` is indeed stored internally; it is only when 
+trying to output the result it that it gets evaluated, applying the simplification rule `F*(E/F)==E`
 
-issues
+We have walked a step further by introducing the concept of an "unknown". So it
+is also possible to define "symbolic functions" :
 
-This section discusses a couple of issues for the current version o
+```
 
-Cojac.
+public class HelloSymbolicFunctions {
+    public static String COJAC_MAGIC_toString(double n) { return ""; }
+    public static double COJAC_MAGIC_asSymbolicUnknown() { return 0; }
+    public static double COJAC_MAGIC_evaluateSymbolicAt(double fct, double x) { return 0; }
+    public static void main(String[] args) {
+        double x=COJAC_MAGIC_asSymbolicUnknown();
+        double a = 3.0, b = a + 1;
+        double c = b * (a / (a - x));
+        System.out.println(COJAC_MAGIC_toString(c));
+        System.out.println(COJAC_MAGIC_evaluateSymbolicAt(c, 5.0));
+        System.out.println(c);
+    }
+}
 
-## 5.1 - Issues with the
+```
 
-niffer
+Now `c` is no more a `double` value at all, it is an abstract function 
+`f(x)`. 
 
-The sniffer part of COJAC is rather stable. Here are some limi
+$ java -javaagent:cojac.jar="-Rsy" demo.HelloSymbolicExpressions
+MUL(ADD(3.0,1.0),DIV(3.0,SUB(3.0,x)))
+-6.0
+NaN
+```
 
-tions:
+Beside evaluating the function on a point, many advanced features could be added: 
+solving equations such as `f(x)=0`, computing an integral, etc. An elegant 
+bridge from standard Java code to Mathematica-like processing!
 
- * Of course a suspicious operation is not always the manifestation of a software defect. For instance, you can rely on integer overflows to compute a hash function, or maybe the cancellation phenomenon is not a problem because the floating point numbers you deal with do not suffer from impr
+## 4.8 - Number model "Chebfun"
 
-ision.
+The previous section just shows how our plain old `double` data are promoted
+to symbolic functions `f(x)`. It happens that mathematicians have invented 
+many ways to represent a real function. Instead of a direct formula, one can 
+also decide to represent it as a polynomial approximation. In this context, 
+Chebyshev polynomials are especially powerful, and Trefethen et al. have studied 
+the approach in breadth and depth to develop the Matlab package named *Chebfun*. 
 
- * That's inherent to the approach: compile-time expressions can't be pro
-essed: 
- don't complain that a "hello world" use c
-se like
-`System.out.println(3*Integer.MAX_VALUE);` does not log the o
-e
-flow!
+We have ported the idea within COJAC. 
+
+
+Again, our contribution is not on the detailed
+features set (improving that is a matter of rewriting in Java the numerical 
+recipes that Chebfun embeds in Matlab). The COJAC port is nevertheless a 
+breakthrough in that it shows how existing code that uses simple `double` 
+numbers can be leveraged to be manipulated in a completely new world where
+we have smart math weapons. All this by the magic of a runtime option!
+
+```
+public class HelloChebfun {
+    public static String COJAC_MAGIC_toString(double n) { return ""; }
+    public static double COJAC_MAGIC_asChebfun() { return 0.5; }
+    public static double COJAC_MAGIC_evaluateChebfunAt(double d, double x) { return 0; }
+    public static double COJAC_MAGIC_derivateChebfun(double d) { return d; }
+    
+    public static void main(String[] args) {
+        double x=COJAC_MAGIC_asChebfun(); // f(x)=x
+        double a = 3.0, b = a + 1;
+        double c = b * (a / (a - x));
+        System.out.println(COJAC_MAGIC_toString(c));
+        System.out.println(COJAC_MAGIC_evaluateChebfunAt(c, 0.5));
+        System.out.println(c);
+    }
+}
+
+$ java -javaagent:cojac.jar="-Rsy" demo.HelloSymbolicExpressions
+Chebfun(degree:32 (effective:19)), [6.0, 5.98, 5.94, ... 3.003, 3.0], 
+                              fft: [4.24, 1.45, 0.24 ... -4.4E-16]
+4.8
+NaN
+
+```
+
+--------------------------------------------------
+# 5 - Detailed usage
+
+
+Here is the full manpage-like description of COJAC, as produced by the help argument (`java -javaagent:cojac.jar="-h"`): 
+
+```
+usage: java -javaagent:cojac.jar="[OPTIONS]" YourApp [appArgs]
+            (version 1.4 - 2015 Oct 21)
+
+Two nice tools to enrich Java arithmetic capabilities, on-the-fly:
+- Numerical Problem Sniffer: detects and signals arithmetic poisons like integer
+  overflows, smearing and catastrophic cancellation, NaN or infinite results.
+- Enriching Wrapper for float/double: wraps every double/float in richer objects. 
+  Current models include BigDecimal (you choose the precision), interval computation,
+  discrete stochastic arithmetic, and even automatic differentiation.
+```
+```
+----------------- OPTIONS -----------------
+ -Ca,--all                   Sniff everywhere (this is the default behavior)
+ -Ccasts                     Sniff in casts opcodes
+ -Cdoubles                   Sniff in doubles opcodes
+ -Cfloats                    Sniff in floats opcodes
+ -Cints                      Sniff in ints opcodes
+ -Clongs                     Sniff in longs opcodes
+ -Cmath                      Sniff in (Strict)Math.xyz() methods
+ -Cn,--none                  Don't sniff at all
+ -Copcodes <arg>             Sniff in those (comma separated) opcodes; eg:
+                             iadd,idiv,iinc,isub,imul,ineg,ladd,lsub,lmul,ldiv,l
+                             neg,dadd,dsub,dmul,ddiv,drem,dcmp,fadd,fsub,fmul,fd
+                             iv,frem,fcmp,l2i,i2s,i2c,i2b,d2f,d2i,d2l,f2i,f2l
+ -h,--help                   Print the help of the program and exit
+ -jmxenable                  Enable JMX feature
+ -jmxhost <host>             Set remote JMX connection host (default: localhost)
+ -jmxname <MBean-id>         Set remote MBean name (default: COJAC)
+ -jmxport <port>             Set remote JMX connection port (default: 5017)
+ -R_noUnstableComparisons    Disable unstability checks in comparisons, for the
+                             Interval or Stochastic wrappers
+ -R_unstableAt <epsilon>     Relative precision considered unstable, for
+                             Interval/Stochastic wrappers (default 0.00001)
+ -Ra,--autodiff              Use automatic differentiation wrapping
+ -Rb,--bigdecimal <digits>   Use BigDecimal wrapping with a certain precision
+                             (number of digits).
+                             Example: -Rb 100 will wrap with
+                             100-significant-digit BigDecimals
+ -Ri,--interval              Use interval computation wrapping
+ -Rs,--stochastic            Use discrete stochastic arithmetic wrapping
+ -Sc,--console               Signal problems with console messages to stderr
+                             (default signaling policy)
+ -Sd,--detailed              Log the full stack trace (combined with -Cc or -Cl)
+ -Se,--exception             Signal problems by throwing an ArithmeticException
+ -Sk,--callback <meth>       Signal problems by calling a user-supplied method
+                             matching this signature:
+                             ...public static void f(String msg)
+                             (Give a fully qualified identifier in the form:
+                             pkgA/myPkg/myClass/myMethod)
+ -Sl,--logfile <path>        Signal problems by writing to a log file.
+                             Default filename is: COJAC_Report.log.
+ -v,--verbose                Display some internal traces
+ -Xb,--bypass <prefixes>     Bypass classes starting with one of these prefixes
+                             (semi-colon separated list).
+                             Example: -Xb foo;bar.util
+                             will skip classes with name foo* or bar.util*
+ -Xf,--filter                Report each problem only once per faulty line
+ -Xs,--summary               Print runtime statistics
+ -Xt,--stats                 Print instrumentation statistics
+
+------> https://github.com/Cojac/Cojac <------ 
+```
+
+--------------------------------------------------
+# 6 - Limitations and known issues
+
+This section discusses a couple of issues for the current version of Cojac.
+
+## 6.1 - Issues with the sniffer
+
+The sniffer part of COJAC is rather stable. Here are some limitations:
+
+ * Of course a suspicious operation is not always the manifestation of a software defect. For instance, you can rely on integer overflows to compute a hash function, or maybe the cancellation phenomenon is not a problem because the floating point numbers you deal with do not suffer from imprecision.
+
+ * That's inherent to the approach: compile-time expressions can't be processed: 
+ don't complain that a "hello world" use case like
+`System.out.println(3*Integer.MAX_VALUE);` does not log the overflow!
  
- * The tool targets the JVM only. We focus on Java, but it might be inte
-esting 
- to try it on other JVM-equipped languages (Scala, Jython...). By the 
-ay, if 
- you dream of a numerical sniffer not limited to the Java world, have a 
-ook at 
- [cojac-grind](https://github.com/Cojac/cojac-g
+ * The tool targets the JVM only. We focus on Java, but it might be interesting 
+ to try it on other JVM-equipped languages (Scala, Jython...). By the way, if 
+ you dream of a numerical sniffer not limited to the Java world, have a look at 
+ [cojac-grind](https://github.com/Cojac/cojac-grind)...
 
-nd)...
+## 6.2 - Issues with the wrapper
 
-## 5.2 - Issues with the
+The wrapper part of COJAC should be considered an experimental prototype. Here 
+are some limitations:
 
-rapper
+* The frontier between "user code" and "java library" has some serious defects, eg 
+when arrays of numbers are involved.
 
-The wrapper part of COJAC should be considered an experimental prototyp
-. Here 
-are some limi
+* We don't handle the "callbacks" from java library to user code when floating 
+point numbers are being passed around.
 
-tions:
+* We have tried to handle `invokedynamic` (at least how Java8 compilers 
+use it), but it has not been thoroughly  tested yet, so we expect some problems 
+with Java8 lambdas (Cojac 1.4.1 has fixed some problems).
 
-* The frontier between "user code" and "java library" has some serious defe
-ts, eg 
-when arrays of numbers are i
+* In case of `class A extends J` where `J` is from the java library, and
+offers a method `f()` (with floating point parameters/result) that `A` does
+not redefine : suppose the declaration `A a`, then the call `a.f(...)` fails,
+whereas `((J)a).f(...)` is OK. This should be fixed in Cojac 1.4.1.
 
-olved.
+* We don't handle the possible use of Java reflection (in case of method 
+invocations via reflection, we don't apply the necessary transformations). 
 
-* We don't handle the "callbacks" from java library to user code when f
-oating 
-point numbers are being passed
+* The decision of converting both the primitive types float/double and their
+original wrapper Float/Double brings several problems, eg signature conflicts, or 
+comparison (compareTo/equals) misbehavior.
 
-round.
+* The implementation of the models is really naive. For instance, we do not compute
+every Math.* operations with the required precision in the BigDecimal model.
 
-* We have tried to handle `invokedynamic` (at least how Java8 co
-pilers 
-use it), but it has not been thoroughly  tested yet, so we expect some p
-oblems 
-with Java8 lambdas (Cojac 1.4.1 has fixed some pr
+* Of course, the slow-down is very important.
 
-lems).
+--------------------------------------------------
+# 7 - And now...
 
-* In case of `class A extends J` where `J` is from the java libr
-ry, and
-offers a method `f()` (with floating point parameters/result) that 
-A` does
-not redefine : suppose the declaration `A a`, then the call `a.f(...)
- fails,
-whereas `((J)a).f(...)` is OK. This should be fixed in Coja
+...well, happy problem sniffing, and happy number wrapping!  
 
-1.4.1.
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>  ...please give us feedback :smiley: via an issue on github, or `the.google.tool@gmail.com`.
 
-* We don't handle the possible use of Java reflection (in case of
-method 
-invocations via reflection, we don't apply the necessary transforma
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>  The COJAC Team. 
 
-ons). 
+--------------------------------------------------
+### Acknowledgements 
 
-* The decision of converting both the primitive types float/double a
-d their
-original wrapper Float/Double brings several problems, eg signature confli
-ts, or 
-comparison (compareTo/equals) misb
+Several Computer Science students from [HEIA-FR](https://www.heia-fr.ch) 
+have been involved in some way in the COJAC project: 
 
-avior.
-
-* The implementation of the models is really naive. For instance, we do not
-compute
-every Math.* operations with the required precision in the BigDecima
-
-model.
-
-* Of course, the slow-down is very im
-
-rtant.
-
-------------------------------------------
--------
-# 6 - An
-
-now...
-
-...well, happy problem sniffing, and happy number wra
-
-ing!  
-
-<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>  ...please give us feedback :smiley: via an issue on github, or `the.google.tool@gma
-
-.com`.
-
-<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt>  The COJA
-
-Team. 
-
-------------------------------------------
--------
-### Acknowled
-
-ments 
-
-Several Computer Science students from [HEIA-FR](https://www.heia
-fr.ch) 
-have been involved in some way in the COJAC p
-
-ject: 
-
-- Ruggiero Botteon and Diego Cavadini (for the very first pre-pr
-totype)
-- Baptiste Wicht (the major contributor, strong refactoring, testing - many 
-hanks!)
-- Maxime Reymond (for an Eclipse Plugin, now (temporarily?) disco
-tinued)
-- Vincent Pasquier (for switching to the "Java agent" tec
-nology)
-- Luis Domingues (for improving the Valgrind cousin Coja
--grind)
-- Romain Monnard (without whom the "wrapping" would still be an unimplemented dream - many 
-hanks!)
-- Sylvain Julmy (for populating 3 "rich number
- types)
-- Lucy Linder (for improving the whole, preparing the release on GitHub, design the first two videos, and much more - many 
-thanks!)
-- Valentin Gazzola (for adding new ways to modify the artithmetic behavior, including changing the rounding mode and forcing double to act like
-floats)
-- Rémi Badoud (for adding a mode where we rebuild genuine symbolic expressions that we can symbolically simplify, and abstract functions that can be stored either symbolically or like Matlab's Chebfun; and also for adding a Delta-Debugging infrastructure t
+- Ruggiero Botteon and Diego Cavadini (for the very first pre-prototype)
+- Baptiste Wicht (the major contributor, strong refactoring, testing - many thanks!)
+- Maxime Reymond (for an Eclipse Plugin, now (temporarily?) discontinued)
+- Vincent Pasquier (for switching to the "Java agent" technology)
+- Luis Domingues (for improving the Valgrind cousin Cojac-grind)
+- Romain Monnard (without whom the "wrapping" would still be an unimplemented dream - many thanks!)
+- Sylvain Julmy (for populating 3 "rich number" types)
+- Lucy Linder (for improving the whole, preparing the release on GitHub, design the first two videos, and much more - many thanks!)
+- Valentin Gazzola (for adding new ways to modify the artithmetic behavior, including changing the rounding mode and forcing double to act like floats)
+- Rémi Badoud (for adding a mode where we rebuild genuine symbolic expressions that we can symbolically simplify, and abstract functions that can be stored either symbolically or like Matlab's Chebfun; and also for adding a Delta-Debugging infrastructure to COJAC)
