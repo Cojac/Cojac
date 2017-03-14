@@ -45,17 +45,17 @@ public class SymbolicDemo {
         return "";
     }
 
-    public static double COJAC_MAGIC_asSymbolicUnknown() {
+    public static double COJAC_MAGIC_identityFct() {
         return 0.0;
     }
 
-    public static double COJAC_MAGIC_evaluateSymbolicAt(double d, double x) {
+    public static double COJAC_MAGIC_evaluateAt(double d, double x) {
         return d;
     }
 
     public static void COJAC_MAGIC_setSymbolicEvaluationMode(boolean smartMode) {}
 
-    public static double COJAC_MAGIC_derivateSymbolic(double d) {
+    public static double COJAC_MAGIC_derivative(double d) {
         return d;
     }
 
@@ -92,7 +92,7 @@ public class SymbolicDemo {
 
         int nbrError = 0;
 
-        double x = COJAC_MAGIC_asSymbolicUnknown();
+        double x = COJAC_MAGIC_identityFct();
         Double y = someFunction(x, 3, 4);
 
         if (y > 2) {
@@ -217,20 +217,20 @@ public class SymbolicDemo {
         }
 
         System.out.printf("Function %d\n", fx);
-        double unknwon = COJAC_MAGIC_asSymbolicUnknown();
+        double unknwon = COJAC_MAGIC_identityFct();
         double function = (double) f.invoke(SymbolicDemo.class, unknwon);
-        double derivative = COJAC_MAGIC_derivateSymbolic(function);
+        double derivative = COJAC_MAGIC_derivative(function);
 
         double funcStdEval = (double) f.invoke(SymbolicDemo.class, x);
-        double funcSymbEval = COJAC_MAGIC_evaluateSymbolicAt(function, x);
+        double funcSymbEval = COJAC_MAGIC_evaluateAt(function, x);
         COJAC_MAGIC_setSymbolicEvaluationMode(false);
-        double funcNaiveEval = COJAC_MAGIC_evaluateSymbolicAt(function, x);
+        double funcNaiveEval = COJAC_MAGIC_evaluateAt(function, x);
         COJAC_MAGIC_setSymbolicEvaluationMode(true);
 
         double derStdEval = (double) df.invoke(SymbolicDemo.class, x);
-        double derSymbEval = COJAC_MAGIC_evaluateSymbolicAt(derivative, x);
+        double derSymbEval = COJAC_MAGIC_evaluateAt(derivative, x);
         COJAC_MAGIC_setSymbolicEvaluationMode(false);
-        double derNaiveEval = COJAC_MAGIC_evaluateSymbolicAt(derivative, x);
+        double derNaiveEval = COJAC_MAGIC_evaluateAt(derivative, x);
         COJAC_MAGIC_setSymbolicEvaluationMode(true);
 
         System.out.printf("f%d(x) = %s \n", fx, COJAC_MAGIC_toString(function));

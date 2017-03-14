@@ -235,18 +235,18 @@ public class WrapperSymbolic extends ACojacWrapper {
         return asSymbWrapper(d.val).expr.containsUnknown;
     }
 
-    public static CommonDouble COJAC_MAGIC_asSymbolicUnknown() {
+    public static CommonDouble COJAC_MAGIC_identityFct() {
         WrapperSymbolic res = new WrapperSymbolic();
         return new CommonDouble(res);
     }
 
-    public static CommonDouble COJAC_MAGIC_evaluateSymbolicAt(CommonDouble d, CommonDouble x) {
+    public static CommonDouble COJAC_MAGIC_evaluateAt(CommonDouble d, CommonDouble x) {
         double result = asSymbWrapper(d.val).expr.evaluate(asSymbWrapper(x.val).expr.evaluate());
         WrapperSymbolic res = new WrapperSymbolic(result);
         return new CommonDouble(res);
     }
 
-    public static CommonDouble COJAC_MAGIC_derivateSymbolic(CommonDouble d) {
+    public static CommonDouble COJAC_MAGIC_derivative(CommonDouble d) {
         WrapperSymbolic res = new WrapperSymbolic(asSymbWrapper(d.val).expr.derivate());
         return new CommonDouble(res);
     }

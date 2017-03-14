@@ -18,15 +18,15 @@ public class RumpPolynomialAndChebfun {
         return false;
     }
 
-    public static double COJAC_MAGIC_asChebfun() {
+    public static double COJAC_MAGIC_identityFct() {
         return Double.NaN;
     }
 
-    public static double COJAC_MAGIC_evaluateChebfunAt(double d, double x) {
+    public static double COJAC_MAGIC_evaluateAt(double d, double x) {
         return d;
     }
 
-    public static double COJAC_MAGIC_derivateChebfun(double d) {
+    public static double COJAC_MAGIC_derivative(double d) {
         return d;
     }
     
@@ -55,19 +55,19 @@ public class RumpPolynomialAndChebfun {
     private static void compute(double x, double y) {
         double r=rumpPolynomial(x, y);
         System.out.println("direct eval:   f("+x+" , "+y+") = " + r);
-        double xx=COJAC_MAGIC_asChebfun();
+        double xx=COJAC_MAGIC_identityFct();
         r=rumpPolynomial(xx, y);
         System.out.println("as Chebfun(x): f("+x+" , "+y+") = " + COJAC_MAGIC_toString(r));
-        r=COJAC_MAGIC_evaluateChebfunAt(r, x);
+        r=COJAC_MAGIC_evaluateAt(r, x);
         System.out.println("     it gives: f("+x+" , "+y+") = " + r);
-//        double yy=COJAC_MAGIC_asChebfun(dummy);
+//        double yy=COJAC_MAGIC_identityFct(dummy);
 //        r=rumpPolynomial(x, yy);
-//        r=COJAC_MAGIC_evaluateChebfunAt(r, y);
+//        r=COJAC_MAGIC_evaluateAt(r, y);
 //        System.out.println("as Chebfun(y): f("+x+" , "+y+") = " + r);
     }
     
     public static void main0(String[] args) {
-        double x=COJAC_MAGIC_asChebfun();
+        double x=COJAC_MAGIC_identityFct();
         double r=5*x;
         System.out.println(COJAC_MAGIC_toString(r));
     }

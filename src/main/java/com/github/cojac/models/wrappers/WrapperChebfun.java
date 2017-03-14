@@ -209,12 +209,12 @@ public class WrapperChebfun extends ACompactWrapper {
         return asCheb(d.val).isChebfun();
     }
 
-    public static CommonDouble COJAC_MAGIC_asChebfun() {
+    public static CommonDouble COJAC_MAGIC_identityFct() {
         WrapperChebfun res = new WrapperChebfun(Double.NaN, initChebun(BASE_DEGREE));
         return new CommonDouble(res);
     }
 
-    public static CommonDouble COJAC_MAGIC_evaluateChebfunAt(CommonDouble d, CommonDouble x) {
+    public static CommonDouble COJAC_MAGIC_evaluateAt(CommonDouble d, CommonDouble x) {
         WrapperChebfun dd = asCheb(d.val);
         WrapperChebfun xx = asCheb(x.val);
         if (!dd.isChebfun()) {
@@ -231,7 +231,7 @@ public class WrapperChebfun extends ACompactWrapper {
         return new CommonDouble(res);
     }
 
-    public static CommonDouble COJAC_MAGIC_derivateChebfun(CommonDouble d) {
+    public static CommonDouble COJAC_MAGIC_derivative(CommonDouble d) {
         if (!asCheb(d.val).isChebfun()) {
             pkgLogger().log(Level.WARNING, "Only Chefuns can be derivate");
             WrapperChebfun res = new WrapperChebfun(Double.NaN, null);

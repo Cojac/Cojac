@@ -48,15 +48,15 @@ public class ChebfunDemo {
         return false;
     }
 
-    public static double COJAC_MAGIC_asChebfun() {
+    public static double COJAC_MAGIC_identityFct() {
         return 0;
     }
 
-    public static double COJAC_MAGIC_evaluateChebfunAt(double d, double x) {
+    public static double COJAC_MAGIC_evaluateAt(double d, double x) {
         return d;
     }
 
-    public static double COJAC_MAGIC_derivateChebfun(double d) {
+    public static double COJAC_MAGIC_derivative(double d) {
         return d;
     }
 
@@ -93,7 +93,7 @@ public class ChebfunDemo {
 
         int nbrError = 0;
 
-        double x = COJAC_MAGIC_asChebfun();
+        double x = COJAC_MAGIC_identityFct();
         Double y = someFunction(x, 3, 4);
 
         if (y > 2) {
@@ -218,15 +218,15 @@ public class ChebfunDemo {
         }
 
         System.out.printf("Function %d\n", fx);
-        double unknwon = COJAC_MAGIC_asChebfun();
+        double unknwon = COJAC_MAGIC_identityFct();
         double function = (double) f.invoke(ChebfunDemo.class, unknwon);
-        double derivative = COJAC_MAGIC_derivateChebfun(function);
+        double derivative = COJAC_MAGIC_derivative(function);
 
         double funcStdEval = (double) f.invoke(ChebfunDemo.class, x);
-        double funcSymbEval = COJAC_MAGIC_evaluateChebfunAt(function, x);
+        double funcSymbEval = COJAC_MAGIC_evaluateAt(function, x);
 
         double derStdEval = (double) df.invoke(ChebfunDemo.class, x);
-        double derSymbEval = COJAC_MAGIC_evaluateChebfunAt(derivative, x);
+        double derSymbEval = COJAC_MAGIC_evaluateAt(derivative, x);
 
         System.out.printf("f%d(%s) = %s Standard Eval\n", fx, x, funcStdEval);
         System.out.printf("f%d(%s) = %s Chebfun Eval\n", fx, x, funcSymbEval);

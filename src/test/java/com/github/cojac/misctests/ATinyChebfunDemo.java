@@ -8,15 +8,15 @@ public class ATinyChebfunDemo {
         return "";
     }
 
-    public static double COJAC_MAGIC_asChebfun() {
+    public static double COJAC_MAGIC_identityFct() {
         return 0.0;
     }
 
-    public static double COJAC_MAGIC_evaluateChebfunAt(double d, double x) {
+    public static double COJAC_MAGIC_evaluateAt(double d, double x) {
         return d;
     }
 
-    public static double COJAC_MAGIC_derivateChebfun(double d) {
+    public static double COJAC_MAGIC_derivative(double d) {
         return d;
     }
 
@@ -51,31 +51,31 @@ public class ATinyChebfunDemo {
 
     public static void main(String[] args) {
 
-        double x = COJAC_MAGIC_asChebfun(); // define a function x=x
+        double x = COJAC_MAGIC_identityFct(); // define a function x=x
 
         double f = myFunction(x);
-        double resf = COJAC_MAGIC_evaluateChebfunAt(f, 0.5);
+        double resf = COJAC_MAGIC_evaluateAt(f, 0.5);
         System.out.println("f(0.5)  = " + resf + "   (" + myFunction(0.5) + ")");
 
-        double df = COJAC_MAGIC_derivateChebfun(f);
-        double resdf = COJAC_MAGIC_evaluateChebfunAt(df, 0.5);
+        double df = COJAC_MAGIC_derivative(f);
+        double resdf = COJAC_MAGIC_evaluateAt(df, 0.5);
         System.out.println("f'(0.5) = " + resdf + "  (" + myDerivative(0.5) +  ")");
 
         double cf = myComplexFunction(x);
-        double rescf = COJAC_MAGIC_evaluateChebfunAt(cf, 0.5);
+        double rescf = COJAC_MAGIC_evaluateAt(cf, 0.5);
         System.out.println("g(0.5)  = " + rescf + "  (" + myComplexFunction(0.5) + ")");
 
         // Caution: this has a global effect, and as a side effect, the above
         // "Chebfun" numbers are no more valid!
         COJAC_MAGIC_setChebfunDomain(-10.0, 20.0);
-        f=myFunction(COJAC_MAGIC_asChebfun());
-        df = COJAC_MAGIC_derivateChebfun(f);
+        f=myFunction(COJAC_MAGIC_identityFct());
+        df = COJAC_MAGIC_derivative(f);
         for(double z:new double[]{-9, -1, 0.25, 0.5, 1, 2, 5, 10}) {
-            System.out.println("f("+z+")  = " + COJAC_MAGIC_evaluateChebfunAt(f, z) + "  (" + myFunction(z) +  ")");
-            System.out.println("f'("+z+") = " + COJAC_MAGIC_evaluateChebfunAt(df, z) + "  (" + myDerivative(z) +  ")");
+            System.out.println("f("+z+")  = " + COJAC_MAGIC_evaluateAt(f, z) + "  (" + myFunction(z) +  ")");
+            System.out.println("f'("+z+") = " + COJAC_MAGIC_evaluateAt(df, z) + "  (" + myDerivative(z) +  ")");
         }
         // //
-        // // System.out.printf("f(x) = %s \n",COJAC_MAGIC_evaluateChebfunAt(df,
+        // // System.out.printf("f(x) = %s \n",COJAC_MAGIC_evaluateAt(df,
         // // 0.5));
         // // System.out.printf("f(x) = %s \n",Math.cos(0.5));
 
@@ -91,37 +91,37 @@ public class ATinyChebfunDemo {
         //
         // //
         // //
-        // // double df= COJAC_MAGIC_derivateChebfun(f); // compute the
+        // // double df= COJAC_MAGIC_derivative(f); // compute the
         // derivative
         // // of f
         // // System.out.printf("f(x) = %s s\n",s);
         // // System.out.printf("f(x) = %s s\n",f);
-        // System.out.printf("f(x) = %s s\n", COJAC_MAGIC_evaluateChebfunAt(s,
+        // System.out.printf("f(x) = %s s\n", COJAC_MAGIC_evaluateAt(s,
         // -0.00706789258810));
         // System.out.printf("f(x) = %s s\n", r);
         // // System.out.printf("f(x) = %s should be (%s) \n",
-        // // COJAC_MAGIC_evaluateChebfunAt(f, 0.5123), Math.sin(2*0.5123));
+        // // COJAC_MAGIC_evaluateAt(f, 0.5123), Math.sin(2*0.5123));
         // // System.out.printf("f'(x) = %s should be (%s) \n",
-        // // COJAC_MAGIC_evaluateChebfunAt(df, 0.5123),2*Math.cos(2*0.5123));
+        // // COJAC_MAGIC_evaluateAt(df, 0.5123),2*Math.cos(2*0.5123));
         // System.out.println(COJAC_MAGIC_toString(s));
 
     }
 
     // public static void main(String[] args) {
     //
-    // double x = COJAC_MAGIC_asChebfun(0.0); // define a function x=x
+    // double x = COJAC_MAGIC_identityFct(0.0); // define a function x=x
     // double a = 20.0;
     // a*=a;
     // System.out.printf("f(x) = %s s\n", a);
     //
     //
     // // double f = Math.sin(x); // apply operations on x
-    //// double df =COJAC_MAGIC_derivateChebfun(f);
-    //// df =COJAC_MAGIC_derivateChebfun(df);
-    //// df =COJAC_MAGIC_derivateChebfun(df);
+    //// double df =COJAC_MAGIC_derivative(f);
+    //// df =COJAC_MAGIC_derivative(df);
+    //// df =COJAC_MAGIC_derivative(df);
     //
     ////
-    //// System.out.printf("f(x) = %s \n",COJAC_MAGIC_evaluateChebfunAt(df,
+    //// System.out.printf("f(x) = %s \n",COJAC_MAGIC_evaluateAt(df,
     // 0.5));
     //// System.out.printf("f(x) = %s \n",Math.cos(0.5));
     // double f = Math.sin(Math.PI*x);
@@ -145,17 +145,17 @@ public class ATinyChebfunDemo {
     //
     ////
     ////
-    //// double df= COJAC_MAGIC_derivateChebfun(f); // compute the derivative of
+    //// double df= COJAC_MAGIC_derivative(f); // compute the derivative of
     // f
     //// System.out.printf("f(x) = %s s\n",s);
     //// System.out.printf("f(x) = %s s\n",f);
-    // System.out.printf("f(x) = %s s\n", COJAC_MAGIC_evaluateChebfunAt(s,
+    // System.out.printf("f(x) = %s s\n", COJAC_MAGIC_evaluateAt(s,
     // -0.00706789258810));
     // System.out.printf("f(x) = %s s\n", r);
     //// System.out.printf("f(x) = %s should be (%s) \n",
-    // COJAC_MAGIC_evaluateChebfunAt(f, 0.5123), Math.sin(2*0.5123));
+    // COJAC_MAGIC_evaluateAt(f, 0.5123), Math.sin(2*0.5123));
     //// System.out.printf("f'(x) = %s should be (%s) \n",
-    // COJAC_MAGIC_evaluateChebfunAt(df, 0.5123),2*Math.cos(2*0.5123));
+    // COJAC_MAGIC_evaluateAt(df, 0.5123),2*Math.cos(2*0.5123));
     // System.out.println(COJAC_MAGIC_toString(s));
     //
     // }
