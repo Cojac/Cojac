@@ -6,37 +6,37 @@
 
 1. [Introduction](home#1---introduction)
 
-  1. [Overview](home#11---overview)
-  2. [Launching an application with COJAC](home#12---launching-an-application-with-cojac)
-  3. [Links and notes](home#13---links-and-notes)
+    1. [Overview](home#11---overview)
+    2. [Launching an application with COJAC](home#12---launching-an-application-with-cojac)
+    3. [Links and notes](home#13---links-and-notes)
   
 2. [COJAC: the numerical sniffer](home#2---cojac-the-numerical-sniffer)
   
-  1. [What COJAC considers suspicious](home#21---what-cojac-considers-suspicious)
-  2. [Configuring what COJAC will detect](home#22---configuring-what-cojac-will-detect)
-  3. [Configuring how COJAC will signal the detected problems](home#23---configuring-how-cojac-will-signal-the-detected-problems)
-  4. [Instrumenting without executing](home#24---instrumenting-without-executing)
-  5. [Example](home#25---example)
-  6. [JMX feature](home#26---jmx-feature)
+-  1. [What COJAC considers suspicious](home#21---what-cojac-considers-suspicious)
+-  2. [Configuring what COJAC will detect](home#22---configuring-what-cojac-will-detect)
+-  3. [Configuring how COJAC will signal the detected problems](home#23---configuring-how-cojac-will-signal-the-detected-problems)
+-  4. [Instrumenting without executing](home#24---instrumenting-without-executing)
+-  5. [Example](home#25---example)
+-  6. [JMX feature](home#26---jmx-feature)
   
 3. [COJAC: the numerical sniffer](home#3---cojac-the-arithmetic-behavior-toolkit)
 
 4. [COJAC: the enriching wrapper](home#4---cojac-the-enriching-wrapper)
 
-  1. [Our wrapping mechanism](home#41---our-wrapping-mechanism)
-  2. [Number model "BigDecimal"](home#42---number-model-bigdecimal)
-  3. [Number model "Interval computation"](home#43---number-model-interval-computation)
-  4. [Number model "Discrete stochastic arithmetic"](home#44---number-model-discrete-stochastic-arithmetic)
-  5. [Number model "Automatic differentiation"](home#45---number-model-automatic-differentiation)
+-  1. [Our wrapping mechanism](home#41---our-wrapping-mechanism)
+-  2. [Number model "BigDecimal"](home#42---number-model-bigdecimal)
+-  3. [Number model "Interval computation"](home#43---number-model-interval-computation)
+-  4. [Number model "Discrete stochastic arithmetic"](home#44---number-model-discrete-stochastic-arithmetic)
+-  5. [Number model "Automatic differentiation"](home#45---number-model-automatic-differentiation)
 
 5. [Detailed usage](home#5---detailed-usage)
 
 6. [Limitations and known issues](home#6---limitations-and-known-issues)
 
-  1. [Issues with the sniffer](home#61---issues-with-the-sniffer)
-  2. [Issues with the wrapper](home#62---issues-with-the-wrapper)
+-  1. [Issues with the sniffer](home#61---issues-with-the-sniffer)
+-  2. [Issues with the wrapper](home#62---issues-with-the-wrapper)
 
-7. [And now...](home#6---and-now)
+7. [And now...](home#7---and-now)
 
 --------------------------------------------------
 # 1 - Introduction
@@ -617,6 +617,7 @@ public class HelloSymbolicFunctions {
 Now `c` is no more a `double` value at all, it is an abstract function 
 `f(x)`. 
 
+```
 $ java -javaagent:cojac.jar="-Rsy" demo.HelloSymbolicExpressions
 MUL(ADD(3.0,1.0),DIV(3.0,SUB(3.0,x)))
 -6.0
