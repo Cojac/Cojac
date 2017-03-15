@@ -157,7 +157,7 @@ public class SymbolicExpression {
     }
 
 
-    // Retourne la réprésentation de l'arbre sous la forme préfixe
+    // Retourne la représentation de l'arbre sous la forme préfixe
     public String toString() {
         if (containsUnknown && oper == OP.NOP)
             return "x";

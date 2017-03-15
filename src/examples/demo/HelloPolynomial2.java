@@ -22,21 +22,21 @@ public class HelloPolynomial2 {
                 + x/(2.0*y);
     }
 
-    public static double COJAC_MAGIC_getDerivation(double a)      { return 0; }
-    public static double COJAC_MAGIC_asDerivationTarget(double a) { return a; }
+    public static double COJAC_MAGIC_derivative(double a) { return 0; }
+    public static double asDerivativeVar(double a) { return a; }
 
     public static void main(String[] args) {
         double r, x, y;
         x=2.0; y=3.0;
-        x=COJAC_MAGIC_asDerivationTarget(x);
+        x=asDerivativeVar(x);
         r=somePolynomial(x, y);
         System.out.println("f (x,y): "+r);
-        System.out.println("f'(x,y): "+COJAC_MAGIC_getDerivation(r));
+        System.out.println("f'(x,y): "+COJAC_MAGIC_derivative(r));
         
         x=2.0; y=3.0;
-        y=COJAC_MAGIC_asDerivationTarget(y);
+        y=asDerivativeVar(y);
         r=somePolynomial(x, y);
         System.out.println("f (x,y): "+r);
-        System.out.println("f'(x,y): "+COJAC_MAGIC_getDerivation(r));
+        System.out.println("f'(x,y): "+COJAC_MAGIC_derivative(r));
     }
 }
