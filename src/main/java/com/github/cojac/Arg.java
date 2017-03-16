@@ -72,19 +72,19 @@ public enum Arg {
     /*V.Gazzola*/
     
     DOUBLE2FLOAT("BD2F"),
-    CHECKB("BC"),
     ROUND_BIASED_UP("Rbu"),
     ROUND_BIASED_DOWN("Rbd"),
     ROUND_BIASED_RANDOM("Rbr"),
-    ARBITRARY_PRECISION("Ap"),
-    DOUBLE_INTERVAL("Di"),
-
-    INSTRUMENT_SELECTIVELY("Oi"),
-    LISTING_INSTRUCTIONS("Li"), // -Li path/to/file (badoud)
-    LOAD_BEHAVIOUR_MAP("Lbm"),
     ROUND_NATIVELY_UP("Rnu"),
     ROUND_NATIVELY_DOWN("Rnd"),
     ROUND_NATIVELY_TO_ZERO("Rnz"),
+    ARBITRARY_PRECISION("Ap"),
+    DOUBLE_INTERVAL("Di"),
+    CMPFUZZER("Fuz"),
+    INSTRUMENT_SELECTIVELY("Oi"),  // TODO: reconsider removing this feature (selective instr)
+    
+    LISTING_INSTRUCTIONS("Li"), // -Li path/to/file (badoud)
+    LOAD_BEHAVIOUR_MAP("Lbm"),
     // Those below are used internally, but no more appear in the usage.
     IADD("iadd", Opcodes.IADD, INTS),
     IDIV("idiv", Opcodes.IDIV, INTS),
@@ -332,10 +332,8 @@ public enum Arg {
         options.addOption(Arg.FLOATS.shortOpt(),
             false, "Sniff in floats opcodes");
         /*V.Gazzola*/
-        options.addOption(Arg.DOUBLE2FLOAT.shortOpt(),
+        options.addOption(Arg.DOUBLE2FLOAT.shortOpt(),"double-as-floats", 
                 false, "Cast Doubles into Floats");
-        options.addOption(Arg.CHECKB.shortOpt(),
-                false, "Sniff Numerical problems");
         options.addOption(Arg.ROUND_BIASED_UP.shortOpt(),
                 false, "\"Round\" (Biased) up");
         options.addOption(Arg.ROUND_BIASED_DOWN.shortOpt(),
@@ -350,6 +348,8 @@ public enum Arg {
                 false, "Change the CPU's rounding mode toward minus infinity");
         options.addOption(Arg.ROUND_NATIVELY_TO_ZERO.shortOpt(),
                 false, "Change the CPU's rounding mode toward zero");
+        options.addOption(Arg.CMPFUZZER.shortOpt(), 
+                false, "toggles CMP results operands are too close together");
         options.addOption(OptionBuilder.
                 withLongOpt("arbitraryPrecisionBits").
                 withArgName("bits").

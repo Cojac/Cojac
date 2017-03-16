@@ -61,6 +61,7 @@ public final class Args {
         behaviours.put(Arg.ROUND_NATIVELY_TO_ZERO, "ConversionBehaviour");
         behaviours.put(Arg.DOUBLE2FLOAT,           "ConversionBehaviour");
         behaviours.put(Arg.DOUBLE_INTERVAL,    "DoubleIntervalBehaviour");
+        behaviours.put(Arg.CMPFUZZER,               "CmpFuzzerBehaviour");
     }
     
     private static final String USAGE =
@@ -150,7 +151,7 @@ public final class Args {
             specify(Arg.PRINT);
         }
 
-        if (isOperationEnabled(Arg.JMX_ENABLE)) {
+        if (isSpecified(Arg.JMX_ENABLE)) {
             if (values.get(Arg.JMX_HOST).getValue().equals("")) {
                 values.get(Arg.JMX_HOST).setValue(DEFAULT_JMX_HOST);
             }
@@ -201,7 +202,8 @@ public final class Args {
             || isSpecified(Arg.DOUBLE2FLOAT)|| isSpecified(Arg.ROUND_BIASED_UP)
             || isSpecified(Arg.ROUND_BIASED_DOWN)|| isSpecified(Arg.ROUND_BIASED_RANDOM)
             || isSpecified(Arg.ARBITRARY_PRECISION)||isSpecified(Arg.DOUBLE_INTERVAL)
-            ||isSpecified(Arg.ROUND_NATIVELY_UP)||isSpecified(Arg.ROUND_NATIVELY_DOWN)||isSpecified(Arg.ROUND_NATIVELY_TO_ZERO);
+            ||isSpecified(Arg.ROUND_NATIVELY_UP)||isSpecified(Arg.ROUND_NATIVELY_DOWN)
+            ||isSpecified(Arg.ROUND_NATIVELY_TO_ZERO)||isSpecified(Arg.CMPFUZZER);
     }
 
     private boolean areSomeOpcodesSelected() {
@@ -295,7 +297,6 @@ public final class Args {
                 .map(a -> behaviours.get(a))
                 .map(s -> BEHAVIOUR_PACKAGE + s)
                 .collect(Collectors.joining(";"));
-
         return result;
     }
 

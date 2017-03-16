@@ -66,16 +66,15 @@ public class ConversionBehaviour {
        String OSName = System.getProperty("os.name");
        int arch = Integer.parseInt(System.getProperty("sun.arch.data.model"));
        try {    
-           if(OSName.startsWith("Windows")){
+           if(OSName.startsWith("Windows")) {
                if(arch == 32){
                    NativeUtils.loadLibraryFromJar(winLib32); 
                    isNativeLibLoaded = true;
-                }
-               else if(arch == 64){
+                } else if(arch == 64){
                    NativeUtils.loadLibraryFromJar(winLib64);
                    isNativeLibLoaded = true;
                }
-           }else if(OSName.startsWith("Linux")){
+           } else if(OSName.startsWith("Linux")) {
                if(arch == 64){
                    NativeUtils.loadLibraryFromJar(linLib64); 
                    isNativeLibLoaded = true;

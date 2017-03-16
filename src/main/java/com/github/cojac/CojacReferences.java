@@ -385,7 +385,7 @@ public final class CojacReferences {
             if (args.isSpecified(Arg.CALL_BACK)) {
                 ReflectionUtils.setStaticFieldValue(loader, "com.github.cojac.models.Reactions", "theCallback", args.getValue(Arg.CALL_BACK));
             }
-            if (args.isOperationEnabled(Arg.JMX_ENABLE)) {
+            if (args.isSpecified(Arg.JMX_ENABLE)) {
                 mbServer = ManagementFactory.getPlatformMBeanServer();
                 registerInstrumentationStats(mbServer, stats);
             }

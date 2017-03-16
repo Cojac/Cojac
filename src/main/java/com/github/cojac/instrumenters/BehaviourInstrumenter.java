@@ -83,7 +83,7 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
         }
         
         if (args.isSpecified(Arg.CALL_BACK))
-            Reactions.theLogFilename = args.getValue(Arg.CALL_BACK); // No, I'm not proud of that trick...
+            Reactions.theCallback = args.getValue(Arg.CALL_BACK); 
         else
             Reactions.theLogFilename = args.getValue(Arg.LOG_FILE);
         
@@ -93,7 +93,7 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
         fillMethods();
     }
     /**
-     * Method used to get the singleton instance. If not allready constructed, the params given will be used.
+     * Method used to get the singleton instance. If not already constructed, the params given will be used.
      * 
      * @param args the arguments with which Cojac has been run.
      * @param stats
