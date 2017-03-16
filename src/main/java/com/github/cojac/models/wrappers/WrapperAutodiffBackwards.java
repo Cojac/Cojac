@@ -21,15 +21,16 @@ package com.github.cojac.models.wrappers;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
 
-public class WrapperRad extends ACojacWrapper {
+public class WrapperAutodiffBackwards extends ACojacWrapper {
     private final double value;
-    private final WrapperRad op1, op2; // @Nullable
+    private final WrapperAutodiffBackwards op1, op2; // @Nullable
     private final double dop1, dop2;
 
-    private double adjoint;
+    private double adjoint;  // CAUTION: this Wrapper is thus NOT immutable
+                             // (the consequences have not been analyzed...)
 
-    private WrapperRad(double value, 
-                             WrapperRad op1, WrapperRad op2,
+    private WrapperAutodiffBackwards(double value, 
+                             WrapperAutodiffBackwards op1, WrapperAutodiffBackwards op2,
                              double dop1, double dop2) {
         this.value = value;
         this.adjoint = 0;
@@ -37,8 +38,8 @@ public class WrapperRad extends ACojacWrapper {
         this.op2=op2; this.dop2=dop2;
     }
     
-    private WrapperRad(double value, 
-                             WrapperRad op1,
+    private WrapperAutodiffBackwards(double value, 
+                             WrapperAutodiffBackwards op1,
                              double dop1) {
         this(value, op1, null, dop1, 0.0);
     }
@@ -46,7 +47,7 @@ public class WrapperRad extends ACojacWrapper {
     //-------------------------------------------------------------------------
     //----------------- Necessary constructor  -------------------------------
     //-------------------------------------------------------------------------
-    public WrapperRad(ACojacWrapper w) {
+    public WrapperAutodiffBackwards(ACojacWrapper w) {
         this(w==null ? 0.0 : der(w).value, 
              w==null ? null : der(w).op1,
              w==null ? null : der(w).op2,
@@ -56,20 +57,20 @@ public class WrapperRad extends ACojacWrapper {
     }
     
     //-------------------------------------------------------------------------
-    private WrapperRad unaryBuild(DoubleUnaryOperator op, double dop1) {
-        return new WrapperRad(op.applyAsDouble(value), this, dop1);
+    private WrapperAutodiffBackwards unaryBuild(DoubleUnaryOperator op, double dop1) {
+        return new WrapperAutodiffBackwards(op.applyAsDouble(value), this, dop1);
     }
-    private WrapperRad binaryBuild(DoubleBinaryOperator op, double dop1, 
+    private WrapperAutodiffBackwards binaryBuild(DoubleBinaryOperator op, double dop1, 
                                          ACojacWrapper op2, double dop2) {
-        return new WrapperRad(op.applyAsDouble(value, der(op2).value), 
+        return new WrapperAutodiffBackwards(op.applyAsDouble(value, der(op2).value), 
                                     this, der(op2), dop1, dop2);
     }
-    private WrapperRad unaryBuild(DoubleUnaryOperator op, DoubleUnaryOperator dop1) {
-        return new WrapperRad(op.applyAsDouble(value), this, dop1.applyAsDouble(value) );
+    private WrapperAutodiffBackwards unaryBuild(DoubleUnaryOperator op, DoubleUnaryOperator dop1) {
+        return new WrapperAutodiffBackwards(op.applyAsDouble(value), this, dop1.applyAsDouble(value) );
     }
-    private WrapperRad binaryBuild(DoubleBinaryOperator op, DoubleBinaryOperator dop1, 
+    private WrapperAutodiffBackwards binaryBuild(DoubleBinaryOperator op, DoubleBinaryOperator dop1, 
                                         ACojacWrapper op2, DoubleBinaryOperator dop2) {
-        return new WrapperRad(op.applyAsDouble(value, der(op2).value), 
+        return new WrapperAutodiffBackwards(op.applyAsDouble(value, der(op2).value), 
                 this, der(op2), 
                 dop1.applyAsDouble(value, der(op2).value), 
                 dop2.applyAsDouble(value, der(op2).value) );
@@ -116,7 +117,7 @@ public class WrapperRad extends ACojacWrapper {
     @SuppressWarnings("unused")
     @Override
     public ACojacWrapper fromDouble(double a, boolean wasFromFloat) {
-        return new WrapperRad(a, null, 0.0);
+        return new WrapperAutodiffBackwards(a, null, 0.0);
     }
 
     @Override public String asInternalString() {
@@ -132,35 +133,55 @@ public class WrapperRad extends ACojacWrapper {
         bp(op1, delta*dop1);
         bp(op2, delta*dop2);
     }
+
+    private void backReset() {
+        this.adjoint = 0;
+        br(op1);
+        br(op2);
+    }
     
-    private static void bp(WrapperRad op, double delta) {
+    private static void bp(WrapperAutodiffBackwards op, double delta) {
         if(op==null || delta==0.0) return;
         op.backPropagate(delta);
     }
     
+    private static void br(WrapperAutodiffBackwards op) {
+        if(op==null) return;
+        op.backReset();
+    }
+
     // ------------------------------------------------------------------------
-    public static CommonDouble COJAC_MAGIC_partialDerivativeAgainst(CommonDouble d) {
-        WrapperRad res=new WrapperRad(der(d.val).adjoint, null, 0);
+    public static CommonDouble COJAC_MAGIC_partialDerivativeIn(CommonDouble d) {
+        WrapperAutodiffBackwards res=new WrapperAutodiffBackwards(der(d.val).adjoint, null, 0);
         return new CommonDouble(res);
     }
     
-    public static CommonFloat COJAC_MAGIC_partialDerivativeAgainst(CommonFloat d) {
-        WrapperRad res=new WrapperRad(der(d.val).adjoint,null, 0);
+    public static CommonFloat COJAC_MAGIC_partialDerivativeIn(CommonFloat d) {
+        WrapperAutodiffBackwards res=new WrapperAutodiffBackwards(der(d.val).adjoint,null, 0);
         return new CommonFloat(res);
     }
     
     public static void COJAC_MAGIC_computePartialDerivatives(CommonDouble d) {
-        WrapperRad w=der(d.val);
+        WrapperAutodiffBackwards w=der(d.val);
         w.backPropagate(1.0);
     }
     
     public static void COJAC_MAGIC_computePartialDerivatives(CommonFloat d) {
-        WrapperRad w=der(d.val);
+        WrapperAutodiffBackwards w=der(d.val);
         w.backPropagate(1.0);
     }
 
+    public static void COJAC_MAGIC_resetPartialDerivatives(CommonDouble d) {
+        WrapperAutodiffBackwards w=der(d.val);
+        w.backReset();
+    }
+    
+    public static void COJAC_MAGIC_resetPartialDerivatives(CommonFloat d) {
+        WrapperAutodiffBackwards w=der(d.val);
+        w.backReset();
+    }
     //-------------------------------------------------------------------------
-    private static WrapperRad der(ACojacWrapper w) {
-        return (WrapperRad)w;
+    private static WrapperAutodiffBackwards der(ACojacWrapper w) {
+        return (WrapperAutodiffBackwards)w;
     }
 }

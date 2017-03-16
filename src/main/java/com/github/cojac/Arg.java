@@ -50,7 +50,8 @@ public enum Arg {
     BIG_DECIMAL_PRECISION("Rb"),   // BigDecimal nbOfDigits
     INTERVAL("Ri"),                // Interval computation
     STOCHASTIC("Rs"),              // StochasticArithmetic
-    AUTOMATIC_DERIVATION("Ra"),    // AutoDiff "backward mode"
+    AUTODIFF("Ra"),                // AutoDiff "forward mode"
+    AUTODIFF_BACKWARDS("Rab"),     // AutoDiff "backward mode"
     SYMBOLIC("Rsy"), 
     CHEBFUN("Rcheb"),
     DISABLE_UNSTABLE_COMPARISONS_CHECK("R_noUnstableComparisons"),
@@ -284,8 +285,10 @@ public enum Arg {
                 "interval",false,"Use interval computation wrapping");
         options.addOption(Arg.STOCHASTIC.shortOpt(),
                 "stochastic",false,"Use discrete stochastic arithmetic wrapping");
-        options.addOption(Arg.AUTOMATIC_DERIVATION.shortOpt(),
+        options.addOption(Arg.AUTODIFF.shortOpt(),
                 "autodiff",false,"Use automatic differentiation wrapping");
+        options.addOption(Arg.AUTODIFF_BACKWARDS.shortOpt(),
+                "autodiff-backwards",false,"Use automatic differentiation wrapping");
         options.addOption(Arg.SYMBOLIC.shortOpt(),
                 "symbolic",false,"Use symbolic wrapping");
         options.addOption(Arg.CHEBFUN.shortOpt(),

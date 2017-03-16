@@ -109,7 +109,7 @@ public abstract class WrappingLauncher {
     //========================================
     public static class DerivativeWrappingTest extends WrappingLauncher {
         @Override protected void specifyArgs(Args args) {
-            args.specify(Arg.AUTOMATIC_DERIVATION);
+            args.specify(Arg.AUTODIFF);
         }
     }
     //========================================

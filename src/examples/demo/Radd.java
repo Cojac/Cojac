@@ -34,7 +34,7 @@ public class Radd {
          WolframAlpha:      -38959.5     525787.0
          CojacReverseAD:    -38959.83    525791.5
     */
-    public static double COJAC_MAGIC_partialDerivativeAgainst(double a) { return 0;}
+    public static double COJAC_MAGIC_partialDerivativeIn(double a) { return 0;}
     public static void COJAC_MAGIC_computePartialDerivatives(double a) {}
 
     public static void main(String[] args) {
@@ -44,8 +44,8 @@ public class Radd {
         System.out.println("f(x,y): "+r);
         COJAC_MAGIC_computePartialDerivatives(r);
         
-        System.out.println("df/dx: "+COJAC_MAGIC_partialDerivativeAgainst(x));
-        System.out.println("df/dy: "+COJAC_MAGIC_partialDerivativeAgainst(y));
+        System.out.println("df/dx: "+COJAC_MAGIC_partialDerivativeIn(x));
+        System.out.println("df/dy: "+COJAC_MAGIC_partialDerivativeIn(y));
     }
 }
 //df/dx: 356207.9

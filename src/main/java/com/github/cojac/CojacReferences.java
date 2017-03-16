@@ -325,9 +325,14 @@ public final class CojacReferences {
                 args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperStochastic");
             }
 
-            if (args.isSpecified(Arg.AUTOMATIC_DERIVATION)) {
+            if (args.isSpecified(Arg.AUTODIFF)) {
                 args.specify(Arg.REPLACE_FLOATS);
-                args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperDerivation");
+                args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperAutodiff");
+            }
+            
+            if (args.isSpecified(Arg.AUTODIFF_BACKWARDS)) {
+                args.specify(Arg.REPLACE_FLOATS);
+                args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperAutodiffBackwards");
             }
             
             if (args.isSpecified(Arg.SYMBOLIC)) {
