@@ -1,4 +1,4 @@
-// Run with "Symbolic" Wrapper: ... cojac.jar="-Rsy"
+// Run with "Symbolic" Wrapper: ... cojac.jar="-Rsymb"
 
 package com.github.cojac.misctests;
 

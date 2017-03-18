@@ -52,12 +52,13 @@ public enum Arg {
     STOCHASTIC("Rs"),              // StochasticArithmetic
     AUTODIFF("Ra"),                // AutoDiff "forward mode"
     AUTODIFF_BACKWARDS("Rab"),     // AutoDiff "backward mode"
-    SYMBOLIC("Rsy"), 
+    SYMBOLIC("Rsymb"),  // was Rsy
     CHEBFUN("Rcheb"),
     DISABLE_UNSTABLE_COMPARISONS_CHECK("R_noUnstableComparisons"),
     STABILITY_THRESHOLD("R_unstableAt"),
-    POLY_BEHAVIOURAL_LOGGING("Rpbl"),
-    POLY_BEHAVIOURAL_LOAD("Rpbload"),
+    /* Badoud */
+    POLY_BEHAVIOURAL_LOGGING("Rpbl"),  //Rpbl    Rddwrite
+    POLY_BEHAVIOURAL_LOAD("Rpbload"),  //Ppbload Rddread
 
     ALL("Ca"),
     NONE("Cn"),
@@ -69,22 +70,22 @@ public enum Arg {
     CASTS("Ccasts"),
     MATHS("Cmath"),
     
-    /*V.Gazzola*/
+    /* V.Gazzola */
+    DOUBLE2FLOAT("BD2F"), //BD2F                              -Bdaf
+    ROUND_BIASED_UP("Rbu"), //Rbu                             -Beroundu
+    ROUND_BIASED_DOWN("Rbd"), //Rbd                           -Beroundd
+    ROUND_BIASED_RANDOM("Rbr"), // Rbr                        -Beroundr
+    ROUND_NATIVELY_UP("Rnu"), // Rnu                          -Broundu
+    ROUND_NATIVELY_DOWN("Rnd"), // Rnd                        -Broundd
+    ROUND_NATIVELY_TO_ZERO("Rnz"), // Rnz                     -Broundz
+    ARBITRARY_PRECISION("Ap"), //Ap                           -Bpr
+    DOUBLE_INTERVAL("Di"), //Di                               -Bi
+    CMPFUZZER("Fuz"), //Fuz                                   -Bfuz
+    INSTRUMENT_SELECTIVELY("Oi"),  // Oi                      -Only
     
-    DOUBLE2FLOAT("BD2F"),
-    ROUND_BIASED_UP("Rbu"),
-    ROUND_BIASED_DOWN("Rbd"),
-    ROUND_BIASED_RANDOM("Rbr"),
-    ROUND_NATIVELY_UP("Rnu"),
-    ROUND_NATIVELY_DOWN("Rnd"),
-    ROUND_NATIVELY_TO_ZERO("Rnz"),
-    ARBITRARY_PRECISION("Ap"),
-    DOUBLE_INTERVAL("Di"),
-    CMPFUZZER("Fuz"),
-    INSTRUMENT_SELECTIVELY("Oi"),  // TODO: reconsider removing this feature (selective instr)
-    
-    LISTING_INSTRUCTIONS("Li"), // -Li path/to/file (badoud)
-    LOAD_BEHAVIOUR_MAP("Lbm"),
+    /* Badoud */
+    LISTING_INSTRUCTIONS("Li"), // -Li path/to/file (badoud)  -Bddwrite
+    LOAD_BEHAVIOUR_MAP("Lbm"),  // Lbm                        -Bddread
     // Those below are used internally, but no more appear in the usage.
     IADD("iadd", Opcodes.IADD, INTS),
     IDIV("idiv", Opcodes.IDIV, INTS),
@@ -202,32 +203,32 @@ public enum Arg {
                 "console", false, "Signal problems with console messages to stderr (default signaling policy)");
         options.addOption(Arg.EXCEPTION.shortOpt(),
                 "exception", false, "Signal problems by throwing an ArithmeticException");
-        options.addOption(OptionBuilder.
-                withLongOpt("callback").
-                withArgName("meth").
-                hasArg().
-                withDescription("Signal problems by calling " +
+        options.addOption(OptionBuilder
+                .withLongOpt("callback")
+                .withArgName("meth")
+                .hasArg()
+                .withDescription("Signal problems by calling " +
                     "a user-supplied method matching this signature:" +
                     "\n...public static void f(String msg) \n" +
                     "(Give a fully qualified identifier in the form: \n" +
-                    "pkgA/myPkg/myClass/myMethod)").
-                create(Arg.CALL_BACK.shortOpt()));
-        options.addOption(OptionBuilder.
-                withLongOpt("logfile").
-                withArgName("path").
-                hasOptionalArg().
-                withDescription("Signal problems by writing to a log file.\n" +
-                    "Default filename is: " + Args.DEFAULT_LOG_FILE_NAME + '.').
-                create(Arg.LOG_FILE.shortOpt()));
+                    "pkgA/myPkg/myClass/myMethod)")
+                .create(Arg.CALL_BACK.shortOpt()));
+        options.addOption(OptionBuilder
+                .withLongOpt("logfile")
+                .withArgName("path")
+                .hasOptionalArg()
+                .withDescription("Signal problems by writing to a log file.\n" +
+                    "Default filename is: " + Args.DEFAULT_LOG_FILE_NAME + '.')
+                .create(Arg.LOG_FILE.shortOpt()));
         options.addOption(Arg.DETAILED_LOG.shortOpt(),
                 "detailed", false, "Log the full stack trace (combined with -Cc or -Cl)");
-        options.addOption(OptionBuilder.
-                withLongOpt("bypass").
-                withArgName("prefixes").
-                hasOptionalArg().
-                withDescription("Bypass classes starting with one of these prefixes (semi-colon separated list). " +
-                        "\nExample: -Xb foo;bar.util\n will skip classes with name foo* or bar.util*").
-                create(Arg.BYPASS.shortOpt()));
+        options.addOption(OptionBuilder
+                .withLongOpt("bypass")
+                .withArgName("prefixes")
+                .hasOptionalArg()
+                .withDescription("Bypass classes starting with one of these prefixes (semi-colon separated list). " +
+                        "\nExample: -Xb foo;bar.util\n will skip classes with name foo* or bar.util*")
+                .create(Arg.BYPASS.shortOpt()));
         options.addOption(Arg.FILTER.shortOpt(),
                 "filter", false, "Report each problem only once per faulty line");
         options.addOption(Arg.RUNTIME_STATS.shortOpt(),
@@ -236,82 +237,81 @@ public enum Arg {
                 "stats", false, "Print instrumentation statistics");
         
         options.addOption(Arg.JMX_ENABLE.shortOpt(), false, "Enable JMX feature");
-        options.addOption(OptionBuilder.
-            withArgName("host").
-            hasArg().
-            withDescription("Set remote JMX connection host (default: localhost)").
-            create(JMX_HOST.shortOpt()));
-        options.addOption(OptionBuilder.
-            withArgName("port").
-            hasArg().
-            withDescription("Set remote JMX connection port (default: 5017)").
-            create(JMX_PORT.shortOpt()));
-        options.addOption(OptionBuilder.
-            withArgName("MBean-id").
-            hasArg().
-            withDescription("Set remote MBean name (default: COJAC)").
-            create(JMX_NAME.shortOpt()));
+        options.addOption(OptionBuilder
+            .withArgName("host")
+            .hasArg()
+            .withDescription("Set remote JMX connection host (default: localhost)")
+            .create(JMX_HOST.shortOpt()));
+        options.addOption(OptionBuilder
+            .withArgName("port")
+            .hasArg()
+            .withDescription("Set remote JMX connection port (default: 5017)")
+            .create(JMX_PORT.shortOpt()));
+        options.addOption(OptionBuilder
+                .withArgName("MBean-id")
+                .hasArg()
+                .withDescription("Set remote MBean name (default: COJAC)")
+                .create(JMX_NAME.shortOpt()));
         
 //        options.addOption(Arg.REPLACE_FLOATS.shortOpt(),
 //            "replacefloats", false, "Replace floats by Cojac-wrapper objects ");
         
-        options.addOption(OptionBuilder.
-                withArgName("class").
-                hasArg().
-                withDescription("Select the double container (don't use it!).\n" +
-                        "Example: -Wd cojac.BigDecimalDouble will use com.github.cojac.models.wrappers.BigDecimalDouble").
-                create(DOUBLE_WRAPPER.shortOpt()));
-        options.addOption(OptionBuilder.
-                withArgName("class").
-                hasArg().
-                withDescription("Select the float container. See -Wd.").
-                create(FLOAT_WRAPPER.shortOpt()));
-        options.addOption(OptionBuilder.
-                withArgName("class").
-                hasArg().
-                withDescription("Select the wrapper (don't use it!).\n" +
-                        "Example: -W cojac.WrapperBasic will use com.github.cojac.models.wrappers.WrapperBasic").
-                create(NG_WRAPPER.shortOpt()));
+        options.addOption(OptionBuilder
+                .withArgName("class")
+                .hasArg()
+                .withDescription("Select the double container (not for regular users!).\n" +
+                        "Example: -Wd cojac.MyDouble will use com.github.cojac.models.wrappers.MyDouble")
+                .create(DOUBLE_WRAPPER.shortOpt()));
+        options.addOption(OptionBuilder
+                .withArgName("class")
+                .hasArg()
+                .withDescription("Select the float container. See -Wd.")
+                .create(FLOAT_WRAPPER.shortOpt()));
+        options.addOption(OptionBuilder
+                .withArgName("class")
+                .hasArg()
+                .withDescription("Select the wrapper (not for regular users!).\n" +
+                        "Example: -W cojac.WrapperBasic will use com.github.cojac.models.wrappers.WrapperBasic")
+                .create(NG_WRAPPER.shortOpt()));
 		
-        options.addOption(OptionBuilder.
-                withLongOpt("bigdecimal").
-                withArgName("digits").
-                hasArg().
-                withDescription("Use BigDecimal wrapping with a certain precision (number of digits).\n" +
-                        "Example: -Rb 100 will wrap with 100-significant-digit BigDecimals").
-                create(BIG_DECIMAL_PRECISION.shortOpt()));
+        options.addOption(OptionBuilder
+                .withLongOpt("bigdecimal")
+                .withArgName("digits")
+                .hasArg()
+                .withDescription("Use BigDecimal wrapping with a certain precision (number of digits).\n" +
+                        "Example: -Rb 100 will wrap with 100-significant-digit BigDecimals")
+                .create(BIG_DECIMAL_PRECISION.shortOpt()));
 		
         options.addOption(Arg.INTERVAL.shortOpt(),
                 "interval",false,"Use interval computation wrapping");
         options.addOption(Arg.STOCHASTIC.shortOpt(),
                 "stochastic",false,"Use discrete stochastic arithmetic wrapping");
         options.addOption(Arg.AUTODIFF.shortOpt(),
-                "autodiff",false,"Use automatic differentiation wrapping");
+                "autodiff",false,"Use automatic differentiation (forward mode) wrapping");
         options.addOption(Arg.AUTODIFF_BACKWARDS.shortOpt(),
-                "autodiff-backwards",false,"Use automatic differentiation wrapping");
+                "autodiff-backwards",false,"Use automatic differentiation (backward mode) wrapping");
         options.addOption(Arg.SYMBOLIC.shortOpt(),
                 "symbolic",false,"Use symbolic wrapping");
         options.addOption(Arg.CHEBFUN.shortOpt(),
                 "chebfun",false,"Use chefun wrapping");
         options.addOption(Arg.DISABLE_UNSTABLE_COMPARISONS_CHECK.shortOpt(),
                 false,"Disable unstability checks in comparisons, for the Interval or Stochastic wrappers");
-        options.addOption(OptionBuilder.
-                withArgName("epsilon").
-                hasArg().
-                withDescription("Relative precision considered unstable, for Interval/Stochastic wrappers (default 0.00001)").
-                create(STABILITY_THRESHOLD.shortOpt()));
+        options.addOption(OptionBuilder
+                .withArgName("epsilon")
+                .hasArg()
+                .withDescription("Relative precision considered unstable, for Interval/Stochastic wrappers (default 0.00001)")
+                .create(STABILITY_THRESHOLD.shortOpt()));
         // badoud
-        options.addOption(OptionBuilder.
-                withLongOpt("Rpblogging").
-                withArgName("path").
-                hasArg().
-                withDescription("Log the lines that can be associated with a behaviour into a XML file.").
-                create(Arg.POLY_BEHAVIOURAL_LOGGING.shortOpt()));
-        options.addOption(OptionBuilder.withLongOpt("Rpbload").
-                withArgName("path").
-                hasArg().
-                withDescription("Load behaviours from a XML file  and use poly behavioural wrapping").
-                create(Arg.POLY_BEHAVIOURAL_LOAD.shortOpt())); 
+        options.addOption(OptionBuilder
+                .withArgName("path")
+                .hasArg()
+                .withDescription("Log the lines that can be associated with a behaviour into a XML file.")
+                .create(Arg.POLY_BEHAVIOURAL_LOGGING.shortOpt()));
+        options.addOption(OptionBuilder
+                .withArgName("path")
+                .hasArg()
+                .withDescription("Load behaviours from a XML file  and use poly behavioural wrapping")
+                .create(Arg.POLY_BEHAVIOURAL_LOAD.shortOpt())); 
         
         options.addOption(Arg.ALL.shortOpt(),
                 "all", false, "Sniff everywhere (this is the default behavior)");
@@ -332,55 +332,51 @@ public enum Arg {
         options.addOption(Arg.FLOATS.shortOpt(),
             false, "Sniff in floats opcodes");
         /*V.Gazzola*/
-        options.addOption(Arg.DOUBLE2FLOAT.shortOpt(),"double-as-floats", 
-                false, "Cast Doubles into Floats");
+        options.addOption(Arg.DOUBLE2FLOAT.shortOpt(),"double_as_floats", 
+                false, "Use doubles as if they were single-precision floats");
         options.addOption(Arg.ROUND_BIASED_UP.shortOpt(),
-                false, "\"Round\" (Biased) up");
+                false, "Emulate \"round\" (biased) up");
         options.addOption(Arg.ROUND_BIASED_DOWN.shortOpt(),
-                false, "\"Round\" (Biased) down");
+                false, "Emulate \"round\" (biased) down");
         options.addOption(Arg.ROUND_BIASED_RANDOM.shortOpt(),
-                false, "\"Round\" (Biased) randomly up or down");
+                false, "Emulate \"round\" (Biased) randomly");
         options.addOption(Arg.DOUBLE_INTERVAL.shortOpt(),
-                false, "Perform interval computation on Double");
+                false, "Hijack doubles as low-precision intervals");
         options.addOption(Arg.ROUND_NATIVELY_UP.shortOpt(),
-                false, "Change the CPU's rounding mode toward infinity");
+                false, "Change the CPU's rounding mode toward plus infinity");
         options.addOption(Arg.ROUND_NATIVELY_DOWN.shortOpt(),
                 false, "Change the CPU's rounding mode toward minus infinity");
         options.addOption(Arg.ROUND_NATIVELY_TO_ZERO.shortOpt(),
                 false, "Change the CPU's rounding mode toward zero");
         options.addOption(Arg.CMPFUZZER.shortOpt(), 
-                false, "toggles CMP results operands are too close together");
-        options.addOption(OptionBuilder.
-                withLongOpt("arbitraryPrecisionBits").
-                withArgName("bits").
-                hasArg().
-                withDescription("Use Arbitrary precision with a certain number of bits in the mantissa.\n" +
-                        "Example: -"+ARBITRARY_PRECISION.shortOpt()+" 2 will drop the precision of floats and double to 2 bits").
-                create(ARBITRARY_PRECISION.shortOpt()));
-        options.addOption(OptionBuilder.
-                withLongOpt("optin").
-                withArgName("instrumentCode").
-                hasOptionalArg().
-                withDescription("Select what to instrument. InstrumentCode has to be Classes names " +
-                        "separated by Ampersand (&), plus, eventually, following a Class name, curly brackets "+
+                false, "toggles CMP results for operands too close together");
+        options.addOption(OptionBuilder
+                .withArgName("nbOfBits")
+                .hasArg()
+                .withDescription("limit the precision of a double's mantissa.\n" +
+                        "Example: -"+ARBITRARY_PRECISION.shortOpt()+" 8 emulates eight-significant bits floats and doubles")
+                .create(ARBITRARY_PRECISION.shortOpt()));
+        options.addOption(OptionBuilder
+                .withArgName("portionsOfCode")
+                .hasOptionalArg()
+                .withDescription("Select what to instrument. InstrumentCode has to be Classes names " +
+                        "separated by Ampersand (&), plus, possibly, following a Class name, curly brackets "+
                         "Containing a list of method names+signature or line numbers (or intervals) separated by commas. "+
                         "Example: "+Arg.INSTRUMENT_SELECTIVELY.shortOpt()+" \"foo.Bar{m1(II)I,m3(),1,12,112,25};foo.foobar.Bar{10-354}\" "+
                         "Will instrument fully methods m1(II)I, m3() and lines [1,12,112,25] from Class foo.Bar "+
-                        "and lines 10 to 354 (inclusive) from Class foo.foobar.Bar").
-                create(Arg.INSTRUMENT_SELECTIVELY.shortOpt()));
+                        "and lines 10 to 354 (inclusive) from Class foo.foobar.Bar")
+                .create(Arg.INSTRUMENT_SELECTIVELY.shortOpt()));
         //Badoud
-        options.addOption(OptionBuilder.
-                withLongOpt("listingInstructions").
-                withArgName("path").
-                hasArg().
-                withDescription("List all instrumentable instructions into a XML file.").
-                create(Arg.LISTING_INSTRUCTIONS.shortOpt()));      
-        options.addOption(OptionBuilder.
-                withLongOpt("loadBehaviourMap").
-                withArgName("path").
-                hasArg().
-                withDescription("Load behaviour map from a XML file.").
-                create(Arg.LOAD_BEHAVIOUR_MAP.shortOpt()));
+        options.addOption(OptionBuilder
+                .withArgName("filename")
+                .hasArg()
+                .withDescription("List all instrumentable instructions into a XML file.")
+                .create(Arg.LISTING_INSTRUCTIONS.shortOpt()));      
+        options.addOption(OptionBuilder
+                .withArgName("filename")
+                .hasArg()
+                .withDescription("Load behaviour map from a XML file.")
+                .create(Arg.LOAD_BEHAVIOUR_MAP.shortOpt()));
         return options;
     }
 

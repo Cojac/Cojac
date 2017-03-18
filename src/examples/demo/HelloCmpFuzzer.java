@@ -14,6 +14,8 @@ public class HelloCmpFuzzer {
       System.out.println(a<b);
       System.out.println(a>b);
       System.out.println(b<c);
+      a=2;
+      System.out.println(a+2);
       System.out.println("End of demo");
   }
 
