@@ -33,7 +33,7 @@ public final class InvokableMethod {
     final String signature;
     final int opCode;
 
-    InvokableMethod(String classPath, String method, String signature, int opCode) {
+    public InvokableMethod(String classPath, String method, String signature, int opCode) {
         super();
 
         this.classPath = classPath;

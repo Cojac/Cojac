@@ -53,6 +53,7 @@ public class WrapperInterval extends ACojacWrapper {
         return value;
     }
 
+    @SuppressWarnings("unused")
     @Override
     public ACojacWrapper fromDouble(double a, boolean wasFromFloat) {
         return new WrapperInterval(a);

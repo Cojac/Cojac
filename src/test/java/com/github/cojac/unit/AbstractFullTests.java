@@ -20,7 +20,10 @@ package com.github.cojac.unit;
 
 import org.junit.Test;
 
-import static com.github.cojac.models.CheckedDoubles.*;
+import com.github.cojac.models.Reactions;
+import com.github.cojac.models.ReactionType;
+
+import static com.github.cojac.models.behaviours.CheckedBehaviourConstants.*;
 import static java.lang.Double.*;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
@@ -28,6 +31,10 @@ import static junit.framework.Assert.assertTrue;
 //import static junit.framework.Assert.fail;
 
 public abstract class AbstractFullTests {
+    static {
+        Reactions.theReactionType=ReactionType.EXCEPTION;
+    }
+    
     public abstract Tests getTests();
 
     @Test(expected = ArithmeticException.class)
@@ -1030,10 +1037,10 @@ public abstract class AbstractFullTests {
         assertEquals(StrictMath.exp(2), exp);
     }
 
-    @Test(expected = ArithmeticException.class)
-    public void exp2() throws Exception {
-        getTests().exp(Double.POSITIVE_INFINITY);
-    }
+//    @Test(expected = ArithmeticException.class)
+//    public void exp2() throws Exception {
+//        getTests().exp(Double.POSITIVE_INFINITY);
+//    }
 
     @Test
     public void log1() throws Exception {

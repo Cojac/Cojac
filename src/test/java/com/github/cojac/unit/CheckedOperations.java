@@ -18,206 +18,206 @@
 
 package com.github.cojac.unit;
 
-import com.github.cojac.models.*;
+import com.github.cojac.models.behaviours.*;
 
 public class CheckedOperations implements MathOperations {
     @Override
     public int iadd(int a, int b) throws Exception {
-        return CheckedInts.checkedIADD(a, b, ReactionType.EXCEPTION.value(), "");
+        return CheckedIntBehaviour.IADD(a, b);
     }
 
     @Override
     public int isub(int a, int b) throws Exception {
-        return CheckedInts.checkedISUB(a, b, ReactionType.EXCEPTION.value(), "");
+        return CheckedIntBehaviour.ISUB(a, b);
     }
 
     @Override
     public int imul(int a, int b) throws Exception {
-        return CheckedInts.checkedIMUL(a, b, ReactionType.EXCEPTION.value(), "");
+        return CheckedIntBehaviour.IMUL(a, b);
     }
 
     @Override
     public int idiv(int a, int b) throws Exception {
-        return CheckedInts.checkedIDIV(a, b, ReactionType.EXCEPTION.value(), "");
+        return CheckedIntBehaviour.IDIV(a, b);
     }
 
     @Override
     public int iinc(int a, int b) throws Exception {
-        return CheckedInts.checkedIINC(a, b, ReactionType.EXCEPTION.value(), "");
+        return CheckedIntBehaviour.IINC(a, b);
     }
 
     @Override
     public int ineg(int a) throws Exception {
-        return CheckedInts.checkedINEG(a, ReactionType.EXCEPTION.value(), "");
+        return CheckedIntBehaviour.INEG(a);
     }
 
     @Override
     public long ladd(long a, long b) throws Exception {
-        return CheckedLongs.checkedLADD(a, b, ReactionType.EXCEPTION.value(), "");
+        return CheckedLongBehaviour.LADD(a, b);
     }
 
     @Override
     public long lsub(long a, long b) throws Exception {
-        return CheckedLongs.checkedLSUB(a, b, ReactionType.EXCEPTION.value(), "");
+        return CheckedLongBehaviour.LSUB(a, b);
     }
 
     @Override
     public long lmul(long a, long b) throws Exception {
-        return CheckedLongs.checkedLMUL(a, b, ReactionType.EXCEPTION.value(), "");
+        return CheckedLongBehaviour.LMUL(a, b);
     }
 
     @Override
     public long ldiv(long a, long b) throws Exception {
-        return CheckedLongs.checkedLDIV(a, b, ReactionType.EXCEPTION.value(), "");
+        return CheckedLongBehaviour.LDIV(a, b);
     }
 
     @Override
     public long lneg(long a) throws Exception {
-        return CheckedLongs.checkedLNEG(a, ReactionType.EXCEPTION.value(), "");
+        return CheckedLongBehaviour.LNEG(a);
     }
 
     @Override
     public double dadd(double a, double b) throws Exception {
-        return CheckedDoubles.checkedDADD(a, b, ReactionType.EXCEPTION.value(), "");
+        return CheckedDoubleBehaviour.DADD(a, b);
     }
 
     @Override
     public double dsub(double a, double b) throws Exception {
-        return CheckedDoubles.checkedDSUB(a, b, ReactionType.EXCEPTION.value(), "");
+        return CheckedDoubleBehaviour.DSUB(a, b);
     }
 
     @Override
     public double dmul(double a, double b) throws Exception {
-        return CheckedDoubles.checkedDMUL(a, b, ReactionType.EXCEPTION.value(), "");
+        return CheckedDoubleBehaviour.DMUL(a, b);
     }
 
     @Override
     public double ddiv(double a, double b) throws Exception {
-        return CheckedDoubles.checkedDDIV(a, b, ReactionType.EXCEPTION.value(), "");
+        return CheckedDoubleBehaviour.DDIV(a, b);
     }
 
     @Override
     public float fadd(float a, float b) throws Exception {
-        return CheckedFloats.checkedFADD(a, b, ReactionType.EXCEPTION.value(), "");
+        return CheckedFloatBehaviour.FADD(a, b);
     }
 
     @Override
     public float fsub(float a, float b) throws Exception {
-        return CheckedFloats.checkedFSUB(a, b, ReactionType.EXCEPTION.value(), "");
+        return CheckedFloatBehaviour.FSUB(a, b);
     }
 
     @Override
     public float fmul(float a, float b) throws Exception {
-        return CheckedFloats.checkedFMUL(a, b, ReactionType.EXCEPTION.value(), "");
+        return CheckedFloatBehaviour.FMUL(a, b);
     }
 
     @Override
     public float fdiv(float a, float b) throws Exception {
-        return CheckedFloats.checkedFDIV(a, b, ReactionType.EXCEPTION.value(), "");
+        return CheckedFloatBehaviour.FDIV(a, b);
     }
 
     @Override
     public int l2i(long a) throws Exception {
-        return CheckedCasts.checkedL2I(a, ReactionType.EXCEPTION.value(), "");
+        return CheckedCastBehaviour.L2I(a);
     }
 
     @Override
     public short i2s(int a) throws Exception {
-        return CheckedCasts.checkedI2S(a, ReactionType.EXCEPTION.value(), "");
+        return (short) CheckedCastBehaviour.I2S(a);
     }
 
     @Override
     public byte i2b(int a) throws Exception {
-        return CheckedCasts.checkedI2B(a, ReactionType.EXCEPTION.value(), "");
+        return (byte) CheckedCastBehaviour.I2B(a);
     }
 
     @Override
     public char i2c(int a) throws Exception {
-        return CheckedCasts.checkedI2C(a, ReactionType.EXCEPTION.value(), "");
+        return (char) CheckedCastBehaviour.I2C(a);
     }
 
     @Override
     public int d2i(double a) throws Exception {
-        return CheckedCasts.checkedD2I(a, ReactionType.EXCEPTION.value(), "");
+        return CheckedCastBehaviour.D2I(a);
     }
 
     @Override
     public long d2l(double a) throws Exception {
-        return CheckedCasts.checkedD2L(a, ReactionType.EXCEPTION.value(), "");
+        return CheckedCastBehaviour.D2L(a);
     }
 
     @Override
     public int f2i(float a) throws Exception {
-        return CheckedCasts.checkedF2I(a, ReactionType.EXCEPTION.value(), "");
+        return CheckedCastBehaviour.F2I(a);
     }
 
     @Override
     public long f2l(float a) throws Exception {
-        return CheckedCasts.checkedF2L(a, ReactionType.EXCEPTION.value(), "");
+        return CheckedCastBehaviour.F2L(a);
     }
 
     @Override
     public float d2f(double a) throws Exception {
-        return CheckedCasts.checkedD2F(a, ReactionType.EXCEPTION.value(), "");
+        return CheckedCastBehaviour.D2F(a);
     }
 
     @Override
     public float i2f(int a) throws Exception {
-        return CheckedCasts.checkedI2F(a, ReactionType.EXCEPTION.value(), "");
+        return CheckedCastBehaviour.I2F(a);
     }
 
     @Override
     public double l2d(long a) throws Exception {
-        return CheckedCasts.checkedL2D(a, ReactionType.EXCEPTION.value(), "");
+        return CheckedCastBehaviour.L2D(a);
     }
 
     @Override
     public double pow(double a, double b) throws Exception {
-        return CheckedMaths.checkedPow(a, b, ReactionType.EXCEPTION.value(), "");
+        return CheckedMathBehaviour.pow(a, b);
     }
 
     @Override
     public double asin(double a) throws Exception {
-        return CheckedMaths.checkedAsin(a, ReactionType.EXCEPTION.value(), "");
+        return CheckedMathBehaviour.asin(a);
     }
 
     @Override
     public double exp(double a) throws Exception {
-        return CheckedMaths.checkedExp(a, ReactionType.EXCEPTION.value(), "");
+        return CheckedMathBehaviour.exp(a);
     }
 
     @Override
     public double log(double a) throws Exception {
-        return CheckedMaths.checkedLog(a, ReactionType.EXCEPTION.value(), "");
+        return CheckedMathBehaviour.log(a);
     }
 
     @Override
     public float frem(float a, float b) throws Exception {
-        return CheckedFloats.checkedFREM(a, b, ReactionType.EXCEPTION.value(), "");
+        return CheckedFloatBehaviour.FREM(a, b);
     }
 
     @Override
     public int fcmpl(float a, float b) throws Exception {
-        return CheckedFloats.checkedFCMPL(a, b, ReactionType.EXCEPTION.value(), "");
+        return CheckedFloatBehaviour.FCMPL(a, b);
     }
 
     @Override
     public int fcmpg(float a, float b) throws Exception {
-        return CheckedFloats.checkedFCMPG(a, b, ReactionType.EXCEPTION.value(), "");
+        return CheckedFloatBehaviour.FCMPG(a, b);
     }
 
     @Override
     public double drem(double a, double b) throws Exception {
-        return CheckedDoubles.checkedDREM(a, b, ReactionType.EXCEPTION.value(), "");
+        return CheckedDoubleBehaviour.DREM(a, b);
     }
 
     @Override
     public int dcmpg(double a, double b) throws Exception {
-        return CheckedDoubles.checkedDCMPG(a, b, ReactionType.EXCEPTION.value(), "");
+        return CheckedDoubleBehaviour.DCMPG(a, b);
     }
 
     @Override
     public int dcmpl(double a, double b) throws Exception {
-        return CheckedDoubles.checkedDCMPL(a, b, ReactionType.EXCEPTION.value(), "");
+        return CheckedDoubleBehaviour.DCMPL(a, b);
     }
 }

@@ -176,7 +176,8 @@ public class FloatProxyMethod {
         mv.visitInsn(DUP);
         // stack >> target allParamsArr nullOrMeth nullOrMeth
         
-        ArrayList<Object> scl=new ArrayList<Object>(aaAfter.stack);
+        @SuppressWarnings("unchecked")
+        ArrayList<Object> scl=new ArrayList<Object>(aaAfter.stack); 
         scl.remove(scl.size()-1); // remove the last nullOrMeth
         Object[] stackContent=scl.toArray(); //target allParamsArr nullOrMeth
         
@@ -273,10 +274,10 @@ public class FloatProxyMethod {
         return t;
     }
 
-    private void checkNotNullStack() {
-        if (aaAfter.stack != null) return; 
-        throw new RuntimeException("STUPID NULL stack!!!");
-    }
+//    private void checkNotNullStack() {
+//        if (aaAfter.stack != null) return; 
+//        throw new RuntimeException("STUPID NULL stack!!!");
+//    }
     
     public boolean needsConversion(ConversionContext cc) {
         if(cc.owner.equals(JWRAPPER_FLOAT_TYPE .getInternalName())) return true;
@@ -650,6 +651,7 @@ public class FloatProxyMethod {
 		mv.visitTypeInsn(CHECKCAST, afterFloatReplacement(aType).getInternalName());
 	}
 	
+    @SuppressWarnings("unused")
     public void setUsefulPartners(AnalyzerAdapter aaAfter, MyLocalAdder mla) {
         this.aaAfter=aaAfter;
         // this.mla=mla;

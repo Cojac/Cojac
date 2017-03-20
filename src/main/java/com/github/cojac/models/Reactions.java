@@ -229,5 +229,4 @@ public final class Reactions {
     public static void react(String message) {
         react(theReactionType.ordinal(), message, theLogFilename);
     }
-
 }

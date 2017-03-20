@@ -28,10 +28,11 @@ public final class ClassLoaderInstrumenterFactory implements IOpcodeInstrumenter
     public ClassLoaderInstrumenterFactory(Args args, InstrumentationStats stats) {
         super();
 
-        if (args.isSpecified(Arg.REPLACE_FLOATS))
+        if (args.isSpecified(Arg.REPLACE_FLOATS)){
             opCodeInstrumenter = new ReplaceFloatsInstrumenter(args, stats);
-        else
-            opCodeInstrumenter = new DirectInstrumenter(args, stats);
+        } else {
+            opCodeInstrumenter = BehaviourInstrumenter.getInstance(args, stats);//new DirectInstrumenter(args, stats);
+        }
     }
 
     @Override

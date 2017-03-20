@@ -18,6 +18,12 @@
 
 package com.github.cojac;
 
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -26,33 +32,56 @@ import org.apache.commons.cli.ParseException;
 
 import com.github.cojac.models.ReactionType;
 
-import java.util.EnumMap;
-import java.util.Map;
-
 public final class Args {
     private final Options options = Arg.createOptions();
     private final Map<Arg, ArgValue> values = new EnumMap<>(Arg.class);
-
+    
     static final String DEFAULT_LOG_FILE_NAME = "COJAC_Report.log";
     static final String DEFAULT_JMX_HOST = "localhost";
     static final String DEFAULT_JMX_PORT = "5217";
     static final String DEFAULT_JMX_NAME = "COJAC";
     static final String DEFAULT_STABILITY_THRESHOLD = "0.0001";
+    static final String BEHAVIOUR_PACKAGE = "com/github/cojac/models/behaviours/";
+    
+    private final static Map<Arg, String> behaviours = new EnumMap<>(Arg.class);
 
-    private static String USAGE =
+    static{
+        behaviours.put(Arg.INTS,    "CheckedIntBehaviour");
+        behaviours.put(Arg.DOUBLES, "CheckedDoubleBehaviour");
+        behaviours.put(Arg.FLOATS,  "CheckedFloatBehaviour");
+        behaviours.put(Arg.LONGS,   "CheckedLongBehaviour");
+        behaviours.put(Arg.CASTS,   "CheckedCastBehaviour");
+        behaviours.put(Arg.MATHS,   "CheckedMathBehaviour");
+        behaviours.put(Arg.ROUND_BIASED_UP,     "PseudoRoundingBehaviour");
+        behaviours.put(Arg.ROUND_BIASED_DOWN,   "PseudoRoundingBehaviour");
+        behaviours.put(Arg.ROUND_BIASED_RANDOM, "PseudoRoundingBehaviour");
+        behaviours.put(Arg.ARBITRARY_PRECISION,    "ConversionBehaviour");
+        behaviours.put(Arg.ROUND_NATIVELY_UP,      "ConversionBehaviour");
+        behaviours.put(Arg.ROUND_NATIVELY_DOWN,    "ConversionBehaviour");
+        behaviours.put(Arg.ROUND_NATIVELY_TO_ZERO, "ConversionBehaviour");
+        behaviours.put(Arg.DOUBLE2FLOAT,           "ConversionBehaviour");
+        behaviours.put(Arg.DOUBLE_INTERVAL,    "DoubleIntervalBehaviour");
+        behaviours.put(Arg.CMPFUZZER,               "CmpFuzzerBehaviour");
+    }
+    
+    private static final String USAGE =
              "java -javaagent:cojac.jar=\"[OPTIONS]\" YourApp [appArgs]\n"
-           + "(version 1.4 - 2015 Nov 17)";
-    private static String HEADER =
-            "\nTwo nice tools to enrich Java arithmetic capabilities, on-the-fly:"
+           + "(version 1.5.0 - 2017 Mar 19)";
+    private static final String HEADER =
+            "\nNice tools to enrich Java arithmetic capabilities, on-the-fly:"
             +"\n - Numerical Problem Sniffer: detects and signals arithmetic poisons like "
-            +"integer overflows, smearing and catastrophic cancellation, NaN or infinite results."
+            +"integer overflows, aborption, catastrophic cancellation, NaN or infinite results."
+            +"\n - New float/double behaviors: double-as-floats, change rounding mode... Some known "
+            +"tricks to track possible numerical instabilities."
             +"\n - Enriching Wrapper for float/double: wraps every double/float in richer objects. Current "
-            +"models include BigDecimal (you choose the precision), "
-            +"interval computation, discrete stochastic arithmetic, and even automatic differentiation."
+            +"models include BigDecimal (you choose the precision!), "
+            +"interval computation, automatic differentiation, symbolic processing, chebfun and more."
             +"\n----------------- OPTIONS -----------------\n";
-    private static String FOOTER =
+    private static final String FOOTER =
             "\n------> https://github.com/Cojac/Cojac <------";
-
+    
+    // private String behaviour = behaviours.get(Arg.ALL);
+    
     public Args() {
         super();
 
@@ -86,7 +115,8 @@ public final class Args {
         String msg="bad format for option "+arg;
         try {
             switch(arg) {
-            case BIG_DECIMAL_PRECISION:
+            case BIG_DECIMAL_WR:
+            case ARBITRARY_PRECISION:
             case JMX_PORT: Integer.parseInt(val); break;
             case STABILITY_THRESHOLD: Double.parseDouble(val); break;
             case OPCODES: processOpcodeList(val); break;
@@ -123,7 +153,7 @@ public final class Args {
             specify(Arg.PRINT);
         }
 
-        if (isOperationEnabled(Arg.JMX_ENABLE)) {
+        if (isSpecified(Arg.JMX_ENABLE)) {
             if (values.get(Arg.JMX_HOST).getValue().equals("")) {
                 values.get(Arg.JMX_HOST).setValue(DEFAULT_JMX_HOST);
             }
@@ -134,7 +164,8 @@ public final class Args {
                 values.get(Arg.JMX_NAME).setValue(DEFAULT_JMX_NAME);
             }
         }
-        values.get(Arg.STABILITY_THRESHOLD).setValue(DEFAULT_STABILITY_THRESHOLD);
+        if(!isSpecified(Arg.STABILITY_THRESHOLD))
+            values.get(Arg.STABILITY_THRESHOLD).setValue(DEFAULT_STABILITY_THRESHOLD);
         
         if (isSpecified(Arg.FLOAT_WRAPPER)) {
             specify(Arg.REPLACE_FLOATS);
@@ -164,11 +195,17 @@ public final class Args {
         specify(Arg.DOUBLES);
         specify(Arg.MATHS);
         specify(Arg.CASTS);
+        //behaviour = behaviours.get(Arg.ALL);
     }
 
     private boolean areSomeCategoriesSelected() {
         return isSpecified(Arg.INTS) || isSpecified(Arg.DOUBLES) || isSpecified(Arg.FLOATS) ||
-            isSpecified(Arg.LONGS) || isSpecified(Arg.MATHS) || isSpecified(Arg.CASTS);
+            isSpecified(Arg.LONGS) || isSpecified(Arg.MATHS) || isSpecified(Arg.CASTS) 
+            || isSpecified(Arg.DOUBLE2FLOAT)|| isSpecified(Arg.ROUND_BIASED_UP)
+            || isSpecified(Arg.ROUND_BIASED_DOWN)|| isSpecified(Arg.ROUND_BIASED_RANDOM)
+            || isSpecified(Arg.ARBITRARY_PRECISION)||isSpecified(Arg.DOUBLE_INTERVAL)
+            ||isSpecified(Arg.ROUND_NATIVELY_UP)||isSpecified(Arg.ROUND_NATIVELY_DOWN)
+            ||isSpecified(Arg.ROUND_NATIVELY_TO_ZERO)||isSpecified(Arg.CMPFUZZER);
     }
 
     private boolean areSomeOpcodesSelected() {
@@ -188,14 +225,23 @@ public final class Args {
     }
 
     public boolean isSpecified(Arg arg) {
+       /* if(behaviours.containsKey(arg)){
+            behaviour = behaviours.get(arg);
+        }*/
         return values.get(arg).isSpecified();
     }
 
     public boolean specify(Arg arg) {
+//        if(behaviours.containsKey(arg)){
+//            behaviour = behaviours.get(arg);
+//        }
         return values.get(arg).setSpecified();
     }
 
     public boolean unspecify(Arg arg) {
+//        if(behaviours.containsKey(arg)){
+//            behaviour = null;
+//        }
         return values.get(arg).setSpecified(false);
     }
 
@@ -208,7 +254,7 @@ public final class Args {
 
         values.get(arg).setValue(value);
     }
-
+    
     public boolean isOperationEnabled(Arg arg) {
         boolean res=isSpecified(arg) || arg.getParent() != null && isSpecified(arg.getParent());
         if (arg.ordinal() >= Arg.INTS.ordinal()) {
@@ -227,8 +273,33 @@ public final class Args {
         } else if (isSpecified(Arg.CALL_BACK)) {
             return ReactionType.CALLBACK;
         }
-
         throw new RuntimeException("no reaction is defined!");
+    }
+    
+    public String getBehaviour() {
+        Set<Arg> args=EnumSet.noneOf(Arg.class);
+        if(isSpecified(Arg.ALL) || isSpecified(Arg.OPCODES)) {
+            args.add(Arg.CASTS);
+            args.add(Arg.INTS);
+            args.add(Arg.LONGS);
+            args.add(Arg.DOUBLES);
+            args.add(Arg.FLOATS);
+        }
+        if(isSpecified(Arg.ALL)) {
+            args.add(Arg.MATHS);
+        }
+        for (Arg arg : Arg.values()) {
+            if (!arg.isOperator() && isSpecified(arg) &&  
+                    behaviours.containsKey(arg)) {
+                args.add(arg);
+            }
+        }
+        
+        String result = args.stream()
+                .map(a -> behaviours.get(a))
+                .map(s -> BEHAVIOUR_PACKAGE + s)
+                .collect(Collectors.joining(";"));
+        return result;
     }
 
     //========================================================================

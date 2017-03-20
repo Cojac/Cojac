@@ -18,15 +18,21 @@
 
 package com.github.cojac.instrumenters;
 
+import static com.github.cojac.instrumenters.InvokableMethod.replaceFloatMethodDescription;
+import static com.github.cojac.models.FloatReplacerClasses.COJAC_DOUBLE_WRAPPER_INTERNAL_NAME;
+import static com.github.cojac.models.FloatReplacerClasses.COJAC_DOUBLE_WRAPPER_TYPE_DESCR;
+import static com.github.cojac.models.FloatReplacerClasses.COJAC_FLOAT_WRAPPER_INTERNAL_NAME;
+import static com.github.cojac.models.FloatReplacerClasses.COJAC_FLOAT_WRAPPER_TYPE_DESCR;
+import static com.github.cojac.models.FloatReplacerClasses.COJAC_WRAPPER_NG_INTERNAL_NAME;
+import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
+import static org.objectweb.asm.Opcodes.INVOKESTATIC;
+import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import org.objectweb.asm.MethodVisitor;
 
-import static com.github.cojac.instrumenters.InvokableMethod.*;
-import static com.github.cojac.instrumenters.ReplaceFloatsInstrumenter.DN_NAME;
-import static com.github.cojac.models.FloatReplacerClasses.*;
-import static org.objectweb.asm.Opcodes.*;
+import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
 import com.github.cojac.CojacReferences;
@@ -57,6 +63,7 @@ public class ReplaceFloatsMethods {
 	private static final String COJAC_MAGIC_CALL_FLOAT_PREFIX = "COJAC_MAGIC_FLOAT_";
     private static final String COJAC_MAGIC_CALL_NG_PREFIX = "COJAC_MAGIC_";
 
+    @SuppressWarnings("unused")
     public ReplaceFloatsMethods(FloatProxyMethod fpm, String crtClassName, CojacReferences references) {
 		CFW_N = COJAC_FLOAT_WRAPPER_INTERNAL_NAME;
 		CFW = COJAC_FLOAT_WRAPPER_TYPE_DESCR;

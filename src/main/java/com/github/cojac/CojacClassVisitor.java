@@ -19,7 +19,6 @@
 package com.github.cojac;
 
 import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 import com.github.cojac.instrumenters.IOpcodeInstrumenterFactory;
@@ -41,26 +40,29 @@ public class CojacClassVisitor extends ClassVisitor {
         this.cav = cav;
     }
 
+
     @Override
     public void visit(int version, int access, String name, String signature, String supername, String[] interfaces) {
         crtClassName = name;
         super.visit(version, access, name, signature, supername, interfaces);
     }
 
-    @Override
-    public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-        //boolean isNative = (access & Opcodes.ACC_NATIVE) > 0;
-        MethodVisitor mv = cv.visitMethod(access, name, desc, signature, exceptions);
-        String currentMethodID = crtClassName + '/' + name;
-        if (cav.isClassAnnotated() || cav.isMethodAnnotated(currentMethodID)) {
-            return mv;
-        }      
-        return instrumentMethod(mv, access, desc);
-    }
+// NOT USED ANYMORE (replaced by the "behaviour" mechanism)
 
-    private MethodVisitor instrumentMethod(MethodVisitor parentMv, int access, String desc) {
-        MethodVisitor mv=null;
-        mv = new CojacCheckerMethodVisitor(access, desc, parentMv, stats, args, crtClassName, factory);
-        return mv;
-    }
+//    @Override
+//    public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
+//        //boolean isNative = (access & Opcodes.ACC_NATIVE) > 0;
+//        MethodVisitor mv = cv.visitMethod(access, name, desc, signature, exceptions);
+//        String currentMethodID = crtClassName + '/' + name;
+//        if (cav.isClassAnnotated() || cav.isMethodAnnotated(currentMethodID)) {
+//            return mv;
+//        }      
+//        return instrumentMethod(mv, access, desc);
+//    }
+//
+//    private MethodVisitor instrumentMethod(MethodVisitor parentMv, int access, String desc) {
+//        MethodVisitor mv=null;
+//        mv = new CojacCheckerMethodVisitor(access, desc, parentMv, stats, args, crtClassName, factory);
+//        return mv;
+//    }
 }

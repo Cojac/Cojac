@@ -97,25 +97,25 @@ public abstract class WrappingLauncher {
 	//========================================
 	public static class IntervalWrappingTest extends WrappingLauncher {
         @Override protected void specifyArgs(Args args) {
-            args.specify(Arg.INTERVAL);
+            args.specify(Arg.INTERVAL_WR);
         }
 	}
     //========================================
     public static class StochasticWrappingTest extends WrappingLauncher {
         @Override protected void specifyArgs(Args args) {
-            args.specify(Arg.STOCHASTIC);
+            args.specify(Arg.STOCHASTIC_WR);
         }
     }
     //========================================
     public static class DerivativeWrappingTest extends WrappingLauncher {
         @Override protected void specifyArgs(Args args) {
-            args.specify(Arg.AUTOMATIC_DERIVATION);
+            args.specify(Arg.AUTODIFF_WR);
         }
     }
     //========================================
     public static class BigDecimalWrappingTest extends WrappingLauncher {
         @Override protected void specifyArgs(Args args) {
-            args.setValue(Arg.BIG_DECIMAL_PRECISION, "100");
+            args.setValue(Arg.BIG_DECIMAL_WR, "100");
         }
     }
 }

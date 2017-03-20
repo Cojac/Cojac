@@ -22,6 +22,7 @@ import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
 import java.util.Comparator;
 
+//TODO: finalize this class... or remove it!
 public class WrapperKasu extends ACompactWrapper {
     private final double value;
     private final double dust;
@@ -221,6 +222,7 @@ public class WrapperKasu extends ACompactWrapper {
         return value;
     }
 
+    @SuppressWarnings("unused")
     @Override
     public ACojacWrapper fromDouble(double a, boolean wasFromFloat) {
         return new WrapperKasu(a, 0.0);

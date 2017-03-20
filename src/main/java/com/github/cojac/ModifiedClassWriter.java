@@ -51,16 +51,15 @@ public class ModifiedClassWriter extends ClassWriter {
             if ((info1.getAccess() & Opcodes.ACC_INTERFACE) != 0) {
                 if (typeImplements(type2, info2, type1)) {
                     return type1;
-                } else {
-                    return "java/lang/Object";
-                }
+                } 
+                return "java/lang/Object";
+                
             }
             if ((info2.getAccess() & Opcodes.ACC_INTERFACE) != 0) {
                 if (typeImplements(type1, info1, type2)) {
                     return type2;
-                } else {
-                    return "java/lang/Object";
                 }
+                return "java/lang/Object";
             }
             StringBuilder b1 = typeAncestors(type1, info1);
             StringBuilder b2 = typeAncestors(type2, info2);

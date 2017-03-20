@@ -81,6 +81,7 @@ public class WrapperStochastic extends ACompactWrapper {
         return value;
     }
 
+    @SuppressWarnings("unused")
     @Override
     public ACojacWrapper fromDouble(double a, boolean wasFromFloat) {
         return new WrapperStochastic(a);

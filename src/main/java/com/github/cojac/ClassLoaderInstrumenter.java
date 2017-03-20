@@ -18,8 +18,10 @@
 
 package com.github.cojac;
 
+
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+
 
 public final class ClassLoaderInstrumenter implements IClassInstrumenter {
     private final Args args;
@@ -39,16 +41,16 @@ public final class ClassLoaderInstrumenter implements IClassInstrumenter {
     public byte[] instrument(byte[] byteCode, ClassLoader loader) {
         ClassReader cr = new ClassReader(byteCode);
         ClassWriter cw = new ModifiedClassWriter(cr, CojacReferences.getFlags(args), loader);
-
         CojacAnnotationVisitor cav = new CojacAnnotationVisitor(stats);
         cr.accept(cav, ClassReader.EXPAND_FRAMES); 
         CojacClassVisitor ccv;
         if(references.getArgs().isSpecified(Arg.REPLACE_FLOATS))
             ccv = new FloatReplaceClassVisitor(cw, references, cav);
-        else 
-            ccv = new CojacClassVisitor(cw, references, cav);
+        else //if(references.getArgs().isSpecified(Arg.DOUBLE2FLOAT))
+            ccv = new BehaviourClassVisitor(cw, references, cav);
+        /*else 
+            ccv = new CojacClassVisitor(cw, references, cav);*/
 		cr.accept(ccv, ClassReader.EXPAND_FRAMES);
-
         return cw.toByteArray();
     }
 }
