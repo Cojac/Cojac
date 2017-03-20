@@ -42,7 +42,7 @@ public class SelectiveInstrumentationTest {
     };
     // @Test  // Bapst: don't know why this test suddenly fails... 
     //           Anyway the feature is expected to be dropped
-    //           (replaced by XML mechanism, see -Li/-Lbm options)
+    //           (replaced by XML mechanism, see -Bddwrite/-Bddread options)
     public void SelectInstruTest() throws Exception {
         
         Args args = new Args();

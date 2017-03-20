@@ -307,7 +307,7 @@ public final class CojacReferences {
                 args.specify(Arg.REPLACE_FLOATS);
             }
             
-            if (args.isSpecified(Arg.BIG_DECIMAL_PRECISION)) {
+            if (args.isSpecified(Arg.BIG_DECIMAL_WR)) {
                 args.specify(Arg.REPLACE_FLOATS);
 //                args.setValue(Arg.FLOAT_WRAPPER, "com.github.cojac.models.wrappers.BigDecimalFloat");
 //                args.setValue(Arg.DOUBLE_WRAPPER, "com.github.cojac.models.wrappers.BigDecimalDouble");
@@ -315,31 +315,31 @@ public final class CojacReferences {
 
             }
 
-            if (args.isSpecified(Arg.INTERVAL)) {
+            if (args.isSpecified(Arg.INTERVAL_WR)) {
                 args.specify(Arg.REPLACE_FLOATS);
                 args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperInterval");
             }
 
-            if (args.isSpecified(Arg.STOCHASTIC)) {
+            if (args.isSpecified(Arg.STOCHASTIC_WR)) {
                 args.specify(Arg.REPLACE_FLOATS);
                 args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperStochastic");
             }
 
-            if (args.isSpecified(Arg.AUTODIFF)) {
+            if (args.isSpecified(Arg.AUTODIFF_WR)) {
                 args.specify(Arg.REPLACE_FLOATS);
                 args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperAutodiff");
             }
             
-            if (args.isSpecified(Arg.AUTODIFF_BACKWARDS)) {
+            if (args.isSpecified(Arg.AUTODIFFBW_WR)) {
                 args.specify(Arg.REPLACE_FLOATS);
                 args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperAutodiffBackwards");
             }
             
-            if (args.isSpecified(Arg.SYMBOLIC)) {
+            if (args.isSpecified(Arg.SYMBOLIC_WR)) {
                 args.specify(Arg.REPLACE_FLOATS);
                 args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperSymbolic");
             }
-            if (args.isSpecified(Arg.CHEBFUN)) {
+            if (args.isSpecified(Arg.CHEBFUN_WR)) {
                 args.specify(Arg.REPLACE_FLOATS);
                 args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperChebfun");
             }
@@ -504,8 +504,8 @@ public final class CojacReferences {
             clazz.getMethod("setDoubleWrapper", String.class).invoke(clazz, doubleWrapper);
             clazz.getMethod("setNgWrapper", String.class).invoke(clazz, ngWrapper);
 
-            if (args.isSpecified(Arg.BIG_DECIMAL_PRECISION)) {
-                bigDecimalPrecision = Integer.valueOf(args.getValue(Arg.BIG_DECIMAL_PRECISION));
+            if (args.isSpecified(Arg.BIG_DECIMAL_WR)) {
+                bigDecimalPrecision = Integer.valueOf(args.getValue(Arg.BIG_DECIMAL_WR));
                 clazz.getMethod("setBigDecimalPrecision", int.class).invoke(clazz, bigDecimalPrecision);
             }
             
@@ -514,7 +514,7 @@ public final class CojacReferences {
                 clazz.getMethod("setStabilityThreshold", double.class).invoke(clazz, stabilityThreshold);
             }
 
-            if (args.isSpecified(Arg.DISABLE_UNSTABLE_COMPARISONS_CHECK)) {
+            if (args.isSpecified(Arg.DISABLE_UNSTABLE_CMP_CHECK)) {
                 checkUnstableComparisons=false;
                 clazz.getMethod("setCheckUnstableComparisons", boolean.class).invoke(clazz, checkUnstableComparisons);
             }

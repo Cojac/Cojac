@@ -23,69 +23,68 @@ import org.apache.commons.cli.Options;
 import org.objectweb.asm.Opcodes;
 
 public enum Arg {
-    HELP("h"),
+    HELP   ("h"),
     VERBOSE("v"),
 
-    PRINT("Sc"),
-    EXCEPTION("Se"),
-    CALL_BACK("Sk"),
-    LOG_FILE("Sl"),
+    PRINT       ("Sc"),
+    EXCEPTION   ("Se"),
+    CALL_BACK   ("Sk"),
+    LOG_FILE    ("Sl"),
     DETAILED_LOG("Sd"),
     
-    BYPASS("Xb"),
-    FILTER("Xf"),
-    RUNTIME_STATS("Xs"),
+    BYPASS               ("Xb"),
+    FILTER               ("Xf"),
+    RUNTIME_STATS        ("Xs"),
     INSTRUMENTATION_STATS("Xt"),
     
     JMX_ENABLE("jmxenable"),
-    JMX_HOST("jmxhost"),
-    JMX_PORT("jmxport"),
-    JMX_NAME("jmxname"),
+    JMX_HOST  ("jmxhost"),
+    JMX_PORT  ("jmxport"),
+    JMX_NAME  ("jmxname"),
     
     REPLACE_FLOATS("R"), // used internally, but no more appears in the usage
-    FLOAT_WRAPPER("Wf"),
+    FLOAT_WRAPPER ("Wf"),
     DOUBLE_WRAPPER("Wd"),
-    NG_WRAPPER("W"),
+    NG_WRAPPER    ("W"),
     
-    BIG_DECIMAL_PRECISION("Rb"),   // BigDecimal nbOfDigits
-    INTERVAL("Ri"),                // Interval computation
-    STOCHASTIC("Rs"),              // StochasticArithmetic
-    AUTODIFF("Ra"),                // AutoDiff "forward mode"
-    AUTODIFF_BACKWARDS("Rab"),     // AutoDiff "backward mode"
-    SYMBOLIC("Rsymb"),  // was Rsy
-    CHEBFUN("Rcheb"),
-    DISABLE_UNSTABLE_COMPARISONS_CHECK("R_noUnstableComparisons"),
-    STABILITY_THRESHOLD("R_unstableAt"),
+    BIG_DECIMAL_WR("Rb"),    // BigDecimal nbOfDigits
+    INTERVAL_WR   ("Ri"),    // Interval computation
+    STOCHASTIC_WR ("Rs"),    // StochasticArithmetic
+    AUTODIFF_WR   ("Ra"),    // AutoDiff "forward mode"
+    AUTODIFFBW_WR ("Rab"),   // AutoDiff "backward mode"
+    SYMBOLIC_WR   ("Rsymb"), // was: Rsy
+    CHEBFUN_WR    ("Rcheb"),
+    DISABLE_UNSTABLE_CMP_CHECK("R_noUnstableComparisons"),
+    STABILITY_THRESHOLD       ("R_unstableAt"),
     /* Badoud */
-    POLY_BEHAVIOURAL_LOGGING("Rpbl"),  //Rpbl    Rddwrite
-    POLY_BEHAVIOURAL_LOAD("Rpbload"),  //Ppbload Rddread
+    LISTING_INSTRUCTIONS    ("Bddwrite"),  // was: -Li path/to/file (badoud) 
+    LOAD_BEHAVIOUR_MAP      ("Bddread"),   // was: Lbm
+    POLY_BEHAVIOURAL_LOGGING("Rddwrite"),  // was: Rpbl
+    POLY_BEHAVIOURAL_LOAD   ("Rddread"),   // was: Rpbload
 
-    ALL("Ca"),
-    NONE("Cn"),
+    ALL    ("Ca"),
+    NONE   ("Cn"),
     OPCODES("Copcodes"),
-    INTS("Cints"),  // warning: its ordinal value is used (individual opcodes must be below)
-    FLOATS("Cfloats"),
+    INTS   ("Cints"),  // warning: its ordinal value is used (individual opcodes must be below)
+    FLOATS ("Cfloats"),
     DOUBLES("Cdoubles"),
-    LONGS("Clongs"),
-    CASTS("Ccasts"),
-    MATHS("Cmath"),
+    LONGS  ("Clongs"),
+    CASTS  ("Ccasts"),
+    MATHS  ("Cmath"),
     
     /* V.Gazzola */
-    DOUBLE2FLOAT("BD2F"), //BD2F                              -Bdaf
-    ROUND_BIASED_UP("Rbu"), //Rbu                             -Beroundu
-    ROUND_BIASED_DOWN("Rbd"), //Rbd                           -Beroundd
-    ROUND_BIASED_RANDOM("Rbr"), // Rbr                        -Beroundr
-    ROUND_NATIVELY_UP("Rnu"), // Rnu                          -Broundu
-    ROUND_NATIVELY_DOWN("Rnd"), // Rnd                        -Broundd
-    ROUND_NATIVELY_TO_ZERO("Rnz"), // Rnz                     -Broundz
-    ARBITRARY_PRECISION("Ap"), //Ap                           -Bpr
-    DOUBLE_INTERVAL("Di"), //Di                               -Bi
-    CMPFUZZER("Fuz"), //Fuz                                   -Bfuz
-    INSTRUMENT_SELECTIVELY("Oi"),  // Oi                      -Only
+    DOUBLE2FLOAT("Bdaf"),               // was: BD2F
+    ROUND_BIASED_UP       ("Beroundu"), // was: Rbu
+    ROUND_BIASED_DOWN     ("Beroundd"), // was: Rbd
+    ROUND_BIASED_RANDOM   ("Beroundd"), // was: Rbr
+    ROUND_NATIVELY_UP     ("Bnroundu"), // was: Rnu
+    ROUND_NATIVELY_DOWN   ("Bnroundd"), // was: Rnd
+    ROUND_NATIVELY_TO_ZERO("Bnroundz"), // was: Rnz
+    ARBITRARY_PRECISION   ("Bpr"),      // was: Ap
+    DOUBLE_INTERVAL       ("Bdai"),     // was: Di
+    CMPFUZZER             ("Bfuz"), 
+    INSTRUMENT_SELECTIVELY("Only"),     // was: Oi
     
-    /* Badoud */
-    LISTING_INSTRUCTIONS("Li"), // -Li path/to/file (badoud)  -Bddwrite
-    LOAD_BEHAVIOUR_MAP("Lbm"),  // Lbm                        -Bddread
     // Those below are used internally, but no more appear in the usage.
     IADD("iadd", Opcodes.IADD, INTS),
     IDIV("idiv", Opcodes.IDIV, INTS),
@@ -265,7 +264,7 @@ public enum Arg {
         options.addOption(OptionBuilder
                 .withArgName("class")
                 .hasArg()
-                .withDescription("Select the float container. See -Wd.")
+                .withDescription("Select the float container. See "+DOUBLE_WRAPPER.shortOpt())
                 .create(FLOAT_WRAPPER.shortOpt()));
         options.addOption(OptionBuilder
                 .withArgName("class")
@@ -280,21 +279,21 @@ public enum Arg {
                 .hasArg()
                 .withDescription("Use BigDecimal wrapping with a certain precision (number of digits).\n" +
                         "Example: -Rb 100 will wrap with 100-significant-digit BigDecimals")
-                .create(BIG_DECIMAL_PRECISION.shortOpt()));
+                .create(BIG_DECIMAL_WR.shortOpt()));
 		
-        options.addOption(Arg.INTERVAL.shortOpt(),
+        options.addOption(Arg.INTERVAL_WR.shortOpt(),
                 "interval",false,"Use interval computation wrapping");
-        options.addOption(Arg.STOCHASTIC.shortOpt(),
+        options.addOption(Arg.STOCHASTIC_WR.shortOpt(),
                 "stochastic",false,"Use discrete stochastic arithmetic wrapping");
-        options.addOption(Arg.AUTODIFF.shortOpt(),
+        options.addOption(Arg.AUTODIFF_WR.shortOpt(),
                 "autodiff",false,"Use automatic differentiation (forward mode) wrapping");
-        options.addOption(Arg.AUTODIFF_BACKWARDS.shortOpt(),
+        options.addOption(Arg.AUTODIFFBW_WR.shortOpt(),
                 "autodiff-backwards",false,"Use automatic differentiation (backward mode) wrapping");
-        options.addOption(Arg.SYMBOLIC.shortOpt(),
+        options.addOption(Arg.SYMBOLIC_WR.shortOpt(),
                 "symbolic",false,"Use symbolic wrapping");
-        options.addOption(Arg.CHEBFUN.shortOpt(),
+        options.addOption(Arg.CHEBFUN_WR.shortOpt(),
                 "chebfun",false,"Use chefun wrapping");
-        options.addOption(Arg.DISABLE_UNSTABLE_COMPARISONS_CHECK.shortOpt(),
+        options.addOption(Arg.DISABLE_UNSTABLE_CMP_CHECK.shortOpt(),
                 false,"Disable unstability checks in comparisons, for the Interval or Stochastic wrappers");
         options.addOption(OptionBuilder
                 .withArgName("epsilon")
@@ -305,12 +304,12 @@ public enum Arg {
         options.addOption(OptionBuilder
                 .withArgName("path")
                 .hasArg()
-                .withDescription("Log the lines that can be associated with a behaviour into a XML file.")
+                .withDescription("Write the located effect of the Wrapper to an XML file (used for Delta-Debugging)")
                 .create(Arg.POLY_BEHAVIOURAL_LOGGING.shortOpt()));
         options.addOption(OptionBuilder
                 .withArgName("path")
                 .hasArg()
-                .withDescription("Load behaviours from a XML file  and use poly behavioural wrapping")
+                .withDescription("Read an XML file to tune how the Wrapper behaves (used for Delta-Debugging)")
                 .create(Arg.POLY_BEHAVIOURAL_LOAD.shortOpt())); 
         
         options.addOption(Arg.ALL.shortOpt(),
@@ -370,12 +369,12 @@ public enum Arg {
         options.addOption(OptionBuilder
                 .withArgName("filename")
                 .hasArg()
-                .withDescription("List all instrumentable instructions into a XML file.")
+                .withDescription("Write the located effect of an ArithmeticBehavior to an XML file (used for Delta-Debugging)")
                 .create(Arg.LISTING_INSTRUCTIONS.shortOpt()));      
         options.addOption(OptionBuilder
                 .withArgName("filename")
                 .hasArg()
-                .withDescription("Load behaviour map from a XML file.")
+                .withDescription("Read an XML file to tune how an ArithmeticBehavior behaves (used for Delta-Debugging)")
                 .create(Arg.LOAD_BEHAVIOUR_MAP.shortOpt()));
         return options;
     }

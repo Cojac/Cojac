@@ -30,7 +30,7 @@ import com.github.cojac.deltadebugging.utils.*;
  *              
  * 2) Run your "judge" under Cojac, with the options: 
  * 
- *      java -jar:cojac.jar=" -BD2F -Li /path/to/Simpsons.xml " dd.Simpsons
+ *      java -jar:cojac.jar=" -Bdaf -Bddwrite /path/to/Simpsons.xml " dd.Simpsons
  *      
  *    As everything is computed as "float", it typically fails. An XML file
  *    holding every "double" statements is produced

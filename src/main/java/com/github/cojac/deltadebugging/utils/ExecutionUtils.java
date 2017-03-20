@@ -19,10 +19,10 @@ public enum ExecutionUtils implements Executor {
 	private static final String		COJAC_START_OPTION			= "=\'"; //  = "=\"";
 	private static final String		COJAC_END_OPTION			= " \'";
 	// BAPST: strange, the initial space is mandatory on Windows... Wyy??
-	private static final String		COJAC_OPTION_BEHAVIOUR		= " -BD2F -Lbm ";
-	private static final String		COJAC_OPTION_LISTING		= " -BD2F -Li ";
-	private static final String		COJAC_OPTION_WRAP_PBLOAD	= "-Rpbload ";
-	private static final String		COJAC_OPTION_WRAP_PBL		= "-Rpbl ";
+	private static final String		COJAC_OPTION_BEHAVIOUR		= " -Bdaf -Bddread ";
+	private static final String		COJAC_OPTION_LISTING		= " -Bdaf -Bddwrite ";
+	private static final String		COJAC_OPTION_WRAP_PBLOAD	= "-Rddread ";
+	private static final String		COJAC_OPTION_WRAP_PBL		= "-Rddwrite ";
 	private static final String		JAR_OPTION					= "-jar";
 	private static final String		CLASSPATH_OPTION			= "-classpath";
 

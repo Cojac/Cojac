@@ -89,7 +89,7 @@ public class BehaviourEditor implements Editor {
 	 * function of the BitSet.
 	 * 
 	 * @param instrumentationSet BitSet that represent instructions behaviours:
-	 *            1-> "IGNORE", 0 -> "BD2F", bitIndex -> index of instruction as
+	 *            1-> "IGNORE", 0 -> "Bdaf", bitIndex -> index of instruction as
 	 *            appeared in file.
 	 */
 	public void editBehaviours(BitSet instrumentationSet) {

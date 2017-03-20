@@ -18,7 +18,7 @@
 package com.github.cojac.unit.behaviours;
 
 /*
- * These tests should work with the double to float instrumenter. (option -BD2F)
+ * These tests should work with the double to float instrumenter. (option -Bdaf)
  * 
  * */
 public class Double2FloatTests {

@@ -288,7 +288,7 @@ public class COJACBenchmark {
     public static class COJACBenchmarkIntervalWrapper {
         public static void main(String[] t) throws Exception {
             Args a=new Args();
-            a.specify(Arg.INTERVAL);
+            a.specify(Arg.INTERVAL_WR);
             a.specify(Arg.PRINT);
             a.specify(Arg.FILTER); 
             setArgs(a);

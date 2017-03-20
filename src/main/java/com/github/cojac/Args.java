@@ -113,7 +113,7 @@ public final class Args {
         String msg="bad format for option "+arg;
         try {
             switch(arg) {
-            case BIG_DECIMAL_PRECISION:
+            case BIG_DECIMAL_WR:
             case ARBITRARY_PRECISION:
             case JMX_PORT: Integer.parseInt(val); break;
             case STABILITY_THRESHOLD: Double.parseDouble(val); break;

@@ -19,7 +19,7 @@ package com.github.cojac.unit.behaviours;
 
 /*
  * These tests should work with real processor rounding mode 
- * Behaviour: native rounding. (option -Rnu)
+ * Behaviour: native rounding. (option -Bnroundu)
  * 
  * */
 public class NativeRoundingTests {
