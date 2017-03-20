@@ -66,14 +66,16 @@ public final class Args {
     
     private static final String USAGE =
              "java -javaagent:cojac.jar=\"[OPTIONS]\" YourApp [appArgs]\n"
-           + "(version 1.4.2 - 2017 Mar 10)";
+           + "(version 1.5.0 - 2017 Mar 19)";
     private static final String HEADER =
-            "\nTwo nice tools to enrich Java arithmetic capabilities, on-the-fly:"
+            "\nNice tools to enrich Java arithmetic capabilities, on-the-fly:"
             +"\n - Numerical Problem Sniffer: detects and signals arithmetic poisons like "
-            +"integer overflows, aborption and catastrophic cancellation, NaN or infinite results."
+            +"integer overflows, aborption, catastrophic cancellation, NaN or infinite results."
+            +"\n - New float/double behaviors: double-as-floats, change rounding mode... Some known "
+            +"tricks to track possible numerical instabilities."
             +"\n - Enriching Wrapper for float/double: wraps every double/float in richer objects. Current "
-            +"models include BigDecimal (you choose the precision), "
-            +"interval computation, discrete stochastic arithmetic, and even automatic differentiation."
+            +"models include BigDecimal (you choose the precision!), "
+            +"interval computation, automatic differentiation, symbolic processing, chebfun and more."
             +"\n----------------- OPTIONS -----------------\n";
     private static final String FOOTER =
             "\n------> https://github.com/Cojac/Cojac <------";

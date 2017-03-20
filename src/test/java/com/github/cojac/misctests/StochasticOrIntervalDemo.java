@@ -19,7 +19,7 @@
 // compile this to a jar and launch it with the following command :
 //    java -javaagent:cojac.jar="-Ri"     or
 //    java -javaagent:cojac.jar="-Rs"
-// An additional possible option: "-R_unstableAt 1E-5"
+// An additional possible option: "-RunstableAt 1E-5"
 
 package com.github.cojac.misctests;
 

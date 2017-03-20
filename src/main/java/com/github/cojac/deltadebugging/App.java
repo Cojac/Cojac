@@ -39,10 +39,10 @@ import com.github.cojac.deltadebugging.utils.*;
  * 
  *      java -cp cojac.jar com.github.cojac.deltadebugging.App 
  *               -behavioursfile /path/to/Simpsons.xml 
- *               -cojac /path/to/cojac.jar 
- *               -mode std 
- *               -mainclass dd.Simpsons 
- *               -classpath classPathForSimpsons
+ *               -cojac          /path/to/cojac.jar 
+ *               -mode           std 
+ *               -mainclass      dd.Simpsons 
+ *               -classpath      classPathForSimpsons
  * 
  *    It will launch your judge several times (using dd_min algorithm), to find 
  *    a "minimal" set of "double" statements that satisfies the judge.

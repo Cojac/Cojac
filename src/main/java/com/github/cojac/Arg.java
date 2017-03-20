@@ -54,8 +54,8 @@ public enum Arg {
     AUTODIFFBW_WR ("Rab"),   // AutoDiff "backward mode"
     SYMBOLIC_WR   ("Rsymb"), // was: Rsy
     CHEBFUN_WR    ("Rcheb"),
-    DISABLE_UNSTABLE_CMP_CHECK("R_noUnstableComparisons"),
-    STABILITY_THRESHOLD       ("R_unstableAt"),
+    DISABLE_UNSTABLE_CMP_CHECK("RnoUnstableCmp"),
+    STABILITY_THRESHOLD       ("RunstableAt"),
     /* Badoud */
     LISTING_INSTRUCTIONS    ("Bddwrite"),  // was: -Li path/to/file (badoud) 
     LOAD_BEHAVIOUR_MAP      ("Bddread"),   // was: Lbm
@@ -199,41 +199,38 @@ public enum Arg {
         options.addOption(Arg.VERBOSE.shortOpt(),
                 "verbose", false, "Display some internal traces");
         options.addOption(Arg.PRINT.shortOpt(),
-                "console", false, "Signal problems with console messages to stderr (default signaling policy)");
+                false, "Signal problems with console messages to stderr (default signaling policy)");
         options.addOption(Arg.EXCEPTION.shortOpt(),
-                "exception", false, "Signal problems by throwing an ArithmeticException");
+                false, "Signal problems by throwing an ArithmeticException");
         options.addOption(OptionBuilder
-                .withLongOpt("callback")
                 .withArgName("meth")
                 .hasArg()
                 .withDescription("Signal problems by calling " +
                     "a user-supplied method matching this signature:" +
-                    "\n...public static void f(String msg) \n" +
+                    "...public static void f(String msg) \n" +
                     "(Give a fully qualified identifier in the form: \n" +
                     "pkgA/myPkg/myClass/myMethod)")
                 .create(Arg.CALL_BACK.shortOpt()));
         options.addOption(OptionBuilder
-                .withLongOpt("logfile")
-                .withArgName("path")
+                .withArgName("file")
                 .hasOptionalArg()
                 .withDescription("Signal problems by writing to a log file.\n" +
                     "Default filename is: " + Args.DEFAULT_LOG_FILE_NAME + '.')
                 .create(Arg.LOG_FILE.shortOpt()));
         options.addOption(Arg.DETAILED_LOG.shortOpt(),
-                "detailed", false, "Log the full stack trace (combined with -Cc or -Cl)");
+                false, "Log the full stack trace (combined with -Cc or -Cl)");
         options.addOption(OptionBuilder
-                .withLongOpt("bypass")
                 .withArgName("prefixes")
                 .hasOptionalArg()
                 .withDescription("Bypass classes starting with one of these prefixes (semi-colon separated list). " +
                         "\nExample: -Xb foo;bar.util\n will skip classes with name foo* or bar.util*")
                 .create(Arg.BYPASS.shortOpt()));
         options.addOption(Arg.FILTER.shortOpt(),
-                "filter", false, "Report each problem only once per faulty line");
+                false, "Report each problem only once per faulty line");
         options.addOption(Arg.RUNTIME_STATS.shortOpt(),
-                "summary", false, "Print runtime statistics");
+                false, "Print runtime statistics");
         options.addOption(Arg.INSTRUMENTATION_STATS.shortOpt(),
-                "stats", false, "Print instrumentation statistics");
+                false, "Print instrumentation statistics");
         
         options.addOption(Arg.JMX_ENABLE.shortOpt(), false, "Enable JMX feature");
         options.addOption(OptionBuilder
@@ -247,7 +244,7 @@ public enum Arg {
             .withDescription("Set remote JMX connection port (default: 5017)")
             .create(JMX_PORT.shortOpt()));
         options.addOption(OptionBuilder
-                .withArgName("MBean-id")
+                .withArgName("ID")
                 .hasArg()
                 .withDescription("Set remote MBean name (default: COJAC)")
                 .create(JMX_NAME.shortOpt()));
@@ -259,7 +256,7 @@ public enum Arg {
                 .withArgName("class")
                 .hasArg()
                 .withDescription("Select the double container (not for regular users!).\n" +
-                        "Example: -Wd cojac.MyDouble will use com.github.cojac.models.wrappers.MyDouble")
+                        "Example: -"+DOUBLE_WRAPPER.shortOpt()+" cojac.MyDouble will use com.github.cojac.models.wrappers.MyDouble")
                 .create(DOUBLE_WRAPPER.shortOpt()));
         options.addOption(OptionBuilder
                 .withArgName("class")
@@ -270,52 +267,51 @@ public enum Arg {
                 .withArgName("class")
                 .hasArg()
                 .withDescription("Select the wrapper (not for regular users!).\n" +
-                        "Example: -W cojac.WrapperBasic will use com.github.cojac.models.wrappers.WrapperBasic")
+                        "Example: -"+NG_WRAPPER.shortOpt()+" cojac.WrapperBasic will use com.github.cojac.models.wrappers.WrapperBasic")
                 .create(NG_WRAPPER.shortOpt()));
 		
         options.addOption(OptionBuilder
-                .withLongOpt("bigdecimal")
                 .withArgName("digits")
                 .hasArg()
-                .withDescription("Use BigDecimal wrapping with a certain precision (number of digits).\n" +
-                        "Example: -Rb 100 will wrap with 100-significant-digit BigDecimals")
+                .withDescription("Use BigDecimal wrapping with arbitrarily high precision." +
+                        "Example: -"+BIG_DECIMAL_WR.shortOpt()+" 100 will wrap with 100-significant-digit BigDecimals")
                 .create(BIG_DECIMAL_WR.shortOpt()));
 		
         options.addOption(Arg.INTERVAL_WR.shortOpt(),
-                "interval",false,"Use interval computation wrapping");
+                false,"Use interval computation wrapping");
         options.addOption(Arg.STOCHASTIC_WR.shortOpt(),
-                "stochastic",false,"Use discrete stochastic arithmetic wrapping");
+                false,"Use discrete stochastic arithmetic wrapping");
         options.addOption(Arg.AUTODIFF_WR.shortOpt(),
-                "autodiff",false,"Use automatic differentiation (forward mode) wrapping");
+                false,"Use automatic differentiation (forward mode) wrapping");
         options.addOption(Arg.AUTODIFFBW_WR.shortOpt(),
-                "autodiff-backwards",false,"Use automatic differentiation (backward mode) wrapping");
+                false,"Use automatic differentiation (backward mode) wrapping");
         options.addOption(Arg.SYMBOLIC_WR.shortOpt(),
-                "symbolic",false,"Use symbolic wrapping");
+                false,"Use symbolic wrapping");
         options.addOption(Arg.CHEBFUN_WR.shortOpt(),
-                "chebfun",false,"Use chefun wrapping");
+                false,"Use chefun wrapping");
         options.addOption(Arg.DISABLE_UNSTABLE_CMP_CHECK.shortOpt(),
                 false,"Disable unstability checks in comparisons, for the Interval or Stochastic wrappers");
         options.addOption(OptionBuilder
-                .withArgName("epsilon")
+                .withArgName("e")
                 .hasArg()
                 .withDescription("Relative precision considered unstable, for Interval/Stochastic wrappers (default 0.00001)")
                 .create(STABILITY_THRESHOLD.shortOpt()));
         // badoud
         options.addOption(OptionBuilder
-                .withArgName("path")
+                .withArgName("file")
                 .hasArg()
                 .withDescription("Write the located effect of the Wrapper to an XML file (used for Delta-Debugging)")
                 .create(Arg.POLY_BEHAVIOURAL_LOGGING.shortOpt()));
         options.addOption(OptionBuilder
-                .withArgName("path")
+                .withArgName("file")
                 .hasArg()
                 .withDescription("Read an XML file to tune how the Wrapper behaves (used for Delta-Debugging)")
                 .create(Arg.POLY_BEHAVIOURAL_LOAD.shortOpt())); 
         
         options.addOption(Arg.ALL.shortOpt(),
-                "all", false, "Sniff everywhere (this is the default behavior)");
+                false, "Sniff everywhere (this is the default behavior)");
         options.addOption(Arg.NONE.shortOpt(),
-                "none", false, "Don't sniff at all");
+                false, "Don't sniff at all");
         options.addOption(Arg.OPCODES.shortOpt(),
                 true, "Sniff in those (comma separated) opcodes; eg: "+allOpcodes);
         options.addOption(Arg.MATHS.shortOpt(),
@@ -331,7 +327,7 @@ public enum Arg {
         options.addOption(Arg.FLOATS.shortOpt(),
             false, "Sniff in floats opcodes");
         /*V.Gazzola*/
-        options.addOption(Arg.DOUBLE2FLOAT.shortOpt(),"double_as_floats", 
+        options.addOption(Arg.DOUBLE2FLOAT.shortOpt(), 
                 false, "Use doubles as if they were single-precision floats");
         options.addOption(Arg.ROUND_BIASED_UP.shortOpt(),
                 false, "Emulate \"round\" (biased) up");
@@ -352,27 +348,25 @@ public enum Arg {
         options.addOption(OptionBuilder
                 .withArgName("nbOfBits")
                 .hasArg()
-                .withDescription("limit the precision of a double's mantissa.\n" +
+                .withDescription("limit the precision of a double's mantissa." +
                         "Example: -"+ARBITRARY_PRECISION.shortOpt()+" 8 emulates eight-significant bits floats and doubles")
                 .create(ARBITRARY_PRECISION.shortOpt()));
         options.addOption(OptionBuilder
-                .withArgName("portionsOfCode")
+                .withArgName("code")
                 .hasOptionalArg()
-                .withDescription("Select what to instrument. InstrumentCode has to be Classes names " +
-                        "separated by Ampersand (&), plus, possibly, following a Class name, curly brackets "+
-                        "Containing a list of method names+signature or line numbers (or intervals) separated by commas. "+
-                        "Example: "+Arg.INSTRUMENT_SELECTIVELY.shortOpt()+" \"foo.Bar{m1(II)I,m3(),1,12,112,25};foo.foobar.Bar{10-354}\" "+
-                        "Will instrument fully methods m1(II)I, m3() and lines [1,12,112,25] from Class foo.Bar "+
-                        "and lines 10 to 354 (inclusive) from Class foo.foobar.Bar")
+                .withDescription("Select precisely which portions of code will be instrumented. The syntax is sketched in this "+
+                        "example: -"+Arg.INSTRUMENT_SELECTIVELY.shortOpt()+" \"pkg.Foo{m1(II)I,m3(),1,12,112,25};pkg.Bar{10-354}\" "+
+                        "Will instrument fully methods m1(II)I, m3() and lines [1,12,112,25] from Class pkg.Foo "+
+                        "and lines 10 to 354 (inclusive) from Class pkg.Bar")
                 .create(Arg.INSTRUMENT_SELECTIVELY.shortOpt()));
         //Badoud
         options.addOption(OptionBuilder
-                .withArgName("filename")
+                .withArgName("file")
                 .hasArg()
                 .withDescription("Write the located effect of an ArithmeticBehavior to an XML file (used for Delta-Debugging)")
                 .create(Arg.LISTING_INSTRUCTIONS.shortOpt()));      
         options.addOption(OptionBuilder
-                .withArgName("filename")
+                .withArgName("file")
                 .hasArg()
                 .withDescription("Read an XML file to tune how an ArithmeticBehavior behaves (used for Delta-Debugging)")
                 .create(Arg.LOAD_BEHAVIOUR_MAP.shortOpt()));

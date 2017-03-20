@@ -138,6 +138,5 @@ public class CheckedFloatBehaviour {
         }
         return r;
     }
-    
-    
+
 }
