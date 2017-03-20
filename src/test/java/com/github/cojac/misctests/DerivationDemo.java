@@ -64,7 +64,7 @@ public class DerivationDemo{
     public static void main1( String[] args ){
         // TODO : why the args ??
         double x = 2;
-        x = asDerivativeVar( x );
+        x = COJAC_MAGIC_asDerivativeVar( x );
         double y = someFunction( x, 3, 4 );
         System.out.println( "f(2):  " + y );
         System.out.println( "f'(2): " + COJAC_MAGIC_derivative( y ) );
@@ -95,7 +95,7 @@ public class DerivationDemo{
         }
 
         System.out.printf( "Function %d\n", fx );
-        x = asDerivativeVar( x );
+        x = COJAC_MAGIC_asDerivativeVar( x );
         double res = ( double ) f.invoke( DerivationDemo.class, x );
         double dfRes = ( double ) df.invoke( DerivationDemo.class, x );
         double dRes = COJAC_MAGIC_derivative( res );
@@ -117,7 +117,7 @@ public class DerivationDemo{
         return 0;
     }
 
-    public static double asDerivativeVar( double a ){
+    public static double COJAC_MAGIC_asDerivativeVar( double a ){
         return a;
     }
 

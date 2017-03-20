@@ -215,12 +215,12 @@ public class WrapperAutodiff extends ACompactWrapper {
     
     // consider renaming.. but how? asDerivativeVar
     // asDifferentiationVar asIndependentVar? asDerivativeFocus?
-    public static CommonDouble asDerivativeVar(CommonDouble d) {
+    public static CommonDouble COJAC_MAGIC_asDerivativeVar(CommonDouble d) {
         WrapperAutodiff res=new WrapperAutodiff(der(d.val).value, 1.0);
         return new CommonDouble(res);
     }
     
-    public static CommonFloat asDerivativeVar(CommonFloat d) {
+    public static CommonFloat COJAC_MAGIC_asDerivativeVar(CommonFloat d) {
         WrapperAutodiff res=new WrapperAutodiff(der(d.val).value, 1.0);
         return new CommonFloat(res);
     }

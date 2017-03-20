@@ -23,18 +23,18 @@ public class HelloPolynomial2 {
     }
 
     public static double COJAC_MAGIC_derivative(double a) { return 0; }
-    public static double asDerivativeVar(double a) { return a; }
+    public static double COJAC_MAGIC_asDerivativeVar(double a) { return a; }
 
     public static void main(String[] args) {
         double r, x, y;
         x=2.0; y=3.0;
-        x=asDerivativeVar(x);
+        x=COJAC_MAGIC_asDerivativeVar(x);
         r=somePolynomial(x, y);
         System.out.println("f (x,y): "+r);
         System.out.println("f'(x,y): "+COJAC_MAGIC_derivative(r));
         
         x=2.0; y=3.0;
-        y=asDerivativeVar(y);
+        y=COJAC_MAGIC_asDerivativeVar(y);
         r=somePolynomial(x, y);
         System.out.println("f (x,y): "+r);
         System.out.println("f'(x,y): "+COJAC_MAGIC_derivative(r));

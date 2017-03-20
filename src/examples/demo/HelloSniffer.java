@@ -1,13 +1,13 @@
 /* For simplicity, we don't use JUnit here (only the idea)...
  * To be run: 
- * - without Cojac:        java demo.HelloCojac
- * - with Cojac:           java -javaagent:cojac.jar demo.HelloCojac
- * - with Cojac filtered:  java -javaagent:cojac.jar="-Xs -Xf" demo.HelloCojac
+ * - without Cojac:        java demo.HelloSniffer
+ * - with Cojac:           java -javaagent:cojac.jar demo.HelloSniffer
+ * - with Cojac filtered:  java -javaagent:cojac.jar="-Xs -Xf" demo.HelloSniffer
  */
 
 package demo;
 
-public class HelloCojac {
+public class HelloSniffer {
   static int powerModA(int x, int y, int z) {
     int res=1;
     while(y-- > 0)
