@@ -21,6 +21,7 @@ package com.github.cojac.unit.behaviours;
 import java.lang.reflect.Method;
 
 import org.junit.Assert;
+import org.junit.Test;
 
 import com.github.cojac.Agent;
 import com.github.cojac.Arg;
@@ -40,9 +41,8 @@ public class SelectiveInstrumentationTest {
             {nominalReturn, instrumentedReturn},//method3
             {instrumentedReturn, nominalReturn},//method4
     };
-    // @Test  // Bapst: don't know why this test suddenly fails... 
-    //           Anyway the feature is expected to be dropped
-    //           (replaced by XML mechanism, see -Bddwrite/-Bddread options)
+    
+    @Test
     public void SelectInstruTest() throws Exception {
         
         Args args = new Args();
