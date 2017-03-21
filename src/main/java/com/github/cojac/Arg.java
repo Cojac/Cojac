@@ -61,7 +61,19 @@ public enum Arg {
     LOAD_BEHAVIOUR_MAP      ("Bddread"),   // was: Lbm
     POLY_BEHAVIOURAL_LOGGING("Rddwrite"),  // was: Rpbl
     POLY_BEHAVIOURAL_LOAD   ("Rddread"),   // was: Rpbload
-
+    /* V.Gazzola */
+    DOUBLE2FLOAT("Bdaf"),               // was: BD2F
+    ROUND_BIASED_UP       ("Beroundu"), // was: Rbu
+    ROUND_BIASED_DOWN     ("Beroundd"), // was: Rbd
+    ROUND_BIASED_RANDOM   ("Beroundr"), // was: Rbr
+    ROUND_NATIVELY_UP     ("Bnroundu"), // was: Rnu
+    ROUND_NATIVELY_DOWN   ("Bnroundd"), // was: Rnd
+    ROUND_NATIVELY_TO_ZERO("Bnroundz"), // was: Rnz
+    ARBITRARY_PRECISION   ("Bpr"),      // was: Ap
+    DOUBLE_INTERVAL       ("Bdai"),     // was: Di
+    CMPFUZZER             ("Bfuz"), 
+    INSTRUMENT_SELECTIVELY("Only"),     // was: Oi
+    
     ALL    ("Ca"),
     NONE   ("Cn"),
     OPCODES("Copcodes"),
@@ -71,19 +83,6 @@ public enum Arg {
     LONGS  ("Clongs"),
     CASTS  ("Ccasts"),
     MATHS  ("Cmath"),
-    
-    /* V.Gazzola */
-    DOUBLE2FLOAT("Bdaf"),               // was: BD2F
-    ROUND_BIASED_UP       ("Beroundu"), // was: Rbu
-    ROUND_BIASED_DOWN     ("Beroundd"), // was: Rbd
-    ROUND_BIASED_RANDOM   ("Beroundd"), // was: Rbr
-    ROUND_NATIVELY_UP     ("Bnroundu"), // was: Rnu
-    ROUND_NATIVELY_DOWN   ("Bnroundd"), // was: Rnd
-    ROUND_NATIVELY_TO_ZERO("Bnroundz"), // was: Rnz
-    ARBITRARY_PRECISION   ("Bpr"),      // was: Ap
-    DOUBLE_INTERVAL       ("Bdai"),     // was: Di
-    CMPFUZZER             ("Bfuz"), 
-    INSTRUMENT_SELECTIVELY("Only"),     // was: Oi
     
     // Those below are used internally, but no more appear in the usage.
     IADD("iadd", Opcodes.IADD, INTS),
@@ -294,7 +293,7 @@ public enum Arg {
         options.addOption(OptionBuilder
                 .withArgName("e")
                 .hasArg()
-                .withDescription("Relative precision considered unstable, for Interval/Stochastic wrappers (default 0.00001)")
+                .withDescription("Relative precision considered unstable, eg for Interval/Stochastic wrappers (default 0.00001)")
                 .create(STABILITY_THRESHOLD.shortOpt()));
         // badoud
         options.addOption(OptionBuilder
@@ -334,17 +333,17 @@ public enum Arg {
         options.addOption(Arg.ROUND_BIASED_DOWN.shortOpt(),
                 false, "Emulate \"round\" (biased) down");
         options.addOption(Arg.ROUND_BIASED_RANDOM.shortOpt(),
-                false, "Emulate \"round\" (Biased) randomly");
+                false, "Emulate \"round\" (biased) randomly");
         options.addOption(Arg.DOUBLE_INTERVAL.shortOpt(),
                 false, "Hijack doubles as low-precision intervals");
         options.addOption(Arg.ROUND_NATIVELY_UP.shortOpt(),
-                false, "Change the CPU's rounding mode toward plus infinity");
+                false, "Change the CPU rounding mode toward plus infinity");
         options.addOption(Arg.ROUND_NATIVELY_DOWN.shortOpt(),
-                false, "Change the CPU's rounding mode toward minus infinity");
+                false, "Change the CPU rounding mode toward minus infinity");
         options.addOption(Arg.ROUND_NATIVELY_TO_ZERO.shortOpt(),
-                false, "Change the CPU's rounding mode toward zero");
+                false, "Change the CPU rounding mode toward zero");
         options.addOption(Arg.CMPFUZZER.shortOpt(), 
-                false, "toggles CMP results for operands too close together");
+                false, "toggle CMP results for operands too close together");
         options.addOption(OptionBuilder
                 .withArgName("nbOfBits")
                 .hasArg()
