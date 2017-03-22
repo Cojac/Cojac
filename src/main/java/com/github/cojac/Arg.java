@@ -51,7 +51,7 @@ public enum Arg {
     INTERVAL_WR   ("Ri"),    // Interval computation
     STOCHASTIC_WR ("Rs"),    // StochasticArithmetic
     AUTODIFF_WR   ("Ra"),    // AutoDiff "forward mode"
-    AUTODIFFBW_WR ("Rab"),   // AutoDiff "backward mode"
+    AUTODIFFREV_WR("Rar"),   // AutoDiff "reverse mode"
     SYMBOLIC_WR   ("Rsymb"), // was: Rsy
     CHEBFUN_WR    ("Rcheb"),
     DISABLE_UNSTABLE_CMP_CHECK("RnoUnstableCmp"),
@@ -282,8 +282,8 @@ public enum Arg {
                 false,"Use discrete stochastic arithmetic wrapping");
         options.addOption(Arg.AUTODIFF_WR.shortOpt(),
                 false,"Use automatic differentiation (forward mode) wrapping");
-        options.addOption(Arg.AUTODIFFBW_WR.shortOpt(),
-                false,"Use automatic differentiation (backward mode) wrapping");
+        options.addOption(Arg.AUTODIFFREV_WR.shortOpt(),
+                false,"Use automatic differentiation (reverse mode) wrapping");
         options.addOption(Arg.SYMBOLIC_WR.shortOpt(),
                 false,"Use symbolic wrapping");
         options.addOption(Arg.CHEBFUN_WR.shortOpt(),

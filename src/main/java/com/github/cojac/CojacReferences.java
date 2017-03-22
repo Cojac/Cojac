@@ -330,9 +330,9 @@ public final class CojacReferences {
                 args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperAutodiff");
             }
             
-            if (args.isSpecified(Arg.AUTODIFFBW_WR)) {
+            if (args.isSpecified(Arg.AUTODIFFREV_WR)) {
                 args.specify(Arg.REPLACE_FLOATS);
-                args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperAutodiffBackwards");
+                args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperAutodiffReverse");
             }
             
             if (args.isSpecified(Arg.SYMBOLIC_WR)) {
