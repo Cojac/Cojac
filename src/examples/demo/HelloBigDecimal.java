@@ -34,8 +34,8 @@ public class HelloBigDecimal {
     public static void main(String[] args) {
         double m = mullerRecurrence(20);
         double r = 6.04;
-        System.out.println(m);
-        System.out.println("... should be: ~ "+r);
+        System.out.print(m);
+        System.out.println("  ... should be: ~ "+r);
     }
 
 }
