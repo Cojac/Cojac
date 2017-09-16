@@ -3,7 +3,7 @@
 ### Java numbers with a fresh eye and a cool tool...
 
 ... Don't miss the opportunity:  
-  - watch our small demos on [YouTube](https://youtu.be/DqAFQfbWZOU?list=PLHLKWUtT0B7kNos1e48vKhFlGAXR1AAkF)
+  - watch our small demos on [YouTube](https://youtu.be/eAy71M34U_I?list=PLHLKWUtT0B7kNos1e48vKhFlGAXR1AAkF)
   - read the [User Guide](https://github.com/Cojac/Cojac/wiki)
   - download [cojac.jar](https://github.com/Cojac/Cojac/releases/download/v1.4.1/cojac.jar)
 
