@@ -33,7 +33,7 @@
 
 ### Recent improvements
 
-The following features have been implemented, and are impatient to appear in the next release:
+The following features have been implemented and recently included in the current release:
 
 - symbolic expressions: we rebuild the formulas from the bytecode, and then apply simplification rules, just like Mathematica and similar great tools are able to do. Hard to believe, but yes we did it!
 
