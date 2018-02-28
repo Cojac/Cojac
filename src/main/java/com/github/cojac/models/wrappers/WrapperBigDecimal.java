@@ -39,7 +39,8 @@ public class WrapperBigDecimal extends ACompactWrapper {
     private final BigDecimal value;
    
     private WrapperBigDecimal(double v) {
-        this(new BigDecimal(v, mathContext));
+        this(new BigDecimal(Double.toString(v), mathContext));
+        // this(new BigDecimal(v, mathContext));
     }
     
     private WrapperBigDecimal(BigDecimal v) {

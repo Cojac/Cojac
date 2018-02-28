@@ -25,6 +25,7 @@ public class HelloAutodiffReverse {
 
     public static double COJAC_MAGIC_partialDerivativeIn(double a) { return 0;}
     public static void   COJAC_MAGIC_computePartialDerivatives(double a) {}
+    public static void COJAC_MAGIC_resetPartialDerivatives(double d) {}
 
     public static double somePolynomial(double x, double y) {
         return 3*x*x + 2*y;
@@ -42,5 +43,14 @@ public class HelloAutodiffReverse {
         
         System.out.println("df/dx: "+COJAC_MAGIC_partialDerivativeIn(x));
         System.out.println("df/dy: "+COJAC_MAGIC_partialDerivativeIn(y));
+        
+        COJAC_MAGIC_resetPartialDerivatives(r);
+        COJAC_MAGIC_computePartialDerivatives(r);
+        System.out.println("df/dx: "+COJAC_MAGIC_partialDerivativeIn(x));
+        
+        COJAC_MAGIC_resetPartialDerivatives(r);
+        COJAC_MAGIC_computePartialDerivatives(r);
+        System.out.println("df/dx: "+COJAC_MAGIC_partialDerivativeIn(x));
+
     }
 }
