@@ -272,18 +272,23 @@ public final class CojacReferences {
         private int arbitraryPrecisionBits;
         private final String[] loadedClasses;
 
-        private static final String STANDARD_PACKAGES = "com.sun.;java.;javax.;sun.;sunw.;"
+        private static final String PACKAGES_NOT_TO_INSTRUMENT = 
+                  "com.sun.;java.;javax.;sun.;sunw.;"
                 + "org.xml.sax.;org.w3c.dom.;org.omg.;org.ietf.jgss.;"
                 + "com.apple.;apple.;"
                 + "javafx.;"
                    // BAPST: trick to avoid a "callback" issue. Note that it is
-                   // not need to fix that here, we can use the bypass option:
-                   //  -b java2d.demos.Fonts.AttributedStr$ScalableImageGraphicAttribute
+                   // not needed to fix that here, we can use the bypass option:
+                   //  -Xb java2d.demos.Fonts.AttributedStr$ScalableImageGraphicAttribute
                 + "java2d.demos.Fonts.AttributedStr$ScalableImageGraphicAttribute;" 
                 + "com.github.cojac.models;"
                 + "com.github.cojac.interval;"
                 + "jdk.internal;"
                 + "org.slf4j;"
+                // IntelliJ debugger stuff 
+                + "com.intellij.rt.debugger.;"
+                + "org.jetbrains.capture.;"
+                // A math library 
                 + "org.apache.commons.math3";
 
         public CojacReferencesBuilder(final Args args) {
@@ -299,7 +304,7 @@ public final class CojacReferences {
 
         public CojacReferences build() {
             this.stats = new InstrumentationStats();
-            this.sbBypassList = new StringBuilder(STANDARD_PACKAGES);
+            this.sbBypassList = new StringBuilder(PACKAGES_NOT_TO_INSTRUMENT);
             args.setValue(Arg.FLOAT_WRAPPER,  "com.github.cojac.models.wrappers.CommonFloat");
             args.setValue(Arg.DOUBLE_WRAPPER, "com.github.cojac.models.wrappers.CommonDouble");
 

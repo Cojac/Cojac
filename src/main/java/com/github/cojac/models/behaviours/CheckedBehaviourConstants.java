@@ -20,7 +20,7 @@ package com.github.cojac.models.behaviours;
 
 public final class CheckedBehaviourConstants {
     
-    public static final String PRECISION_MSG = "Absorbtion: ";
+    public static final String PRECISION_MSG = "Absorption: ";
     public static final String RESULT_IS_POS_INF_MSG = "Result is +Infinity: ";
     public static final String RESULT_IS_NEG_INF_MSG = "Result is -Infinity: ";
     public static final String UNDERFLOW_MSG = "Underflow: ";
