@@ -273,24 +273,32 @@ public final class CojacReferences {
         private final String[] loadedClasses;
 
         private static final String PACKAGES_NOT_TO_INSTRUMENT = 
+                // Every part of the "Java standard library"...
                   "com.sun.;java.;javax.;sun.;sunw.;"
-                + "org.xml.sax.;org.w3c.dom.;org.omg.;org.ietf.jgss.;"
-                + "com.apple.;apple.;"
+                + "org.xml.sax.;org.w3c.dom.;org.ietf.jgss.;"
                 + "javafx.;"
-                   // BAPST: trick to avoid a "callback" issue. Note that it is
-                   // not needed to fix that here, we can use the bypass option:
-                   //  -Xb java2d.demos.Fonts.AttributedStr$ScalableImageGraphicAttribute
-                + "java2d.demos.Fonts.AttributedStr$ScalableImageGraphicAttribute;" 
+                + "netscape.javascript;"
+                + "jdk.;"  // TODO: was "jdk.internal;" double-check if reasonable
+                // Baptiste Wicht certainly had good reasons to add these: 
+                + "org.omg.;"
+                + "com.apple.;apple.;"
+                // COJAC stuff 
                 + "com.github.cojac.models;"
                 + "com.github.cojac.interval;"
-                + "jdk.internal;"
+                // logging library 
                 + "org.slf4j;"
                 // IntelliJ debugger stuff 
                 + "com.intellij.rt.debugger.;"
                 + "org.jetbrains.capture.;"
-                // A math library 
-                + "org.apache.commons.math3";
-
+                // A popular math library 
+                + "org.apache.commons.math3;"
+                // BAPST: trick to avoid a "callback" issue. Note that it is
+                // not needed to fix that here, we can use the bypass option:
+                //  -Xb java2d.demos.Fonts.AttributedStr$ScalableImageGraphicAttribute
+                + "java2d.demos.Fonts.AttributedStr$ScalableImageGraphicAttribute"; 
+                // CAUTION: be sure not to put a trailing ';' --> empty prefix
+                //                                       --> no instrumentation!
+        
         public CojacReferencesBuilder(final Args args) {
             this(args, null);
         }
