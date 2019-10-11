@@ -28,6 +28,7 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.AnalyzerAdapter;
+import static com.github.cojac.CojacCommonConstants.ASM_VERSION;
 
 /**
  * Remap the local variables indices for load & store instructions
@@ -40,7 +41,7 @@ public class FloatVariablesSorter extends MethodVisitor {
     private final int maxRenumber;
     
     public FloatVariablesSorter(int access, String oldDesc, AnalyzerAdapter mv) {
-        super(Opcodes.ASM5, mv);
+        super(ASM_VERSION, mv);
         Type[] args = Type.getArgumentTypes(oldDesc);
         firstFrameMapping = new int[1+args.length*2]; // +1 for 'this'
         Arrays.fill(firstFrameMapping, -1); // so that erroneously using unwritten cells will cause problems...

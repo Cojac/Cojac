@@ -33,18 +33,23 @@ import org.objectweb.asm.Opcodes;
  * If a class is loaded here, it will never be instrumented.
  */
 public class ModifiedClassWriter extends ClassWriter {
-    private ClassLoader l = getClass().getClassLoader();
+    private ClassLoader theLoader = getClass().getClassLoader();
 
 
 	ModifiedClassWriter(ClassReader cr, int flags, ClassLoader loader) {
 		super(cr, flags);
 		if(loader != null){
-			l = loader;
+			theLoader = loader;
 		}
+//		if(theLoader == null) 
+//		    theLoader  = ClassLoader.getSystemClassLoader().getParent();
 	}
 
     @Override
     protected String getCommonSuperClass(final String type1, final String type2) {
+        if(theLoader==null || type1==null || type2==null) {
+            return "java/lang/Object"; 
+        }
         try {
             ClassReader info1 = typeInfo(type1);
             ClassReader info2 = typeInfo(type2);
@@ -85,7 +90,7 @@ public class ModifiedClassWriter extends ClassWriter {
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException(e.toString()+" (cojac info added: "+type1+" or "+type2+")");
+            throw new RuntimeException(e.toString()+" (cojac info added: "+type1+" or "+type2+")", e);
         }
     }
 
@@ -160,7 +165,7 @@ public class ModifiedClassWriter extends ClassWriter {
      *             if the bytecode of 'type' cannot be loaded.
      */
     private ClassReader typeInfo(final String type) throws IOException {
-        InputStream is = l.getResourceAsStream(type + ".class");
+        InputStream is = theLoader.getResourceAsStream(type + ".class");
         try {
             return new ClassReader(is);
         } finally {

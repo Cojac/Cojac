@@ -41,6 +41,7 @@ import com.github.cojac.instrumenters.IOpcodeInstrumenterFactory;
 import com.github.cojac.instrumenters.ReplaceFloatsMethods;
 import com.github.cojac.models.DoubleNumbers;
 import com.github.cojac.models.FloatNumbers;
+import static com.github.cojac.CojacCommonConstants.ASM_VERSION;
 
 /**
  * There is a delegation chain in place for MethodVisitors:
@@ -76,7 +77,7 @@ public final class FloatReplacerMethodVisitor extends MethodVisitor {
             InstrumentationStats stats, 
             IOpcodeInstrumenterFactory factory, 
             CojacReferences references) {
-        super(Opcodes.ASM5, lvs);
+        super(ASM_VERSION, lvs);
         
         //this.lvs=lvs;
         this.aa = aa;
@@ -280,15 +281,18 @@ public final class FloatReplacerMethodVisitor extends MethodVisitor {
 		
 		Type cojacType = afterFloatReplacement(myType);
 		
-		if(opcode == CHECKCAST && myType.equals(cojacType) == false){
-			if(stackTop().equals(Type.getType(Object.class).getInternalName())){
-				if(cojacType.equals(COJAC_FLOAT_WRAPPER_TYPE)){
-					 mv.visitMethodInsn(INVOKESTATIC, FN_NAME, "castFromObject", "("+Type.getType(Object.class).getDescriptor()+")"+Type.getType(Object.class).getDescriptor(), false);
-				}
-				if(cojacType.equals(COJAC_DOUBLE_WRAPPER_TYPE)){
-					 mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "castFromObject", "("+Type.getType(Object.class).getDescriptor()+")"+Type.getType(Object.class).getDescriptor(), false);
-				}
-			}
+		if(opcode == CHECKCAST && myType.equals(cojacType) == false) {
+		    Type objType = Type.getType(Object.class);  // maybe with bootstrap loader(?)
+		    if(stackTop() != null && objType != null) {
+		        if(stackTop().equals(objType.getInternalName())){
+		            if(cojacType.equals(COJAC_FLOAT_WRAPPER_TYPE)){
+		                mv.visitMethodInsn(INVOKESTATIC, FN_NAME, "castFromObject", "("+Type.getType(Object.class).getDescriptor()+")"+Type.getType(Object.class).getDescriptor(), false);
+		            }
+		            if(cojacType.equals(COJAC_DOUBLE_WRAPPER_TYPE)){
+		                mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "castFromObject", "("+Type.getType(Object.class).getDescriptor()+")"+Type.getType(Object.class).getDescriptor(), false);
+		            }
+		        }
+		    }
 		}
 
         mv.visitTypeInsn(opcode, cojacType.getInternalName());

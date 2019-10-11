@@ -15,7 +15,7 @@
 
 	<groupId>com.github.cojac</groupId>
 	<artifactId>cojac</artifactId>
-	<version>1.5.0</version>
+	<version>1.5.1</version>
 	<name>COJAC</name>
 	<description>a tool that leverages in new ways the arithmetic capabilities of the Java programming language.</description>
 	<url>https://github.com/Cojac/</url>
@@ -235,27 +235,27 @@
 		<dependency>
 			<groupId>org.ow2.asm</groupId>
 			<artifactId>asm</artifactId>
-			<version>6.0</version>
+			<version>7.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ow2.asm</groupId>
 			<artifactId>asm-commons</artifactId>
-			<version>6.0</version>
+			<version>7.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ow2.asm</groupId>
 			<artifactId>asm-tree</artifactId>
-			<version>6.0</version>
+			<version>7.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.ow2.asm</groupId>
 			<artifactId>asm-analysis</artifactId>
-			<version>6.0</version>
+			<version>7.2</version>
 		</dependency>
         <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm-util</artifactId>
-            <version>6.0</version>
+            <version>7.2</version>
         </dependency>
 
 		<dependency>
