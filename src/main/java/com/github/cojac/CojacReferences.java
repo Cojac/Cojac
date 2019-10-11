@@ -288,8 +288,8 @@ public final class CojacReferences {
                 // logging library 
                 + "org.slf4j;"
                 // IntelliJ debugger stuff 
-                + "com.intellij.rt.debugger.;"
-                + "org.jetbrains.capture.;"
+                 + "com.intellij.rt.debugger.;"
+                 + "org.jetbrains.capture.;"
                 // A popular math library 
                 + "org.apache.commons.math3;"
                 // BAPST: trick to avoid a "callback" issue. Note that it is

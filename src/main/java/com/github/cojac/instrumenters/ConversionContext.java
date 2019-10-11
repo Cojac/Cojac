@@ -57,6 +57,7 @@ public class ConversionContext {
     }
     
     public ConversionContext(int opcode, String owner, String name, String desc) {
+        assert !owner.endsWith(";");
         this.opcode=opcode;
         this.owner=owner;
         this.name=name;

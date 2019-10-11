@@ -22,6 +22,7 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;
 
 import com.github.cojac.instrumenters.IOpcodeInstrumenterFactory;
+import static com.github.cojac.CojacCommonConstants.ASM_VERSION;
 
 public class CojacClassVisitor extends ClassVisitor {
     protected final IOpcodeInstrumenterFactory factory;
@@ -32,7 +33,7 @@ public class CojacClassVisitor extends ClassVisitor {
     protected String crtClassName;    
 
     public CojacClassVisitor(ClassVisitor cv, CojacReferences references, CojacAnnotationVisitor cav) {
-		super(Opcodes.ASM5, cv);
+		super(ASM_VERSION, cv);
 		this.references = references;
         this.stats = references.getStats();
         this.args = references.getArgs();

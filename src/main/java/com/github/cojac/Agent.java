@@ -30,6 +30,8 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.util.*;
 
+import static com.github.cojac.CojacCommonConstants.ASM_VERSION;
+
 public final class Agent implements ClassFileTransformer {
     private final boolean PRINT_INSTR_RESULT=false;
     private final CojacReferences references;
@@ -63,6 +65,8 @@ public final class Agent implements ClassFileTransformer {
 //        }
         if (className==null) 
             className=extractedClassname(classfileBuffer);
+        if(loader==null || loader==ClassLoader.getSystemClassLoader().getParent()) 
+            return classfileBuffer;  // maybe the bootstrapLoader??
         try {
             if("com/github/cojac/models/FloatReplacerClasses".equals(className)) {
                 if (VERBOSE) {
@@ -143,7 +147,7 @@ public final class Agent implements ClassFileTransformer {
 	private byte[] setGlobalFields(byte[] byteCode, @SuppressWarnings("unused") ClassLoader loader) {
         ClassReader cr = new ClassReader(byteCode);
         ClassWriter cw = new ClassWriter(cr, ClassWriter.COMPUTE_FRAMES);
-        ClassVisitor cv = new ClassVisitor(Opcodes.ASM5, cw) {
+        ClassVisitor cv = new ClassVisitor(ASM_VERSION, cw) {
 			@Override
 			public void visit(int version, int access, String name, String signature, String superName, String[] interfaces){
 				super.visit(version, access, name, signature, superName, interfaces);
@@ -177,7 +181,7 @@ public final class Agent implements ClassFileTransformer {
 	//=======================================================================
 	static class ClassNameExtractor extends ClassVisitor {
 	    public String unitName=null;
-        public ClassNameExtractor() { super(Opcodes.ASM5); }
+        public ClassNameExtractor() { super(ASM_VERSION); }
         @SuppressWarnings("unused")
         @Override
         public void visit(int version, int access, String name, String signature, String supername, String[] interfaces) {

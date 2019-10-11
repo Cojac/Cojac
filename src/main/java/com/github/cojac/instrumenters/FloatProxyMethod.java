@@ -162,7 +162,7 @@ public class FloatProxyMethod {
         mv.visitInsn(POP);
         mv.visitInsn(POP);
         // stack >> target allParamsArr
-        Object[] localsInFrame = aaAfter.locals.toArray();
+        Object[] localsInFrame = (aaAfter.locals != null) ? aaAfter.locals.toArray() : new Object[0];
         mv.visitInsn(SWAP);
         // stack >> allParamsArr target
         mv.visitInsn(DUP_X1);
@@ -176,8 +176,8 @@ public class FloatProxyMethod {
         mv.visitInsn(DUP);
         // stack >> target allParamsArr nullOrMeth nullOrMeth
         
-        @SuppressWarnings("unchecked")
-        ArrayList<Object> scl=new ArrayList<Object>(aaAfter.stack); 
+        // The stack==null case is flawed... Please clarify when it happens!!
+        ArrayList<Object> scl = aaAfter.stack!=null ? new ArrayList<>(aaAfter.stack) : new ArrayList<>(); 
         scl.remove(scl.size()-1); // remove the last nullOrMeth
         Object[] stackContent=scl.toArray(); //target allParamsArr nullOrMeth
         
@@ -365,7 +365,7 @@ public class FloatProxyMethod {
             convertCojacToRealType(JWRAPPER_DOUBLE_TYPE, mv);
             mv.visitInsn(SWAP);
         }
-        Type ownerType=Type.getType(owner); // that case doesn't contain the preceding two
+        Type ownerType = myGetType(owner); // that case doesn't contain the preceding two
         Type afterType = afterFloatReplacement(ownerType);
         if (!ownerType.equals(afterType)) {
             mv.visitInsn(SWAP);
@@ -373,6 +373,23 @@ public class FloatProxyMethod {
             mv.visitInsn(SWAP);
         }
         // stack >> [newTarget] allParamsArr
+    }
+    
+    /* From https://gitlab.ow2.org/asm/asm/issues/304725: 
+     * typeDescriptor parameter is not a class name, it is a
+     * descriptor in internal representation. So, for reference
+     * types it should look like Ljava/lang/Object;  However desc
+     * parameter of visitTypeInsn() is a type name or array descriptor.
+     * So, your code should be:
+     *   Type.getType( desc.startsWith("[") ? desc : "L"+desc+";" )
+    */ 
+    static Type myGetType(String d) {
+        if(d.endsWith(";") || d.startsWith("["))
+            return Type.getType(d);  
+        // Well, this seems to be the behavior of getType(d) up to asm-6.0.
+        // It's not clear to me what is a "method type", and why it appears
+        // somehow in the "owner" data... BAPST, 11.10.19
+        return Type.getMethodType(d);
     }
 	
 	private static void convertReturnType(MethodVisitor mv, String desc) {
@@ -669,6 +686,11 @@ public class FloatProxyMethod {
 //      return aa.stack.get(aa.stack.size()-1);
 //  }
 
+    
+//    public static void main(String[] args) {
+//        System.out.println(JWRAPPER_FLOAT_TYPE .getInternalName()); //  java/lang/Float
+//        System.out.println(JWRAPPER_FLOAT_TYPE .getDescriptor());   // Ljava/lang/Float;
+//    }
 }
 
 /*============================================================================

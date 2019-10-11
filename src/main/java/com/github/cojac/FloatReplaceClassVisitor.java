@@ -36,6 +36,7 @@ import org.objectweb.asm.util.TraceMethodVisitor;
 
 import com.github.cojac.instrumenters.FloatProxyMethod;
 import com.github.cojac.instrumenters.ReplaceFloatsMethods;
+import static com.github.cojac.CojacCommonConstants.ASM_VERSION;
 
 public final class FloatReplaceClassVisitor extends CojacClassVisitor {
     private static final String DUMP_CLASS = null; // "" or "Dump"
@@ -122,7 +123,7 @@ public final class FloatReplaceClassVisitor extends CojacClassVisitor {
     }
 
     private Printer newPrinter(final String s) {
-        Printer printer=new ASMifier(Opcodes.ASM5, "mv", 0) {  // or Textifier(ASM5)
+        Printer printer=new ASMifier(ASM_VERSION, "mv", 0) {  // or Textifier(ASM5)
             @Override public void visitMethodEnd() {
                 System.out.println("======================== "+s+" ==================");
                 PrintWriter p=new PrintWriter(System.out);
@@ -184,7 +185,7 @@ public final class FloatReplaceClassVisitor extends CojacClassVisitor {
         private int targetVar=-1;
 
         protected MyLocalAdder(int access, String desc, MethodVisitor mv) {
-            super(Opcodes.ASM5, access, desc, mv);
+            super(ASM_VERSION, access, desc, mv);
         }
         
         public int paramArrayVar() {

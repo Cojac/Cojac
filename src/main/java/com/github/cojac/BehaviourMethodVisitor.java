@@ -19,6 +19,7 @@
 package com.github.cojac;
 
 import static org.objectweb.asm.util.Printer.OPCODES;
+import static com.github.cojac.CojacCommonConstants.ASM_VERSION;
 
 /**
  * Class called for each instrumented method, which can change a variable for another, 
@@ -65,7 +66,7 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
     private BehaviourInstrumenter instrumenter;
 
     public BehaviourMethodVisitor(int access, String desc, MethodVisitor mv, InstrumentationStats stats, Args args, String classPath, IOpcodeInstrumenterFactory factory, CojacReferences references, String methodName, BehaviourClassVisitor behaviourClassVisitor) {
-        super(Opcodes.ASM5, access, desc, mv);
+        super(ASM_VERSION, access, desc, mv);
 
         this.stats = stats;
         this.args = args;
