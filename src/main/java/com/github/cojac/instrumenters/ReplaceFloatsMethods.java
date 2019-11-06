@@ -24,6 +24,7 @@ import static com.github.cojac.models.FloatReplacerClasses.COJAC_DOUBLE_WRAPPER_
 import static com.github.cojac.models.FloatReplacerClasses.COJAC_FLOAT_WRAPPER_INTERNAL_NAME;
 import static com.github.cojac.models.FloatReplacerClasses.COJAC_FLOAT_WRAPPER_TYPE_DESCR;
 import static com.github.cojac.models.FloatReplacerClasses.COJAC_WRAPPER_NG_INTERNAL_NAME;
+import static com.github.cojac.models.FloatReplacerClasses.isMagicMethod;
 import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
 import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;

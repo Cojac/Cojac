@@ -18,11 +18,16 @@
 
 package com.github.cojac.models;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.objectweb.asm.Type;
 
+import com.github.cojac.models.wrappers.WrapperAutodiff;
 import com.github.cojac.models.wrappers.WrapperBigDecimal;
 
 public class FloatReplacerClasses {
@@ -46,6 +51,26 @@ public class FloatReplacerClasses {
 	
 	public static Class<?> COJAC_WRAPPER_NG_CLASS=WrapperBigDecimal.class;
     public static String COJAC_WRAPPER_NG_INTERNAL_NAME;
+    private static final Map<String, Set<String>> SPECIFIC_MAGIC_METHODS;
+    
+    static {
+        SPECIFIC_MAGIC_METHODS = new HashMap<>();
+        populateMagicMethods(WrapperAutodiff.class);
+    }
+    
+    private static void populateMagicMethods(Class<?> clazz, String... methods) {
+        String internalName = Type.getType(clazz).getInternalName();
+        SPECIFIC_MAGIC_METHODS.putIfAbsent(internalName, new HashSet<>());
+        Set<String> ms = SPECIFIC_MAGIC_METHODS.get(internalName);
+        for(String m: methods) {
+            ms.add(m);
+        }
+    }
+    
+    public static boolean isMagicMethod(String methodName) {
+        // TODO
+        return false;
+    }
 
 	public static void setNgWrapper(String className) {
 	    try {
