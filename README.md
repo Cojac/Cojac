@@ -5,7 +5,7 @@
 ... Don't miss the opportunity:  
   - watch our small demos on [YouTube](https://youtu.be/eAy71M34U_I?list=PLHLKWUtT0B7kNos1e48vKhFlGAXR1AAkF)
   - read the [User Guide](https://github.com/Cojac/Cojac/wiki)
-  - download [cojac.jar](https://github.com/Cojac/Cojac/releases/download/v1.5/cojac.jar)
+  - download [cojac.jar](https://github.com/Cojac/Cojac/releases/download/v1.5.1/cojac.jar)
 
 ### Numerical Sniffer, and other floating point gadgets
 
