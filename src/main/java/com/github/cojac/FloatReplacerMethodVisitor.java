@@ -162,8 +162,9 @@ public final class FloatReplacerMethodVisitor extends MethodVisitor {
         String a0After=replaceFloatMethodDescription(a0Before), a2After=replaceFloatMethodDescription(a2Before);
         bsmArgsAfter[0]=Type.getType(a0After);
         bsmArgsAfter[2]=Type.getType(a2After);
-        bsmArgsAfter[1]=new Handle(target.getTag(), target.getOwner(), target.getName(),
-                replaceFloatMethodDescription(target.getDesc()));
+        int tag = target.getTag();
+        bsmArgsAfter[1]=new Handle(tag, target.getOwner(), target.getName(),
+                replaceFloatMethodDescription(target.getDesc()), tag == Opcodes.H_INVOKEINTERFACE);
         desc=replaceFloatMethodDescription(desc);
         mv.visitInvokeDynamicInsn(name, desc, bsm, bsmArgsAfter);
     }
