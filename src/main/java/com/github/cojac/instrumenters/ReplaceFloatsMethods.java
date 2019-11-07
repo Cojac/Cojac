@@ -24,7 +24,8 @@ import static com.github.cojac.models.FloatReplacerClasses.COJAC_DOUBLE_WRAPPER_
 import static com.github.cojac.models.FloatReplacerClasses.COJAC_FLOAT_WRAPPER_INTERNAL_NAME;
 import static com.github.cojac.models.FloatReplacerClasses.COJAC_FLOAT_WRAPPER_TYPE_DESCR;
 import static com.github.cojac.models.FloatReplacerClasses.COJAC_WRAPPER_NG_INTERNAL_NAME;
-import static com.github.cojac.models.FloatReplacerClasses.isMagicMethod;
+import static com.github.cojac.models.FloatReplacerClasses.isSpecificMagicMethod;
+import static com.github.cojac.models.FloatReplacerClasses.*;
 import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
 import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
@@ -60,9 +61,6 @@ public class ReplaceFloatsMethods {
     private static String CDW;
     
     private final FloatProxyMethod fpm;
-	private static final String COJAC_MAGIC_CALL_DOUBLE_PREFIX = "COJAC_MAGIC_DOUBLE_";
-	private static final String COJAC_MAGIC_CALL_FLOAT_PREFIX = "COJAC_MAGIC_FLOAT_";
-    private static final String COJAC_MAGIC_CALL_NG_PREFIX = "COJAC_MAGIC_";
 
     @SuppressWarnings("unused")
     public ReplaceFloatsMethods(FloatProxyMethod fpm, String crtClassName, CojacReferences references) {
@@ -232,12 +230,13 @@ public class ReplaceFloatsMethods {
 			return true;
 		}
         if(name.startsWith(COJAC_MAGIC_CALL_NG_PREFIX)) {
-            String magicLocation=COJAC_WRAPPER_NG_INTERNAL_NAME;
-            if (name.equals("COJAC_MAGIC_toString") || 
-                name.equals("COJAC_MAGIC_wrapperName") )
-                magicLocation=CDW_N;
-            cojacMagicCall(mv, name, desc, magicLocation);
-            return true;
+            if(isGeneralMagicMethod(name) || isSpecificMagicMethod(name)) {
+                String magicLocation=COJAC_WRAPPER_NG_INTERNAL_NAME;
+                if (isGeneralMagicMethod(name) )
+                    magicLocation=CDW_N;
+                cojacMagicCall(mv, name, desc, magicLocation);
+                return true;
+            }
         }
 		
         if(suppressions.containsKey(ms)) {

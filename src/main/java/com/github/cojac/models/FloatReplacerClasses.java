@@ -28,7 +28,12 @@ import java.util.logging.Logger;
 import org.objectweb.asm.Type;
 
 import com.github.cojac.models.wrappers.WrapperAutodiff;
+import com.github.cojac.models.wrappers.WrapperAutodiffReverse;
 import com.github.cojac.models.wrappers.WrapperBigDecimal;
+import com.github.cojac.models.wrappers.WrapperChebfun;
+import com.github.cojac.models.wrappers.WrapperInterval;
+import com.github.cojac.models.wrappers.WrapperStochastic;
+import com.github.cojac.models.wrappers.WrapperSymbolic;
 
 public class FloatReplacerClasses {
 	
@@ -47,6 +52,10 @@ public class FloatReplacerClasses {
 	public static double  COJAC_STABILITY_THRESHOLD = 1E-5;
 	public static boolean COJAC_CHECK_UNSTABLE_COMPARISONS = true;
 	
+	public static final String COJAC_MAGIC_CALL_DOUBLE_PREFIX = "COJAC_MAGIC_DOUBLE_";
+	public static final String COJAC_MAGIC_CALL_FLOAT_PREFIX = "COJAC_MAGIC_FLOAT_";
+	public static final String COJAC_MAGIC_CALL_NG_PREFIX = "COJAC_MAGIC_";
+
 	// NOT READY YET...
 	
 	public static Class<?> COJAC_WRAPPER_NG_CLASS=WrapperBigDecimal.class;
@@ -55,19 +64,47 @@ public class FloatReplacerClasses {
     
     static {
         SPECIFIC_MAGIC_METHODS = new HashMap<>();
-        populateMagicMethods(WrapperAutodiff.class);
+        // CAUTION: to adapt when another wrapper is designed!
+        populateMagicMethods(WrapperAutodiff.class, 
+                "COJAC_MAGIC_derivative", 
+                "COJAC_MAGIC_asDerivativeVar");
+        populateMagicMethods(WrapperAutodiffReverse.class, 
+                "COJAC_MAGIC_partialDerivativeIn", 
+                "COJAC_MAGIC_computePartialDerivatives",
+                "COJAC_MAGIC_resetPartialDerivatives");
+        populateMagicMethods(WrapperChebfun.class, 
+                "COJAC_MAGIC_isChebfun", 
+                "COJAC_MAGIC_identityFct",
+                "COJAC_MAGIC_evaluateAt",
+                "COJAC_MAGIC_derivative",
+                "COJAC_MAGIC_setChebfunDomain");
+        populateMagicMethods(WrapperInterval.class, 
+                "COJAC_MAGIC_relativeError", 
+                "COJAC_MAGIC_width");
+        populateMagicMethods(WrapperStochastic.class, 
+                "COJAC_MAGIC_relativeError");
+        populateMagicMethods(WrapperSymbolic.class, 
+                "COJAC_MAGIC_isSymbolicFunction", 
+                "COJAC_MAGIC_identityFct",
+                "COJAC_MAGIC_evaluateAt",
+                "COJAC_MAGIC_derivative",
+                "COJAC_MAGIC_setSymbolicEvaluationMode",
+                "COJAC_MAGIC_setConstantSubtreeMode");        
     }
     
     private static void populateMagicMethods(Class<?> clazz, String... methods) {
         String internalName = Type.getType(clazz).getInternalName();
         SPECIFIC_MAGIC_METHODS.putIfAbsent(internalName, new HashSet<>());
         Set<String> ms = SPECIFIC_MAGIC_METHODS.get(internalName);
-        for(String m: methods) {
-            ms.add(m);
-        }
+        for(String m: methods) ms.add(m);
     }
     
-    public static boolean isMagicMethod(String methodName) {
+    public static boolean isGeneralMagicMethod(String methodName) {
+        return methodName.equals("COJAC_MAGIC_toString") || 
+               methodName.equals("COJAC_MAGIC_wrapperName");
+    }
+
+    public static boolean isSpecificMagicMethod(String methodName) {
         // TODO
         return false;
     }
