@@ -105,8 +105,9 @@ public class FloatReplacerClasses {
     }
 
     public static boolean isSpecificMagicMethod(String methodName) {
-        // TODO
-        return false;
+        if(COJAC_WRAPPER_NG_INTERNAL_NAME == null) return false;
+        Set<String> s = SPECIFIC_MAGIC_METHODS.get(COJAC_WRAPPER_NG_INTERNAL_NAME);
+        return s != null && s.contains(methodName);
     }
 
 	public static void setNgWrapper(String className) {
