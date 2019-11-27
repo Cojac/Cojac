@@ -104,7 +104,7 @@ public final class FloatReplacerMethodVisitor extends MethodVisitor {
             }
         }
         // replace FALOAD by AALOAD
-        switch(opCode){
+        switch(opCode) {
             case DALOAD:
             case FALOAD: opCode = AALOAD; break;
             case DASTORE:
