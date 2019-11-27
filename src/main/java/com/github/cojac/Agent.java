@@ -90,6 +90,10 @@ public final class Agent implements ClassFileTransformer {
                 System.out.println("Agent     instrumenting "+className +" under "+loader);
             }
             byte[] instrumented= instrumenter.instrument(classfileBuffer, loader);
+            if (VERBOSE) {
+                System.out.println("Agent DONE instrumenting "+className +" under "+loader);
+            }
+
             trackForDebuggingPurposes(className, instrumented);
             if (VERBOSE) {
 				/*
@@ -99,8 +103,10 @@ public final class Agent implements ClassFileTransformer {
 				classloader. That means the interface will never be instrumented 
 				in verbose mode. 
 				*/
-                if (! REPLACE_FLOATS)
-                    CheckClassAdapter.verify(new ClassReader(instrumented), PRINT_INSTR_RESULT, new PrintWriter(System.out));
+                // The verify() can fail because some classes are used but
+                // not yet defined... So better turn this off!
+                // if (! REPLACE_FLOATS)
+                //    CheckClassAdapter.verify(new ClassReader(instrumented), PRINT_INSTR_RESULT, new PrintWriter(System.out));
 			}
 			
             return instrumented;

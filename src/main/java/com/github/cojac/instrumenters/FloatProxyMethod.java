@@ -408,7 +408,8 @@ public class FloatProxyMethod {
     private void createConvertMethod(String convertDesc, ConversionContext cc) {
         if(ccv.isProxyMethod(COJAC_TYPE_CONVERT_NAME, convertDesc))
             return; // the method already exists
-        MethodVisitor newMv = ccv.addProxyMethod(ACC_STATIC, COJAC_TYPE_CONVERT_NAME, convertDesc, null, null);
+        MethodVisitor newMv = ccv.addProxyMethod(ACC_STATIC + ACC_PRIVATE, 
+                COJAC_TYPE_CONVERT_NAME, convertDesc, null, null);
         int varIndex = 0;
         newMv.visitLdcInsn(cc.outArgs.length+1); // additional cell for the AllAsObjects array
         newMv.visitTypeInsn(ANEWARRAY, OBJ_TYPE.getInternalName());
