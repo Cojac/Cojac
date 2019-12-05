@@ -74,11 +74,12 @@ public class FloatReplaceTest {
         System.out.println(tinyExample);
         
         ClassLoader cl = ClassLoader.getSystemClassLoader();
- 
-        URL[] urls = ((URLClassLoader)cl).getURLs();
- 
-        for(URL url: urls){
-        	System.out.println(url.getFile());
+        if(cl instanceof URLClassLoader) {
+            URL[] urls = ((URLClassLoader) cl).getURLs();
+
+            for (URL url : urls) {
+                System.out.println(url.getFile());
+            }
         }
         
         if (tinyExample==null) return;
