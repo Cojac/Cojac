@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
 import com.github.cojac.CojacReferences;
@@ -234,8 +235,12 @@ public class ReplaceFloatsMethods {
                 String magicLocation=COJAC_WRAPPER_NG_INTERNAL_NAME;
                 if (isGeneralMagicMethod(name) )
                     magicLocation=CDW_N;
-                cojacMagicCall(mv, name, desc, magicLocation);
-                return true;
+                if(opcode == Opcodes.INVOKESTATIC) {
+                    cojacMagicCall(mv, name, desc, magicLocation);
+                    return true;
+                } else {
+                    System.err.println("Wrong: COJAC_MAGIC_ methods are expected to be static...");
+                }
             }
         }
 		
