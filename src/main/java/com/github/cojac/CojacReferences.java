@@ -316,6 +316,11 @@ public final class CojacReferences {
             args.setValue(Arg.FLOAT_WRAPPER,  "com.github.cojac.models.wrappers.CommonFloat");
             args.setValue(Arg.DOUBLE_WRAPPER, "com.github.cojac.models.wrappers.CommonDouble");
 
+            if (args.isSpecified(Arg.NUMERICAL_PROFILER)) {
+                args.specify(Arg.SYMBOLIC_WR);
+                // TODO add shutdown hook to print profile results
+            }
+
             if (args.isSpecified(Arg.NG_WRAPPER)) {
                 args.specify(Arg.REPLACE_FLOATS);
             }

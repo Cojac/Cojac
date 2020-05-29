@@ -73,6 +73,8 @@ public abstract class ACojacWrapper implements Comparable<ACojacWrapper>{
     }
     
     public abstract ACojacWrapper math_pow(ACojacWrapper b);
+    // TODO make this abstract and implement it for all wrappers
+    public ACojacWrapper math_hypot(ACojacWrapper b) { throw new UnsupportedOperationException();}
     
     public boolean isNaN() {
         return Double.isNaN(toDouble());

@@ -185,6 +185,11 @@ public class WrapperSymbolic extends ACojacWrapper {
         return new WrapperSymbolic(OP.POW, this.expr, asSymbWrapper(w).expr);
     }
 
+    @Override
+    public ACojacWrapper math_hypot(ACojacWrapper w) {
+        return new WrapperSymbolic(OP.HYPOT, this.expr, asSymbWrapper(w).expr);
+    }
+
     // -------------------------------------------------------------------------
     // ----------------- Comparison operator _----------------------------------
     // -------------------------------------------------------------------------

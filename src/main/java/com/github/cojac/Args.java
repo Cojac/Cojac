@@ -272,6 +272,8 @@ public final class Args {
             return ReactionType.EXCEPTION;
         } else if (isSpecified(Arg.CALL_BACK)) {
             return ReactionType.CALLBACK;
+        } else if (isSpecified(Arg.NUMERICAL_PROFILER)) {
+            return ReactionType.PRINT;
         }
         throw new RuntimeException("no reaction is defined!");
     }

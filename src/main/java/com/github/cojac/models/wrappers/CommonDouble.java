@@ -171,6 +171,10 @@ public class CommonDouble extends Number implements Comparable<CommonDouble>{
     public static CommonDouble math_pow(CommonDouble a, CommonDouble b) {
         return new CommonDouble(a.val.math_pow(b.val));
     }
+
+    public static CommonDouble math_hypot(CommonDouble a, CommonDouble b) {
+        return new CommonDouble(a.val.math_hypot(b.val));
+    }
     	
     //-------------------------------------------------------------------------
     //----------------- Necessarily static methods ----------------------------

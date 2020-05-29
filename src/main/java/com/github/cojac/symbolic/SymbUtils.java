@@ -205,6 +205,11 @@ public class SymbUtils {
         return p.derivate();
     }
 
+    public static SymbolicExpression derivateHYPOT(SymbolicExpression se) {
+        // TODO write this
+        throw new UnsupportedOperationException();
+    }
+
     // -------------------------------------------------------------------------
 
     public static SymbolicExpression symbExpr() {

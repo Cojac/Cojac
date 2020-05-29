@@ -36,6 +36,7 @@ public enum Arg {
     FILTER               ("Xf"),
     RUNTIME_STATS        ("Xs"),
     INSTRUMENTATION_STATS("Xt"),
+    NUMERICAL_PROFILER   ("Prof"),
     
     JMX_ENABLE("jmxenable"),
     JMX_HOST  ("jmxhost"),
@@ -230,6 +231,8 @@ public enum Arg {
                 false, "Print runtime statistics");
         options.addOption(Arg.INSTRUMENTATION_STATS.shortOpt(),
                 false, "Print instrumentation statistics");
+        options.addOption(Arg.NUMERICAL_PROFILER.shortOpt(),
+                false, "Enable numerical profiler");
         
         options.addOption(Arg.JMX_ENABLE.shortOpt(), false, "Enable JMX feature");
         options.addOption(OptionBuilder

@@ -213,7 +213,8 @@ public class SymbolicExpression {
         DEG((x, y) -> Math.toDegrees(x), SymbUtils::derivateDEG),
         MIN((x, y) -> Math.min(x, y), SymbUtils::derivateMIN),
         MAX((x, y) -> Math.max(x, y), SymbUtils::derivateMAX),
-        POW((x, y) -> Math.pow(x, y), SymbUtils::derivatePOW);
+        POW((x, y) -> Math.pow(x, y), SymbUtils::derivatePOW),
+        HYPOT(Math::hypot, SymbUtils::derivateHYPOT);
 
         // Standard operator
         private final DoubleBinaryOperator binaryOp;
