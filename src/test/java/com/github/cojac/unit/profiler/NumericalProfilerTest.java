@@ -1,0 +1,75 @@
+package com.github.cojac.unit.profiler;
+
+import com.github.cojac.Agent;
+import com.github.cojac.Arg;
+import com.github.cojac.Args;
+import com.github.cojac.CojacReferences;
+import com.github.cojac.models.wrappers.CommonDouble;
+import com.github.cojac.unit.AgentTest;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.lang.instrument.UnmodifiableClassException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+public class NumericalProfilerTest {
+
+   public static String COJAC_MAGIC_toString(double n) {return "";}
+
+   //correspond to the methods in Class "NumericalProfilerTests" that will be tested
+   private String[] methods = {"testFMA", "testScalb", "testLog1p", "testExpm1", "testAbsMixed", "testAbsOnlyPos", "testPow", "testHypFromSqrt", "testHypToSqrt"};
+   //expected output of these methods, in the same order as the methods in "methods"
+   private double[] expectedResults = {22.0, 448.0, 1.2212125431609638E-5, 1.2299938845217184E-11, 0.0, 20.0, 2.4319066147859923E-4, 5.830951894845301, 5.830951894845301};
+   private Object object;
+   private Class<?> classz;
+   private Agent agent;
+   /*
+    * initialization method, instrumenting "NumericalProfilerTests" with Arg.NUMERICAL_PROFILER
+    */
+   @Before
+   public void instrument() throws ClassNotFoundException, UnmodifiableClassException, InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+
+      Assert.assertEquals(methods.length, expectedResults.length);
+      Args args = new Args();
+
+      args.specify(Arg.NUMERICAL_PROFILER);
+      CojacReferences.CojacReferencesBuilder builder = new CojacReferences.CojacReferencesBuilder(args);
+
+      agent = new Agent(builder.build());
+      AgentTest.instrumentation.addTransformer(agent);
+
+      classz = ClassLoader.getSystemClassLoader().loadClass("com.github.cojac.unit.profiler.NumericalProfilerTests");
+      AgentTest.instrumentation.retransformClasses(classz);
+
+      object = classz.getConstructor().newInstance();
+   }
+   /*
+    * Post-test method removing instrumentation on "Double2FloatTests"
+    */
+   @After
+   public void removeInstrumentation() throws UnmodifiableClassException{
+      AgentTest.instrumentation.removeTransformer(agent);
+      AgentTest.instrumentation.retransformClasses(classz);
+   }
+
+   /*
+    * checks one by one that expectedResult[i] equals method[i]() call.
+    */
+   @Test
+   public void testNumericalProfiler() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+      for (int i = 0; i < expectedResults.length; i++) {
+         Method method = classz.getMethod(methods[i]);
+         // TODO this seems necessary because this class isn't instrumented, but is it really ?
+         Object resObj = method.invoke(object);
+         Class<?> c = resObj.getClass();
+         Method m = c.getDeclaredMethod("doubleValue");
+         double res = (double) m.invoke(resObj);
+
+         String out = "On \""+methods[i]+"\", Got: " + res + ", Expected: "+(double)expectedResults[i];
+         Assert.assertEquals(out, (double) expectedResults[i], res, 0.0);
+      }
+   }
+}
