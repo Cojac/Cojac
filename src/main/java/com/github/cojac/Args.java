@@ -273,7 +273,7 @@ public final class Args {
         } else if (isSpecified(Arg.CALL_BACK)) {
             return ReactionType.CALLBACK;
         } else if (isSpecified(Arg.NUMERICAL_PROFILER)) {
-            return ReactionType.PRINT;
+            return ReactionType.PRINT_SMALLER;
         }
         throw new RuntimeException("no reaction is defined!");
     }

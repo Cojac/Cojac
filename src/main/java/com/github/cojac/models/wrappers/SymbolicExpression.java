@@ -31,7 +31,7 @@ import com.github.cojac.symbolic.SymbUtils.SymbolicDerivationOperator;
 public class SymbolicExpression {
     // The value of the constant or the value of the sub tree if
     // !containsUnknown
-    private final double value;
+    public final double value;
     // Indicate if the current sub contains at least one unknown
     public final boolean containsUnknown;
     // Determine the current operator ( if the node is an unknown or a
@@ -58,6 +58,20 @@ public class SymbolicExpression {
         this.oper = OP.NOP;
         this.left = null;
         this.right = null;
+    }
+
+    // Constructor for an operator with unknowns subtrees (used in SymbTreeMatcher)
+    public SymbolicExpression(SymbolicExpression.OP oper) {
+        this.value = Double.NaN;
+        this.containsUnknown = true;
+        this.oper = oper;
+        if(oper == OP.ANY) {
+            this.right = null;
+            this.left = null;
+        } else {
+            this.right = new SymbolicExpression(OP.ANY);
+            this.left = new SymbolicExpression(OP.ANY);
+        }
     }
 
     // Constructor for an operator
@@ -109,12 +123,12 @@ public class SymbolicExpression {
         return new SymbolicExpression(OP.NEG, se, null);
     }
 
-    protected double evaluate() {
+    public double evaluate() {
         return evaluate(Double.NaN); // typically the "unknown" won't appear...
     }
     
     // Evaluate the current sub-tree at "x"
-    protected double evaluate(double x) {
+    public double evaluate(double x) {
         if (oper == OP.NOP)
             return containsUnknown ? x : value;
         if (smart_evaluation_mode && (oper == OP.ADD || oper == OP.SUB))
@@ -175,13 +189,15 @@ public class SymbolicExpression {
 
     // Retourne la représentation de l'arbre sous la forme préfixe
     public String toString() {
-        if (containsUnknown && oper == OP.NOP)
+        if (containsUnknown && oper == OP.NOP || oper == OP.ANY)
             return "x";
         if (oper == OP.NOP)
             return value + "";
         if (right != null)
             return oper + "(" + left + "," + right + ")";
-        return oper + "(" + left + ")";
+        if (left != null)
+            return oper + "(" + left + ")";
+        return oper + "(x, x)";
     }
 
     //=======================================================================
@@ -214,7 +230,9 @@ public class SymbolicExpression {
         MIN((x, y) -> Math.min(x, y), SymbUtils::derivateMIN),
         MAX((x, y) -> Math.max(x, y), SymbUtils::derivateMAX),
         POW((x, y) -> Math.pow(x, y), SymbUtils::derivatePOW),
-        HYPOT(Math::hypot, SymbUtils::derivateHYPOT);
+        HYPOT(Math::hypot, SymbUtils::derivateHYPOT),
+        // profiler
+        ANY(null, null);
 
         // Standard operator
         private final DoubleBinaryOperator binaryOp;

@@ -18,6 +18,7 @@
 
 package com.github.cojac;
 
+import com.github.cojac.profiler.SymbTreeMatcher;
 import org.objectweb.asm.ClassWriter;
 
 import com.github.cojac.instrumenters.ClassLoaderInstrumenterFactory;
@@ -83,9 +84,30 @@ public final class CojacReferences {
     private final HashMap<String, PartiallyInstrumentable> classesToInstrument;
     //TODO: remove behaviourMapFilePath?
     //private final String behaviourMapFilePath; // path to XML file that is used to load behaviours
-   
+
+    // profiler
+    private final SymbTreeMatcher symbTreeMatcher;
+
+    private static CojacReferences instance = null;
+
+    /**
+     * Returns the latest instance of CojacReferences.
+     * This is "the poor man's singleton"...
+     * @return the most recently created instance of CojacReferences
+     */
+    public static CojacReferences getInstance() {
+        if(instance == null) {
+            throw new IllegalStateException(
+                    "No available instance of CojacReferences, " +
+                    "use the CojacReferencesBuilder to create one first"
+            );
+        }
+        return instance;
+    }
 
     private CojacReferences(CojacReferencesBuilder builder) {
+        instance = this;
+
         this.args = builder.args;
         this.stats = builder.stats;
         this.factory = builder.factory;
@@ -103,6 +125,9 @@ public final class CojacReferences {
         this.arbitraryPrecisionBits = builder.arbitraryPrecisionBits;
         this.classesToInstrument = builder.classesToInstrument;
         //this.behaviourMapFilePath = builder.behaviourMapFilePath;
+
+        // profiler
+        this.symbTreeMatcher = builder.symbTreeMatcher;
     }
 
     public String getNgWrapper() {
@@ -141,6 +166,11 @@ public final class CojacReferences {
 
     public Args getArgs() {
         return args;
+    }
+
+    // profiler
+    public SymbTreeMatcher getSymbTreeMatcher() {
+        return this.symbTreeMatcher;
     }
 
     public InstrumentationStats getStats() {
@@ -271,6 +301,8 @@ public final class CojacReferences {
         private boolean checkUnstableComparisons=true;
         private int arbitraryPrecisionBits;
         private final String[] loadedClasses;
+        // profiler
+        private SymbTreeMatcher symbTreeMatcher;
 
         private static final String PACKAGES_NOT_TO_INSTRUMENT = 
                 // Every part of the "Java standard library"...
@@ -316,8 +348,12 @@ public final class CojacReferences {
             args.setValue(Arg.FLOAT_WRAPPER,  "com.github.cojac.models.wrappers.CommonFloat");
             args.setValue(Arg.DOUBLE_WRAPPER, "com.github.cojac.models.wrappers.CommonDouble");
 
+            // profiler
+            symbTreeMatcher = new SymbTreeMatcher();
             if (args.isSpecified(Arg.NUMERICAL_PROFILER)) {
                 args.specify(Arg.SYMBOLIC_WR);
+                // enable symbolic tree matching
+                symbTreeMatcher.setActive(true);
                 // TODO add shutdown hook to print profile results
             }
 
