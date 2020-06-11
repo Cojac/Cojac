@@ -18,7 +18,7 @@
 
 package com.github.cojac;
 
-import com.github.cojac.profiler.SymbTreeMatcher;
+import com.github.cojac.profiler.NumericalProfiler;
 import org.objectweb.asm.ClassWriter;
 
 import com.github.cojac.instrumenters.ClassLoaderInstrumenterFactory;
@@ -86,7 +86,7 @@ public final class CojacReferences {
     //private final String behaviourMapFilePath; // path to XML file that is used to load behaviours
 
     // profiler
-    private final SymbTreeMatcher symbTreeMatcher;
+    private final NumericalProfiler numericalProfiler;
 
     private static CojacReferences instance = null;
 
@@ -127,7 +127,7 @@ public final class CojacReferences {
         //this.behaviourMapFilePath = builder.behaviourMapFilePath;
 
         // profiler
-        this.symbTreeMatcher = builder.symbTreeMatcher;
+        this.numericalProfiler = builder.numericalProfiler;
     }
 
     public String getNgWrapper() {
@@ -169,8 +169,8 @@ public final class CojacReferences {
     }
 
     // profiler
-    public SymbTreeMatcher getSymbTreeMatcher() {
-        return this.symbTreeMatcher;
+    public NumericalProfiler getNumericalProfiler() {
+        return this.numericalProfiler;
     }
 
     public InstrumentationStats getStats() {
@@ -302,7 +302,7 @@ public final class CojacReferences {
         private int arbitraryPrecisionBits;
         private final String[] loadedClasses;
         // profiler
-        private SymbTreeMatcher symbTreeMatcher;
+        private NumericalProfiler numericalProfiler;
 
         private static final String PACKAGES_NOT_TO_INSTRUMENT = 
                 // Every part of the "Java standard library"...
@@ -317,6 +317,7 @@ public final class CojacReferences {
                 // COJAC stuff 
                 + "com.github.cojac.models;"
                 + "com.github.cojac.interval;"
+                + "com.github.cojac.profiler;"
                 // logging library 
                 + "org.slf4j;"
                 // IntelliJ debugger stuff 
@@ -349,11 +350,9 @@ public final class CojacReferences {
             args.setValue(Arg.DOUBLE_WRAPPER, "com.github.cojac.models.wrappers.CommonDouble");
 
             // profiler
-            symbTreeMatcher = new SymbTreeMatcher();
             if (args.isSpecified(Arg.NUMERICAL_PROFILER)) {
                 args.specify(Arg.SYMBOLIC_WR);
-                // enable symbolic tree matching
-                symbTreeMatcher.setActive(true);
+                numericalProfiler = new NumericalProfiler();
                 // TODO add shutdown hook to print profile results
             }
 

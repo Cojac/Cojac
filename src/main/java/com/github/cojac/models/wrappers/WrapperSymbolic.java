@@ -24,7 +24,6 @@ import java.util.logging.Logger;
 import com.github.cojac.Arg;
 import com.github.cojac.CojacReferences;
 import com.github.cojac.models.wrappers.SymbolicExpression.OP;
-import com.github.cojac.profiler.SymbTreeMatcher;
 
 
 public class WrapperSymbolic extends ACojacWrapper {
@@ -52,9 +51,9 @@ public class WrapperSymbolic extends ACojacWrapper {
 
     private WrapperSymbolic(OP oper, SymbolicExpression left, SymbolicExpression right) {
         this.expr = new SymbolicExpression(oper, left, right);
-        SymbTreeMatcher matcher =  CojacReferences.getInstance().getSymbTreeMatcher();
-        if(matcher.isActive()) {
-            matcher.match(this.expr);
+        // profiler
+        if(CojacReferences.getInstance().getArgs().isSpecified(Arg.NUMERICAL_PROFILER)) {
+            CojacReferences.getInstance().getNumericalProfiler().handle(this.expr);
         }
     }
 
