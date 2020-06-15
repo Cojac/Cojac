@@ -19,30 +19,11 @@
 package com.github.cojac.models;
 
 public enum ReactionType {
-    PRINT(0),
-    PRINT_SMALLER(1),
-    LOG(2),
-    LOG_SMALLER(3),
-    EXCEPTION(4),
-    CALLBACK(5);
-
-    private final int value;
-
-    ReactionType(int value) {
-        this.value = value;
-    }
-
-    public int value() {
-        return value;
-    }
-
-    public static ReactionType get(int value) {
-        for (ReactionType reactionType : values()) {
-            if (reactionType.value() == value) {
-                return reactionType;
-            }
-        }
-
-        return null;
-    }
+    PRINT,
+    PRINT_SMALLER,
+    LOG,
+    LOG_SMALLER,
+    EXCEPTION,
+    CALLBACK,
+    PRINT_PROFILER
 }

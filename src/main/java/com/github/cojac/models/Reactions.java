@@ -52,12 +52,15 @@ public final class Reactions {
     //TODO: check whether we can get rid of first/last parameter of react()
     //      quite sure that "yes, we can"!
     public static void react(int reaction, String message, String logFileName) {
-        switch (ReactionType.get(reaction)) {
+        switch (ReactionType.values()[reaction]) {
             case PRINT:
                 printOverflow(message);
                 break;
             case PRINT_SMALLER:
                 printOverflowSmaller(message);
+                break;
+            case PRINT_PROFILER:
+                printProfiler(message);
                 break;
             case LOG:
                 logOverflow(message, logFileName);
@@ -93,15 +96,16 @@ public final class Reactions {
     }
 
     private static int reasonableIndex(StackTraceElement[] t) {
-        int i = 0;
-        while(true) {
-            if (i==t.length-1) break; 
-            String s=t[i].toString();
-            if (!s.startsWith("com.github.cojac.models") &&
-                !t[1].getMethodName().startsWith("cojacCheck")) break;
-            i++;
+        if(t[1].getMethodName().startsWith("cojacCheck")) {
+            return t.length-1;
         }
-        return i;
+        for(int i = 0; i < t.length; i++) {
+            String s = t[i].toString();
+            if (!s.startsWith("com.github.cojac.models") && !s.startsWith("com.github.cojac.profiler")) {
+                return i;
+            }
+        }
+        return t.length-1;
     }
     
     // identifier must match Methods.PRINT definition
@@ -136,6 +140,25 @@ public final class Reactions {
 
         if (passesFilter(location)) {
             System.err.println(location);
+        }
+    }
+
+    public static void printProfiler(String message) {
+        if (!react.get())
+            return;
+        StackTraceElement[] t = new Throwable().getStackTrace();
+        int i = reasonableIndex(t);
+
+        System.out.println(i);
+
+        String location = "COJAC: " + message + ' ' + t[i].toString();
+
+        if (passesFilter(location)) {
+            System.err.println(location);
+            for(;i < t.length; i++) {
+                System.err.print('\t');
+                System.err.println(t[i].toString());
+            }
         }
     }
 

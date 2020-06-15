@@ -1,5 +1,6 @@
 package com.github.cojac.profiler;
 
+import com.github.cojac.models.Reactions;
 import com.github.cojac.models.wrappers.SymbolicExpression;
 
 public class NumericalProfiler {
@@ -17,6 +18,7 @@ public class NumericalProfiler {
    }
 
    private void handleDirectMatch(Recommendation r, SymbolicExpression expr) {
+      Reactions.react(r.getRecommendation());
       System.out.println("Direct match : " + expr + " for recommendation " + r);
    }
 
