@@ -4,7 +4,6 @@ import com.github.cojac.Agent;
 import com.github.cojac.Arg;
 import com.github.cojac.Args;
 import com.github.cojac.CojacReferences;
-import com.github.cojac.models.wrappers.CommonDouble;
 import com.github.cojac.unit.AgentTest;
 import org.junit.After;
 import org.junit.Assert;
@@ -22,15 +21,13 @@ import java.util.Collection;
 @RunWith(Parameterized.class)
 public class NumericalProfilerTest {
 
-   public static String COJAC_MAGIC_toString(double n) {
-      return "";
-   }
-
    //correspond to the methods in Class "NumericalProfilerTests" that will be tested
-   private static String[] methods = {"testFMA", "testScalb", "testLog1p", "testExpm1", "testAbsMixed",
+   private static String[] methods = {"testFMA", "testFMAReverse", "testScalb", "testScalbReverse", "testLog1p",
+           "testLog1pReverse", "testExpm1", "testAbsMixed",
            "testAbsOnlyPos", "testPow", "testHypFromSqrt", "testHypToSqrt"};
    //expected output of these methods, in the same order as the methods in "methods"
-   private static double[] expectedResults = {22.0, 448.0, 1.2212125431609638E-5, 1.2299938845217184E-11, 0.0, 20.0,
+   private static double[] expectedResults = {22.0, 22.0, 448.0, 448.0, 1.2212125431609638E-5,
+           1.2212125431609638E-5, 1.2299938845217184E-11, 0.0, 20.0,
            2.4319066147859923E-4, 5.830951894845301, 5.830951894845301};
 
    private Object object;
@@ -46,7 +43,7 @@ public class NumericalProfilerTest {
       this.result = result;
    }
 
-   @Parameterized.Parameters(name="{0}")
+   @Parameterized.Parameters(name = "{0}")
    public static Collection<Object[]> data() {
       ArrayList<Object[]> data = new ArrayList<>();
       for (int i = 0; i < methods.length; i++) {

@@ -37,7 +37,14 @@ public class SymbPattern {
       if (pattern.oper == SymbolicExpression.OP.NOP) {
          return pattern.value == candidate.value;
       }
-      return match(pattern.left, candidate.left) && match(pattern.right, candidate.right);
+
+      if(match(pattern.left, candidate.left) && match(pattern.right, candidate.right)) {
+         return true;
+      } else if(pattern.oper.isCommutative()) {
+         return match(pattern.left, candidate.right) && match(pattern.right, candidate.left);
+      }
+
+      return false;
    }
 
    boolean match(SymbolicExpression other) {

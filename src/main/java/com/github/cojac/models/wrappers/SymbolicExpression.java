@@ -60,7 +60,7 @@ public class SymbolicExpression {
         this.right = null;
     }
 
-    // Constructor for an operator with unknowns subtrees (used in SymbTreeMatcher)
+    // Constructor for an operator with unknowns subtrees (used in SymbPattern)
     public SymbolicExpression(SymbolicExpression.OP oper) {
         this.value = Double.NaN;
         this.containsUnknown = true;
@@ -205,9 +205,9 @@ public class SymbolicExpression {
     // TODO: consider refactoring symbOP as an abstract OP.derivate() method.
     public static enum OP {
         NOP(((x, y) -> Double.NaN), SymbUtils::derivateNOP),
-        ADD(((x, y) -> x + y), SymbUtils::derivateADD),
+        ADD(((x, y) -> x + y), SymbUtils::derivateADD, true),
         SUB(((x, y) -> x - y), SymbUtils::derivateSUB),
-        MUL(((x, y) -> x * y), SymbUtils::derivateMUL),
+        MUL(((x, y) -> x * y), SymbUtils::derivateMUL, true),
         DIV(((x, y) -> x / y), SymbUtils::derivateDIV),
         REM(((x, y) -> x % y), SymbUtils::derivateREM),
         NEG(((x, y) -> -x), SymbUtils::derivateNEG),
@@ -230,7 +230,7 @@ public class SymbolicExpression {
         MIN((x, y) -> Math.min(x, y), SymbUtils::derivateMIN),
         MAX((x, y) -> Math.max(x, y), SymbUtils::derivateMAX),
         POW((x, y) -> Math.pow(x, y), SymbUtils::derivatePOW),
-        HYPOT(Math::hypot, SymbUtils::derivateHYPOT),
+        HYPOT(Math::hypot, SymbUtils::derivateHYPOT, true),
         // profiler
         ANY(null, null);
 
@@ -238,12 +238,21 @@ public class SymbolicExpression {
         private final DoubleBinaryOperator binaryOp;
         // Operator use for differentiating
         private final SymbolicDerivationOperator symbOP;
+        // Is the operation commutative ?
+        // Used in SymbPattern
+        private final boolean commutative;
 
         // Constructor, define the operators
         OP(DoubleBinaryOperator binaryOp, SymbolicDerivationOperator symbOP) {
+            this(binaryOp, symbOP, false);
+        }
+
+        OP(DoubleBinaryOperator binaryOp, SymbolicDerivationOperator symbOP, boolean commutative) {
             this.binaryOp = binaryOp;
             this.symbOP = symbOP;
+            this.commutative = commutative;
         }
+
         // Apply the standard operator
         public double apply(double left, double right) {
             return binaryOp.applyAsDouble(left, right);
@@ -251,6 +260,10 @@ public class SymbolicExpression {
         // Apply the differentiation
         public SymbolicExpression derivate(SymbolicExpression se) {
             return symbOP.derivate(se);
+        }
+
+        public boolean isCommutative() {
+            return this.commutative;
         }
     }
 

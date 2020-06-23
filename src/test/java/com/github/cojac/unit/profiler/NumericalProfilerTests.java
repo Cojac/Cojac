@@ -14,6 +14,13 @@ public class NumericalProfilerTests {
       return res;
    }
 
+   public double testFMAReverse() {
+      double a = 5.0, b = 3.0, c = 7.0;
+      double res = c + a * b;
+      System.out.println(COJAC_MAGIC_toString(res));
+      return res;
+   }
+
    public double testScalb() {
       double a = 7.0;
       int b = 6;
@@ -22,9 +29,24 @@ public class NumericalProfilerTests {
       return res;
    }
 
+   public double testScalbReverse() {
+      double a = 7.0;
+      int b = 6;
+      double res = Math.pow(2, b) * a;
+      System.out.println(COJAC_MAGIC_toString(res));
+      return res;
+   }
+
    public double testLog1p() {
       double x = 0.0000122122;
       double res = Math.log(1.0 + x);
+      System.out.println(COJAC_MAGIC_toString(res));
+      return res;
+   }
+
+   public double testLog1pReverse() {
+      double x = 0.0000122122;
+      double res = Math.log(x + 1.0);
       System.out.println(COJAC_MAGIC_toString(res));
       return res;
    }
