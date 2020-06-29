@@ -18,13 +18,34 @@ public class SymbPattern {
       this.validator = validator;
    }
 
-   private static boolean match(SymbolicExpression pattern, SymbolicExpression candidate) {
+   private void saveCandidateValue(SymbolicExpression pattern, SymbolicExpression candidate) {
+      if (pattern instanceof SymbExpressionGoal) {
+         //System.out.println("Saving candidate : " + pattern + " | " + candidate);
+         if (candidate != null) {
+            SymbExpressionGoal goal = (SymbExpressionGoal) pattern;
+            double left = Double.NaN, right = Double.NaN;
+            if(candidate.left != null) {
+               left = candidate.left.evaluate();
+            }
+            if(candidate.right != null) {
+               right = candidate.right.evaluate();
+            }
+            goal.saveValues(left, right);
+         } else {
+            // this should never happen because the goal should not match against a null value
+            throw new IllegalStateException();
+         }
+      }
+   }
+
+   private boolean match(SymbolicExpression pattern, SymbolicExpression candidate) {
       //System.out.println(pattern + " | " + candidate);
       if (pattern == null) {
          // returns true if both are null (handle empty right tree case)
          return candidate == null;
       }
       if (pattern.oper == SymbolicExpression.OP.ANY) {
+         saveCandidateValue(pattern, candidate);
          return true;
       }
       if (candidate == null) {
@@ -38,10 +59,15 @@ public class SymbPattern {
          return pattern.value == candidate.value;
       }
 
-      if(match(pattern.left, candidate.left) && match(pattern.right, candidate.right)) {
+      if (match(pattern.left, candidate.left) && match(pattern.right, candidate.right)) {
+         saveCandidateValue(pattern, candidate);
          return true;
-      } else if(pattern.oper.isCommutative()) {
-         return match(pattern.left, candidate.right) && match(pattern.right, candidate.left);
+      } else if (pattern.oper.isCommutative()) {
+         boolean r = match(pattern.left, candidate.right) && match(pattern.right, candidate.left);
+         if (r) {
+            saveCandidateValue(pattern, candidate);
+         }
+         return r;
       }
 
       return false;

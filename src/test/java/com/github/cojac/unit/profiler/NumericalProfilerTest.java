@@ -28,7 +28,7 @@ public class NumericalProfilerTest {
    //expected output of these methods, in the same order as the methods in "methods"
    private static double[] expectedResults = {22.0, 22.0, 448.0, 448.0, 1.2212125431609638E-5,
            1.2212125431609638E-5, 1.2299938845217184E-11, 0.0, 20.0,
-           2.4319066147859923E-4, 5.830951894845301, 5.830951894845301};
+           2.4319066147859923E-4, Double.POSITIVE_INFINITY, 2.998076996061238E154};
 
    private Object object;
    private Class<?> classz;

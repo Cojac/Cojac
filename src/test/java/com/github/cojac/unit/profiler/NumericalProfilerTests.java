@@ -93,15 +93,17 @@ public class NumericalProfilerTests {
 
    public double testHypFromSqrt() {
       double a = 3.0, b = 5.0;
+      double c = Math.sqrt(Double.MAX_VALUE)*2, d = Math.sqrt(Double.MAX_VALUE);
       double res = Math.sqrt(a*a + b*b);
-      System.out.println(COJAC_MAGIC_toString(res));
-      return res;
+      double res2 = Math.sqrt(c*c + d*d);
+      return res + res2;
    }
 
    public double testHypToSqrt() {
       double a = 3.0, b = 5.0;
+      double c = Math.sqrt(Double.MAX_VALUE)*2, d = Math.sqrt(Double.MAX_VALUE);
       double res = Math.hypot(a, b);
-      System.out.println(COJAC_MAGIC_toString(res));
-      return res;
+      double res2 = Math.hypot(c, d);
+      return res + res2;
    }
 }

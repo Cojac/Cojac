@@ -18,6 +18,7 @@
 
 package com.github.cojac;
 
+import com.github.cojac.models.wrappers.WrapperSymbolic;
 import com.github.cojac.profiler.NumericalProfiler;
 import org.objectweb.asm.ClassWriter;
 
@@ -352,8 +353,9 @@ public final class CojacReferences {
             // profiler
             if (args.isSpecified(Arg.NUMERICAL_PROFILER)) {
                 args.specify(Arg.SYMBOLIC_WR);
-                numericalProfiler = new NumericalProfiler();
-                // TODO add shutdown hook to print profile results
+                // disable smart evaluation
+                WrapperSymbolic.smart_evaluation_mode = false;
+                numericalProfiler = NumericalProfiler.getInstance();
             }
 
             if (args.isSpecified(Arg.NG_WRAPPER)) {

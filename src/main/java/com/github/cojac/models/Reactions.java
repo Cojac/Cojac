@@ -37,9 +37,9 @@ public final class Reactions {
 
     public static ReactionType theReactionType=ReactionType.PRINT;
     public static String theLogFilename="cojac_log.txt";
-    public static String theCallback="dummyCallback"; 
+    public static String theCallback="dummyCallback";
     //-------------------------------------------------------
-    
+
     public static final AtomicBoolean react = new AtomicBoolean(true);
 
     private Reactions() {
@@ -72,7 +72,7 @@ public final class Reactions {
                 throwOverflow(message);
                 break;
             case CALLBACK:
-                callbackOverflow(message, theCallback); 
+                callbackOverflow(message, theCallback);
                 break;
         }
     }
@@ -107,7 +107,7 @@ public final class Reactions {
         }
         return t.length-1;
     }
-    
+
     // identifier must match Methods.PRINT definition
     public static void printOverflow(String instructionName) {
         if (!react.get())
@@ -149,15 +149,17 @@ public final class Reactions {
         StackTraceElement[] t = new Throwable().getStackTrace();
         int i = reasonableIndex(t);
 
-        System.out.println(i);
-
         String location = "COJAC: " + message + ' ' + t[i].toString();
 
         if (passesFilter(location)) {
             System.err.println(location);
-            for(;i < t.length; i++) {
+            for(i = i + 1; i < t.length; i++) {
+                String line = t[i].toString();
+                if(line.startsWith("java.")) {
+                    break;
+                }
                 System.err.print('\t');
-                System.err.println(t[i].toString());
+                System.err.println(line);
             }
         }
     }
@@ -248,7 +250,7 @@ public final class Reactions {
     public static void callbackOverflow(String instructionName, String callbackName) {
         ReflectionUtils.invokeCallback(callbackName, instructionName);
     }
-    
+
     public static void react(String message) {
         react(theReactionType.ordinal(), message, theLogFilename);
     }
