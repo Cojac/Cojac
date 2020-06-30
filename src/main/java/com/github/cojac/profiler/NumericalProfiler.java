@@ -1,13 +1,26 @@
 package com.github.cojac.profiler;
 
-import com.github.cojac.models.Reactions;
 import com.github.cojac.models.wrappers.SymbolicExpression;
 
 import java.util.*;
 
 public class NumericalProfiler {
 
-   private final SortedMap<StackTraceElement, ProfileData> profile;
+   private static class RecommendationWithProfile {
+      Recommendation recommendation;
+      ProfileData profile;
+
+      public RecommendationWithProfile(Recommendation recommendation, ProfileData profile) {
+         this.recommendation = recommendation;
+         this.profile = profile;
+      }
+   }
+
+   private final SortedMap<StackTraceElement, RecommendationWithProfile> profile;
+   private final SortedMap<StackTraceElement, Recommendation> directMatches;
+
+   private static final Comparator<StackTraceElement> compareByFilenameAndLine =
+           Comparator.comparing(StackTraceElement::getFileName).thenComparingInt(StackTraceElement::getLineNumber);
 
    private static NumericalProfiler instance = null;
 
@@ -19,9 +32,10 @@ public class NumericalProfiler {
    }
 
    private NumericalProfiler() {
-      profile = new TreeMap<>(Comparator.comparing(StackTraceElement::getFileName).thenComparingInt(StackTraceElement::getLineNumber));
-      Runtime.getRuntime().addShutdownHook(new Thread(this::onShutdown));
+      profile = new TreeMap<>(compareByFilenameAndLine);
+      directMatches = new TreeMap<>(compareByFilenameAndLine);
 
+      Runtime.getRuntime().addShutdownHook(new Thread(this::onShutdown));
    }
 
    public void handle(SymbolicExpression expr) {
@@ -48,26 +62,44 @@ public class NumericalProfiler {
    }
 
    private void handleDirectMatch(Recommendation r, SymbolicExpression expr) {
-      Reactions.react(r.getRecommendation());
+      StackTraceElement el = getLine();
+      directMatches.putIfAbsent(el, r);
       //System.out.println("Direct match : " + expr + " for recommendation " + r);
    }
 
    private void handleProfiledMatch(Recommendation r, SymbolicExpression expr) {
       StackTraceElement el = getLine();
-      profile.putIfAbsent(el, new ProfileData());
+      profile.putIfAbsent(el, new RecommendationWithProfile(r, new ProfileData()));
       //System.out.println(r.getLatestLeftValue() + " | " + r.getLatestRightValue());
-      r.updateTracking(profile.get(el));
+      r.updateTracking(profile.get(el).profile);
 
       //System.out.println("Indirect match : " + expr + " for recommendation " + r);
    }
 
    public void onShutdown() {
-      for(Map.Entry<StackTraceElement, ProfileData> entry : profile.entrySet()) {
+      for (Map.Entry<StackTraceElement, Recommendation> entry : directMatches.entrySet()) {
          StackTraceElement stack = entry.getKey();
-         ProfileData data = entry.getValue();
-
-         data.finish();
-         System.out.println(stack.toString() + " : " + data.toString());
+         Recommendation recommendation = entry.getValue();
+         System.out.println(stack.toString() + " : " + recommendation.getRecommendation());
       }
+
+      for(Map.Entry<StackTraceElement, RecommendationWithProfile> entry : profile.entrySet()) {
+         StackTraceElement stack = entry.getKey();
+         ProfileData data = entry.getValue().profile;
+         Recommendation recommendation = entry.getValue().recommendation;
+         data.finish();
+
+         if(recommendation.isRelevant(data)) {
+            System.out.println(stack.toString() + " : " + recommendation.getRecommendation());
+            System.out.println("\t" + data.toString());
+         } else {
+            System.out.println("not relevant");
+            System.out.println("\t" + stack.toString() + " : " + recommendation.getRecommendation());
+            System.out.println("\t\t" + data.toString());
+         }
+      }
+
+      directMatches.clear();
+      profile.clear();
    }
 }

@@ -30,6 +30,11 @@ public class SymbPattern {
             if(candidate.right != null) {
                right = candidate.right.evaluate();
             }
+            if(candidate.left == null && candidate.right == null) {
+               // candidate contains a value, setting it to this goal left value
+               // TODO check that this is a reasonable thing to do
+               left = candidate.evaluate();
+            }
             goal.saveValues(left, right);
          } else {
             // this should never happen because the goal should not match against a null value

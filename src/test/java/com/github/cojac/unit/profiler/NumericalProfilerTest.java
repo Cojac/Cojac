@@ -75,7 +75,7 @@ public class NumericalProfilerTest {
    }
 
    /*
-    * Post-test method removing instrumentation on "Double2FloatTests"
+    * Post-test method removing instrumentation on "NumericalProfilerTests"
     */
    @After
    public void removeInstrumentation() throws UnmodifiableClassException {
@@ -98,5 +98,8 @@ public class NumericalProfilerTest {
 
       String out = "On \"" + this.method + "\", Got: " + res + ", Expected: " + this.result;
       Assert.assertEquals(out, this.result, res, 0.0);
+
+      // manually call on shutdown to force printing now instead of on JVM exit
+      CojacReferences.getInstance().getNumericalProfiler().onShutdown();
    }
 }

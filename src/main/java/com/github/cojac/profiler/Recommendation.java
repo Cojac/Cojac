@@ -5,14 +5,23 @@ import com.github.cojac.models.wrappers.SymbolicExpression;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 public class Recommendation {
+
+   // https://stackoverflow.com/a/9090575/6882070
+   private static boolean almostEqual(double a, double b, double eps) {
+      return Math.abs(a - b) < eps;
+   }
 
    public static final List<Recommendation> recommandations;
 
    static {
+      // used to temporarily store the new SymbExpressionsGoal to pass it to the recommandation constructor
+      // some recommendations have a dedicated temporary goal storage when it is required to use it in a lambda
+      // (because it needs to be effectively final)
       SymbExpressionGoal goal;
+
       recommandations = new ArrayList<>();
 
       // --- DIRECT PATTERNS ---
@@ -43,6 +52,7 @@ public class Recommendation {
               )
       ));
 
+      // --- PROFILED PATTERNS ---
       // LOG1P
       recommandations.add(new Recommendation(
               "log1p",
@@ -51,11 +61,13 @@ public class Recommendation {
                       new SymbolicExpression(SymbolicExpression.OP.LOG,
                               new SymbolicExpression(SymbolicExpression.OP.ADD,
                                       new SymbolicExpression(1.0),
-                                      new SymbolicExpression(SymbolicExpression.OP.ANY)
+                                      goal = new SymbExpressionGoal(SymbolicExpression.OP.ANY)
                               ),
                               null
                       )
-              )
+              ),
+              goal,
+              (profile) -> almostEqual(profile.mean, 0.0, 1.0E-05) && profile.std < 1.0E-05
       ));
 
       // EXPM1
@@ -64,23 +76,30 @@ public class Recommendation {
               // exp(x) - 1
               new SymbPattern(
                       new SymbolicExpression(SymbolicExpression.OP.SUB,
-                              new SymbolicExpression(SymbolicExpression.OP.EXP),
+                              goal = new SymbExpressionGoal(SymbolicExpression.OP.EXP),
                               new SymbolicExpression(1.0)
                       )
-              )
+              ),
+              goal,
+              (profile) -> almostEqual(profile.mean, 0.0, 1.0E-05) && profile.std < 1.0E-05
       ));
 
-      // --- PROFILED PATTERNS ---
       // INTPOW
+      final SymbExpressionGoal intPowGoal;
       recommandations.add(new Recommendation(
               "pow of int",
               // pow(a,x)
               new SymbPattern(
-                      goal = new SymbExpressionGoal(SymbolicExpression.OP.POW)
+                      intPowGoal = new SymbExpressionGoal(SymbolicExpression.OP.POW)
                       // no validator even though we want x to always be an integer
                       // because we need to instrument its value further down the process
               ),
-              goal
+              intPowGoal,
+              (profile) -> {
+                 // need to instrument right value to monitor the exponent
+                 profile.update(intPowGoal.getRightValue());
+              },
+              (profile) -> profile.min == profile.max && profile.max == Math.rint(profile.max)
       ));
 
       // PYTH_TO_HYPOT
@@ -106,11 +125,14 @@ public class Recommendation {
               ),
               pythToHypotGoal,
               (profile) -> {
-                 if(Double.isInfinite(pythToHypotGoal.getLeftValue())) {
+                 // need to check if the multiplication produced an overflow
+                 if (Double.isInfinite(pythToHypotGoal.getLeftValue())) {
+                    // TODO maybe check that using hypot would not have produced an overflow
                     profile.overflow = true;
                  }
                  profile.update(pythToHypotGoal.getLeftValue());
-              }
+              },
+              (profile) -> profile.overflow
       ));
 
       // HYPOT_TO_PYTH
@@ -123,15 +145,19 @@ public class Recommendation {
               ),
               hypotToPythGoal,
               (profile) -> {
-                  double left = hypotToPythGoal.getLeftValue();
-                  double right = hypotToPythGoal.getRightValue();
-                  double sum = left*left + right*right;
-                  if(Double.isInfinite(sum)) {
-                     profile.overflow = true;
-                  }
-                  profile.update(sum);
-                  profile.updateChildren(left, right);
-              }
+                 // need to check if the execution using simple maths would produce an overflow
+                 double left = hypotToPythGoal.getLeftValue();
+                 double right = hypotToPythGoal.getRightValue();
+                 double sum = left * left + right * right;
+                 if (Double.isInfinite(sum)) {
+                    profile.overflow = true;
+                 }
+                 profile.update(sum);
+
+                 // also update children to gain some insights on the values
+                 profile.updateChildren(left, right);
+              },
+              (profile) -> !profile.overflow
       ));
 
       // USELESS_ABS
@@ -141,7 +167,8 @@ public class Recommendation {
               new SymbPattern(
                       goal = new SymbExpressionGoal(SymbolicExpression.OP.ABS)
               ),
-              goal
+              goal,
+              (profile) -> profile.max <= 0 || profile.min >= 0
       ));
 
       // SIN_APPROX
@@ -149,8 +176,13 @@ public class Recommendation {
               "sin can be approximated",
               // sin(x)
               new SymbPattern(
-                      new SymbolicExpression(SymbolicExpression.OP.SIN)
-              )
+                      goal = new SymbExpressionGoal(SymbolicExpression.OP.SIN)
+              ),
+              goal,
+              (profile) -> {
+                 // TODO
+                 return false;
+              }
       ));
 
       // COS_APPROX
@@ -158,8 +190,13 @@ public class Recommendation {
               "cos can be approximated",
               // cos(x)
               new SymbPattern(
-                      new SymbolicExpression(SymbolicExpression.OP.COS)
-              )
+                      goal = new SymbExpressionGoal(SymbolicExpression.OP.COS)
+              ),
+              goal,
+              (profile) -> {
+                 // TODO
+                 return false;
+              }
       ));
 
       // TAN_APPROX
@@ -167,8 +204,13 @@ public class Recommendation {
               "tan can be approximated",
               // tan(x)
               new SymbPattern(
-                      new SymbolicExpression(SymbolicExpression.OP.TAN)
-              )
+                      new SymbExpressionGoal(SymbolicExpression.OP.TAN)
+              ),
+              goal,
+              (profile) -> {
+                 // TODO
+                 return false;
+              }
       ));
    }
 
@@ -176,20 +218,23 @@ public class Recommendation {
    private final SymbPattern pattern;
    private final SymbExpressionGoal goal;
    private final Consumer<ProfileData> profileUpdater;
+   private final Function<ProfileData, Boolean> profileAnalyser;
 
    private Recommendation(String recommendation, SymbPattern pattern) {
       this.recommendation = recommendation;
       this.pattern = pattern;
       this.goal = null;
       this.profileUpdater = null;
+      this.profileAnalyser = null;
    }
 
-   private Recommendation(String recommendation, SymbPattern pattern, SymbExpressionGoal goal) {
-      this(recommendation, pattern, goal, null);
+   private Recommendation(String recommendation, SymbPattern pattern, SymbExpressionGoal goal, Function<ProfileData,
+           Boolean> profileAnalyser) {
+      this(recommendation, pattern, goal, null, profileAnalyser);
    }
 
    private Recommendation(String recommendation, SymbPattern pattern, SymbExpressionGoal goal,
-                  Consumer<ProfileData> profileUpdater) {
+                          Consumer<ProfileData> profileUpdater, Function<ProfileData, Boolean> profileAnalyser) {
       this.recommendation = recommendation;
 
       this.goal = goal;
@@ -200,6 +245,7 @@ public class Recommendation {
          // default updater
          this.profileUpdater = x -> x.update(this.goal.getLeftValue());
       }
+      this.profileAnalyser = profileAnalyser;
    }
 
    @Override
@@ -224,5 +270,9 @@ public class Recommendation {
          throw new UnsupportedOperationException();
       }
       profileUpdater.accept(profileData);
+   }
+
+   public boolean isRelevant(ProfileData profile) {
+      return profileAnalyser.apply(profile);
    }
 }
