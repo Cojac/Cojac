@@ -3,9 +3,10 @@ package com.github.cojac.profiler;
 import com.github.cojac.models.wrappers.SymbolicExpression;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class Recommendation {
 
@@ -15,6 +16,20 @@ public class Recommendation {
    }
 
    public static final List<Recommendation> recommandations;
+
+   // All the recommendations, listed to be used by unit tests
+   public final static Recommendation FMA;
+   public final static Recommendation SCALB;
+   public final static Recommendation LOG1P;
+   public final static Recommendation EXPM1;
+   public final static Recommendation INTPOW;
+   public final static Recommendation PYTH_TO_HYPOT;
+   public final static Recommendation HYPOT_TO_PYTH;
+   public final static Recommendation USELESS_ABS;
+   public final static Recommendation SIN_APPROX;
+   public final static Recommendation COS_APPROX;
+   public final static Recommendation TAN_APPROX;
+
 
    static {
       // used to temporarily store the new SymbExpressionsGoal to pass it to the recommandation constructor
@@ -26,7 +41,7 @@ public class Recommendation {
 
       // --- DIRECT PATTERNS ---
       // FMA
-      recommandations.add(new Recommendation(
+      FMA = new Recommendation(
               "FMA",
               // a * b + c
               new SymbPattern(
@@ -35,10 +50,10 @@ public class Recommendation {
                               new SymbolicExpression(SymbolicExpression.OP.ANY)
                       )
               )
-      ));
+      );
 
       // SCALB
-      recommandations.add(new Recommendation(
+      SCALB = new Recommendation(
               "scalb",
               // a * pow(2, b)
               new SymbPattern(
@@ -50,11 +65,11 @@ public class Recommendation {
                               )
                       )
               )
-      ));
+      );
 
       // --- PROFILED PATTERNS ---
       // LOG1P
-      recommandations.add(new Recommendation(
+      LOG1P = new Recommendation(
               "log1p",
               // log(1 + x)
               new SymbPattern(
@@ -68,10 +83,10 @@ public class Recommendation {
               ),
               goal,
               (profile) -> almostEqual(profile.mean, 0.0, 1.0E-05) && profile.std < 1.0E-05
-      ));
+      );
 
       // EXPM1
-      recommandations.add(new Recommendation(
+      EXPM1 = new Recommendation(
               "expm1",
               // exp(x) - 1
               new SymbPattern(
@@ -82,11 +97,11 @@ public class Recommendation {
               ),
               goal,
               (profile) -> almostEqual(profile.mean, 0.0, 1.0E-05) && profile.std < 1.0E-05
-      ));
+      );
 
       // INTPOW
       final SymbExpressionGoal intPowGoal;
-      recommandations.add(new Recommendation(
+      INTPOW = new Recommendation(
               "pow of int",
               // pow(a,x)
               new SymbPattern(
@@ -100,11 +115,11 @@ public class Recommendation {
                  profile.update(intPowGoal.getRightValue());
               },
               (profile) -> profile.min == profile.max && profile.max == Math.rint(profile.max)
-      ));
+      );
 
       // PYTH_TO_HYPOT
       final SymbExpressionGoal pythToHypotGoal;
-      recommandations.add(new Recommendation(
+      PYTH_TO_HYPOT = new Recommendation(
               "hypot instead of sqrt",
               // sqrt(a*a + b*b)
               new SymbPattern(
@@ -133,11 +148,11 @@ public class Recommendation {
                  profile.update(pythToHypotGoal.getLeftValue());
               },
               (profile) -> profile.overflow
-      ));
+      );
 
       // HYPOT_TO_PYTH
       final SymbExpressionGoal hypotToPythGoal;
-      recommandations.add(new Recommendation(
+      HYPOT_TO_PYTH = new Recommendation(
               "sqrt instead of hypot",
               // hypot(a, b)
               new SymbPattern(
@@ -158,10 +173,10 @@ public class Recommendation {
                  profile.updateChildren(left, right);
               },
               (profile) -> !profile.overflow
-      ));
+      );
 
       // USELESS_ABS
-      recommandations.add(new Recommendation(
+      USELESS_ABS = new Recommendation(
               "useless abs call",
               // abs(x)
               new SymbPattern(
@@ -169,10 +184,10 @@ public class Recommendation {
               ),
               goal,
               (profile) -> profile.max <= 0 || profile.min >= 0
-      ));
+      );
 
       // SIN_APPROX
-      recommandations.add(new Recommendation(
+      SIN_APPROX = new Recommendation(
               "sin can be approximated",
               // sin(x)
               new SymbPattern(
@@ -183,10 +198,10 @@ public class Recommendation {
                  // TODO
                  return false;
               }
-      ));
+      );
 
       // COS_APPROX
-      recommandations.add(new Recommendation(
+      COS_APPROX = new Recommendation(
               "cos can be approximated",
               // cos(x)
               new SymbPattern(
@@ -197,10 +212,10 @@ public class Recommendation {
                  // TODO
                  return false;
               }
-      ));
+      );
 
       // TAN_APPROX
-      recommandations.add(new Recommendation(
+      TAN_APPROX = new Recommendation(
               "tan can be approximated",
               // tan(x)
               new SymbPattern(
@@ -211,14 +226,19 @@ public class Recommendation {
                  // TODO
                  return false;
               }
-      ));
+      );
+
+
+      Collections.addAll(recommandations,
+              FMA, SCALB, LOG1P, EXPM1, INTPOW, PYTH_TO_HYPOT, HYPOT_TO_PYTH, USELESS_ABS, SIN_APPROX, COS_APPROX,
+              TAN_APPROX);
    }
 
    private final String recommendation;
    private final SymbPattern pattern;
    private final SymbExpressionGoal goal;
    private final Consumer<ProfileData> profileUpdater;
-   private final Function<ProfileData, Boolean> profileAnalyser;
+   private final Predicate<ProfileData> profileAnalyser;
 
    private Recommendation(String recommendation, SymbPattern pattern) {
       this.recommendation = recommendation;
@@ -228,13 +248,13 @@ public class Recommendation {
       this.profileAnalyser = null;
    }
 
-   private Recommendation(String recommendation, SymbPattern pattern, SymbExpressionGoal goal, Function<ProfileData,
-           Boolean> profileAnalyser) {
+   private Recommendation(String recommendation, SymbPattern pattern, SymbExpressionGoal goal,
+                          Predicate<ProfileData> profileAnalyser) {
       this(recommendation, pattern, goal, null, profileAnalyser);
    }
 
    private Recommendation(String recommendation, SymbPattern pattern, SymbExpressionGoal goal,
-                          Consumer<ProfileData> profileUpdater, Function<ProfileData, Boolean> profileAnalyser) {
+                          Consumer<ProfileData> profileUpdater, Predicate<ProfileData> profileAnalyser) {
       this.recommendation = recommendation;
 
       this.goal = goal;
@@ -273,6 +293,6 @@ public class Recommendation {
    }
 
    public boolean isRelevant(ProfileData profile) {
-      return profileAnalyser.apply(profile);
+      return profileAnalyser.test(profile);
    }
 }

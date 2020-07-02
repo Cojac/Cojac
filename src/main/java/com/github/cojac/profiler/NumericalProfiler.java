@@ -10,7 +10,7 @@ public class NumericalProfiler {
       Recommendation recommendation;
       ProfileData profile;
 
-      public RecommendationWithProfile(Recommendation recommendation, ProfileData profile) {
+      RecommendationWithProfile(Recommendation recommendation, ProfileData profile) {
          this.recommendation = recommendation;
          this.profile = profile;
       }
@@ -18,6 +18,7 @@ public class NumericalProfiler {
 
    private final SortedMap<StackTraceElement, RecommendationWithProfile> profile;
    private final SortedMap<StackTraceElement, Recommendation> directMatches;
+   private boolean throwInsteadOfPrint = false;
 
    private static final Comparator<StackTraceElement> compareByFilenameAndLine =
            Comparator.comparing(StackTraceElement::getFileName).thenComparingInt(StackTraceElement::getLineNumber);
@@ -77,10 +78,12 @@ public class NumericalProfiler {
    }
 
    public void onShutdown() {
+      ThrowableRecommendationContainer recommendations = new ThrowableRecommendationContainer();
+
       for (Map.Entry<StackTraceElement, Recommendation> entry : directMatches.entrySet()) {
          StackTraceElement stack = entry.getKey();
          Recommendation recommendation = entry.getValue();
-         System.out.println(stack.toString() + " : " + recommendation.getRecommendation());
+         recommendations.addRecommendation(new RecommendationReport(recommendation, stack));
       }
 
       for(Map.Entry<StackTraceElement, RecommendationWithProfile> entry : profile.entrySet()) {
@@ -90,16 +93,27 @@ public class NumericalProfiler {
          data.finish();
 
          if(recommendation.isRelevant(data)) {
-            System.out.println(stack.toString() + " : " + recommendation.getRecommendation());
-            System.out.println("\t" + data.toString());
+            recommendations.addRecommendation(new RecommendationReport(recommendation, stack, data));
          } else {
-            System.out.println("not relevant");
-            System.out.println("\t" + stack.toString() + " : " + recommendation.getRecommendation());
-            System.out.println("\t\t" + data.toString());
+            System.err.println("#### irrelevant ####");
+            System.err.println(new RecommendationReport(recommendation, stack, data).toString());
          }
       }
 
       directMatches.clear();
       profile.clear();
+
+      if(throwInsteadOfPrint) {
+         if(!recommendations.getAllRecommendations().isEmpty())
+            throw recommendations;
+      } else {
+         for(RecommendationReport recommendation : recommendations.getAllRecommendations()) {
+            System.err.println(recommendation.toString());
+         }
+      }
+   }
+
+   public void setThrowInsteadOfPrint(boolean throwInsteadOfPrint) {
+      this.throwInsteadOfPrint = throwInsteadOfPrint;
    }
 }
