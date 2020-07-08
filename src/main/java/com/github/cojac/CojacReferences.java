@@ -356,7 +356,7 @@ public final class CojacReferences {
                 // disable smart evaluation
                 WrapperSymbolic.smart_evaluation_mode = false;
                 numericalProfiler = NumericalProfiler.getInstance();
-                numericalProfiler.setThrowInsteadOfPrint(args.isSpecified(Arg.EXCEPTION));
+                numericalProfiler.setThrowRecommendations(args.isSpecified(Arg.EXCEPTION));
             }
 
             if (args.isSpecified(Arg.NG_WRAPPER)) {

@@ -14,8 +14,10 @@ public class RecommendationReport {
       this.stackTrace = stackTrace;
       this.data = data;
 
-      message = TAG + stackTrace.toString() + " : " + recommendation.getRecommendation() + "\n" +
-              "\t" + data.toString();
+      message = TAG + stackTrace.toString() + " :\n" +
+              "\t" + recommendation.getRecommendation() + "\n" +
+              (recommendation.hasCustomStringProvider() ? "\tAdditional information : " + recommendation.getCustomString(data) + "\n" : "") +
+              "\tRaw data : " + data.toString();
    }
 
    public RecommendationReport(Recommendation recommendation, StackTraceElement stackTrace) {
@@ -23,7 +25,8 @@ public class RecommendationReport {
       this.stackTrace = stackTrace;
       this.data = null;
 
-      message = TAG + stackTrace.toString() + " : " + recommendation.getRecommendation();
+      message = TAG + stackTrace.toString() + " :\n" +
+              "\t" + recommendation.getRecommendation();
    }
 
    public Recommendation getRecommendation() {

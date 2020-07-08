@@ -18,7 +18,7 @@ public class NumericalProfiler {
 
    private final SortedMap<StackTraceElement, RecommendationWithProfile> profile;
    private final SortedMap<StackTraceElement, Recommendation> directMatches;
-   private boolean throwInsteadOfPrint = false;
+   private boolean throwRecommendations = false;
 
    private static final Comparator<StackTraceElement> compareByFilenameAndLine =
            Comparator.comparing(StackTraceElement::getFileName).thenComparingInt(StackTraceElement::getLineNumber);
@@ -39,7 +39,7 @@ public class NumericalProfiler {
       Runtime.getRuntime().addShutdownHook(new Thread(this::onShutdown));
    }
 
-   public void handle(SymbolicExpression expr) {
+   public synchronized void handle(SymbolicExpression expr) {
       for (Recommendation r : Recommendation.recommandations) {
          if (r.getPattern().match(expr)) {
             if (r.isDirectMatch()) {
@@ -83,7 +83,9 @@ public class NumericalProfiler {
       for (Map.Entry<StackTraceElement, Recommendation> entry : directMatches.entrySet()) {
          StackTraceElement stack = entry.getKey();
          Recommendation recommendation = entry.getValue();
-         recommendations.addRecommendation(new RecommendationReport(recommendation, stack));
+         RecommendationReport report = new RecommendationReport(recommendation, stack);
+         recommendations.addRecommendation(report);
+         System.err.println(report);
       }
 
       for(Map.Entry<StackTraceElement, RecommendationWithProfile> entry : profile.entrySet()) {
@@ -92,28 +94,28 @@ public class NumericalProfiler {
          Recommendation recommendation = entry.getValue().recommendation;
          data.finish();
 
+         RecommendationReport reprot = new RecommendationReport(recommendation, stack, data);
          if(recommendation.isRelevant(data)) {
-            recommendations.addRecommendation(new RecommendationReport(recommendation, stack, data));
+            recommendations.addRecommendation(reprot);
+            System.err.println(reprot.toString());
          } else {
-            System.err.println("#### irrelevant ####");
-            System.err.println(new RecommendationReport(recommendation, stack, data).toString());
+            // TODO remove, debug only
+            //System.err.println("#### irrelevant ####");
+            //System.err.println(reprot.toString());
          }
+
       }
 
       directMatches.clear();
       profile.clear();
 
-      if(throwInsteadOfPrint) {
+      if(throwRecommendations) {
          if(!recommendations.getAllRecommendations().isEmpty())
             throw recommendations;
-      } else {
-         for(RecommendationReport recommendation : recommendations.getAllRecommendations()) {
-            System.err.println(recommendation.toString());
-         }
       }
    }
 
-   public void setThrowInsteadOfPrint(boolean throwInsteadOfPrint) {
-      this.throwInsteadOfPrint = throwInsteadOfPrint;
+   public void setThrowRecommendations(boolean throwRecommendations) {
+      this.throwRecommendations = throwRecommendations;
    }
 }

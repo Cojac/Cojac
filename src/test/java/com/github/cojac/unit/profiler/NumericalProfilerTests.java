@@ -1,5 +1,7 @@
 package com.github.cojac.unit.profiler;
 
+import com.github.cojac.profiler.Recommendation;
+
 @SuppressWarnings("unused")
 public class NumericalProfilerTests {
 
@@ -95,5 +97,32 @@ public class NumericalProfilerTests {
       double res = Math.hypot(a, b);
       double res2 = Math.hypot(c, d);
       return res + res2;
+   }
+
+   public double testSinApprox() {
+      double r = 0;
+      for(int i = 0; i < Recommendation.SIN_THRESHOLDS.length; i++) {
+         r += Math.sin(Recommendation.SIN_THRESHOLDS[i]);
+      }
+      double r2 = Math.sin(Math.PI);
+      return r + r2;
+   }
+
+   public double testCosApprox() {
+      double r = 0;
+      for(int i = 0; i < Recommendation.COS_THRESHOLDS.length; i++) {
+         r += Math.cos(Recommendation.COS_THRESHOLDS[i]);
+      }
+      double r2 = Math.cos(Math.PI);
+      return r + r2;
+   }
+
+   public double testTanApprox() {
+      double r = 0;
+      for(int i = 0; i < Recommendation.TAN_THRESHOLDS.length; i++) {
+         r += Math.tan(Recommendation.TAN_THRESHOLDS[i]);
+      }
+      double r2 = Math.tan(Math.PI);
+      return r + r2;
    }
 }

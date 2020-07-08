@@ -231,4 +231,46 @@ public class NumericalProfilerTest {
                       .count()
       );
    }
+
+   @Test
+   public void testSinApprox() throws IllegalAccessException, IllegalArgumentException,
+           InvocationTargetException, NoSuchMethodException, SecurityException {
+
+      List<RecommendationReport> recommendations = invokeAndGetResults("testSinApprox");
+      Assert.assertNotNull(recommendations);
+
+      Assert.assertEquals(1,
+              recommendations.stream()
+                      .filter(x -> x.getRecommendation() == Recommendation.SIN_APPROX)
+                      .count()
+      );
+   }
+
+   @Test
+   public void testCosApprox() throws IllegalAccessException, IllegalArgumentException,
+           InvocationTargetException, NoSuchMethodException, SecurityException {
+
+      List<RecommendationReport> recommendations = invokeAndGetResults("testCosApprox");
+      Assert.assertNotNull(recommendations);
+
+      Assert.assertEquals(1,
+              recommendations.stream()
+                      .filter(x -> x.getRecommendation() == Recommendation.COS_APPROX)
+                      .count()
+      );
+   }
+
+   @Test
+   public void testTanApprox() throws IllegalAccessException, IllegalArgumentException,
+           InvocationTargetException, NoSuchMethodException, SecurityException {
+
+      List<RecommendationReport> recommendations = invokeAndGetResults("testTanApprox");
+      Assert.assertNotNull(recommendations);
+
+      Assert.assertEquals(1,
+              recommendations.stream()
+                      .filter(x -> x.getRecommendation() == Recommendation.TAN_APPROX)
+                      .count()
+      );
+   }
 }

@@ -6,9 +6,48 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class Recommendation {
+
+   // --- Settings ---
+   // maximal absolute value of y when proposing a replacement for Math.pow(x, y)
+   private static final int MAX_POW_REPLACEMENT = 5;
+   // thresholds for trigonometric approximations
+   // adding new ones is fine but keep them sorted, also if they are not power of 10 it will break the custom string
+   public static final double[] SIN_THRESHOLDS = {
+           0.85375, // 0.1
+           0.39249, // 0.01
+           0.18181, // 0.001
+           0.08435, // 0.0001
+   };
+   public static final double[] COS_THRESHOLDS = {
+           1.26124, // 0.1
+           0.70281, // 0.01
+           0.39410, // 0.001
+           0.22142, // 0.0001
+           0.12448, // 0.00001
+           0.06999, // 0.000001
+   };
+   public static final double[] TAN_THRESHOLDS = {
+           0.63165, // 0.1
+           0.30677, // 0.01
+           0.14382, // 0.001
+           0.06690, // 0.0001
+   };
+
+   private static String trigoApproxError(ProfileData profile, final double[] source) {
+      String r = "maximal error : ";
+      double max = Math.max(Math.abs(profile.min), Math.abs(profile.max));
+      for(int i = source.length-1; i >= 0; i--) {
+         if(max <= source[i]) {
+            String fmt = "0.%0" + (i+1) + "d";
+            return r + String.format(fmt, 1);
+         }
+      }
+      return "";
+   }
 
    // https://stackoverflow.com/a/9090575/6882070
    private static boolean almostEqual(double a, double b, double eps) {
@@ -42,7 +81,8 @@ public class Recommendation {
       // --- DIRECT PATTERNS ---
       // FMA
       FMA = new Recommendation(
-              "FMA",
+              "Calculations like \"a * b + c\" can be replaced by a call to Math.fma(a, b, c) to increase precision " +
+                      "by rounding the result only once.",
               // a * b + c
               new SymbPattern(
                       new SymbolicExpression(SymbolicExpression.OP.ADD,
@@ -54,7 +94,8 @@ public class Recommendation {
 
       // SCALB
       SCALB = new Recommendation(
-              "scalb",
+              "Calculations like \"a * Math.pow(2, b)\" can be replaced by a call to Math.scalb(a, b) to increase " +
+                      "performances by performing the operation directly on the floating point representation.",
               // a * pow(2, b)
               new SymbPattern(
                       new SymbolicExpression(SymbolicExpression.OP.MUL,
@@ -70,7 +111,8 @@ public class Recommendation {
       // --- PROFILED PATTERNS ---
       // LOG1P
       LOG1P = new Recommendation(
-              "log1p",
+              "Calculations like \"Math.log(1.0 + x)\" can be replaced by a call to Math.log1p(x) to increase " +
+                      "precision for small values of x.",
               // log(1 + x)
               new SymbPattern(
                       new SymbolicExpression(SymbolicExpression.OP.LOG,
@@ -87,7 +129,8 @@ public class Recommendation {
 
       // EXPM1
       EXPM1 = new Recommendation(
-              "expm1",
+              "Calculations like \"exp(x) - 1.0\" can be replaced by a call to Math.expm1(x) to increase precision " +
+                      "for small values of x.",
               // exp(x) - 1
               new SymbPattern(
                       new SymbolicExpression(SymbolicExpression.OP.SUB,
@@ -102,7 +145,8 @@ public class Recommendation {
       // INTPOW
       final SymbExpressionGoal intPowGoal;
       INTPOW = new Recommendation(
-              "pow of int",
+              "Calculations like \"Math.pow(x, y)\" where \"y\" is a constant integer should be replaced by their " +
+                      "plain maths equivalent to increase performances.",
               // pow(a,x)
               new SymbPattern(
                       intPowGoal = new SymbExpressionGoal(SymbolicExpression.OP.POW)
@@ -114,13 +158,32 @@ public class Recommendation {
                  // need to instrument right value to monitor the exponent
                  profile.update(intPowGoal.getRightValue());
               },
-              (profile) -> profile.min == profile.max && profile.max == Math.rint(profile.max)
+              (profile) -> profile.min == profile.max && profile.max == Math.rint(profile.max) && Math.abs(profile.max) <= MAX_POW_REPLACEMENT,
+              (profile) -> {
+                 StringBuilder r = new StringBuilder("Math.pow(x, " + profile.max + ") -> ");
+                 if (profile.max == 0) {
+                    return r + "1";
+                 }
+                 if (profile.max < 0) {
+                    r.append("1.0/(");
+                 }
+                 for (int i = 0; i < Math.abs(profile.max); i++) {
+                    r.append("x*");
+                 }
+                 // remove extra '*'
+                 r.deleteCharAt(r.length() - 1);
+                 if (profile.max < 0) {
+                    r.append(")");
+                 }
+                 return r.toString();
+              }
       );
 
       // PYTH_TO_HYPOT
       final SymbExpressionGoal pythToHypotGoal;
       PYTH_TO_HYPOT = new Recommendation(
-              "hypot instead of sqrt",
+              "Calculations like \"Math.sqrt(a*a + b*b)\" can be replaced by a call to Math.hypot(a, b) to avoid " +
+                      "intermediate overflows at the price of a high performance impact.",
               // sqrt(a*a + b*b)
               new SymbPattern(
                       pythToHypotGoal = new SymbExpressionGoal(SymbolicExpression.OP.SQRT,
@@ -143,6 +206,7 @@ public class Recommendation {
                  // need to check if the multiplication produced an overflow
                  if (Double.isInfinite(pythToHypotGoal.getLeftValue())) {
                     // TODO maybe check that using hypot would not have produced an overflow
+                    // Non-trivial because it would require the values from the multiplications
                     profile.overflow = true;
                  }
                  profile.update(pythToHypotGoal.getLeftValue());
@@ -153,7 +217,8 @@ public class Recommendation {
       // HYPOT_TO_PYTH
       final SymbExpressionGoal hypotToPythGoal;
       HYPOT_TO_PYTH = new Recommendation(
-              "sqrt instead of hypot",
+              "Math.hypot(a, b) should not be used when the values do not overflow because of its high performance " +
+                      "impact. Consider replacing the call by \"Math.sqrt(a*a + b*b)\".",
               // hypot(a, b)
               new SymbPattern(
                       hypotToPythGoal = new SymbExpressionGoal(SymbolicExpression.OP.HYPOT)
@@ -177,55 +242,59 @@ public class Recommendation {
 
       // USELESS_ABS
       USELESS_ABS = new Recommendation(
-              "useless abs call",
+              "This Math.abs call always always receive values of the same sign and is therefore useless.",
               // abs(x)
               new SymbPattern(
                       goal = new SymbExpressionGoal(SymbolicExpression.OP.ABS)
               ),
               goal,
-              (profile) -> profile.max <= 0 || profile.min >= 0
+              (profile) -> profile.max <= 0 || profile.min >= 0,
+              (profile) -> {
+                 if (profile.max == 0 && profile.min == 0) {
+                    return "Value is always \"0\"";
+                 } else if (profile.max <= 0) {
+                    return "Value is always negative";
+                 } else {
+                    return "Value is always positive";
+                 }
+              }
+
       );
 
       // SIN_APPROX
       SIN_APPROX = new Recommendation(
-              "sin can be approximated",
+              "Value of sin(x) can be approximated with the following estimation : \"x\" for small values of x.",
               // sin(x)
               new SymbPattern(
                       goal = new SymbExpressionGoal(SymbolicExpression.OP.SIN)
               ),
               goal,
-              (profile) -> {
-                 // TODO
-                 return false;
-              }
+              (profile) -> Math.max(Math.abs(profile.min), Math.abs(profile.max)) <= SIN_THRESHOLDS[0],
+              (profile) -> trigoApproxError(profile, SIN_THRESHOLDS)
       );
 
       // COS_APPROX
       COS_APPROX = new Recommendation(
-              "cos can be approximated",
+              "Value of cos(x) can be approximated with the following estimation : \"1.0 - x*x/2\" for small values of x.",
               // cos(x)
               new SymbPattern(
                       goal = new SymbExpressionGoal(SymbolicExpression.OP.COS)
               ),
               goal,
-              (profile) -> {
-                 // TODO
-                 return false;
-              }
+              (profile) -> Math.max(Math.abs(profile.min), Math.abs(profile.max)) <= COS_THRESHOLDS[0],
+              (profile) -> trigoApproxError(profile, COS_THRESHOLDS)
       );
 
       // TAN_APPROX
       TAN_APPROX = new Recommendation(
-              "tan can be approximated",
+              "Value of tan(x) can be approximated with the following estimation : \"x\" for small values of x.",
               // tan(x)
               new SymbPattern(
-                      new SymbExpressionGoal(SymbolicExpression.OP.TAN)
+                      goal = new SymbExpressionGoal(SymbolicExpression.OP.TAN)
               ),
               goal,
-              (profile) -> {
-                 // TODO
-                 return false;
-              }
+              (profile) -> Math.max(Math.abs(profile.min), Math.abs(profile.max)) <= TAN_THRESHOLDS[0],
+              (profile) -> trigoApproxError(profile, TAN_THRESHOLDS)
       );
 
 
@@ -239,6 +308,7 @@ public class Recommendation {
    private final SymbExpressionGoal goal;
    private final Consumer<ProfileData> profileUpdater;
    private final Predicate<ProfileData> profileAnalyser;
+   private final Function<ProfileData, String> customStringProvider;
 
    private Recommendation(String recommendation, SymbPattern pattern) {
       this.recommendation = recommendation;
@@ -246,15 +316,27 @@ public class Recommendation {
       this.goal = null;
       this.profileUpdater = null;
       this.profileAnalyser = null;
+      this.customStringProvider = null;
    }
 
    private Recommendation(String recommendation, SymbPattern pattern, SymbExpressionGoal goal,
                           Predicate<ProfileData> profileAnalyser) {
-      this(recommendation, pattern, goal, null, profileAnalyser);
+      this(recommendation, pattern, goal, null, profileAnalyser, null);
+   }
+
+   private Recommendation(String recommendation, SymbPattern pattern, SymbExpressionGoal goal,
+                          Predicate<ProfileData> profileAnalyser, Function<ProfileData, String> customStringProvider) {
+      this(recommendation, pattern, goal, null, profileAnalyser, customStringProvider);
    }
 
    private Recommendation(String recommendation, SymbPattern pattern, SymbExpressionGoal goal,
                           Consumer<ProfileData> profileUpdater, Predicate<ProfileData> profileAnalyser) {
+      this(recommendation, pattern, goal, profileUpdater, profileAnalyser, null);
+   }
+
+   private Recommendation(String recommendation, SymbPattern pattern, SymbExpressionGoal goal,
+                          Consumer<ProfileData> profileUpdater, Predicate<ProfileData> profileAnalyser,
+                          Function<ProfileData, String> customStringProvider) {
       this.recommendation = recommendation;
 
       this.goal = goal;
@@ -266,6 +348,7 @@ public class Recommendation {
          this.profileUpdater = x -> x.update(this.goal.getLeftValue());
       }
       this.profileAnalyser = profileAnalyser;
+      this.customStringProvider = customStringProvider;
    }
 
    @Override
@@ -283,6 +366,17 @@ public class Recommendation {
 
    public boolean isDirectMatch() {
       return goal == null;
+   }
+
+   public boolean hasCustomStringProvider() {
+      return this.customStringProvider != null;
+   }
+
+   public String getCustomString(ProfileData profileData) {
+      if (customStringProvider == null) {
+         throw new UnsupportedOperationException();
+      }
+      return this.customStringProvider.apply(profileData);
    }
 
    public void updateTracking(ProfileData profileData) {
