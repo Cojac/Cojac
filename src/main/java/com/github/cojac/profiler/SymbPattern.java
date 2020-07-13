@@ -2,18 +2,18 @@ package com.github.cojac.profiler;
 
 import com.github.cojac.models.wrappers.SymbolicExpression;
 
-import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class SymbPattern {
 
    private final SymbolicExpression expr;
-   private final Function<SymbolicExpression, Boolean> validator;
+   private final Predicate<SymbolicExpression> validator;
 
    SymbPattern(SymbolicExpression expr) {
       this(expr, null);
    }
 
-   SymbPattern(SymbolicExpression expr, Function<SymbolicExpression, Boolean> validator) {
+   SymbPattern(SymbolicExpression expr, Predicate<SymbolicExpression> validator) {
       this.expr = expr;
       this.validator = validator;
    }
@@ -81,7 +81,7 @@ public class SymbPattern {
    boolean match(SymbolicExpression other) {
       boolean r = match(expr, other);
       if (r && this.validator != null) {
-         return this.validator.apply(other);
+         return this.validator.test(other);
       } else {
          return r;
       }
