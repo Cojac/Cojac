@@ -30,7 +30,7 @@ public class SymbPattern {
             if(candidate.right != null) {
                right = candidate.right.evaluate();
             }
-            if(candidate.left == null && candidate.right == null) {
+            if(candidate.left == null && candidate.right == null || goal.oper == SymbolicExpression.OP.ANY) {
                // candidate contains a value, setting it to this goal left value
                // TODO check that this is a reasonable thing to do
                left = candidate.evaluate();
