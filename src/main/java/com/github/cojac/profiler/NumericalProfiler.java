@@ -7,8 +7,8 @@ import java.util.*;
 public class NumericalProfiler {
 
    private static class RecommendationWithProfile {
-      Recommendation recommendation;
-      ProfileData profile;
+      final Recommendation recommendation;
+      final ProfileData profile;
 
       RecommendationWithProfile(Recommendation recommendation, ProfileData profile) {
          this.recommendation = recommendation;
@@ -33,19 +33,20 @@ public class NumericalProfiler {
    }
 
    private NumericalProfiler() {
-      profile = new TreeMap<>(compareByFilenameAndLine);
-      directMatches = new TreeMap<>(compareByFilenameAndLine);
+      profile = Collections.synchronizedSortedMap(new TreeMap<>(compareByFilenameAndLine));
+      directMatches = Collections.synchronizedSortedMap(new TreeMap<>(compareByFilenameAndLine));
 
       Runtime.getRuntime().addShutdownHook(new Thread(this::onShutdown));
    }
 
-   public synchronized void handle(SymbolicExpression expr) {
+   public void handle(SymbolicExpression expr) {
       for (Recommendation r : Recommendation.recommandations) {
-         if (r.getPattern().match(expr)) {
+         SymbExpressionGoal goal;
+         if ((goal = r.getPattern().match(expr)) != null) {
             if (r.isDirectMatch()) {
-               handleDirectMatch(r, expr);
+               handleDirectMatch(r);
             } else {
-               handleProfiledMatch(r, expr);
+               handleProfiledMatch(r, goal);
             }
          }
       }
@@ -62,48 +63,49 @@ public class NumericalProfiler {
       return null;
    }
 
-   private void handleDirectMatch(Recommendation r, SymbolicExpression expr) {
+   private void handleDirectMatch(Recommendation r) {
       StackTraceElement el = getLine();
       directMatches.putIfAbsent(el, r);
       //System.out.println("Direct match : " + expr + " for recommendation " + r);
    }
 
-   private void handleProfiledMatch(Recommendation r, SymbolicExpression expr) {
+   private void handleProfiledMatch(Recommendation r, SymbExpressionGoal goal) {
       StackTraceElement el = getLine();
       profile.putIfAbsent(el, new RecommendationWithProfile(r, new ProfileData()));
       //System.out.println(r.getLatestLeftValue() + " | " + r.getLatestRightValue());
-      r.updateTracking(profile.get(el).profile);
-
+      r.updateTracking(profile.get(el).profile, goal);
       //System.out.println("Indirect match : " + expr + " for recommendation " + r);
    }
 
    public void onShutdown() {
       ThrowableRecommendationContainer recommendations = new ThrowableRecommendationContainer();
-
-      for (Map.Entry<StackTraceElement, Recommendation> entry : directMatches.entrySet()) {
-         StackTraceElement stack = entry.getKey();
-         Recommendation recommendation = entry.getValue();
-         RecommendationReport report = new RecommendationReport(recommendation, stack);
-         recommendations.addRecommendation(report);
-         System.err.println(report);
-      }
-
-      for(Map.Entry<StackTraceElement, RecommendationWithProfile> entry : profile.entrySet()) {
-         StackTraceElement stack = entry.getKey();
-         ProfileData data = entry.getValue().profile;
-         Recommendation recommendation = entry.getValue().recommendation;
-         data.finish();
-
-         RecommendationReport reprot = new RecommendationReport(recommendation, stack, data);
-         if(recommendation.isRelevant(data)) {
-            recommendations.addRecommendation(reprot);
-            System.err.println(reprot.toString());
-         } else {
-            // TODO remove, debug only
-            //System.err.println("#### irrelevant ####");
-            //System.err.println(reprot.toString());
+      synchronized (directMatches) {
+         for (Map.Entry<StackTraceElement, Recommendation> entry : directMatches.entrySet()) {
+            StackTraceElement stack = entry.getKey();
+            Recommendation recommendation = entry.getValue();
+            RecommendationReport report = new RecommendationReport(recommendation, stack);
+            recommendations.addRecommendation(report);
+            System.err.println(report);
          }
+      }
+      synchronized (profile) {
+         for (Map.Entry<StackTraceElement, RecommendationWithProfile> entry : profile.entrySet()) {
+            StackTraceElement stack = entry.getKey();
+            ProfileData data = entry.getValue().profile;
+            Recommendation recommendation = entry.getValue().recommendation;
+            data.finish();
 
+            RecommendationReport reprot = new RecommendationReport(recommendation, stack, data);
+            if (recommendation.isRelevant(data)) {
+               recommendations.addRecommendation(reprot);
+               System.err.println(reprot.toString());
+            } else {
+               // TODO remove, debug only
+               System.err.println("#### irrelevant ####");
+               System.err.println(reprot.toString());
+            }
+
+         }
       }
 
       directMatches.clear();

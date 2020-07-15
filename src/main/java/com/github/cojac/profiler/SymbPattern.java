@@ -18,19 +18,19 @@ public class SymbPattern {
       this.validator = validator;
    }
 
-   private void saveCandidateValue(SymbolicExpression pattern, SymbolicExpression candidate) {
+   private void saveCandidateValue(SymbolicExpression pattern, SymbolicExpression candidate, SymbExpressionGoal goal) {
       if (pattern instanceof SymbExpressionGoal) {
          //System.out.println("Saving candidate : " + pattern + " | " + candidate);
          if (candidate != null) {
-            SymbExpressionGoal goal = (SymbExpressionGoal) pattern;
+            SymbExpressionGoal patternGoal = (SymbExpressionGoal) pattern;
             double left = Double.NaN, right = Double.NaN;
-            if(candidate.left != null) {
+            if (candidate.left != null) {
                left = candidate.left.evaluate();
             }
-            if(candidate.right != null) {
+            if (candidate.right != null) {
                right = candidate.right.evaluate();
             }
-            if(candidate.left == null && candidate.right == null || goal.oper == SymbolicExpression.OP.ANY) {
+            if (candidate.left == null && candidate.right == null || patternGoal.oper == SymbolicExpression.OP.ANY) {
                // candidate contains a value, setting it to this goal left value
                // TODO check that this is a reasonable thing to do
                left = candidate.evaluate();
@@ -43,14 +43,14 @@ public class SymbPattern {
       }
    }
 
-   private boolean match(SymbolicExpression pattern, SymbolicExpression candidate) {
+   private boolean match(SymbolicExpression pattern, SymbolicExpression candidate, SymbExpressionGoal goal) {
       //System.out.println(pattern + " | " + candidate);
       if (pattern == null) {
          // returns true if both are null (handle empty right tree case)
          return candidate == null;
       }
       if (pattern.oper == SymbolicExpression.OP.ANY) {
-         saveCandidateValue(pattern, candidate);
+         saveCandidateValue(pattern, candidate, goal);
          return true;
       }
       if (candidate == null) {
@@ -64,13 +64,13 @@ public class SymbPattern {
          return pattern.value == candidate.value;
       }
 
-      if (match(pattern.left, candidate.left) && match(pattern.right, candidate.right)) {
-         saveCandidateValue(pattern, candidate);
+      if (match(pattern.left, candidate.left, goal) && match(pattern.right, candidate.right, goal)) {
+         saveCandidateValue(pattern, candidate, goal);
          return true;
       } else if (pattern.oper.isCommutative()) {
-         boolean r = match(pattern.left, candidate.right) && match(pattern.right, candidate.left);
+         boolean r = match(pattern.left, candidate.right, goal) && match(pattern.right, candidate.left, goal);
          if (r) {
-            saveCandidateValue(pattern, candidate);
+            saveCandidateValue(pattern, candidate, goal);
          }
          return r;
       }
@@ -78,13 +78,15 @@ public class SymbPattern {
       return false;
    }
 
-   boolean match(SymbolicExpression other) {
-      boolean r = match(expr, other);
-      if (r && this.validator != null) {
-         return this.validator.test(other);
-      } else {
-         return r;
+   SymbExpressionGoal match(SymbolicExpression other) {
+      SymbExpressionGoal goal = new SymbExpressionGoal();
+      boolean r = match(expr, other, goal);
+      if (r) {
+         if (this.validator == null || this.validator.test(other)) {
+            return goal;
+         }
       }
+      return null;
    }
 
    @Override
