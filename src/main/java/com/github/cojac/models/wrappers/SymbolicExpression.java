@@ -19,11 +19,10 @@ package com.github.cojac.models.wrappers;
 import java.util.ArrayList;
 import java.util.function.DoubleBinaryOperator;
 
-import static com.github.cojac.models.wrappers.WrapperSymbolic.keep_constant_subtrees_mode;
-import static com.github.cojac.models.wrappers.WrapperSymbolic.smart_evaluation_mode;
-
 import com.github.cojac.symbolic.SymbUtils;
 import com.github.cojac.symbolic.SymbUtils.SymbolicDerivationOperator;
+
+import static com.github.cojac.models.wrappers.WrapperSymbolic.*;
 
 // -------------------------------------------------------------------------
 // ----------------- Symbolic expression tree ------------------------------
@@ -124,6 +123,9 @@ public class SymbolicExpression {
     }
 
     public double evaluate() {
+        if(use_cached_values) {
+            return value;
+        }
         return evaluate(Double.NaN); // typically the "unknown" won't appear...
     }
     

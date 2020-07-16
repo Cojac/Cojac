@@ -19,6 +19,8 @@ public class NumericalProfiler {
    private final SortedMap<StackTraceElement, RecommendationWithProfile> profile;
    private final SortedMap<StackTraceElement, Recommendation> directMatches;
    private boolean throwRecommendations = false;
+   private boolean verbose = false;
+   private final String VERBOSE_PREFIX = "|\t";
 
    private static final Comparator<StackTraceElement> compareByFilenameAndLine =
            Comparator.comparing(StackTraceElement::getFileName).thenComparingInt(StackTraceElement::getLineNumber);
@@ -100,9 +102,14 @@ public class NumericalProfiler {
                recommendations.addRecommendation(reprot);
                System.err.println(reprot.toString());
             } else {
-               // TODO remove, debug only
-               System.err.println("#### irrelevant ####");
-               System.err.println(reprot.toString());
+               if(verbose) {
+                  System.err.println("#### irrelevant :");
+                  String str = reprot.toString();
+                  // add a prefix to each line of the recommendation
+                  str = VERBOSE_PREFIX + str.replaceAll("(\r\n|\n)", "$1" + VERBOSE_PREFIX);
+                  str = str.substring(0, str.length() - VERBOSE_PREFIX.length());
+                  System.err.println(str);
+               }
             }
 
          }
@@ -119,5 +126,9 @@ public class NumericalProfiler {
 
    public void setThrowRecommendations(boolean throwRecommendations) {
       this.throwRecommendations = throwRecommendations;
+   }
+
+   public void setVerbose(boolean verbose) {
+      this.verbose = verbose;
    }
 }

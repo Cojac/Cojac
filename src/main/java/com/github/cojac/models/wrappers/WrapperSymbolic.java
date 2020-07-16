@@ -31,6 +31,8 @@ public class WrapperSymbolic extends ACojacWrapper {
     public static boolean smart_evaluation_mode = true;
     // If constant subtrees are dropped, we lose an opportunity to improve precision (via smart mode)
     public static boolean keep_constant_subtrees_mode = true;
+    // Use the cached value instead of recalculating the tree
+    public static boolean use_cached_values = false;
 
     private final SymbolicExpression expr;
 
