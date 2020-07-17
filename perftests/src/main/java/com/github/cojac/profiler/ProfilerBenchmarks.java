@@ -202,7 +202,7 @@ public class ProfilerBenchmarks {
    @Benchmark
    public double powm1UsingCalcs(RandomProvider rand) {
       double v = rand.gen.nextDouble();
-      return 1.0 / v;git
+      return 1.0 / v;
    }
 
    @Benchmark
