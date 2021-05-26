@@ -1,7 +1,8 @@
 ---------------- A faire (26.05.21) ------------------------------------
 - consider removing the very old cojac.perfs benchmarks and the associated
   ugly dependencies (bb.jar, benchmark-utils.jar etc). Maybe port those
-  benchmarks to JMH (see cojac.profiler.ProfileBenchmarks for a tentative)
+  benchmarks to JMH (see cojac.profiler.ProfileBenchmarks for a tentative).
+  Or reconsider the general approach for our benchmarks...
 
 - (unknown date) maybe prefer maven-shade-plugin to maven-assembly-plugin (?)
 
