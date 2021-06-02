@@ -1,0 +1,78 @@
+\documentclass[french,11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage{lmodern}                        % Police utiliser pour
+\usepackage{textcomp}                       % la prise en charge des °
+\usepackage{graphicx}               		% pour inclure des images
+    \graphicspath{{images/}}     			% spécifier le dossier des images
+\usepackage[square, numbers]{natbib}         % Ajout de references et de citations
+\usepackage[ddmmyyyy]{datetime}             % Utilisation de la date
+\usepackage{geometry}
+\usepackage{xcolor}
+\usepackage{pdflscape}
+\usepackage[all]{nowidow}
+\usepackage{vhistory}
+\usepackage{tabularx}
+\pagenumbering{gobble}
+\usepackage{hyperref}
+\usepackage{babel}
+    \frenchbsetup{StandardLists=true}
+
+\bibliographystyle{plainnat}
+
+\setlength{\parindent}{0em}
+\setlength{\parskip}{1em}
+
+\input{config}
+
+\newgeometry{left=3cm, right=3cm, top=3cm, bottom=3cm}
+
+%% COMANDS %%
+% print todo and the text in red
+\newcommand{\todo}[1]{
+    \textcolor{red}{\textbf{TODO: #1}}
+    \PackageError{Document}{TODO}{#1!}
+}
+
+\begin{document}
+\include{title}
+
+\section *{Table des versions}
+\vspace*{0.5 cm}
+
+\begin{table}[h]
+    \begin{tabularx}{\columnwidth}{ | p{1.5cm} |p{1.5cm} | p{2.5cm} | X |}
+        \hline
+        \textbf{Version} & \textbf{Date} & \textbf{Auteur} & \textbf{Description} \\
+        \hline
+        0.1 & 01.06.2021 & Cédric Tâche & Création \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+\pagenumbering{Roman}
+
+\newpage
+
+\hypersetup{
+	hidelinks,
+	allcolors=black,
+	linktocpage,
+	linktoc=all
+}
+
+\tableofcontents
+
+\newpage
+
+\pagenumbering{arabic}
+
+\input{content}
+
+\section{Références}
+
+\renewcommand{\bibsection}{}
+\bibliography{biblio.bib}
+
+\end{document}
