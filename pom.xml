@@ -95,7 +95,7 @@
 						<exclude>com/github/cojac/unit/Tests.java</exclude>
 						<exclude>com/github/cojac/poly/PolyTest.java</exclude>
 					</excludes>
-					<argLine>-javaagent:${basedir}/src/test/resources/cojac-agent-test.jar </argLine>
+					<argLine>-javaagent:"${basedir}/src/test/resources/cojac-agent-test.jar"</argLine>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <reuseForks>false</reuseForks>
                     <forkCount>1</forkCount>
