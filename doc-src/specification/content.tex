@@ -1,46 +1,47 @@
 \section{Introduction}
 
-La plupart des langages de programmation offrent les mêmes types pour stocker des nombres. Il s'agit notamment des nombre entiers et des nombres réels. Ces nombres réels sont toujours en virgule flottante.
+La plupart des langages de programmation offrent des capacités similaires pour stocker des nombres et effectuer des calculs. Ces langages permettent d'utiliser des nombres entiers et des nombres réels.
 
-Ces types ont tout de même des limitations. Les nombres sont limités en taille et au domaine du réel. Quant à eux, les nombres à virgule flottante sont inexacts. Par conséquent, lorsque les erreurs s'accumulent, le résultat d'un calcul peut être complètement faux sans qu'on le sache.
+Ces types ont tout de même des limitations. Les nombres entiers sont limités en taille et au domaine du réel. Quant à eux, les nombres à virgule flottante sont inexacts. Par conséquent, lorsque les erreurs s'accumulent, le résultat d'un calcul peut être très éloignée de la réponse exacte.
 
-Pourtant, d'autres alternatives existent. Les nombres complexes sont couramment utilisés en mathématique et en physique. Quant à eux, les nombres réels peuvent aussi être représentés avec des Unum.
+Pourtant, d'autres alternatives existent. Les nombres complexes sont couramment utilisés en mathématique et en physique. Ils peuvent être utilisés pour simplifier des réponses utilisant des racines de nombres négatifs ou pour combiner deux quantités réelles tels que la tension et l'intensité en électricité. Quant à eux, les nombres réels peuvent aussi être représentés différemment. Les \textbf{universal numbers} (\textbf{unums}) sont une représentation alternative possible dont la dernière version est expliquée dans l'article \textit{Beating Floating Point at its Own Game: Posit Arithmetic} \cite{posit}.
 
 
 \section{Contexte}
 
-En Java, aucun type ni aucune classe dans le JDK permet de gérer des nombres complexes ou des Unum.
+En Java, aucun type ni aucune classe dans le JDK permet de gérer des nombres complexes ou des unum, mais il est possible de l'implémenter soi-même.
 
-Si on veut ajouter ces types, on pense naturellement à créer ces objets. Cependant il est aussi possible de \todo{...}
+La première solution pour ajouter ces fonctionnalités et de créer de nouvelles classes: une classe pour les nombres complexes et une classe pour les unums. Ensuite, il faut écrire le code en utilisant directement ces classes. Pour changer le type de calculs effectué (ex: nombre complexe $\rightarrow$ nombre réel), il faut changer le code source de l'application.
 
-COJAC \cite{COJAC} est une librairie Java permettant de modifier les capacités arithmétiques d'un programme Java sans en modifier le code.
+COJAC \cite{COJAC} est une librairie Java permettant de modifier les capacités arithmétiques d'un programme Java sans en modifier le code. Elle utilise l'API d'instrumentation et peut transformer les classes et méthodes au runtime pour changer le type de calcul effectué. Ainsi, pour changer le type de calculs effectué (ex: nombre complexe $\rightarrow$ nombre réel), il faut seulement changer l'argument donné à COJAC \cite{COJAC} lors du démarrage de l'application. Ceci ne demande aucune modification dans l'application de l'utilisateur.
 
 \section{Objectifs}
 
-Le but de ce projet est d'ajouter deux nouvelles fonctionnalités à COJAC \cite{COJAC}.
+Le but de ce projet est d'ajouter deux nouvelles fonctionnalités à COJAC \cite{COJAC}. COJAC devra permettre de remplacer automatiquement les nombres à virgules flottantes par deux nouveaux types numériques.
 
 \subsection{Intégration des nombres complexes}
 
-Une option de COJAC permettra de changer le comportement des calculs dans l'application de l'utilisateur. Les calculs se feront ainsi avec des nombres complexes.
+Une option de COJAC permettra de changer le comportement des calculs dans l'application de l'utilisateur. Les nombres à virgules flottantes (\textit{float} et \textit{double}) seront remplacés, au runtime, par des nombres complexes. Les opérations arithmétiques telles que l'addition, la soustration, etc. devront être adaptées. De plus, les méthodes souvent utilisées de la librairie standard devront également pouvoir fonctionner. Par exemple, la méthode \textit{Math.sqrt} devra permettre de retourner la racine carrée d'un nombre négatif.
 
-\subsection{Intégration des Unum}
+\subsection{Intégration des unums}
 
-Une option de COJAC permettra de changer le format de stockage des nombres réels. Les Unum seront utilisés à la place de la virgule flottante.
+Une option de COJAC permettra de changer le format de stockage et de calculs des nombres réels. Les unums seront utilisés à la place de la virgule flottante. Par conséquent, les opérations arithmétiques devront être redéfinies pour fonctionner avec ce nouveau format de stockage. Il faudra probablement utiliser JNI pour accéder à une librairie C/C++ permettant d'utiliser les unums, mais d'autres approches restent possibles.
 
 \subsection{Démonstration des deux fonctionnalités}
 
-Des démonstrations seront réalisées pour les montrer l'utiliser des deux fonctionnalités.
+Des programmes de démonstrations seront réalisés pour montrer ces des deux fonctionnalités. Ces démonstrations doivent montrer l'utilité et les avantages de cette approche.
 
 \section{Objectifs secondaires}
 
+D'autres ajouts de fonctionnalités ou modifications permettraient d'améliorer ce projet.
 
 \subsection{Mise à jour des librairies}
 
-COJAC \cite{COJAC} utilise plusieurs vielles librairies. Ce serait bien de les mettre à jour si possible.
+COJAC \cite{COJAC} utilise plusieurs librairies dont les versions sont désormais obsolètes. Il vaut mieux mettre à jour les versions avant de rencontrer des problèmes à cause de versions trop anciennes. Cependant, COJAC \cite{COJAC} devra garantir une compatibilité pour Java 8+.
 
 \subsection{Tests de performance}
 
-Des tests de performance peuvent aussi être effectués pour tester l'efficacité de l'implémentation.
+Lorsque les fonctionnalités de remplacement des nombres à virgule flottante par des nombres complexes et des unums, il restera encore un aspect inconnu qui est pourtant important pour décider de l'utilité de cette fonctionnalité: les performances. Pour cette raison, des tests de performance peuvent aussi être ajoutés pour tester l'efficacité de l'implémentation.
 
 \section{Tâches}
 
@@ -58,13 +59,13 @@ Les tâches suivantes seront effectuées pour réaliser cet objectif:
     \item Tester l'algorithme.
 \end{itemize}
 
-\subsection{Intégration des Unum}
+\subsection{Intégration des unum}
 
 Les tâches suivantes seront effectuées pour réaliser cet objectif:
 \begin{itemize}
     \item Analyse des implémentations existantes.
     \item Analyse de COJAC et de comment intégrer un nouveau type.
-    \item Analyse des Unum.
+    \item Analyse des unum.
     \item Concevoir l'algorithme.
     \item Implémenter l'algorithme.
     \item Tester l'algorithme.
@@ -98,12 +99,26 @@ Les tâches suivantes seront effectuées pour réaliser cet objectif:
 
 \begin{landscape}
 \section{Planification}
-La figure \ref{fig:gantt} montre le diagramme de Gantt avec la liste des jalons et des tâches.
+La figure \ref{fig:gantt} montre le diagramme de Gantt avec la liste des jalons et des tâches durant le projet. Ce travail dure du 31 mai au 16 juillet 2021.
 \begin{figure}[h!]
    \centering
     \includegraphics[width=0.98\linewidth]{planning.png}
     \caption{Diagramme de Gantt}
     \label{fig:gantt}
 \end{figure}
+
+D'autres dates importantes sont également prévues plus tard dans l'année pour présenter ce projet.
+
+\begin{table}[ht]
+    \begin{tabularx}{\columnwidth}{ | X | p{8em} |}
+        \hline
+        \textbf{Activité} & \textbf{Date limite} \\
+        \hline
+        Rendu du poster & 27.08.2021 \\
+        Exposition du travail de bachelor & 03.09.2021 \\
+        Défense orale & 06-08.06.2021 \\
+        \hline
+    \end{tabularx}
+\end{table}
 
 \end{landscape} 

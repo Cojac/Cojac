@@ -2,7 +2,7 @@
     <description>
         <![CDATA[[Bachelor] Intégration des nombres complexes et des Unum en Java avec COJAC]]>
     </description>
-    <view zooming-state="default:4" id="gantt-chart">
+    <view zooming-state="default:5" id="gantt-chart">
         <field id="tpd3" name="Name" width="242" order="0"/>
         <field id="tpd4" name="Begin date" width="118" order="1"/>
         <field id="tpd5" name="End date" width="117" order="2"/>
@@ -21,6 +21,9 @@
             <overriden-day-types/>
             <days/>
         </day-types>
+        <date year="2021" month="6" date="3" type="HOLIDAY">
+            <![CDATA[Holiday on 6/3/21, 12:00 AM]]>
+        </date>
     </calendars>
     <tasks empty-milestones="true">
         <taskproperties>
@@ -35,15 +38,15 @@
             <taskproperty id="tpd8" name="coordinator" type="default" valuetype="text"/>
             <taskproperty id="tpd9" name="predecessorsr" type="default" valuetype="text"/>
         </taskproperties>
-        <task id="0" name="Analyse de COJAC" color="#8cb6ce" meeting="false" start="2021-06-03" duration="3" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true"/>
-        <task id="10" name="Intégration des nombres complexes" meeting="false" start="2021-06-08" duration="12" complete="0" expand="true">
-            <task id="11" name="Analyse des nombres complexes" color="#8cb6ce" meeting="false" start="2021-06-08" duration="1" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true">
+        <task id="0" name="Analyse de COJAC" color="#8cb6ce" meeting="false" start="2021-06-04" duration="3" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true"/>
+        <task id="10" name="Intégration des nombres complexes" meeting="false" start="2021-06-09" duration="11" complete="0" expand="true">
+            <task id="11" name="Analyse des nombres complexes" color="#8cb6ce" meeting="false" start="2021-06-09" duration="1" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true">
                 <depend id="12" type="2" difference="0" hardness="Strong"/>
             </task>
-            <task id="12" name="Concevoir l'intégration des nombres complexes" color="#8cb6ce" meeting="false" start="2021-06-09" duration="3" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true">
+            <task id="12" name="Concevoir l'intégration des nombres complexes" color="#8cb6ce" meeting="false" start="2021-06-10" duration="3" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true">
                 <depend id="13" type="2" difference="0" hardness="Strong"/>
             </task>
-            <task id="13" name="Implémenter l'intégration des nombres complexes" color="#8cb6ce" meeting="false" start="2021-06-14" duration="4" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true">
+            <task id="13" name="Implémenter l'intégration des nombres complexes" color="#8cb6ce" meeting="false" start="2021-06-15" duration="3" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true">
                 <depend id="14" type="2" difference="0" hardness="Strong"/>
                 <depend id="40" type="2" difference="2" hardness="Strong"/>
             </task>
@@ -66,7 +69,7 @@
         </task>
         <task id="38" name="Mise à jour des librairies" color="#8cb6ce" meeting="false" start="2021-06-24" duration="1" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true"/>
         <task id="45" name="Tests de performance" color="#8cb6ce" meeting="false" start="2021-07-14" duration="2" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true"/>
-        <task id="50" name="Rendu du rapport" color="#8cb6ce" meeting="true" start="2021-07-16" duration="0" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true"/>
+        <task id="50" name="Rendu du rapport et du flyer" color="#8cb6ce" meeting="true" start="2021-07-16" duration="0" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true"/>
     </tasks>
     <resources/>
     <allocations/>
