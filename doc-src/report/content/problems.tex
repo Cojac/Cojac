@@ -1,0 +1,55 @@
+% ==============
+% Description of all problems that happened during the project
+% ==============
+
+\chapter{Problèmes rencontrés}
+
+\section{Surefire provoque une exception lors de l'exécution des tests par Maven}
+
+Surefire provoquait une erreur lors de l'exécution des tests lorsqu'un espace était présent dans le chemin d'accès.
+
+\subsection{Problème}
+\label{sec:problems_surefire_problem}
+
+Lors de la création du JAR, l'erreur suivante se produit lors de l'exécution des tests:
+
+\begin{minted}[breaklines]{text}
+ExecutionException The forked VM terminated without properly saying goodbye. VM crash or System.exit called?
+\end{minted}
+
+Le message suivant présent dans les logs indique la localisation des fichiers qui contiennent plus de détails.
+\begin{minted}[breaklines]{text}
+[ERROR] Please refer to D:\Documents\Documents\HEIA\Semestre 6 - 2021\Bachelor\Projet\cojac\target\surefire-reports for the individual test results.
+\end{minted}
+
+\subsection{Solution temporaire: ne pas exécuter les tests}
+
+Comme les problèmes ont uniquement lieu durant les tests, il est possible de générer le JAR sans les exécuter. \todo{lien section Maven} Pour ce faire, il faut cliquer sur le bouton dédié dans la fenêtre Maven. Ce bouton est visible sur la figure \ref{fig:problems_maven_skip_tests}.
+
+Cependant, cette solution ne doit être utilisée que s'il y a besoin du JAR pour d'autres raisons. Il est nécessaire de corriger ce problème pour garantir la qualité du code.
+
+\begin{minipage}{\linewidth}
+\makebox[\linewidth]{
+    \includegraphics[width=.5\linewidth]{problems/maven_skip_tests.png}
+}
+\captionof{figure}{Bouton pour ignorer les tests}
+\label{fig:problems_maven_skip_tests}
+\end{minipage}
+
+\subsection{Cause}
+
+Dans un des fichiers de log produits, qui sont mentionnées dans la section \ref{sec:problems_surefire_problem}, on peut trouver l'erreur suivante:
+
+\begin{minted}[breaklines]{text}
+# Created at 2021-06-03T14:09:01.042
+Error opening zip file or JAR manifest missing : D:\Documents\Documents\HEIA\Semestre
+\end{minted}
+
+Ce lien est incomplet par rapport au chemin mentionné dans la section \ref{sec:problems_surefire_problem}. Le chemin d'accès s'arrête lors du premier espace trouvé. Si le projet est déplacé dans un dossier ne contenant aucun espace, le JAR est correctement généré.
+
+\subsection{Solution}
+
+Il faut modifier une ligne de configuration du plugin Surefire dans le \textit{pom.xml}. Des guillemets ont été ajoutés autour du chemin d'accès du JAR pour obtenir la ligne suivante.
+\inputmintedcolor{xml}{code/maven-surefire-javaagent.xml}
+
+Ce changement corrige le problème.

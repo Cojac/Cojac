@@ -1,3 +1,7 @@
+% ==============
+% Main file. Project report on COJAC. It includes all other files.
+% ==============
+
 \documentclass[french,11pt]{report}
 
 %% PACKAGES %%
@@ -38,10 +42,13 @@
 
 
 %% COMANDS %%
-% print todo and the text in red
-\newcommand{\todo}[1]{\textcolor{red}{\textbf{TODO: #1}}\PackageWarning{TODO:}{#1!}}
+% print todo and the text in red and show an error
+\newcommand{\todo}[1]{
+    \textcolor{red}{\textbf{TODO: #1}}
+    \PackageError{Document}{TODO}{#1!}
+}
 % display the inline code with a background and a border
-\newcommand{\inputmintedcolor}[3][firstline=1]{\begin{tcolorbox}\inputminted[xleftmargin=20pt,linenos,#1]{#2}{#3}\end{tcolorbox}}
+\newcommand{\inputmintedcolor}[3][firstline=1]{\begin{tcolorbox}\inputminted[breaklines,xleftmargin=20pt,linenos,#1]{#2}{#3}\end{tcolorbox}}
 % get the type of a section and its number where a label has been defined
 \newcommand*{\fullref}[1]{\hyperref[{#1}]{\autoref*{#1} \nameref*{#1}}}
 % format a title to use in subsection
@@ -112,7 +119,8 @@
         \hline
         \textbf{Version} & \textbf{Date} & \textbf{Author} & \textbf{Description} \\
         \hline
-        0.1 & 06.03.2021 & Cédric Tâche & Création de la structure \\
+        0.1 & 03.06.2021 & Cédric Tâche & Création de la structure \\
+        0.2 & 07.06.2021 & Cédric Tâche & Description de Maven et du problème de compilation \\
         \hline
     \end{tabularx}
 \end{table}
