@@ -23,6 +23,18 @@ Le but de ce projet est d'ajouter deux nouvelles fonctionnalités à COJAC \cite
 
 Une option de COJAC permettra de changer le comportement des calculs dans l'application de l'utilisateur. Les nombres à virgules flottantes (\textit{float} et \textit{double}) seront remplacés, au runtime, par des nombres complexes. Les opérations arithmétiques telles que l'addition, la soustration, etc. devront être adaptées. De plus, les méthodes souvent utilisées de la librairie standard devront également pouvoir fonctionner. Par exemple, la méthode \textit{Math.sqrt} devra permettre de retourner la racine carrée d'un nombre négatif.
 
+Voici un exemple sans les nombres complexes:
+\begin{minted}{Java}
+double val = Math.sqrt(-1); // = NaN
+val = val * val; // = NaN;
+\end{minted}
+
+Avec les nombres complexes, on obtient le résultat suivant:
+\begin{minted}{Java}
+double val = Math.sqrt(-1); // = i
+val = val * val; // = -1;
+\end{minted}
+
 \subsection{Intégration des unums}
 
 Une option de COJAC permettra de changer le format de stockage et de calculs des nombres réels. Les unums seront utilisés à la place de la virgule flottante. Par conséquent, les opérations arithmétiques devront être redéfinies pour fonctionner avec ce nouveau format de stockage. Il faudra probablement utiliser JNI pour accéder à une librairie C/C++ permettant d'utiliser les unums, mais d'autres approches restent possibles.
@@ -31,6 +43,7 @@ Une option de COJAC permettra de changer le format de stockage et de calculs des
 
 Des programmes de démonstrations seront réalisés pour montrer ces deux fonctionnalités. Ces démonstrations doivent montrer l'utilité et les avantages de cette approche.
 
+\begin{minipage2}
 \section{Objectifs secondaires}
 
 D'autres ajouts de fonctionnalités ou modifications permettraient d'améliorer ce projet.
@@ -38,6 +51,7 @@ D'autres ajouts de fonctionnalités ou modifications permettraient d'améliorer 
 \subsection{Mise à jour des librairies}
 
 COJAC \cite{COJAC} utilise plusieurs librairies dont les versions sont désormais obsolètes. Il vaut mieux mettre à jour les versions avant de rencontrer des problèmes à cause de versions trop anciennes. Cependant, COJAC \cite{COJAC} devra garantir une compatibilité pour Java 8+.
+\end{minipage2}
 
 \subsection{Tests de performance}
 
@@ -127,7 +141,7 @@ Les tâches suivantes seront effectuées pour réaliser cet objectif:
 La figure \ref{fig:gantt} montre le diagramme de Gantt avec la liste des jalons et des tâches durant le projet. Ce travail dure du 31 mai au 16 juillet 2021.
 \begin{figure}[h!]
    \centering
-    \includegraphics[width=0.98\linewidth]{planning.png}
+    \includegraphics[width=0.84\linewidth]{planning.png}
     \caption{Diagramme de Gantt}
     \label{fig:gantt}
 \end{figure}
