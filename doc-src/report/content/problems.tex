@@ -53,3 +53,31 @@ Il faut modifier une ligne de configuration du plugin Surefire dans le \textit{p
 \inputmintedcolor{xml}{code/maven-surefire-javaagent.xml}
 
 Ce changement corrige le problème.
+
+\section{Erreur lors de l'instrumentation d'une application par COJAC}
+
+Lors de l'appel de la commande pour instrumenter une démonstration avec COJAC \cite{COJAC}, COJAC \cite{COJAC} provoque une erreur.
+
+\subsection{Problème}
+
+L'application peut être démarrée sans COJAC \cite{COJAC} avec la commande suivante:
+\begin{minted}{bat}
+java demo\HelloBigDecimal.java
+\end{minted}
+
+Cependant, COJAC \cite{COJAC} produit une erreur lorsque l'application est démarrée avec COJAC \cite{COJAC}. La commande suivante a été utilisée:
+\begin{minted}{bat}
+java -javaagent:cojac.jar="-Rb 50" demo\HelloBigDecimal.java
+\end{minted}
+
+\subsection{Solution temporaire: compiler avec Java 8}
+
+COJAC \cite{COJAC} doit être compilé avec Java 9 au minimum, mais l'application instrumentée doit être compilée avec Java 8. Les deux commandes suivantes permettent de compiler une démonstration et de l'exécuter:
+\begin{minted}{bat}
+javac -source 8 -target 8 demo\HelloBigDecimal.java
+java -javaagent:cojac.jar="-Rb 50" demo.HelloBigDecimal
+\end{minted}
+
+\subsection{Cause}
+
+La source du problème provient de l'instruction Bytecode \textit{Invokedynamic} qui a évolué en Java 9 et qui est désormais utilisé pour de nouvelles opérations qui ne sont pas supportés par COJAC \cite{COJAC} à l'heure actuelle.
