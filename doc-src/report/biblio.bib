@@ -2,8 +2,7 @@
 % Bibliography
 % ==============
 
-@misc{COJAC,
-    key = {COJAC},
+@online{COJAC,
     title = {COJAC - Boosting arithmetic capabilities of Java numbers},
     year = {2019},
     publisher = {GitHub},
@@ -12,9 +11,86 @@
     commit = {853e536204aa71f73b5f5844b60827e2c9cebbe4}
 }
 
+@article{posit,
+    author = {Gustafson and Yonemoto},
+    title = {Beating Floating Point at Its Own Game: Posit Arithmetic},
+    year = {2017},
+    issue_date = {June 2017},
+    publisher = {South Ural State University},
+    address = {Chelyabinsk, RUS},
+    volume = {4},
+    number = {2},
+    issn = {2409-6008},
+    url = {https://doi.org/10.14529/jsfi170206},
+    doi = {10.14529/jsfi170206},
+    abstract = {A new data type called a posit is designed as a direct drop-in replacement for IEEE Standard 754 floating-point numbers floats. Unlike earlier forms of universal number unum arithmetic, posits do not require interval arithmetic or variable size operands; like floats, they round if an answer is inexact. However, they provide compelling advantages over floats, including larger dynamic range, higher accuracy, better closure, bitwise identical results across systems, simpler hardware, and simpler exception handling. Posits never overflow to infinity or underflow to zero, and "Nota-Number" NaN indicates an action instead of a bit pattern. A posit processing unit takes less circuitry than an IEEE float FPU. With lower power use and smaller silicon footprint, the posit operations per second POPS supported by a chip can be significantly higher than the FLOPS using similar hardware resources. GPU accelerators and Deep Learning processors, in particular, can do more per watt and per dollar with posits, yet deliver superior answer quality. A comprehensive series of benchmarks compares floats and posits for decimals of accuracy produced for a set precision. Low precision posits provide a better solution than "approximate computing" methods that try to tolerate decreased answer quality. High precision posits provide more correct decimals than floats of the same size; in some cases, a 32-bit posit may safely replace a 64-bit float. In other words, posits beat floats at their own game.},
+    journal = {Supercomput. Front. Innov.: Int. J.},
+    month = jun,
+    pages = {71–86},
+    numpages = {16},
+    keywords = {floating point, neural networks, posits, valid arithmetic, unum computing, linear algebra, LINPACK, computer arithmetic, energy-efficient computing}
+}
+
 @misc{maven,
   author = {Porter, Brett and Zyl, Jason van and Lamy, Olivier},
   title = {Welcome to Apache Maven},
   url = {https://maven.apache.org/},
   urldate = {2021-06-05}
 }
+
+@online{youtube-guide-java-agent,
+    title = {The definitive guide to Java agents by Rafael Winterhalter},
+    date = {2020},
+    organization = {Youtube},
+    author = {Rafael Winterhalter},
+    url = {https://www.youtube.com/watch?v=oflzFGONG08},
+}
+
+@online{byte-buddy,
+    author = {Winterhalter, Rafael},
+    title = {Byte Buddy - runtime code generation for the Java virtual machine},
+    date = {2021},
+    url = {https://bytebuddy.net/}
+}
+
+@online{cojac-wiki-limitations,
+    title = {COJAC - Limitations and known issues - Issues with the wrapper},
+    addendum = "(accessed: 15.06.2021)",
+    url = {https://github.com/Cojac/Cojac/wiki#62---issues-with-the-wrapper}
+}
+
+@online{java-bytecode-video,
+    title = {Java Bytecode Crash Course},
+    date = {2019},
+    organization = {Youtube},
+    author = {Buck, David},
+    url = {https://www.youtube.com/watch?v=e2zmmkc5xI0&t=430s&pp=ugMICgJmchABGAE\%3D}
+}
+
+@online{java-bytecode-documentation,
+    title = {Chapter 6. The Java Virtual Machine Instruction Set},
+    addendum = "(accessed: 15.06.2021)",
+    organization = {Oracle},
+    url = {https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-6.html}
+}
+
+@online{java-instrumentation-retransform-documentation,
+    title = {Instrumentation (Java Platform SE 8 ) - retransformClasses},
+    addendum = "(accessed: 15.06.2021)",
+    organization = {Oracle},
+    url = {https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/Instrumentation.html#retransformClasses-java.lang.Class...-}
+}
+
+@online{apache-complex-documentation,
+    title = {Complex (Apache Commons Math 3.6 API)},
+    addendum = "(accessed: 20.06.2021)",
+    organization = {Apache Commons},
+    url = {https://commons.apache.org/proper/commons-math/javadocs/api-3.6/org/apache/commons/math3/complex/Complex.html}
+}
+
+%@article{article,
+%    author = {Elie, Frédéric},
+%    year = {2017},
+%    month = {10},
+%    title = {Spineurs et algèbre vectorielle en physique quantique ; application à l'équation de Dirac}
+%}

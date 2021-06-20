@@ -1,12 +1,12 @@
 \section{Nombres complexes}
 
-Au tout début, les nombres étaient limités aux entiers positifs. L'humanité y a progressivement inclus des nombres négatifs, puis des nombres réels. Cependant, bien que ces nombres suffisent en général, d'autres ensemble de nombres plus larges existent également comme les nombres complexes qui sont le sujet de ce chapitre.
+Lorsque l'humanité à créer les nombres, ils étaient limités aux entiers positifs. L'humanité y a progressivement inclus des nombres négatifs, puis des nombres réels. Cependant, bien que ces nombres suffisent en général, d'autres ensemble de nombres plus larges existent également comme les nombres complexes qui sont le sujet de ce chapitre.
 
 \subsection{Avantages}
 
-Bien que ces nombres complexes étaient considérés comme une astuce pour résoudre des problèmes ayant des racines carrés de nombres négatifs, ces nombres sont désormais très souvent utilisés en mathématique, en physique et en ingénierie. Ils permettent de simplifier l'écriture de nombreuses formules et sont suffisant pour décrire une grande majorité des lois et phénomènes physiques.
+Bien que ces nombres complexes étaient considérés comme une astuce pour résoudre des problèmes ayant des racines carrés de nombres négatifs, ces nombres sont désormais très souvent utilisés en mathématique, en physique et en ingénierie. Ils permettent de simplifier l'écriture de nombreuses formules et sont suffisants pour décrire une grande majorité des lois et phénomènes physiques.
 
-Une autre raison de leur usage est que le corps des nombres complexes est algébriquement clos. C'est-à-dire que chaque polynôme complexe de degré 1 ou supérieur a au moins une racine complexe. Ainsi, il n'y a pas les mêmes risques que pour les nombres réels où chaque calcul de racine doit être fait avec précautions sans quoi, il pourrait n'exister aucune solution dans le domaine réel. Avec les nombres complexes, il est garanti qu'une racine existera nécessairement.
+Une raison majeure de la nécessité d'intégrer dans l'arsenal mathématique le corps des nombres complexes tient au fait qu'il est algébriquement clos. C'est-à-dire que chaque polynôme complexe de degré 1 ou supérieur a au moins une racine complexe. Ainsi, il n'y a pas les mêmes risques que pour les nombres réels où chaque calcul de racine doit être fait avec précautions sans quoi, il pourrait n'exister aucune solution dans le domaine réel. Avec les nombres complexes, il est garanti qu'une racine existera nécessairement.
 
 Les nombres complexes ont eux aussi des limites, même si on ne les rencontre que rarement. C'est seulement dans des cas spécifiques, tel que la physique quantique avec un spin, que les nombres complexes se révèlent insuffisants.
 
@@ -15,11 +15,32 @@ Les nombres complexes ont eux aussi des limites, même si on ne les rencontre qu
 Les nombres complexes ont aussi un désavantage: la perte de comparaison. Comme les nombres réels peuvent être représentés sur un axe, il est toujours possible de définir si un nombre est plus petit ou plus grand qu'un autre. Cette même comparaison n'a plus lieu d'être avec les nombres complexes, car il ne s'agit plus d'un axe, mais d'un espace à 2 dimensions. Selon les situations, les nombres complexes peuvent être comparés par leur partie réelle, par leur partie imaginaire, par leur module ("la taille" de ce nombre), etc.
 
 \subsection{Représentations}
+\label{sec:complex_representations}
 
 Les nombres complexes peuvent être écrits sous différentes formes:
 \begin{itemize}
-    \item Algébrique: $a + bi$ où $a$ est la partie réelle et $bi$ est la partie imaginaire. Ex: $2 + 3i$
-    \item Trigonométrique: $r(cos(\theta) + i*sin(\theta))$
+    \item Algébrique: $a + bi$ où $a$ est la partie réelle et $bi$ est la partie imaginaire. Ex: $3 - 2i$
+    \item Trigonométrique: $r(cos(\theta) + i \cdot sin(\theta))$
     \item Exponentielle: $re^{i\theta}$
     \item Polaire: $(r, \theta)$
 \end{itemize}
+
+Voici l'exemple du nombre $3 - 2i$ visible sur la figure \ref{fig:complex_3-2i}.
+
+\begin{minipage}{\linewidth}
+\makebox[\linewidth]{
+    \includegraphics[width=.5\linewidth]{complex_numbers/3-2i.png}
+}
+\captionof{figure}{Le nombre $3 - 2i$ dans l'espace complexe}
+\label{fig:complex_3-2i}
+\end{minipage}
+
+Voici les différentes notations correspondant toutes au nombre $3 - 2i$:
+\begin{itemize}
+    \item Algébrique: $3 - 2i$
+    \item Trigonométrique: $\sqrt{13} \cdot (cos(-tan^{-1}(\frac{2}{3})) + i \cdot sin(-tan^{-1}(\frac{2}{3})))$
+    \item Exponentielle: $\sqrt{13} \cdot e^{-i \cdot tan^{-1}(\frac{2}{3})}$
+    \item Polaire: $(\sqrt{13}, -tan^{-1}(\frac{2}{3}))$
+\end{itemize}
+
+Dans chaque de ces formes, on connaît soit la partie réelle et la partie imaginaire, soit l'angle et le module (ou rayon) du nombre complexe. On peut passer de l'un à l'autre en utilisant les formules de Pythagore et de trigonométrie. \todo{Ajouter formules}

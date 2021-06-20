@@ -1,0 +1,87 @@
+\chapter{Conception}
+
+Ce chapitre contient la conception de l'intégration des nombres complexes dans COJAC \cite{COJAC}.
+
+\section{Approche}
+\label{sec:complex_approach}
+
+Comme expliqué dans la section \ref{sec:cojac_integration}, l'intégration des nombres complexes peut se faire à l'aide de deux mécanismes différents:
+\begin{itemize}
+    \item Behaviour: réinterprétation des \textit{floats} et des \textit{doubles}.
+    \item Wrapper: remplacement des \textit{floats} et des \textit{doubles} par un wrapper.
+\end{itemize}
+
+L'intégration des nombres complexes se fera en utilisant un wrapper afin de pouvoir garder la \textit{double precision}.
+
+\section{Comparaison}
+
+La comparaison entre les nombres complexes est un problème important. Toutes les comparaisons entre les nombres sont faites à l'aide d'une même opération et il faut aussi que les comparaisons entre des nombres purement réels soient respectés. Ainsi si on compare des nombres complexes (avec une partie imaginaire), il n'y a pas forcément de valeurs de retour adaptées car il n'y a pas d'ordre total avec les nombres complexes. Cette situation peut être montrée avec l'exemple de code suivant:
+
+\begin{minted}{Java}
+double a = ...;
+if (a == 0) {
+    System.out.println("a = 0");
+} else {
+    System.out.println("a != 0");
+}
+\end{minted}
+
+Si la variable \textit{a} est purement réel, ce code doit fonctionner. Cependant il y a un problème si la variable \textit{a} est complexe. Pour cet exemple, la valeur de \textit{a} sera \textit{2i}. Lorsque le remplacement de cet opération est faite, la méthode doit comparer ces deux nombres (\textit{2i} et 0) et retourner une valeur parmi les trois suivantes:
+
+\begin{itemize}
+    \item \textit{2i} < 0
+    \item \textit{2i} = 0
+    \item \textit{2i} > 0
+\end{itemize}
+
+Cependant, aucune de ces réponses n'est vraie. Il est possible de créer une méthode magique pour gérer les égalités, mais ceci nécessitera que l'application cible soit modifiée pour réaliser la comparaison.
+
+Comme aucun des deux choix n'est complètement satisfaisant, une option supplémentaire pour COJAC \cite{COJAC} sera disponible pour choisir le comportement des comparaisons.
+
+
+
+\begin{tabularx}{\columnwidth}{| p{6em} | X | X |}
+    \hline
+     & \textbf{Sans option: pas d'erreur} & \textbf{Avec option: erreur et méthodes magiques} \\
+    \hline
+    Principe:
+    & La comparaison se fera d'abord avec la partie réelle, puis avec la partie complexe. Ainsi \textit{2 - i} sera considéré comme plus petit que \textit{2}.
+    & La comparaison sera mathématiquement correcte. La comparaison entre deux nombres purement réels donnera toujours un résultat. La comparaison entre deux nombres complexes égaux donnera également un résultat correct. Dans les autres cas, une exception sera générée. \\
+    & & Une méthode magique permettra de vérifier l'égalité de deux nombres complexes. Elle retournera un booléen même en cas d'inégalité. Deux méthodes magiques permettant de garder que la partie réelle ou imaginaire d'un nombre complexe sera aussi disponible et permettra à l'utilisateur d'implémenter lui-même la comparaison entre les nombres complexes.\\
+    \hline
+    Avantage:
+    & Ceci permet de fonctionner sans modifier le code de l'application cible. Ceci respecte au maximum l'ordre établi entre les nombres réels.
+    & La comparaison est mathématiquement correcte. Ainsi, l'utilisateur est conscient des problèmes qui peuvent se produire lorsqu'il travaille avec les nombres complexes. \\
+    & & L'usage des méthodes magiques permet une plus grande flexibilité avec les nombres magiques. \\
+    \hline
+    Désavantage:
+    & Un ordre total est défini alors qu'il n'existe pas mathématiquement. Ceci peut conduire à des comparaisons donnant un résultat mathématiquement faux et produire des incohérences.
+    & L'application cible doit être écrite en tenant compte des fonctions magiques de COJAC \cite{COJAC}. \\
+    \hline
+\end{tabularx}
+
+\begin{minipage2}
+Voici un exemple d'incohérence pouvant apparaître avec la première solution (pas d'erreur, ordre absolu).
+
+\begin{minted}{Java}
+double[] sorted_positives = ... // ex: new double[]{2 + 3i, 3, 1};
+Arrays.sort(sorted_positives); // sorted_positives = [1, 2 + 3i, 3]
+double[] sorted_abs = new double[sorted_positives.length];
+for (int i = 0; i < sorted_positives.length; i++){
+    sorted_abs[i] = Math.abs(sorted_positives[i]);
+}
+// sorted_abs = [1, 3.6, 3]
+\end{minted}
+\end{minipage2}
+
+Si ce code est exécuté avec des nombres réels, le tableau \textit{sorted\_abs sera trié}. Lorsque ce même code est exécuté avec des nombres complexes, le tableau \textit{sorted\_abs sera trié} ne sera pas trié dû à la définition de la valeur absolue d'un nombre complexe.
+
+\section{Diagramme de classes}
+
+Toutes les méthodes abstraites du \textit{ACojacWrapper} seront implémentées en plus de la méthode \textit{isNaN}. De plus, une nouvelle méthode sera ajoutée sur \textit{ACojacWrapper} afin de pouvoir supporter la méthode \textit{Math.cbrt}.
+
+\todo{ajouter diagramme}
+
+\section{Librairie disponible}
+
+La librairie \textit{commons-math3} est déjà disponible en Java pour gérer les nombres complexes \cite{apache-complex-documentation}. Elle possède beaucoup de fonctionnalités et implémente déjà la grande majorité des opérations mathématiques nécessaires. De plus, cette librairie fait déjà partie des dépendances de ce projet.
