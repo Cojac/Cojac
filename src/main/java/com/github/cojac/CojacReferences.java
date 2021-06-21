@@ -421,6 +421,11 @@ public final class CojacReferences {
                 String filePath = args.getValue(Arg.POLY_BEHAVIOURAL_LOAD);
                 PolyBehaviourLoader.getinstance().loadBehaviours(filePath);
             }
+
+            if (args.isSpecified(Arg.COMPLEX_NUMBER)) {
+                args.specify(Arg.REPLACE_FLOATS);
+                args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperComplexNumber");
+            }
                 
             if (args.isSpecified(Arg.REPLACE_FLOATS)) { 
                 sbBypassList.append(BYPASS_SEPARATOR);  // Only for proxy tests
