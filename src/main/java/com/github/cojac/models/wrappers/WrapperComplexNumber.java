@@ -229,6 +229,16 @@ public class WrapperComplexNumber extends ACojacWrapper {
         return this.complex.isNaN();
     }
 
+    @Override
+    public WrapperComplexNumber math_hypot(ACojacWrapper wrapper) {
+        // TODO - improve this naive implementation
+        // it is prone to overflow and underflow
+        Complex x2 = this.complex.multiply(this.complex);
+        Complex y = castWrapper(wrapper).complex;
+        Complex y2 = y.multiply(y);
+        return new WrapperComplexNumber(x2.add(y2).sqrt());
+    }
+
     private static WrapperComplexNumber castWrapper(ACojacWrapper wrapper) {
         return (WrapperComplexNumber) wrapper;
     }
