@@ -26,7 +26,7 @@ public class HelloComplexNumber {
 
     // Find a root of a cubic equation of the form ax^3 + bx^2 + cx + d = 0 with the general cubic formula
     // This formula can be found on wikipedia: https://en.wikipedia.org/wiki/Cubic_equation#General_cubic_formula
-    static double findRootOfCubicEquation(double a, double b, double c, double d) {
+    static double solveCubicEquation(double a, double b, double c, double d) {
         double det0 = b * b - 3 * a * c;
         double det1 = 2 * b * b * b - 9 * a * b * c + 27 * a * a * d;
 
@@ -46,7 +46,7 @@ public class HelloComplexNumber {
     }
 
     public static void main(String[] args) {
-        System.out.println(findRootOfCubicEquation(2, 1, 3, 1) + " should be ~0.66666...");
-        System.out.println(findRootOfCubicEquation(1, -2, -13, -10) + " should be -1, -2 or 5");
+        System.out.println(solveCubicEquation(2, 1, 3, 1) + " should be ≈ -0.34563");
+        System.out.println(solveCubicEquation(1, -2, -13, -10) + " should be -1, -2 or 5");
     }
 }

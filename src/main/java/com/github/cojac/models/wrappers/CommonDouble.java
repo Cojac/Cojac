@@ -110,8 +110,16 @@ public class CommonDouble extends Number implements Comparable<CommonDouble>{
         return (long)a.val.toDouble();
     }
 
+    public static boolean double_isNaN(CommonDouble a){
+        return a.val.isNaN();
+    }
+
     public static CommonDouble math_sqrt(CommonDouble a){
         return new CommonDouble(a.val.math_sqrt());
+    }
+
+    public static CommonDouble math_cbrt(CommonDouble a){
+        return new CommonDouble(a.val.math_cbrt());
     }
 	
     public static CommonDouble math_abs(CommonDouble a){

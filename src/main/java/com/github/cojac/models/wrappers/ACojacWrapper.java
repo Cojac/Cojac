@@ -46,6 +46,12 @@ public abstract class ACojacWrapper implements Comparable<ACojacWrapper>{
     public int  d2i() { return (int)  toDouble();}
     public long d2l() { return (long) toDouble();}
     public abstract ACojacWrapper math_sqrt();
+
+    // TODO make this abstract and implement it for all wrappers
+    public ACojacWrapper math_cbrt() {
+        throw new UnsupportedOperationException();
+    }
+
     public abstract ACojacWrapper math_abs();
     public abstract ACojacWrapper math_sin();
     public abstract ACojacWrapper math_cos();
