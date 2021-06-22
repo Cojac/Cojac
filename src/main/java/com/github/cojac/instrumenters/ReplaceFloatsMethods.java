@@ -137,8 +137,8 @@ public class ReplaceFloatsMethods {
 
         invocations.put(new MethodSignature(DL_NAME, "parseDouble", "(Ljava/lang/String;)D"),
                 new InvokableMethod(CDW_N, "fromString", "(Ljava/lang/String;)" + CDW, INVOKESTATIC));
-        invocations.put(new MethodSignature(DL_NAME, "isNaN", "(D)B"),
-                new InvokableMethod(CDW_N, "double_isNaN", "(" + CDW + ")B", INVOKESTATIC));
+        invocations.put(new MethodSignature(DL_NAME, "isNaN", "(D)Z"),
+                new InvokableMethod(CDW_N, "double_isNaN", "(" + CDW + ")Z", INVOKESTATIC));
 
         invocations.put(new MethodSignature(DL_NAME, "equals", "(Ljava/lang/Object;)Z"),
                 new InvokableMethod(CDW_N, "equals", "(Ljava/lang/Object;)Z", INVOKEVIRTUAL));
