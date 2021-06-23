@@ -1,0 +1,150 @@
+%%
+%% This is file `./samples/minutes.tex',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% meetingmins.dtx  (with options: `minutes')
+%% ----------------------------------------------------------------------
+%% 
+%% meetingmins - A LaTeX class for formatting minutes of meetings
+%% 
+%% Copyright (C) 2011-2013 by Brian D. Beitzel <brian@beitzel.com>
+%% 
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL), either
+%% version 1.3c of this license or (at your option) any later
+%% version.  The latest version of this license is in the file:
+%% 
+%% http://www.latex-project.org/lppl.txt
+%% 
+%% Users may freely modify these files without permission, as long as the
+%% copyright line and this statement are maintained intact.
+%% 
+%% ----------------------------------------------------------------------
+%% 
+\documentclass[11pt]{meetingmins}
+
+
+\usepackage{hyperref}
+\usepackage{tabularx}
+
+% To include images
+\usepackage{graphicx}
+
+% text color
+\usepackage{xcolor}
+
+
+%% CONFIG %%
+% Default image directory
+\graphicspath{{images/}}
+
+
+\setcommittee{Intégration des nombres complexes et des Unums en Java avec COJAC}
+
+\setmembers{
+    Frédéric Bapst (Superviseur),
+    Cédric Tâche (Etudiant)
+}
+
+\setpresent{
+    Frédéric Bapst (Superviseur),
+    Cédric Tâche (Etudiant)
+}
+
+\setlength{\headheight}{13.6pt}
+
+\date{23 juin 2021}
+
+\begin{document}
+
+\begin {center} {
+    \large \textbf {Intégration des nombres complexes et des Unums en Java avec COJAC}
+}
+\vspace {0.5ex}
+
+PV de la séance du 23 juin 2020 (9h30 - 10h40) via Teams
+\end {center} \vspace {1.5em}
+
+\noindent
+\textbf{Présents:} Frédéric Bapst, Cédric Tâche
+
+\section{Ordre du jour}
+Les points suivants ont été abordés durant la séance:
+\begin{hiddenitems}
+    \item Validation du PV du 16 juin 2021.
+    \item Visite d'expert
+    \item Rapport v0.4
+    \item Démonstration
+    \item Etat du projet
+\end{hiddenitems}
+
+\section{PV}
+\begin{hiddenitems}
+    \item Le PV du 16 juin a été validé
+\end{hiddenitems}
+
+\section{Visite d'expert}
+\begin{hiddenitems}
+    \item La visite s'est bien passé.
+    \item Quelques améliorations possibles ont été relevées (cf. PV du 21 juin 2021).
+    \item En accord avec l'expert et M. Bapst, le cahier des charges ne sera plus en annexe du rapport.
+    \item Le problème avec la méthode \textit{Double.isNaN} mentionnée durant la visite a été corrigé depuis.
+\end{hiddenitems}
+
+\section{Rapport}
+\begin{hiddenitems}
+    \item Ce n'est pas clair pourquoi vérifier l'égalité entre deux nombres complexes nécessite de retourner une comparaison entre les deux nombres: plus petit, plus grand ou égal.
+    \item La conception des nombres complexes propose la réalisation d'un mode normal et d'un mode strict. Le mode normal gère au mieux tous les problèmes rencontrés sans générer d'erreur. Il permet de fonctionner avec n'importe quel programme. Le mode strict provoque une erreur dès qu'une opération incorrecte se produit (comparaison de nombres imaginaires, \textit{cast} d'un nombre imaginaire en double), mais offre la garantie de la justesse des résultats obtenus.
+\end{hiddenitems}
+
+
+\section{Projet}
+\begin{hiddenitems}
+    \item La méthode \textit{toString} affiche le nombre complexe avec la partie réelle et imaginaire.
+    \item Il sera possible de parser le String en nombre complexe.
+    \item Les conséquences de cette implémentation du \textit{toString}.
+    \item Les méthodes magiques ont des limitations, principalement si elles sont utilisées dans d'autres langages utilisant la JVM. Il serait intéressant de savoir si les méthodes magiques peuvent êtres implémentées avec du code Java normal.
+    \item Le test \textit{Double2FloatTest.testDouble2FloatConversion} provoque parfois une erreur.
+    \item L'intégration des nombres complexes et les tests sont presque terminés.
+    \item Le projet est en accord avec la planification.
+\end{hiddenitems}
+
+
+\section{Démonstration}
+\begin{hiddenitems}
+    \item La démonstration fonctionne comme prévu.
+    \item Une deuxième démonstration permet aussi de montrer le fonctionnement du mode strict.
+    \item Les configurations d'exécution des démonstrations seront sauvegardées sur le dépôt Git.
+\end{hiddenitems}
+
+\vspace{1em}
+\par \noindent \textbf {Prochaine séance:} Le mercredi 30 juin 2020 à 9h30
+
+\end{document}
+%% 
+%% Copyright (C) 2011-2013 by Brian D. Beitzel <brian@beitzel.com>
+%% 
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL), either
+%% version 1.3c of this license or (at your option) any later
+%% version.  The latest version of this license is in the file:
+%% 
+%% http://www.latex-project.org/lppl.txt
+%% 
+%% Users may freely modify these files without permission, as long as the
+%% copyright line and this statement are maintained intact.
+%% 
+%% This work is "maintained" (as per LPPL maintenance status) by
+%% Brian D. Beitzel.
+%% 
+%% This work consists of the file  meetingmins.dtx
+%% and the derived files           meetingmins.cls,
+%%                                 sampleminutes.tex,
+%%                                 department.min,
+%%                                 README.txt, and
+%%                                 meetingmins.pdf.
+%% 
+%%
+%% End of file `./samples/minutes.tex'.
