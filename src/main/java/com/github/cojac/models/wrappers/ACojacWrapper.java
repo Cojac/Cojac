@@ -88,6 +88,10 @@ public abstract class ACojacWrapper implements Comparable<ACojacWrapper>{
     //-------------------------------------------------------------------------
     /** wasFromFloat can be used to distinguish two kinds of numbers */
     public abstract ACojacWrapper fromDouble(double a, boolean wasFromFloat);
+    // TODO make this abstract and implement it for all wrappers
+    public ACojacWrapper fromString(String a, boolean wasFromFloat){
+        throw new UnsupportedOperationException();
+    }
     
     
     //-------------------------------------------------------------------------

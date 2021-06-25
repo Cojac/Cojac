@@ -47,7 +47,7 @@ public class CommonDouble extends Number implements Comparable<CommonDouble>{
     }
     
     public CommonDouble(String v) {
-        this(Double.valueOf(v));
+        val = newInstance(null).fromString(v, false);
     }
     
     public CommonDouble(CommonFloat v) {
@@ -197,7 +197,7 @@ public class CommonDouble extends Number implements Comparable<CommonDouble>{
     }
 
     public static CommonDouble fromString(String a){
-        return fromDouble(Double.valueOf(a));
+        return new CommonDouble(a);
     }
     
     public static CommonDouble i2d(int a) {

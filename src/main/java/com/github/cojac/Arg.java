@@ -281,8 +281,12 @@ public enum Arg {
                         "Example: -"+BIG_DECIMAL_WR.shortOpt()+" 100 will wrap with 100-significant-digit BigDecimals")
                 .create(BIG_DECIMAL_WR.shortOpt()));
 
-        options.addOption(Arg.COMPLEX_NUMBER.shortOpt(),
-                false,"Use complex number wrapping");
+        options.addOption(OptionBuilder
+                .withArgName("strict")
+                .hasOptionalArg()
+                .withDescription("Use complex number wrapping. Strict mode generates an exception when the imaginary " +
+                        "part is lost or when a comparison between two different complex numbers is made.")
+                .create(COMPLEX_NUMBER.shortOpt()));
         options.addOption(Arg.INTERVAL_WR.shortOpt(),
                 false,"Use interval computation wrapping");
         options.addOption(Arg.STOCHASTIC_WR.shortOpt(),
