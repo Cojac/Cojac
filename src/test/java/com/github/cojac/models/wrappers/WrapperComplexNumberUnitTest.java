@@ -344,4 +344,11 @@ public class WrapperComplexNumberUnitTest extends TestCase {
             assertEquals("Should be: number.toString()", 0, comparison);
         }
     }
+
+    public void testFromString() {
+        WrapperComplexNumber wrapper = new WrapperComplexNumber(0, 0);
+        WrapperComplexNumber number = wrapper.fromString("5 - i", false);
+        assertEquals(5, number.getReal(), ERROR_TOLERANCE);
+        assertEquals(-1, number.getImaginary(), ERROR_TOLERANCE);
+    }
 }

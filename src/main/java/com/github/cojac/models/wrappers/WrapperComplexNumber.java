@@ -76,7 +76,7 @@ public class WrapperComplexNumber extends ACojacWrapper {
     }
 
     @Override
-    public ACojacWrapper fromString(String a, boolean wasFromFloat) {
+    public WrapperComplexNumber fromString(String a, boolean wasFromFloat) {
         a = a.replaceAll("\\s+", "");
 
         Matcher matcher = REAL_PATTERN.matcher(a);
@@ -91,8 +91,13 @@ public class WrapperComplexNumber extends ACojacWrapper {
 
         matcher = COMPLEX_PATTERN.matcher(a);
         if (matcher.matches()){
+            String imaginaryStr = matcher.group(2);
+            // for +i or -i which are crops to + or -
+            if (imaginaryStr.length() == 1){
+                imaginaryStr += "1";
+            }
             return new WrapperComplexNumber(new Complex(Double.parseDouble(matcher.group(1)),
-                    Double.parseDouble(matcher.group(2))));
+                    Double.parseDouble(imaginaryStr)));
         }
         throw new NumberFormatException("Invalid format for complex number: " + a);
     }
