@@ -248,7 +248,7 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
                 for(Method m:behaviorClass(i).getMethods()){
                     //Operation op = MathMethods.toStaticOperation(m);
                     if (m.isAnnotationPresent(UtilityMethod.class)){
-                        break;
+                        continue;
                      }
                     int modifiers = m.getModifiers();
                     if(!Modifier.isPublic(modifiers) || !Modifier.isStatic(modifiers)){
