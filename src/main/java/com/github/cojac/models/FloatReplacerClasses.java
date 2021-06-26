@@ -25,15 +25,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.github.cojac.models.wrappers.*;
 import org.objectweb.asm.Type;
-
-import com.github.cojac.models.wrappers.WrapperAutodiff;
-import com.github.cojac.models.wrappers.WrapperAutodiffReverse;
-import com.github.cojac.models.wrappers.WrapperBigDecimal;
-import com.github.cojac.models.wrappers.WrapperChebfun;
-import com.github.cojac.models.wrappers.WrapperInterval;
-import com.github.cojac.models.wrappers.WrapperStochastic;
-import com.github.cojac.models.wrappers.WrapperSymbolic;
 
 public class FloatReplacerClasses {
 	
@@ -89,7 +82,11 @@ public class FloatReplacerClasses {
                 "COJAC_MAGIC_evaluateAt",
                 "COJAC_MAGIC_derivative",
                 "COJAC_MAGIC_setSymbolicEvaluationMode",
-                "COJAC_MAGIC_setConstantSubtreeMode");        
+                "COJAC_MAGIC_setConstantSubtreeMode");
+        populateMagicMethods(WrapperComplexNumber.class,
+				"COJAC_MAGIC_getReal",
+				"COJAC_MAGIC_getImaginary",
+				"COJAC_MAGIC_equals");
     }
     
     private static void populateMagicMethods(Class<?> clazz, String... methods) {

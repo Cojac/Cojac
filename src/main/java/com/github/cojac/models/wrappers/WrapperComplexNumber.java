@@ -21,7 +21,18 @@ package com.github.cojac.models.wrappers;
 
 import org.apache.commons.math3.complex.Complex;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class WrapperComplexNumber extends ACojacWrapper {
+    private static final String NUMBER_PATTERN = "(?:\\d*(?:.\\d+)?)";
+    private static final Pattern COMPLEX_PATTERN =
+            Pattern.compile("((?:[+-]?)" + NUMBER_PATTERN + ")((?:[+-])" + NUMBER_PATTERN + "?)[ij]");
+    private static final Pattern REAL_PATTERN =
+            Pattern.compile("((?:[+-]?)" + NUMBER_PATTERN + ")");
+    private static final Pattern IMAGINARY_PATTERN =
+            Pattern.compile("((?:[+-]?)" + NUMBER_PATTERN + "?)([ij])");
+    protected static boolean strictMode;
     protected final Complex complex;
 
     private WrapperComplexNumber(double v) {
@@ -40,23 +51,22 @@ public class WrapperComplexNumber extends ACojacWrapper {
     //----------------- Necessary constructor  -------------------------------
     //-------------------------------------------------------------------------
     public WrapperComplexNumber(ACojacWrapper w) {
-        if (w == null || !(w instanceof WrapperComplexNumber)) {
-            complex = new Complex(0, 0);
+        if (!(w instanceof WrapperComplexNumber)) {
+            this.complex = new Complex(0, 0);
         } else {
             Complex value = ((WrapperComplexNumber) w).complex;
-            complex = new Complex(value.getReal(), value.getImaginary());
+            this.complex = new Complex(value.getReal(), value.getImaginary());
         }
     }
 
     //-------------------------------------------------------------------------    
     @Override
     public double toDouble() {
-        // TODO - throw exception if the imaginary part is lost
-        // this currently doesn't work in some cases like Double.isNaN()
-        /*if (complex.getImaginary() != 0) {
-            throw new RuntimeException("Imaginary part lost when casting to double");
-        }*/
-        return complex.getReal();
+        if (strictMode && this.complex.getImaginary() != 0) {
+            throw new ArithmeticException("Imaginary part lost when casting to double. Lost of imaginary part is not " +
+                    "allowed in strict mode: " + this.complex);
+        }
+        return this.complex.getReal();
     }
 
     @SuppressWarnings("unused")
@@ -66,13 +76,35 @@ public class WrapperComplexNumber extends ACojacWrapper {
     }
 
     @Override
+    public ACojacWrapper fromString(String a, boolean wasFromFloat) {
+        a = a.replaceAll("\\s+", "");
+
+        Matcher matcher = REAL_PATTERN.matcher(a);
+        if (matcher.matches()){
+            return new WrapperComplexNumber(new Complex(Double.parseDouble(matcher.group(1)), 0));
+        }
+
+        matcher = IMAGINARY_PATTERN.matcher(a);
+        if (matcher.matches()){
+            return new WrapperComplexNumber(new Complex(0, Double.parseDouble(matcher.group(1))));
+        }
+
+        matcher = COMPLEX_PATTERN.matcher(a);
+        if (matcher.matches()){
+            return new WrapperComplexNumber(new Complex(Double.parseDouble(matcher.group(1)),
+                    Double.parseDouble(matcher.group(2))));
+        }
+        throw new NumberFormatException("Invalid format for complex number: " + a);
+    }
+
+    @Override
     public String asInternalString() {
-        return complex.toString();
+        return this.complex.toString();
     }
 
     @Override
     public String wrapperName() {
-        return "ComplexNumber";
+        return "Complex";
     }
 
     @Override
@@ -101,7 +133,11 @@ public class WrapperComplexNumber extends ACojacWrapper {
 
     @Override
     public WrapperComplexNumber drem(ACojacWrapper b) {
-        throw new UnsupportedOperationException();
+        Complex complex = castWrapper(b).complex;
+        Complex quotient = this.complex.divide(complex);
+        quotient = new Complex(Math.round(quotient.getReal()), Math.round(quotient.getImaginary()));
+        Complex remainder = this.complex.subtract(quotient.multiply(complex));
+        return new WrapperComplexNumber(remainder);
     }
 
     @Override
@@ -183,22 +219,22 @@ public class WrapperComplexNumber extends ACojacWrapper {
 
     @Override
     public WrapperComplexNumber math_log10() {
-        throw new UnsupportedOperationException();
+        return new WrapperComplexNumber(this.complex.log().divide(Math.log(10)));
     }
 
     @Override
     public WrapperComplexNumber math_toRadians() {
         return new WrapperComplexNumber(new Complex(
-                Math.toRadians(complex.getReal()),
-                Math.toRadians(complex.getImaginary())
+                Math.toRadians(this.complex.getReal()),
+                Math.toRadians(this.complex.getImaginary())
         ));
     }
 
     @Override
     public WrapperComplexNumber math_toDegrees() {
         return new WrapperComplexNumber(new Complex(
-                Math.toDegrees(complex.getReal()),
-                Math.toDegrees(complex.getImaginary())
+                Math.toDegrees(this.complex.getReal()),
+                Math.toDegrees(this.complex.getImaginary())
         ));
     }
 
@@ -216,6 +252,10 @@ public class WrapperComplexNumber extends ACojacWrapper {
         Complex complex = castWrapper(wrapper).complex;
         if (this.complex.equals(complex)) {
             return 0;
+        }
+        if (strictMode && (this.complex.getImaginary() != 0 || complex.getImaginary() != 0)){
+            throw new ArithmeticException("Comparison between complex numbers with imaginary parts is not allowed in " +
+                    "strict mode: " + this.complex + " and " + complex);
         }
         int compare = Double.compare(this.complex.getReal(), complex.getReal());
         if (compare == 0) {
@@ -239,15 +279,49 @@ public class WrapperComplexNumber extends ACojacWrapper {
         return new WrapperComplexNumber(x2.add(y2).sqrt());
     }
 
+    @Override
+    public String toString() {
+        double real = this.complex.getReal();
+        double imaginary = this.complex.getImaginary();
+        if (imaginary == 0){
+            return real + "";
+        }
+        if (real == 0){
+            return imaginary + "i";
+        }
+        String sign = imaginary >= 0 ? " + " : " - ";
+        return real + sign + Math.abs(imaginary) + "i";
+    }
+
     private static WrapperComplexNumber castWrapper(ACojacWrapper wrapper) {
         return (WrapperComplexNumber) wrapper;
     }
 
-    public double getReal() {
-        return complex.getReal();
+    protected double getReal() {
+        return this.complex.getReal();
     }
 
-    public double getImaginary() {
-        return complex.getImaginary();
+    protected double getImaginary() {
+        return this.complex.getImaginary();
+    }
+
+    public static void setStrictMode(boolean strictMode){
+        WrapperComplexNumber.strictMode = strictMode;
+    }
+
+    public static CommonDouble COJAC_MAGIC_getReal(CommonDouble d){
+        double real = castWrapper(d.val).complex.getReal();
+        return new CommonDouble(new WrapperComplexNumber(real));
+    }
+
+    public static CommonDouble COJAC_MAGIC_getImaginary(CommonDouble d){
+        double imaginary = castWrapper(d.val).complex.getImaginary();
+        return new CommonDouble(new WrapperComplexNumber(imaginary));
+    }
+
+    public static boolean COJAC_MAGIC_equals(CommonDouble a, CommonDouble b) {
+        Complex c1 = castWrapper(a.val).complex;
+        Complex c2 = castWrapper(b.val).complex;
+        return c1.equals(c2);
     }
 }
