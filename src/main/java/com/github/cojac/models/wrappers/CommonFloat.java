@@ -46,7 +46,7 @@ public class CommonFloat extends Number implements Comparable<CommonFloat> {
     }
     
     public CommonFloat(String v) {
-        this(Float.valueOf(v));
+        val = newInstance(null).fromString(v, true);
     }
     
     public CommonFloat(CommonFloat v) {
@@ -138,7 +138,7 @@ public class CommonFloat extends Number implements Comparable<CommonFloat> {
     }
 
     public static CommonFloat fromString(String a){
-        return fromFloat(Float.valueOf(a));
+        return new CommonFloat(a);
     }
     
     public static CommonFloat d2f(CommonDouble a) {
