@@ -42,7 +42,7 @@ public class WrapperComplexNumberNormalModeTest {
     Agent agent;
 
     /*
-     * initialization method, instrumenting "Double2FloatTests" with Arg.DOUBLE2FLOAT
+     * initialization method, instrumenting "WrapperComplexNumberNormalModeTests" with Arg.COMPLEX_NUMBER
      */
     @Before
     public void instrument() throws ClassNotFoundException, UnmodifiableClassException, InstantiationException,
@@ -66,7 +66,7 @@ public class WrapperComplexNumberNormalModeTest {
     }
 
     /*
-     * Post-test method removing instrumentation on "Double2FloatTests"
+     * Post-test method removing instrumentation on "WrapperComplexNumberNormalModeTests"
      */
     @After
     public void removeInstrumentation() throws UnmodifiableClassException {
