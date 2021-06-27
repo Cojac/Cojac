@@ -146,12 +146,11 @@ public class WrapperComplexNumberStrictModeTests {
         double b = 1 - 2 * i;
         try {
             boolean c = a > b;
-        } catch (Exception e){
+        } catch (Exception e) {
             return e;
         }
         return null;
     }
-
 
 
     /**
@@ -161,7 +160,7 @@ public class WrapperComplexNumberStrictModeTests {
         double a = Math.sqrt(-28) - (-6);
         try {
             int b = (int) a;
-        } catch (Exception e){
+        } catch (Exception e) {
             return e;
         }
         return null;

@@ -81,20 +81,20 @@ public class WrapperComplexNumber extends ACojacWrapper {
         a = a.replaceAll("\\s+", "");
 
         Matcher matcher = REAL_PATTERN.matcher(a);
-        if (matcher.matches()){
+        if (matcher.matches()) {
             return new WrapperComplexNumber(new Complex(Double.parseDouble(matcher.group(1)), 0));
         }
 
         matcher = IMAGINARY_PATTERN.matcher(a);
-        if (matcher.matches()){
+        if (matcher.matches()) {
             return new WrapperComplexNumber(new Complex(0, Double.parseDouble(matcher.group(1))));
         }
 
         matcher = COMPLEX_PATTERN.matcher(a);
-        if (matcher.matches()){
+        if (matcher.matches()) {
             String imaginaryStr = matcher.group(2);
             // for +i or -i which are crops to + or -
-            if (imaginaryStr.length() == 1){
+            if (imaginaryStr.length() == 1) {
                 imaginaryStr += "1";
             }
             return new WrapperComplexNumber(new Complex(Double.parseDouble(matcher.group(1)),
@@ -259,7 +259,7 @@ public class WrapperComplexNumber extends ACojacWrapper {
         if (this.complex.equals(complex)) {
             return 0;
         }
-        if (strictMode && (this.complex.getImaginary() != 0 || complex.getImaginary() != 0)){
+        if (strictMode && (this.complex.getImaginary() != 0 || complex.getImaginary() != 0)) {
             throw new ArithmeticException("Comparison between complex numbers with imaginary parts is not allowed in " +
                     "strict mode: " + this.complex + " and " + complex);
         }
@@ -289,10 +289,10 @@ public class WrapperComplexNumber extends ACojacWrapper {
     public String toString() {
         double real = this.complex.getReal();
         double imaginary = this.complex.getImaginary();
-        if (imaginary == 0){
+        if (imaginary == 0) {
             return real + "";
         }
-        if (real == 0){
+        if (real == 0) {
             return imaginary + "i";
         }
         String sign = imaginary >= 0 ? " + " : " - ";
@@ -321,16 +321,16 @@ public class WrapperComplexNumber extends ACojacWrapper {
         return this.complex.getImaginary();
     }
 
-    public static void setStrictMode(boolean strictMode){
+    public static void setStrictMode(boolean strictMode) {
         WrapperComplexNumber.strictMode = strictMode;
     }
 
-    public static CommonDouble COJAC_MAGIC_getReal(CommonDouble d){
+    public static CommonDouble COJAC_MAGIC_getReal(CommonDouble d) {
         double real = castWrapper(d.val).complex.getReal();
         return new CommonDouble(new WrapperComplexNumber(real));
     }
 
-    public static CommonDouble COJAC_MAGIC_getImaginary(CommonDouble d){
+    public static CommonDouble COJAC_MAGIC_getImaginary(CommonDouble d) {
         double imaginary = castWrapper(d.val).complex.getImaginary();
         return new CommonDouble(new WrapperComplexNumber(imaginary));
     }

@@ -19,7 +19,7 @@ package com.github.cojac.unit.complex;
 
 /*
  * These tests should work with the double to float instrumenter. (option -Bdaf)
- * 
+ *
  * */
 public class WrapperComplexNumberNormalModeTests {
 
@@ -118,7 +118,7 @@ public class WrapperComplexNumberNormalModeTests {
     public boolean testComplexNotEqual() {
         double i = Math.sqrt(-1);
         double a = -2 + i;
-        double b = -2 + 2*i;
+        double b = -2 + 2 * i;
         return a == b;
     }
 
@@ -128,7 +128,7 @@ public class WrapperComplexNumberNormalModeTests {
     public boolean testComplexGreater() {
         double i = Math.sqrt(-1);
         double a = 1 - i;
-        double b = 1 - 2*i;
+        double b = 1 - 2 * i;
         return a > b;
     }
 

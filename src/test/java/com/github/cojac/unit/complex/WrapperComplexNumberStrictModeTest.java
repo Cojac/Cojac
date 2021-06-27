@@ -23,7 +23,6 @@ import com.github.cojac.Arg;
 import com.github.cojac.Args;
 import com.github.cojac.CojacReferences.CojacReferencesBuilder;
 import com.github.cojac.models.wrappers.CommonDouble;
-import com.github.cojac.models.wrappers.WrapperComplexNumber;
 import com.github.cojac.unit.AgentTest;
 import org.junit.After;
 import org.junit.Assert;
@@ -60,7 +59,8 @@ public class WrapperComplexNumberStrictModeTest {
         AgentTest.instrumentation.addTransformer(agent);
 
         classz =
-                ClassLoader.getSystemClassLoader().loadClass(WrapperComplexNumberStrictModeTests.class.getCanonicalName());
+                ClassLoader.getSystemClassLoader()
+                        .loadClass(WrapperComplexNumberStrictModeTests.class.getCanonicalName());
         AgentTest.instrumentation.retransformClasses(classz);
 
         object = classz.getDeclaredConstructor().newInstance();
@@ -177,7 +177,8 @@ public class WrapperComplexNumberStrictModeTest {
             NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         Exception result = (Exception) invokeMethod(methodName);
         Assert.assertNotNull(result);
-        String out = "On \"" + methodName + "\", Got: " + result.getClass().getName() + ", Expected: " + expected.getName();
+        String out =
+                "On \"" + methodName + "\", Got: " + result.getClass().getName() + ", Expected: " + expected.getName();
         Assert.assertTrue(out, expected.isInstance(result));
     }
 
