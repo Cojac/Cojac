@@ -23,7 +23,6 @@ import com.github.cojac.Arg;
 import com.github.cojac.Args;
 import com.github.cojac.CojacReferences.CojacReferencesBuilder;
 import com.github.cojac.models.wrappers.CommonDouble;
-import com.github.cojac.models.wrappers.WrapperComplexNumber;
 import com.github.cojac.unit.AgentTest;
 import org.junit.After;
 import org.junit.Assert;
@@ -47,7 +46,7 @@ public class WrapperComplexNumberNormalModeTest {
      */
     @Before
     public void instrument() throws ClassNotFoundException, UnmodifiableClassException, InstantiationException,
-            IllegalAccessException {
+            IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 
         Args args = new Args();
 
@@ -59,10 +58,11 @@ public class WrapperComplexNumberNormalModeTest {
         agent = new Agent(builder.build());
         AgentTest.instrumentation.addTransformer(agent);
 
-        classz = ClassLoader.getSystemClassLoader().loadClass(WrapperComplexNumberNormalModeTests.class.getCanonicalName());
+        classz = ClassLoader.getSystemClassLoader()
+                .loadClass(WrapperComplexNumberNormalModeTests.class.getCanonicalName());
         AgentTest.instrumentation.retransformClasses(classz);
 
-        object = classz.newInstance();
+        object = classz.getDeclaredConstructor().newInstance();
     }
 
     /*

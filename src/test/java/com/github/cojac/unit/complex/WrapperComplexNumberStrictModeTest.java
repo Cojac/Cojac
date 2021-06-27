@@ -47,7 +47,7 @@ public class WrapperComplexNumberStrictModeTest {
      */
     @Before
     public void instrument() throws ClassNotFoundException, UnmodifiableClassException, InstantiationException,
-            IllegalAccessException {
+            IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 
         Args args = new Args();
 
@@ -63,7 +63,7 @@ public class WrapperComplexNumberStrictModeTest {
                 ClassLoader.getSystemClassLoader().loadClass(WrapperComplexNumberStrictModeTests.class.getCanonicalName());
         AgentTest.instrumentation.retransformClasses(classz);
 
-        object = classz.newInstance();
+        object = classz.getDeclaredConstructor().newInstance();
     }
 
     /*
