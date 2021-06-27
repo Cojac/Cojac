@@ -44,17 +44,18 @@ public class WrapperComplexNumber extends ACojacWrapper {
     }
 
     private WrapperComplexNumber(Complex complex) {
-        this.complex = new Complex(complex.getReal(), complex.getImaginary());
+        this.complex = complex;
     }
 
     //-------------------------------------------------------------------------
     //----------------- Necessary constructor  -------------------------------
     //-------------------------------------------------------------------------
     public WrapperComplexNumber(ACojacWrapper w) {
-        if (!(w instanceof WrapperComplexNumber)) {
+        // CommonDouble can call this constructor with a null wrapper
+        if (w == null) {
             this.complex = new Complex(0, 0);
         } else {
-            Complex value = ((WrapperComplexNumber) w).complex;
+            Complex value = castWrapper(w).complex;
             this.complex = new Complex(value.getReal(), value.getImaginary());
         }
     }
