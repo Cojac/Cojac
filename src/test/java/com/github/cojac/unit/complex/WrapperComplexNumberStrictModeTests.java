@@ -138,7 +138,7 @@ public class WrapperComplexNumberStrictModeTests {
     }
 
     /**
-     * Should return False
+     * Should return an ArithmeticException
      */
     public Exception testComplexGreater() {
         double i = Math.sqrt(-1);
@@ -155,7 +155,7 @@ public class WrapperComplexNumberStrictModeTests {
 
 
     /**
-     * Should return 6
+     * Should return an ArithmeticException
      */
     public Exception testToDouble() {
         double a = Math.sqrt(-28) - (-6);
