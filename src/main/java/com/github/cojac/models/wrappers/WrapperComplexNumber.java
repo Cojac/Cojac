@@ -299,6 +299,16 @@ public class WrapperComplexNumber extends ACojacWrapper {
         return real + sign + Math.abs(imaginary) + "i";
     }
 
+    @Override
+    public WrapperComplexNumber math_min(ACojacWrapper b) {
+        return (WrapperComplexNumber) super.math_min(b);
+    }
+
+    @Override
+    public WrapperComplexNumber math_max(ACojacWrapper b) {
+        return (WrapperComplexNumber) super.math_max(b);
+    }
+
     private static WrapperComplexNumber castWrapper(ACojacWrapper wrapper) {
         return (WrapperComplexNumber) wrapper;
     }
