@@ -158,7 +158,7 @@ public class WrapperComplexNumber extends ACojacWrapper {
 
     @Override
     public WrapperComplexNumber math_cbrt() {
-        return new WrapperComplexNumber(this.complex.pow(1d / 3d));
+        return (WrapperComplexNumber) super.math_cbrt();
     }
 
     @Override
