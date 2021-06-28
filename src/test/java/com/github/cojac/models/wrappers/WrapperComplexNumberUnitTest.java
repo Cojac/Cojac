@@ -6,6 +6,19 @@ public class WrapperComplexNumberUnitTest extends TestCase {
 
     private final static double ERROR_TOLERANCE = 1e-6;
 
+    public void testConstructorNull() {
+        WrapperComplexNumber a = new WrapperComplexNumber(null);
+        assertEquals(0.0, a.getReal(), ERROR_TOLERANCE);
+        assertEquals(0.0, a.getImaginary(), ERROR_TOLERANCE);
+    }
+
+    public void testConstructorNotNull() {
+        WrapperComplexNumber a = new WrapperComplexNumber(2, 4);
+        WrapperComplexNumber b = new WrapperComplexNumber(a);
+        assertEquals(2.0, b.getReal(), ERROR_TOLERANCE);
+        assertEquals(4.0, b.getImaginary(), ERROR_TOLERANCE);
+    }
+
     public void testToDouble_real() {
         WrapperComplexNumber wrapper = new WrapperComplexNumber(2, 0);
         assertEquals(2.0, wrapper.toDouble(), ERROR_TOLERANCE);
@@ -347,8 +360,48 @@ public class WrapperComplexNumberUnitTest extends TestCase {
 
     public void testFromString() {
         WrapperComplexNumber wrapper = new WrapperComplexNumber(0, 0);
+
+        try {
+            wrapper.fromString("+", false);
+            fail("No exception threw");
+        } catch (NumberFormatException exception) {
+            // success
+        }
+    }
+
+    public void testFromStringException() {
+        WrapperComplexNumber wrapper = new WrapperComplexNumber(0, 0);
         WrapperComplexNumber number = wrapper.fromString("5 - i", false);
         assertEquals(5, number.getReal(), ERROR_TOLERANCE);
         assertEquals(-1, number.getImaginary(), ERROR_TOLERANCE);
+    }
+
+    public void testMin() {
+        WrapperComplexNumber a = new WrapperComplexNumber(2, 0);
+        WrapperComplexNumber b = new WrapperComplexNumber(5, 0);
+        WrapperComplexNumber min = a.math_min(b);
+        assertEquals(2, min.getReal(), ERROR_TOLERANCE);
+        assertEquals(0, min.getImaginary(), ERROR_TOLERANCE);
+    }
+
+    public void testMax() {
+        WrapperComplexNumber a = new WrapperComplexNumber(2, 0);
+        WrapperComplexNumber b = new WrapperComplexNumber(5, 0);
+        WrapperComplexNumber max = a.math_max(b);
+        assertEquals(5, max.getReal(), ERROR_TOLERANCE);
+        assertEquals(0, max.getImaginary(), ERROR_TOLERANCE);
+    }
+
+    public void testMinException() {
+        WrapperComplexNumber.setStrictMode(false);
+        WrapperComplexNumber number1 = new WrapperComplexNumber(3, -2);
+        ACojacWrapper number2 = new WrapperBigDecimal(null);
+
+        try {
+            number1.math_min(number2);
+            fail("No exception threw");
+        } catch (IllegalArgumentException exception) {
+            // success
+        }
     }
 }
