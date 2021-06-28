@@ -39,7 +39,7 @@ public class WrapperComplexNumber extends ACojacWrapper {
         this(v, 0);
     }
 
-    public WrapperComplexNumber(double real, double imaginary) {
+    protected WrapperComplexNumber(double real, double imaginary) {
         this.complex = new Complex(real, imaginary);
     }
 
