@@ -25,7 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class WrapperComplexNumber extends ACojacWrapper {
-    private static final String NUMBER_PATTERN = "(?:\\d+(?:.\\d+)?)";
+    private static final String NUMBER_PATTERN = "(?:.*[^E])";
     private static final Pattern COMPLEX_PATTERN =
             Pattern.compile("((?:[+-]?)" + NUMBER_PATTERN + ")((?:[+-])" + NUMBER_PATTERN + "?)[ij]");
     private static final Pattern REAL_PATTERN =
@@ -80,17 +80,7 @@ public class WrapperComplexNumber extends ACojacWrapper {
     public WrapperComplexNumber fromString(String a, boolean wasFromFloat) {
         a = a.replaceAll("\\s+", "");
 
-        Matcher matcher = REAL_PATTERN.matcher(a);
-        if (matcher.matches()) {
-            return new WrapperComplexNumber(new Complex(Double.parseDouble(matcher.group(1)), 0));
-        }
-
-        matcher = IMAGINARY_PATTERN.matcher(a);
-        if (matcher.matches()) {
-            return new WrapperComplexNumber(new Complex(0, Double.parseDouble(matcher.group(1))));
-        }
-
-        matcher = COMPLEX_PATTERN.matcher(a);
+        Matcher matcher = COMPLEX_PATTERN.matcher(a);
         if (matcher.matches()) {
             String imaginaryStr = matcher.group(2);
             // for +i or -i which are crops to + or -
@@ -99,6 +89,16 @@ public class WrapperComplexNumber extends ACojacWrapper {
             }
             return new WrapperComplexNumber(new Complex(Double.parseDouble(matcher.group(1)),
                     Double.parseDouble(imaginaryStr)));
+        }
+
+        matcher = IMAGINARY_PATTERN.matcher(a);
+        if (matcher.matches()) {
+            return new WrapperComplexNumber(new Complex(0, Double.parseDouble(matcher.group(1))));
+        }
+
+        matcher = REAL_PATTERN.matcher(a);
+        if (matcher.matches()) {
+            return new WrapperComplexNumber(new Complex(Double.parseDouble(matcher.group(1)), 0));
         }
         throw new NumberFormatException("Invalid format for complex number: " + a);
     }

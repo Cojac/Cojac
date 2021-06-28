@@ -351,6 +351,9 @@ public class WrapperComplexNumberUnitTest extends TestCase {
                 new WrapperComplexNumber(4, 0),
                 new WrapperComplexNumber(0, -5),
                 new WrapperComplexNumber(-6.1, 2.5),
+                new WrapperComplexNumber(2, Math.nextUp(0)),
+                new WrapperComplexNumber(Math.nextUp(0), -1),
+                new WrapperComplexNumber(Math.nextDown(0), Math.nextUp(0))
         };
         for (WrapperComplexNumber number : numbers) {
             int comparison = number.compareTo(number.fromString(number.toString(), false));
