@@ -358,6 +358,11 @@ public final class CojacReferences {
                 numericalProfiler.setVerbose(args.isOperationEnabled(Arg.VERBOSE));
             }
 
+            if (args.isSpecified(Arg.COMPLEX_NUMBER)) {
+                args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperComplexNumber");
+                WrapperComplexNumber.setStrictMode(args.getValue(Arg.COMPLEX_NUMBER) != null);
+            }
+
             if (args.isSpecified(Arg.NG_WRAPPER)) {
                 args.specify(Arg.REPLACE_FLOATS);
             }
@@ -417,13 +422,6 @@ public final class CojacReferences {
                 args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperPolyBehavioural");
                 String filePath = args.getValue(Arg.POLY_BEHAVIOURAL_LOAD);
                 PolyBehaviourLoader.getinstance().loadBehaviours(filePath);
-            }
-
-            if (args.isSpecified(Arg.COMPLEX_NUMBER)) {
-                args.specify(Arg.REPLACE_FLOATS);
-                args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperComplexNumber");
-
-                WrapperComplexNumber.setStrictMode(args.getValue(Arg.COMPLEX_NUMBER) != null);
             }
                 
             if (args.isSpecified(Arg.REPLACE_FLOATS)) { 
