@@ -32,6 +32,7 @@
     4.6 [Wrapper "Automatic differentiation (reverse mode)"](home#46---wrapper-automatic-differentiation-reverse-mode)  
     4.7 [Wrapper "Symbolic expressions" (and functions)](home#47---wrapper-symbolic-expressions-and-functions)  
     4.8 [Wrapper "Chebfun"](home#48---wrapper-chebfun)  
+    4.9 [Wrapper "ComplexNumber"](home##49---wrapper-complex-number)  
 
 5. [Detailed usage](home#5---detailed-usage)  
 
@@ -741,6 +742,74 @@ Chebfun(degree:32 (effective:19)), [6.0, 5.98, 5.94, ... 3.003, 3.0],
 4.8
 ```
 
+## 4.9 - Wrapper "Complex Number"
+
+The standard `float`/`double` in Java are limited to real numbers. In most cases,
+this isn't a problem. However there are some situations situations where the
+calculation has to be done with complex numbers even if the answer is real.
+
+You can enable this wrapper with the option `-Rc`. This will replace each
+`float`/`double` with a wrapper which can handle complex numbers. In the normal
+mode, the comparison is done by comparing the real part first and only after the
+imaginary part is compared. When the complex numbers is casted back to an
+`int`/`double`, the imaginary part will be lost without any warning.
+
+You can enable the strict mode with the option `-Rc strict`. In this case, the
+comparison with a number which has an imaginary part will result in an
+`ArithmeticException`.  When the complex numbers is casted back to a
+`int`/`double` or any other types, a `ClassCastException` will be thrown.
+
+In both modes, there are three specific magic methods for the complex numbers:
+* `public static double COJAC_MAGIC_getReal(double d)`. This method returns only
+the real part of the complex number
+* `public static double COJAC_MAGIC_getImaginary(double d)`. This method returns
+only the imaginary part of the complex. The resulting number will only have a real
+part which is equals to the imaginary part of the source number.
+* `public static boolean COJAC_MAGIC_equals(double a, double b)`. This method
+returns a boolean which indicates if both numbers are equal. This method will
+never throw any exception.
+
+```java
+public class HelloComplexNumber {
+
+    // Find a root of a cubic equation of the form ax^3 + bx^2 + cx + d = 0 with the general cubic formula
+    // This formula can be found on wikipedia: https://en.wikipedia.org/wiki/Cubic_equation#General_cubic_formula
+    static double solveCubicEquation(double a, double b, double c, double d) {
+        double det0 = b * b - 3 * a * c;
+        double det1 = 2 * b * b * b - 9 * a * b * c + 27 * a * a * d;
+
+        double sqrt = Math.sqrt(det1 * det1 - 4 * det0 * det0 * det0);
+        if (Double.isNaN(sqrt))
+            // the root can't be calculated if this value is not available.
+            return Double.NaN;
+        double coef = Math.cbrt((det1 + sqrt) / 2);
+
+        if (coef == 0) {
+            coef = Math.cbrt((det1 - sqrt) / 2);
+        }
+        if (coef == 0) {
+            return -b / (3 * a);
+        }
+        return -(b + coef + det0 / coef) / (3 * a);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(solveCubicEquation(2, 1, 3, 1) + " should be ≈ -0.34563");
+        System.out.println(solveCubicEquation(1, -2, -13, -10) + " should be -1, -2 or 5");
+    }
+}
+
+$ java -javaagent:cojac.jar="-Rc" demo.HelloComplexNumber
+
+Output:
+-0.34562739226941647 should be ≈ -0.34563
+-2.0 + 2.9605947323337506E-16i should be -1, -2 or 5
+
+4.9
+```
+
+
+
 --------------------------------------------------
 # 5 - Detailed usage
 
@@ -803,6 +872,9 @@ computation, automatic differentiation, symbolic processing, chebfun and more.
  -Rb <digits>       Use BigDecimal wrapping with arbitrarily high
                     precision.Example: -Rb 100 will wrap with
                     100-significant-digit BigDecimals
+ -Rc [strict]       Use complex number wrapping. Strict mode generates an
+                    exception when the imaginary part is lost or when a
+                    comparison between two different complex numbers is made.
  -Rcheb             Use chefun wrapping
  -Rddread <file>    Read an XML file to tune how the Wrapper behaves (used for
                     Delta-Debugging)
