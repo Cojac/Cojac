@@ -156,7 +156,7 @@ public class WrapperComplexNumberStrictModeTest {
     @Test
     public void testToDouble() throws NoSuchMethodException, IllegalAccessException,
             InvocationTargetException {
-        assertExceptionComparison("testToDouble", ArithmeticException.class);
+        assertExceptionComparison("testToDouble", ClassCastException.class);
     }
 
     private void assertDoubleComparison(String methodName, double expected, double errorTolerance) throws

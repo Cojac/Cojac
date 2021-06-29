@@ -36,7 +36,7 @@ public class WrapperComplexNumberUnitTest extends TestCase {
         try {
             wrapper.toDouble();
             fail("No exception threw");
-        } catch (ArithmeticException exception) {
+        } catch (ClassCastException exception) {
             // success
         }
     }

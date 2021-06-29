@@ -154,7 +154,7 @@ public class WrapperComplexNumberStrictModeTests {
 
 
     /**
-     * Should return an ArithmeticException
+     * Should return a ClassCastException
      */
     public Exception testToDouble() {
         double a = Math.sqrt(-28) - (-6);

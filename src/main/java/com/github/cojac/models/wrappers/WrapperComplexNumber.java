@@ -64,7 +64,7 @@ public class WrapperComplexNumber extends ACojacWrapper {
     @Override
     public double toDouble() {
         if (strictMode && this.complex.getImaginary() != 0) {
-            throw new ArithmeticException("Imaginary part lost when casting to double. Lost of imaginary part is not " +
+            throw new ClassCastException("Imaginary part lost when casting to double. Lost of imaginary part is not " +
                     "allowed in strict mode: " + this.complex);
         }
         return this.complex.getReal();
