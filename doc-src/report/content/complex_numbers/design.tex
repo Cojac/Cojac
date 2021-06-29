@@ -1,8 +1,8 @@
-\chapter{Conception}
+\section{Conception}
 
 Ce chapitre contient la conception de l'intégration des nombres complexes dans COJAC \cite{COJAC}.
 
-\section{Approche}
+\subsection{Approche}
 \label{sec:complex_approach}
 
 Comme expliqué dans la section \ref{sec:cojac_integration}, l'intégration des nombres complexes peut se faire à l'aide de deux mécanismes différents:
@@ -13,7 +13,8 @@ Comme expliqué dans la section \ref{sec:cojac_integration}, l'intégration des 
 
 L'intégration des nombres complexes se fera en utilisant un wrapper afin de pouvoir garder la \textit{double precision}.
 
-\section{Comparaison}
+\subsection{Comparaison}
+\label{sec:complex_design_comparison}
 
 La comparaison entre les nombres complexes est un problème important. Toutes les comparaisons entre les nombres sont faites à l'aide d'une même opération et il faut aussi que les comparaisons entre des nombres purement réels soient respectés. Ainsi si on compare des nombres complexes (avec une partie imaginaire), il n'y a pas forcément de valeurs de retour adaptées car il n'y a pas d'ordre total avec les nombres complexes. Cette situation peut être montrée avec l'exemple de code suivant:
 
@@ -36,32 +37,62 @@ Si la variable \textit{a} est purement réel, ce code doit fonctionner. Cependan
 
 Cependant, aucune de ces réponses n'est vraie. Il est possible de créer une méthode magique pour gérer les égalités, mais ceci nécessitera que l'application cible soit modifiée pour réaliser la comparaison.
 
-Comme aucun des deux choix n'est complètement satisfaisant, une option supplémentaire pour COJAC \cite{COJAC} sera disponible pour choisir le comportement des comparaisons.
+Comme aucun des deux choix n'est complètement satisfaisant, une option supplémentaire pour COJAC \cite{COJAC} sera disponible pour choisir le comportement des comparaisons. Ces deux modes différents sont détaillés dans la section \ref{sec:complex_design_modes} suivante.
 
+\subsection{ToString and fromString}
 
+Il a été décidé que le \textit{toString} écrirait le nombre sous sa forme complexe. Ceci peut provoquer une erreur si l'application cible utilise un format strict. Il est surtout important que le \textit{toString} du wrapper puisse être converti en wrapper à nouveau. Ainsi les méthodes \textit{Float.parseFloat} et \textit{Double.parseDouble} doivent aussi fonctionner avec le résultat du \textit{toString} du wrapper.
 
-\begin{tabularx}{\columnwidth}{| p{6em} | X | X |}
-    \hline
-     & \textbf{Sans option: pas d'erreur} & \textbf{Avec option: erreur et méthodes magiques} \\
-    \hline
-    Principe:
-    & La comparaison se fera d'abord avec la partie réelle, puis avec la partie complexe. Ainsi \textit{2 - i} sera considéré comme plus petit que \textit{2}.
-    & La comparaison sera mathématiquement correcte. La comparaison entre deux nombres purement réels donnera toujours un résultat. La comparaison entre deux nombres complexes égaux donnera également un résultat correct. Dans les autres cas, une exception sera générée. \\
-    & & Une méthode magique permettra de vérifier l'égalité de deux nombres complexes. Elle retournera un booléen même en cas d'inégalité. Deux méthodes magiques permettant de garder que la partie réelle ou imaginaire d'un nombre complexe sera aussi disponible et permettra à l'utilisateur d'implémenter lui-même la comparaison entre les nombres complexes.\\
-    \hline
-    Avantage:
-    & Ceci permet de fonctionner sans modifier le code de l'application cible. Ceci respecte au maximum l'ordre établi entre les nombres réels.
-    & La comparaison est mathématiquement correcte. Ainsi, l'utilisateur est conscient des problèmes qui peuvent se produire lorsqu'il travaille avec les nombres complexes. \\
-    & & L'usage des méthodes magiques permet une plus grande flexibilité avec les nombres magiques. \\
-    \hline
-    Désavantage:
-    & Un ordre total est défini alors qu'il n'existe pas mathématiquement. Ceci peut conduire à des comparaisons donnant un résultat mathématiquement faux et produire des incohérences.
-    & L'application cible doit être écrite en tenant compte des fonctions magiques de COJAC \cite{COJAC}. \\
-    \hline
-\end{tabularx}
+\subsection{Modes}
+\label{sec:complex_design_modes}
 
-\begin{minipage2}
-Voici un exemple d'incohérence pouvant apparaître avec la première solution (pas d'erreur, ordre absolu).
+Il n'y a pas de comportement idéal pour implémenter la comparaison (cf section \ref{sec:complex_design_comparison}) et le cast en double. Ainsi, les deux modes différents sont détaillés dans cette section. Une synthèse et des exemples comparent les résultats de ces différentes approches.
+
+\subsubsection{Mode normal}
+
+Dans le mode normal, la comparaison se fera d'abord avec la partie réelle, puis avec la partie complexe. Ainsi \textit{2 - i} sera considéré comme plus petit que \textit{2}. Le cast d'un nombre complexe en double provoquera la perte de la partie imaginaire.
+
+Ce mode a l'avantage suivant:
+\begin{itemize}
+    \item L'application cible n'a pas ou peu besoin de modifications pour fonctionner. Ceci respecte au maximum l'ordre établi entre les nombres réels.
+    \item Les méthodes magiques créées pour le mode strict sont aussi disponibles en mode normal. Ces méthodes sont expliquées dans la section \ref{sec:complex_design_modes_strict}.
+\end{itemize}
+
+Il possède également les inconvénients suivants:
+\begin{itemize}
+    \item Un ordre total est défini alors qu'il n'existe pas mathématiquement. Ceci peut conduire à des comparaisons donnant un résultat mathématiquement faux et produire des incohérences.
+    \item La partie imaginaire peut être perdue sans le remarquer car cela ne provoquera aucune erreur.
+\end{itemize}
+
+\subsubsection{Mode strict}
+\label{sec:complex_design_modes_strict}
+
+Quant à lui, le mode strict offrira une comparaison mathématiquement correcte. La comparaison entre deux nombres purement réels donnera toujours un résultat. La comparaison entre deux nombres complexes égaux donnera également un résultat correct. Dans les autres cas, une exception sera générée.
+
+Lors du cast d'un nombre complexe en nombre réel, la présence d'une partie imaginaire générera une erreur. S'il n'y a qu'une partie réelle, le cast fonctionnera.
+
+De plus, une méthode magique permettra de vérifier l'égalité de deux nombres complexes. Elle retournera un booléen même en cas d'inégalité. Deux méthodes magiques permettant de garder que la partie réelle ou imaginaire d'un nombre complexe sera aussi disponible et permettra à l'utilisateur d'implémenter lui-même la comparaison entre les nombres complexes.
+
+Ce mode offre les avantages suivants:
+\begin{itemize}
+    \item La comparaison est mathématiquement correcte. Ainsi, l'utilisateur est conscient des problèmes qui peuvent se produire lorsqu'il travaille avec les nombres complexes.
+    \item L'usage des méthodes magiques permet une plus grande flexibilité avec les nombres magiques.
+\end{itemize}
+
+Ce mode a aussi l'inconvénient suivant:
+\begin{itemize}
+    \item L'application cible doit être écrite en tenant compte des fonctions magiques de COJAC \cite{COJAC}.
+\end{itemize}
+
+\subsubsection{Exemples}
+
+Voici plusieurs exemples montrant la différence entre le mode normal et le mode strict.
+
+Le premier exemple trie un tableau de nombres complexes, puis calcule leur valeur absolue. Le résultat obtenu est:
+\begin{itemize}
+    \item Mode normal: le code s'exécute et le tableau final n'est plus trié.
+    \item Mode strict: une erreur est générée lors de l'appel à la méthode \textit{Arrays.sort}, parce qu'une comparaison est effectuée avec des nombres complexes contenant une partie imaginaire.
+\end{itemize}
 
 \begin{minted}{Java}
 double[] sorted_positives = ... // ex: new double[]{2 + 3i, 3, 1};
@@ -72,16 +103,44 @@ for (int i = 0; i < sorted_positives.length; i++){
 }
 // sorted_abs = [1, 3.6, 3]
 \end{minted}
-\end{minipage2}
 
-Si ce code est exécuté avec des nombres réels, le tableau \textit{sorted\_abs sera trié}. Lorsque ce même code est exécuté avec des nombres complexes, le tableau \textit{sorted\_abs sera trié} ne sera pas trié dû à la définition de la valeur absolue d'un nombre complexe.
+Le second exemple cast un double en int. Le résultat est le suivant:
+\begin{itemize}
+    \item Mode normal: a est égal à la partie imaginaire du nombre (a = 2);
+    \item Mode strict: une exception est générée à cause de la perte de la partie imaginaire
+\end{itemize}
 
-\section{Diagramme de classes}
+\begin{minted}{Java}
+double d = Math.sqrt(-1) + 2; // 2 + i
+int a = (int) d;
+\end{minted}
 
-Toutes les méthodes abstraites du \textit{ACojacWrapper} seront implémentées en plus de la méthode \textit{isNaN}. De plus, une nouvelle méthode sera ajoutée sur \textit{ACojacWrapper} afin de pouvoir supporter la méthode \textit{Math.cbrt}.
+Avec une méthode magique, le même résultat peut aussi être obtenu avec le mode strict:
+\begin{itemize}
+    \item Mode normal ou strict: a est égal à la partie imaginaire du nombre (a = 2);
+\end{itemize}
 
-\todo{ajouter diagramme}
+\begin{minted}{Java}
+double d = Math.sqrt(-1) + 2; // 2 + i
+int a = (int) COJAC_MAGIC_getReal(d);
+\end{minted}
 
-\section{Librairie disponible}
+\subsubsection{Synthèse}
 
-La librairie \textit{commons-math3} est déjà disponible en Java pour gérer les nombres complexes \cite{apache-complex-documentation}. Elle possède beaucoup de fonctionnalités et implémente déjà la grande majorité des opérations mathématiques nécessaires. De plus, cette librairie fait déjà partie des dépendances de ce projet.
+Le mode normal nécessite aucune modification pour démarrer le programme. Cependant, il peut y avoir des erreurs de logique. Le mode strict garanti un comportement mathématiquement correct et limite le nombre d'erreurs. Cependant, il est nécessaire d'utiliser des méthodes magiques et, par conséquent, de modifier le code de l'application cible. Les méthodes magiques sont aussi disponibles en mode normal et il est ainsi possible de faire la transition du mode normal au mode strict par étapes. Ces méthodes magiques peuvent aussi être utilisés pour avoir un comportement plus sûr à un endroit spécifique du code.
+
+\subsection{Librairie disponible}
+
+La librairie \textit{commons-math3} est déjà disponible en Java pour gérer les nombres complexes \cite{apache-complex-documentation}. Elle possède beaucoup de fonctionnalités et implémente déjà la grande majorité des opérations mathématiques nécessaires. De plus, cette librairie fait déjà partie des dépendances de ce projet. Elle sera ainsi utilisée pour implémenter les nombres complexes.
+
+\subsection{Diagramme de classes}
+
+Toutes les méthodes abstraites du \textit{ACojacWrapper} seront implémentées en plus de plusieurs autres méthodes. De plus, une nouvelle méthode sera ajoutée au \textit{ACojacWrapper} afin de pouvoir supporter la méthode \textit{Math.cbrt}. Les méthodes du wrapper sont surchargées pour retourner un \textit{WrapperComplexNumber} à chaque fois pour simplifier les tests. Toutes les méthodes de la classe \textit{WrapperComplexNumber} qui sont visibles sur le diagramme de classes ont été implémentées.
+
+\begin{minipage}{\linewidth}
+\makebox[\linewidth]{
+    \includegraphics[width=\linewidth]{complex_numbers/class_diagram.png}
+}
+\captionof{figure}{Diagramme de classes de l'intégration des nombres complexes}
+\label{fig:class_diagram}
+\end{minipage}

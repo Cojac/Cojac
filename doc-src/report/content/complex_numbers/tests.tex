@@ -1,1 +1,23 @@
-\chapter{Tests}
+\section{Tests}
+
+Cette section décrit l'ensemble des tests unitaires et d'intégration réalisés pour vérifier le fonctionnement du wrapper. Tous les tests écrits se déroulent avec succès.
+
+\subsection{Tests unitaires}
+
+Toutes les méthodes ont été testées avec au moins un cas général. Les cas particuliers n'ont pas été testés. Ceci inclus les grands nombres, les nombres tout petits et autres valeurs spéciales (NaN, null, etc.). Quelques tests plus précis ont été ajoutés pour éviter que certains bugs, qui ont été corrigés depuis, se reproduisent.
+
+55 tests unitaires ont été réalisés. De plus, ces tests couvrent 100\% de la classe \textit{WrapperComplexNumber}. Les détails sont visibles dans le tableau suivant:
+
+\begin{table}[h]
+    \begin{tabularx}{\columnwidth}{ | p{12em} | X | X | X |}
+        \hline
+        \textbf{Élément} & \textbf{Classe} & \textbf{Méthodes} & \textbf{Lignes} \\
+        \hline
+        WrapperComplexNumber & 100\% (1/1) & 100\% (47/47) & 100\% (118/118) \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+\subsection{Tests d'intégration}
+
+Des tests d'intégrations ont aussi été réalisés. Une classe de test est instrumentée et le retour de ces méthodes sont vérifiées. 13 tests ont été réalisés en mode normal et 14 tests en mode strict.
