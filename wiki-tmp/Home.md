@@ -32,7 +32,7 @@
     4.6 [Wrapper "Automatic differentiation (reverse mode)"](home#46---wrapper-automatic-differentiation-reverse-mode)  
     4.7 [Wrapper "Symbolic expressions" (and functions)](home#47---wrapper-symbolic-expressions-and-functions)  
     4.8 [Wrapper "Chebfun"](home#48---wrapper-chebfun)  
-    4.9 [Wrapper "ComplexNumber"](home##49---wrapper-complex-number)  
+    4.9 [Wrapper "ComplexNumber"](#49-wrapper-complex-number)  
 
 5. [Detailed usage](home#5---detailed-usage)  
 
@@ -804,8 +804,6 @@ $ java -javaagent:cojac.jar="-Rc" demo.HelloComplexNumber
 Output:
 -0.34562739226941647 should be ≈ -0.34563
 -2.0 + 2.9605947323337506E-16i should be -1, -2 or 5
-
-4.9
 ```
 
 
