@@ -114,7 +114,7 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
                 for(Method m:behaviorClass(i).getMethods()) {
                     //Operation op = MathMethods.toStaticOperation(m);
                     if (m.isAnnotationPresent(UtilityMethod.class)){
-                        break;
+                        continue;
                      }
                     int modifiers = m.getModifiers();
                     Operation methodOperation = MathMethods.toStaticOperation(m);
@@ -201,13 +201,12 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
 
                     Method m = behaviorClass(i).getMethod(op.name(), op.parameters);
                     if (m.isAnnotationPresent(UtilityMethod.class)){
-                        break;
+                        continue;
                     }
 
                     //NewDoubles.class.getMethod(op.opCodeName, op.parameters);
                     //System.out.println("method \""+op.name()+"\" modified.");
                     invocations.put(op.opCodeVal, new InvokableMethod(BEHAVIOURS[i], op.name(), op.signature));
-                    break;
                 } catch (NoSuchMethodException e) {
                     //Method not implemented, no problem.
                 }catch(Exception e){
@@ -234,7 +233,6 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
                         invocations.put(tmp.opCodeVal, new InvokableMethod(BEHAVIOURS[i], op.opCodeName, op.signature));
                     }
                     methods.put(op.opCodeName, new InvokableMethod(BEHAVIOURS[i], op.opCodeName, op.signature));
-                    break;
                 } catch (NoSuchMethodException e) {
                     //Method not implemented, no problem.
                 }catch(Exception e){
