@@ -745,26 +745,26 @@ Chebfun(degree:32 (effective:19)), [6.0, 5.98, 5.94, ... 3.003, 3.0],
 ## 4.9 - Wrapper "Complex Number"
 
 The standard `float`/`double` in Java are limited to real numbers. In most cases,
-this isn't a problem. However there are some situations situations where the
+this isn't a problem. However, there are some situations where the
 calculation has to be done with complex numbers even if the answer is real.
 
 You can enable this wrapper with the option `-Rc`. This will replace each
 `float`/`double` with a wrapper which can handle complex numbers. In the normal
 mode, the comparison is done by comparing the real part first and only after the
-imaginary part is compared. When the complex numbers is casted back to an
-`int`/`double`, the imaginary part will be lost without any warning.
+imaginary part is compared. When the complex number needs to be cast back to a
+`double`, the imaginary part will be lost without any warning.
 
 You can enable the strict mode with the option `-Rc strict`. In this case, the
 comparison with a number which has an imaginary part will result in an
-`ArithmeticException`.  When the complex numbers is casted back to a
-`int`/`double` or any other types, a `ClassCastException` will be thrown.
+`ArithmeticException`.  When the complex number needs to be cast back to a
+`double` or any other number type, a `ClassCastException` will be thrown.
 
 In both modes, there are three specific magic methods for the complex numbers:
 * `public static double COJAC_MAGIC_getReal(double d)`. This method returns only
 the real part of the complex number
 * `public static double COJAC_MAGIC_getImaginary(double d)`. This method returns
 only the imaginary part of the complex. The resulting number will only have a real
-part which is equals to the imaginary part of the source number.
+part which is equal to the imaginary part of the source number.
 * `public static boolean COJAC_MAGIC_equals(double a, double b)`. This method
 returns a boolean which indicates if both numbers are equal. This method will
 never throw any exception.
