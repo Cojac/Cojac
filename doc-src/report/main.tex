@@ -1,0 +1,157 @@
+% ==============
+% Main file. Project report on COJAC. It includes all other files.
+% ==============
+
+\documentclass[french,11pt]{report}
+
+%% PACKAGES %%
+% For Bibliography
+\usepackage{biblatex}
+% For french support
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{babel}
+% Geometry of document
+\usepackage{geometry}
+% To include images
+\usepackage{graphicx}
+% For not floating images
+\usepackage[hypcap=false]{caption}
+% For links (and table of contents)
+\usepackage{hyperref}
+% For table
+\usepackage{tabularx}
+% For text color
+\usepackage{xcolor}
+% For code syntax highlighter
+\usepackage{minted}
+% For code background and border
+\usepackage{tcolorbox}
+\usepackage{etoolbox}
+% Prevent the ~ to be written in superscript in minted environment
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+% For Landscape
+\usepackage{pdflscape}
+% For appendices
+\usepackage[toc,page]{appendix}
+% For glossaries
+\usepackage[nopostdot,section=chapter,numberedsection]{glossaries}
+\usepackage{caption}
+\usepackage{subcaption}
+% because of babel with biblatex
+\usepackage{csquotes}
+
+
+%% COMANDS %%
+% print todo and the text in red and show an error
+\newcommand{\todo}[1]{
+    \textcolor{red}{\textbf{TODO: #1}}
+    \PackageError{Document}{TODO}{#1!}
+}
+% display the inline code with a background and a border
+\newcommand{\inputmintedcolor}[3][firstline=1]{\begin{tcolorbox}\inputminted[breaklines,xleftmargin=20pt,linenos,#1]{#2}{#3}\end{tcolorbox}}
+% get the type of a section and its number where a label has been defined
+\newcommand*{\fullref}[1]{\hyperref[{#1}]{\autoref*{#1} \nameref*{#1}}}
+% format a title to use in subsection
+\newcommand{\subtitle}[1]{\vspace{5mm}{\large\textsc{\textbf{#1}}} \par}
+% Rename chapter for appendices
+\renewcommand{\appendixpagename}{Annexes}
+\renewcommand{\appendixtocname}{Annexes}
+
+
+%% ENVIRONNMENT %%
+\newlength{\currentparskip}
+\newenvironment{minipage2} % keep the same space between paragraphs
+    {\setlength{\currentparskip}{\parskip} % save the parskip
+    \begin{minipage}{\linewidth}
+    % parskip is reset to 0 inside a minipage environment
+    \setlength{\parskip}{\currentparskip} % restore the parskip
+    }
+    {\end{minipage}}
+
+
+%% CONFIG %%
+% Default image directory
+\graphicspath{{images/}}
+
+% Set minted background and border
+\input{minted_config}
+
+% Set paragraph spaces
+\setlength{\parindent}{0em}
+\setlength{\parskip}{1em}
+
+% Set document margin
+\newgeometry{left=3cm, right=3cm, top=3cm, bottom=3cm}
+
+% Add bibliography
+\addbibresource{biblio.bib}
+
+% Avoid page breaks before lists
+\makeatletter
+\@beginparpenalty=10000
+\makeatother
+
+% Avoid widow and orphan lines
+\widowpenalty10000
+\clubpenalty10000
+
+
+%% DOCUMENT INFO %%
+\input{config}
+
+
+%% GLOSSARY %%
+\input{content/glossary}
+
+
+\begin{document}
+
+
+%% TITLE %%
+\pagenumbering{alph}
+\input{title}
+
+
+%% TABLE OF VERSIONS %%
+\pagenumbering{Roman}
+\section *{Table des versions}
+\vspace*{0.5 cm}
+
+\begin{table}[h]
+    \begin{tabularx}{\columnwidth}{ | p{3.5em} |p{7em} | p{6.5em} | X |}
+        \hline
+        \textbf{Version} & \textbf{Date} & \textbf{Author} & \textbf{Description} \\
+        \hline
+        0.1 & 03.06.2021 & Cédric Tâche & Création de la structure \\
+        0.2 & 07.06.2021 & Cédric Tâche & Description de Maven et du problème de compilation \\
+        0.3 & 15.06.2021 & Cédric Tâche & Complétion de l'analyse de COJAC \\
+         & & & Analyse des nombres complexes \\
+         & & & Spécification des nombres complexes \\
+        0.4 & 20.06.2021 & Cédric Tâche & Conception des nombres complexes \\
+        0.5 & 29.06.2021 & Cédric Tâche & Implémentation et tests des nombres complexes \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+\newpage
+
+
+%% TABLE OF CONTENTS %%
+\hypersetup{
+	hidelinks,
+	allcolors=black,
+	linktocpage,
+	linktoc=all
+}
+\tableofcontents
+\newpage
+
+
+%% CONTENT %%
+\pagenumbering{arabic}
+
+\input{main_content}
+
+\end{document}

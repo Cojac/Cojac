@@ -1,0 +1,132 @@
+% ==============
+% Description of all problems that happened during the project
+% ==============
+
+\chapter{Problèmes rencontrés}
+
+\section{Surefire provoque une exception lors de l'exécution des tests par Maven}
+
+Surefire provoquait une erreur lors de l'exécution des tests lorsqu'un espace était présent dans le chemin d'accès.
+
+\subsection{Problème}
+\label{sec:problems_surefire_problem}
+
+Lors de la création du JAR, l'erreur suivante se produit lors de l'exécution des tests:
+
+\begin{minted}[breaklines]{text}
+ExecutionException The forked VM terminated without properly saying goodbye. VM crash or System.exit called?
+\end{minted}
+
+Le message suivant présent dans les logs indique la localisation des fichiers qui contiennent plus de détails.
+\begin{minted}[breaklines]{text}
+[ERROR] Please refer to D:\Documents\Documents\HEIA\Semestre 6 - 2021\Bachelor\Projet\cojac\target\surefire-reports for the individual test results.
+\end{minted}
+
+\subsection{Solution temporaire: ne pas exécuter les tests}
+
+Comme les problèmes ont uniquement lieu durant les tests, il est possible de générer le JAR sans les exécuter. \todo{lien section Maven} Pour ce faire, il faut cliquer sur le bouton dédié dans la fenêtre Maven. Ce bouton est visible sur la figure \ref{fig:problems_maven_skip_tests}.
+
+Cependant, cette solution ne doit être utilisée que s'il y a besoin du JAR pour d'autres raisons. Il est nécessaire de corriger ce problème pour garantir la qualité du code.
+
+\begin{minipage}{\linewidth}
+\makebox[\linewidth]{
+    \includegraphics[width=.5\linewidth]{problems/maven_skip_tests.png}
+}
+\captionof{figure}{Bouton pour ignorer les tests}
+\label{fig:problems_maven_skip_tests}
+\end{minipage}
+
+\subsection{Cause}
+
+Dans un des fichiers de log produits, qui sont mentionnées dans la section \ref{sec:problems_surefire_problem}, on peut trouver l'erreur suivante:
+
+\begin{minted}[breaklines]{text}
+# Created at 2021-06-03T14:09:01.042
+Error opening zip file or JAR manifest missing : D:\Documents\Documents\HEIA\Semestre
+\end{minted}
+
+Ce lien est incomplet par rapport au chemin mentionné dans la section \ref{sec:problems_surefire_problem}. Le chemin d'accès s'arrête lors du premier espace trouvé. Si le projet est déplacé dans un dossier ne contenant aucun espace, le JAR est correctement généré.
+
+\subsection{Solution}
+
+Il faut modifier une ligne de configuration du plugin Surefire dans le \textit{pom.xml}. Des guillemets ont été ajoutés autour du chemin d'accès du JAR pour obtenir la ligne suivante.
+\inputmintedcolor{xml}{code/maven-surefire-javaagent.xml}
+
+Ce changement corrige le problème.
+
+\section{Erreur lors de l'instrumentation d'une application par COJAC}
+\label{sec:problem_cojac_instrumentation}
+
+Lors de l'appel de la commande pour instrumenter une démonstration avec COJAC \cite{COJAC}, COJAC \cite{COJAC} provoque une erreur.
+
+\subsection{Problème}
+
+L'application peut être démarrée sans COJAC \cite{COJAC} avec la commande suivante:
+\begin{minted}{bat}
+java demo\HelloBigDecimal.java
+\end{minted}
+
+Cependant, COJAC \cite{COJAC} produit une erreur lorsque l'application est démarrée avec COJAC \cite{COJAC}. La commande suivante a été utilisée:
+\begin{minted}{bat}
+java -javaagent:cojac.jar="-Rb 50" demo\HelloBigDecimal.java
+\end{minted}
+
+\subsection{Solution temporaire: compiler avec Java 8}
+
+COJAC \cite{COJAC} doit être compilé avec Java 9 au minimum, mais l'application instrumentée doit être compilée avec Java 8. Les deux commandes suivantes permettent de compiler une démonstration et de l'exécuter:
+\begin{minted}{bat}
+javac -source 8 -target 8 demo\HelloBigDecimal.java
+java -javaagent:cojac.jar="-Rb 50" demo.HelloBigDecimal
+\end{minted}
+
+\subsection{Cause}
+
+La source du problème provient de l'instruction Bytecode \textit{Invokedynamic} qui a évolué en Java 9 et qui est désormais utilisé pour de nouvelles opérations qui ne sont pas supportés par COJAC \cite{COJAC} à l'heure actuelle.
+
+\section{Erreur des tests unitaires}
+
+Lors de la création du JAR, un test peut parfois échouer.
+
+\subsection{Problème}
+
+Un test déjà présent dans le projet et qui agit sur une autre partie du projet peut parfois créer une erreur. Lors de la création du JAR, l'erreur suivante peut se produire:
+
+\begin{minted}[breaklines]{text}
+[ERROR] Failures: 
+[ERROR]   Double2FloatTest.testDouble2FloatConversion:79 On "testNextUp", Got: 3.0000000000000004, Expected: 3.000000238418579
+\end{minted}
+
+Ce test agit sur les \textbf{behaviours} alors que ce projet se focalise sur les \textbf{wrappers}. Ces deux concepts distincts sont expliqués dans la section \ref{sec:cojac_integration}. Cette erreur est devenue un problème particulièrement important lorsqu'elle est devenue récurrente sur le GitLab CI alors qu'elle est invisible sur la machine de développement. Cette erreur complique la détection des autres erreurs sur le GitLab CI.
+
+\subsection{Cause}
+
+Lorsque l'instrumentation est effectuée, elle doit aussi remplacer certaines méthodes des librairies standards telles que \textit{Math.nextUp}. Cependant, il y a une condition qui peut éviter les méthodes d'être instrumentées qui peut être vue dans l'extrait de code suivant:
+\begin{minted}{Java}
+for(Method m:behaviorClass(i).getMethods()){
+    if (m.isAnnotationPresent(UtilityMethod.class)){
+        break;
+    }
+\end{minted}
+Lorsqu'il y a une méthode qui est annotée, cette méthode et toutes les méthodes suivantes ne sont pas instrumentées.
+
+\subsection{Solution}
+
+Il semble plus logique de ne pas instrumenter la méthode possédant l'annotation uniquement. Pour ce faire, le code a été changé pour correspondre à l'extrait de code suivant:
+\begin{minted}{Java}
+for(Method m:behaviorClass(i).getMethods()){
+    if (m.isAnnotationPresent(UtilityMethod.class)){
+        continue;
+    }
+\end{minted}
+
+Due à la difficulté de comprendre ce code, il est difficile de savoir si c'est vraiment la bonne correction. Cependant, l'erreur n'est plus réapparue depuis.
+
+\subsection{Remarques}
+
+Cette erreur était très difficile à trouver car elle ne se produisait pas sur la machine locale. Il a fallu ajouter des logs pour détecter la différence de comportement entre les deux environnements. De plus, le code est long et peu explicite. Il utilise également certaines mauvaises pratiques. Ainsi, cette erreur a permis de mettre en avant certains problèmes:
+
+\begin{itemize}
+    \item La classe \textit{com.github.cojac.instrumenters.BehaviourInstrumenter} peut et devrait être améliorée. Il y a beaucoup de code commenté, certaines méthodes sont très longues, il y a jusqu'à 6 niveaux d'indentations et l'apparition d'exceptions est considérée comme un cas habituel et n'est pas signalé.
+    \item La classe \textit{com.github.cojac.instrumenters.BehaviourInstrumenter} contient d'autres \textit{break} suspicieux.
+    \item Les tests du profiler produisent une grande quantité de texte sur la sortie standard. Ce texte n'a pourtant que peu d'intérêt.
+\end{itemize}

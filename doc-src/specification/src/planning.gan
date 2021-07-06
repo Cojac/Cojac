@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?><project name="gantt" company="HEIA-FR" webLink="http://" view-date="2021-05-30" view-index="0" gantt-divider-location="481" resource-divider-location="300" version="3.1.3102" locale="en_US">
+<?xml version="1.0" encoding="UTF-8"?><project name="gantt" company="HEIA-FR" webLink="http://" view-date="2021-05-30" view-index="0" gantt-divider-location="419" resource-divider-location="300" version="3.1.3102" locale="en_US">
     <description>
         <![CDATA[[Bachelor] Intégration des nombres complexes et des Unum en Java avec COJAC]]>
     </description>
-    <view zooming-state="default:4" id="gantt-chart">
-        <field id="tpd3" name="Name" width="242" order="0"/>
-        <field id="tpd4" name="Begin date" width="118" order="1"/>
-        <field id="tpd5" name="End date" width="117" order="2"/>
+    <view zooming-state="default:6" id="gantt-chart">
+        <field id="tpd3" name="Name" width="286" order="0"/>
+        <field id="tpd4" name="Begin date" width="69" order="1"/>
+        <field id="tpd5" name="End date" width="60" order="2"/>
     </view>
     <view id="resource-table">
         <field id="0" name="Name" width="210" order="0"/>
@@ -21,6 +21,9 @@
             <overriden-day-types/>
             <days/>
         </day-types>
+        <date year="2021" month="6" date="3" type="HOLIDAY">
+            <![CDATA[Holiday on 6/3/21, 12:00 AM]]>
+        </date>
     </calendars>
     <tasks empty-milestones="true">
         <taskproperties>
@@ -35,38 +38,45 @@
             <taskproperty id="tpd8" name="coordinator" type="default" valuetype="text"/>
             <taskproperty id="tpd9" name="predecessorsr" type="default" valuetype="text"/>
         </taskproperties>
-        <task id="0" name="Analyse de COJAC" color="#8cb6ce" meeting="false" start="2021-06-03" duration="3" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true"/>
-        <task id="10" name="Intégration des nombres complexes" meeting="false" start="2021-06-08" duration="12" complete="0" expand="true">
-            <task id="11" name="Analyse des nombres complexes" color="#8cb6ce" meeting="false" start="2021-06-08" duration="1" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true">
+        <task id="0" name="Analyse de COJAC" color="#8cb6ce" meeting="false" start="2021-06-04" duration="3" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true"/>
+        <task id="10" name="Intégration des nombres complexes" meeting="false" start="2021-06-09" duration="11" complete="0" expand="true">
+            <task id="11" name="Analyse des nombres complexes" color="#8cb6ce" meeting="false" start="2021-06-09" duration="1" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true">
+                <depend id="51" type="2" difference="0" hardness="Strong"/>
+            </task>
+            <task id="51" name="Spécifier la démonstration des nombres complexes" color="#8cb6ce" meeting="false" start="2021-06-10" duration="1" complete="0" thirdDate="2021-05-31" thirdDate-constraint="0" expand="true">
                 <depend id="12" type="2" difference="0" hardness="Strong"/>
             </task>
-            <task id="12" name="Concevoir l'intégration des nombres complexes" color="#8cb6ce" meeting="false" start="2021-06-09" duration="3" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true">
+            <task id="12" name="Concevoir l'intégration des nombres complexes" color="#8cb6ce" meeting="false" start="2021-06-11" duration="3" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true">
                 <depend id="13" type="2" difference="0" hardness="Strong"/>
             </task>
-            <task id="13" name="Implémenter l'intégration des nombres complexes" color="#8cb6ce" meeting="false" start="2021-06-14" duration="4" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true">
+            <task id="13" name="Implémenter l'intégration des nombres complexes" color="#8cb6ce" meeting="false" start="2021-06-16" duration="3" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true">
                 <depend id="14" type="2" difference="0" hardness="Strong"/>
                 <depend id="40" type="2" difference="2" hardness="Strong"/>
             </task>
-            <task id="14" name="Tester l'intégration des nombres complexes" color="#8cb6ce" meeting="false" start="2021-06-18" duration="2" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true"/>
-            <task id="40" name="Démo des nombres complexes" color="#8cb6ce" meeting="false" start="2021-06-22" duration="2" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true"/>
+            <task id="14" name="Tester l'intégration des nombres complexes" color="#8cb6ce" meeting="false" start="2021-06-21" duration="2" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true"/>
+            <task id="40" name="Démo des nombres complexes" color="#8cb6ce" meeting="false" start="2021-06-23" duration="1" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true"/>
+            <task id="77" name="1er prototype" color="#8cb6ce" meeting="true" start="2021-06-23" duration="0" complete="0" thirdDate="2021-05-31" thirdDate-constraint="0" expand="true"/>
         </task>
-        <task id="15" name="Intégration des Unum" meeting="false" start="2021-06-25" duration="13" complete="0" expand="true">
-            <task id="16" name="Analyse des Unum" color="#8cb6ce" meeting="false" start="2021-06-25" duration="2" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true">
+        <task id="15" name="Intégration des unums" color="#000000" meeting="false" start="2021-06-25" duration="13" complete="0" thirdDate="2021-05-31" thirdDate-constraint="0" expand="true">
+            <task id="16" name="Analyse des unums" color="#8cb6ce" meeting="false" start="2021-06-25" duration="2" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true">
+                <depend id="61" type="2" difference="0" hardness="Strong"/>
+            </task>
+            <task id="61" name="Spécifier la démonstration des unums" color="#8cb6ce" meeting="false" start="2021-06-29" duration="1" complete="0" thirdDate="2021-05-31" thirdDate-constraint="0" expand="true">
                 <depend id="17" type="2" difference="0" hardness="Strong"/>
             </task>
-            <task id="17" name="Concevoir l'intégration des Unum" color="#8cb6ce" meeting="false" start="2021-06-29" duration="3" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true">
+            <task id="17" name="Concevoir l'intégration des unums" color="#8cb6ce" meeting="false" start="2021-06-30" duration="3" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true">
                 <depend id="18" type="2" difference="0" hardness="Strong"/>
             </task>
-            <task id="18" name="Implémenter l'intégration des Unum" color="#8cb6ce" meeting="false" start="2021-07-02" duration="4" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true">
+            <task id="18" name="Implémenter l'intégration des unums" color="#8cb6ce" meeting="false" start="2021-07-05" duration="4" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true">
                 <depend id="19" type="2" difference="0" hardness="Strong"/>
                 <depend id="44" type="2" difference="2" hardness="Strong"/>
             </task>
-            <task id="19" name="Tester l'intégration des Unum" color="#8cb6ce" meeting="false" start="2021-07-08" duration="2" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true"/>
-            <task id="44" name="Démo des Unum" color="#8cb6ce" meeting="false" start="2021-07-12" duration="2" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true"/>
+            <task id="19" name="Tester l'intégration des unums" color="#8cb6ce" meeting="false" start="2021-07-09" duration="2" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true"/>
+            <task id="44" name="Démo des unums" color="#8cb6ce" meeting="false" start="2021-07-13" duration="1" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true"/>
         </task>
         <task id="38" name="Mise à jour des librairies" color="#8cb6ce" meeting="false" start="2021-06-24" duration="1" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true"/>
         <task id="45" name="Tests de performance" color="#8cb6ce" meeting="false" start="2021-07-14" duration="2" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true"/>
-        <task id="50" name="Rendu du rapport" color="#8cb6ce" meeting="true" start="2021-07-16" duration="0" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true"/>
+        <task id="50" name="Rendu du rapport et du flyer" color="#8cb6ce" meeting="true" start="2021-07-16" duration="0" complete="0" thirdDate="2021-06-01" thirdDate-constraint="0" expand="true"/>
     </tasks>
     <resources/>
     <allocations/>

@@ -1,0 +1,175 @@
+%%
+%% This is file `./samples/minutes.tex',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% meetingmins.dtx  (with options: `minutes')
+%% ----------------------------------------------------------------------
+%% 
+%% meetingmins - A LaTeX class for formatting minutes of meetings
+%% 
+%% Copyright (C) 2011-2013 by Brian D. Beitzel <brian@beitzel.com>
+%% 
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL), either
+%% version 1.3c of this license or (at your option) any later
+%% version.  The latest version of this license is in the file:
+%% 
+%% http://www.latex-project.org/lppl.txt
+%% 
+%% Users may freely modify these files without permission, as long as the
+%% copyright line and this statement are maintained intact.
+%% 
+%% ----------------------------------------------------------------------
+%% 
+\documentclass[11pt]{meetingmins}
+
+
+\usepackage{hyperref}
+\usepackage{tabularx}
+
+% To include images
+\usepackage{graphicx}
+
+% text color
+\usepackage{xcolor}
+
+
+%% CONFIG %%
+% Default image directory
+\graphicspath{{images/}}
+
+
+\setcommittee{Intégration des nombres complexes et des Unums en Java avec COJAC}
+
+\setmembers{
+    Frédéric Bapst (Superviseur),
+    Cédric Tâche (Etudiant)
+}
+
+\setpresent{
+    Frédéric Bapst (Superviseur),
+    Cédric Tâche (Etudiant)
+}
+
+\setlength{\headheight}{13.6pt}
+
+\date{30 juin 2021}
+
+\begin{document}
+
+\begin {center} {
+    \large \textbf {Intégration des nombres complexes et des Unums en Java avec COJAC}
+}
+\vspace {0.5ex}
+
+PV de la séance du 30 juin 2021 (9h30 - 10h20) via Teams
+\end {center} \vspace {1.5em}
+
+\noindent
+\textbf{Présents:} Frédéric Bapst, Cédric Tâche
+
+\section{Ordre du jour}
+Les points suivants ont été abordés durant la séance:
+\begin{hiddenitems}
+    \item Validation du PV du 23 juin 2021.
+    \item Intégration des nombres complexes
+    \item Correction de l'instrumentation
+    \item Rapport v0.5
+    \item Résumé/Flyer
+    \item Planification
+\end{hiddenitems}
+
+\section{PV}
+\begin{hiddenitems}
+    \item Le PV du 23 juin a été validé
+\end{hiddenitems}
+
+\section{Intégration des nombres complexes}
+\begin{hiddenitems}
+    \item L'implémentation des nombres complexes est terminée.
+    \item Les tests unitaires couvrent 100\% du wrapper pour les nombres complexes.
+    \item Des tests d'intégration testent l'instrumentation en mode normal et en mode strict.
+    \item Le wiki décrit désormais le wrapper pour les nombres complexes.
+    \item Le lien dans la table des matières devra être vérifié lorsque le wiki sera ajouté sur GitHub.
+    \item La version de COJAC sera 1.6.0 jusqu'à la fin du projet.
+\end{hiddenitems}
+
+\section{Correction de l'instrumentation}
+\begin{hiddenitems}
+    \item Le CI/CD sur GitLab ne fonctionnait plus à cause du test de la méthode \textit{nextUp} dans le test \textit{Double2FloatTest.testDouble2FloatConversion} qui était déjà présent avant depuis longtemps.
+    \item Le problème était dû à l'utilisation d'un \textit{break} au lieu d'un \textit{continue} dans la classe \textit{BehaviourInstrumenter} du package \textit{com.github.cojac.instrumenters}.
+    \item D'autres \textit{break} suspects seront aussi modifiés.
+    \item M. Bapst vérifiera les modifications faites dans la classe \textit{BehaviourInstrumenter} du package \textit{com.github.cojac.instrumenters}. à cause de ses connaissances plus avancées dans cette partie du projet.
+\end{hiddenitems}
+
+\section{Rapport v0.5}
+\begin{hiddenitems}
+    \item L'exemple 1 dans \textbf{Conception} $\rightarrow$ \textbf{Modes} n'est pas très clair.
+    \item Il faut aussi vérifier la description de cet exemple.
+\end{hiddenitems}
+
+\section{Résumé/Flyer}
+\begin{hiddenitems}
+    \item Les détails à propos du résumé/flyer devrait être bientôt envoyés par email par l'école.
+    \item Cet email devrait aussi contenir les informations à propos du flyer qui doit être écrit en allemand pour avoir la mention bilingue.
+\end{hiddenitems}
+
+\section{Planification}
+\begin{hiddenitems}
+    \item La fin de l'intégration des nombres complexes a pris plus de temps que prévu.
+    \item La correction du test unitaire a aussi retardé le projet.
+    \item A cause du retard, les librairies ne seront pas mises à jour pour l'instant.
+    \item Le projet a actuellement environ 2 jours de retard sur la planification.
+\end{hiddenitems}
+
+\section{Unums}
+\begin{hiddenitems}
+    \item Il n'y a pas besoin de décrire toute la théorie des unums. Ce projet se concentre sur l'intégration des unums dans COJAC.
+    \item Des références seront ajoutées pour les lecteurs qui veulent approfondir ce sujet.
+    \item Il faudra aussi parler de la compatibilité de cette option sur les différents systèmes d'exploitation si l'implémentation des unums est native.
+\end{hiddenitems}
+
+\section{Décision}
+\begin{hiddenitems}
+    \item M. Bapst vérifiera les modifications faites dans la classe \textit{BehaviourInstrumenter} dans le package \textit{com.github.cojac.instrumenters}.
+    \item M. Bapst vérifiera également le wiki lorsqu'il le reportera sur GitHub.
+\end{hiddenitems}
+
+\section{Prochaines tâches}
+\begin{hiddenitems}
+    \item Analyse des unums
+    \item Spécification de la démo
+    \item Conception des unums
+\end{hiddenitems}
+
+\vspace{1em}
+\par \noindent \textbf {Prochaine séance:} Le mercredi 7 juillet 2021 à 9h30
+
+\end{document}
+%% 
+%% Copyright (C) 2011-2013 by Brian D. Beitzel <brian@beitzel.com>
+%% 
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL), either
+%% version 1.3c of this license or (at your option) any later
+%% version.  The latest version of this license is in the file:
+%% 
+%% http://www.latex-project.org/lppl.txt
+%% 
+%% Users may freely modify these files without permission, as long as the
+%% copyright line and this statement are maintained intact.
+%% 
+%% This work is "maintained" (as per LPPL maintenance status) by
+%% Brian D. Beitzel.
+%% 
+%% This work consists of the file  meetingmins.dtx
+%% and the derived files           meetingmins.cls,
+%%                                 sampleminutes.tex,
+%%                                 department.min,
+%%                                 README.txt, and
+%%                                 meetingmins.pdf.
+%% 
+%%
+%% End of file `./samples/minutes.tex'.

@@ -1,0 +1,121 @@
+\section{Implémentation}
+
+\subsection{Wrapper}
+
+La création d'un nouveau wrapper se fait en créant une nouvelle classe héritant de \textit{ACojacWrapper}. Comme \textit{ACojacWrapper} est une classe abstraite, le wrapper ne peut pas étendre d'autres classes.
+
+Il faut également implémenter un constructeur prenant un \textit{ACojacWrapper} en paramètre. Il faut également gérer le cas où ce paramètre est null. Voici le constructeur implémenté pour ce wrapper:
+
+\begin{minted}{Java}
+public WrapperComplexNumber(ACojacWrapper w) {
+    // CommonDouble can call this constructor with a null wrapper
+    if (w == null) {
+        this.complex = new Complex(0, 0);
+    } else {
+        Complex value = ((WrapperComplexNumber) w).complex;
+        this.complex = new Complex(value.getReal(), value.getImaginary());
+    }
+}
+\end{minted}
+
+\subsection{Remplacement de méthodes}
+
+Seulement une sélection de méthodes de la librairie standards sont remplacées. Deux méthodes supplémentaires sont également remplacées car elles sont utilisées dans la démonstration. Il s'agit de:
+\begin{itemize}
+    \item \textit{Math.cbrt(double)}
+    \item \textit{Double.isNaN(double)}
+\end{itemize}
+
+Le remplacement des méthodes de la librairie standard pour les wrappers se fait dans la classe \textit{com.github.cojac.instrumenters.ReplaceFloatsMethods} dans la méthode \textit{fillMethods}. Les lignes suivantes ont été ajoutées pour remplacer ces deux méthodes supplémentaires:
+
+\begin{minted}[breaklines]{Java}
+// String CDW; // signature of wrapper
+// String CDW_N; // name of wrapper
+invocations.put(new MethodSignature(DL_NAME, "isNaN", "(D)Z"),
+new InvokableMethod(CDW_N, "double_isNaN", "(" + CDW + ")Z", INVOKESTATIC));
+
+invocations.put(new MethodSignature(MATH_NAME, "cbrt", "(D)D"),
+new InvokableMethod(CDW_N, "math_cbrt", "(" + CDW + ")" + CDW, INVOKESTATIC));
+\end{minted}
+
+Il faut également ajouter les deux méthodes déclarées ici: \textit{double\_isNaN} and \textit{math\_cbrt} dans la classe \textit{com.github.cojac.models.wrappers.CommonDouble} et les faire appeler la méthode correspondante du wrapper:
+
+\begin{minted}{Java}
+public static boolean double_isNaN(CommonDouble a){
+    return a.val.isNaN();
+}
+
+public static CommonDouble math_cbrt(CommonDouble a){
+    return new CommonDouble(a.val.math_cbrt());
+}
+\end{minted}
+
+\subsection{Ajout de l'option}
+
+Une nouvelle option doit aussi être ajoutée à COJAC pour que le wrapper puisse être utilisé et configuré. Tout d'abord, il faut ajouter une valeur dans l'enum \textit{com.github.cojac.Arg}.
+
+\begin{minted}{Java}
+COMPLEX_NUMBER ("Rc"),
+\end{minted}
+
+Cette enum a aussi une méthode \textit{createOptions}. Il faut aussi y ajouter une option. Ceci permettra de rendre l'option publique et utilisable comme argument et permettra aussi d'afficher l'aide à propos de cette option. Voici le code pour ajouter une option avec un argument facultatif:
+
+\begin{minted}[breaklines]{Java}
+options.addOption(OptionBuilder
+    .withArgName("strict")
+    .hasOptionalArg()
+    .withDescription("Use complex number wrapping. Strict mode generates an exception when the imaginary " +
+            "part is lost or when a comparison between two different complex numbers is made.")
+    .create(COMPLEX_NUMBER.shortOpt()));
+\end{minted}
+
+Il faut aussi détecter quand l'option est utilisée et la traiter en conséquence. Pour ce faire, il faut ajouter une condition dans la classe \textit{com.github.cojac.CojacReferences.CojacReferencesBuilder} à l'intérieur de la méthode \textit{build}. Ce code doit être ajouté suffisamment haut dans la méthode car elle définit l'option \textit{Arg.NG\_WRAPPER} qui est aussi traitée dans la même méthode. Voici l'extrait de code qui permet de traiter cette option:
+
+\begin{minted}[breaklines]{Java}
+if (args.isSpecified(Arg.COMPLEX_NUMBER)) {
+    args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperComplexNumber");
+    WrapperComplexNumber.setStrictMode( args.getValue(Arg.COMPLEX_NUMBER) != null);
+}
+\end{minted}
+
+\subsection{\textit{toString} et \textit{fromString}}
+
+La méthode \textit{toString} a été implémentée pour avoir trois formats possibles d'après le type de nombres complexes.
+
+\begin{itemize}
+    \item Nombre réel: uniquement la partie réelle (ex: 2.25).
+    \item Nombre imaginaire: uniquement la partie réelle avec un \textit{i} à la fin (ex: -4.2i).
+    \item Nombre complexe: les deux parties sont affichées (ex: -4.25 + 4.0i ou 1.25 - 1.5i).
+\end{itemize}
+
+Ces deux méthodes se basent sur l'affichage du double de Java. Ainsi, \textit{1.401298464324817E-45 - 1.0i} est une représentation possible d'un nombre complexe et il est aussi possible de convertir cette chaîne de caractères en un nombre complexe.
+
+La méthode \textit{fromString} est capable de lire et de créer un nombre complexe à partir de tous les exemples de String valides donnés précédemment.
+
+Cependant, des modifications ont dû être effectuées parce que les méthodes \textit{Float.parseFloat} et \textit{Double.parseDouble} appellent les méthodes des classes \textit{CommonFloat} et \textit{CommonDouble}. Cependant, ces classes font ensuite elles-même un appel aux vraies méthodes \textit{Float.parseFloat} et \textit{Double.parseDouble}.
+
+Voici l'ancien code du \textit{CommonDouble}:
+
+\begin{minted}{Java}
+public CommonDouble(String v) {
+    this(Double.valueOf(v));
+}
+
+public static CommonDouble fromString(String a){
+    return fromDouble(Double.valueOf(a));
+}
+\end{minted}
+
+\begin{minipage2}
+Et voici le nouveau code qui fait l'appel à une nouvelle méthode du \textit{ACojacWrapper}:
+
+\begin{minted}{Java}
+public CommonDouble(String v) {
+    val = newInstance(null).fromString(v, false);
+}
+
+public static CommonDouble fromString(String a){
+    return new CommonDouble(a);
+}
+\end{minted}
+\end{minipage2}

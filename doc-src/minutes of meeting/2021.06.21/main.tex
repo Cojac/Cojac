@@ -1,0 +1,162 @@
+%%
+%% This is file `./samples/minutes.tex',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% meetingmins.dtx  (with options: `minutes')
+%% ----------------------------------------------------------------------
+%% 
+%% meetingmins - A LaTeX class for formatting minutes of meetings
+%% 
+%% Copyright (C) 2011-2013 by Brian D. Beitzel <brian@beitzel.com>
+%% 
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL), either
+%% version 1.3c of this license or (at your option) any later
+%% version.  The latest version of this license is in the file:
+%% 
+%% http://www.latex-project.org/lppl.txt
+%% 
+%% Users may freely modify these files without permission, as long as the
+%% copyright line and this statement are maintained intact.
+%% 
+%% ----------------------------------------------------------------------
+%% 
+\documentclass[11pt]{meetingmins}
+
+
+\usepackage{hyperref}
+\usepackage{tabularx}
+
+% text color
+\usepackage{xcolor}
+
+
+\setcommittee{Intégration des nombres complexes et des Unums en Java avec COJAC}
+
+\setmembers{
+    Baptiste Wicht (Expert),
+    Cédric Tâche (Etudiant)
+}
+
+\setpresent{
+    Baptise Wicht (Expert),
+    Cédric Tâche (Etudiant)
+}
+
+\setlength{\headheight}{13.6pt}
+
+\date{21 juin 2021}
+
+\begin{document}
+
+\begin {center} {
+    \large \textbf {Intégration des nombres complexes et des Unums en Java avec COJAC}
+}
+\vspace {0.5ex}
+
+PV de la séance du 21 juin 2020 (17h00 - 17h35) via Teams
+\end {center} \vspace {1.5em}
+
+\noindent
+\textbf{Présents:} Cédric Tâche (Etudiant), Baptise Wicht (Expert)
+
+\section{Ordre du jour}
+Les points suivants ont été abordés durant la séance:
+\begin{hiddenitems}
+    \item Cahier des charges v1.2
+    \item Gestion de projet
+    \item Rapport v0.4
+    \item Démonstration
+\end{hiddenitems}
+
+\section{COJAC}
+\begin{hiddenitems}
+    \item COJAC permet de détecter des comportements arithmétiques limites (overflow, ...)
+    \item COJAC permet aussi d'ajouter de nouvelles capacités aux programmes cibles (calcul par intervalle, précision arbitraire, ...)
+    \item M. Wicht a déjà travaillé sur une des premières versions de COJAC et a aussi accompagné un projet plus récent.
+\end{hiddenitems}
+
+\section{Objectifs}
+\begin{hiddenitems}
+    \item L'objectif principal est l'intégration des nombres complexes et des unums avec COJAC. Il faudra aussi créer des démonstrations pour montrer l'utilité de ces fonctionnalités.
+    \item Comme COJAC est un projet ancien et que de nombreuses personnes y ont travaillées, il y a beaucoup d'aspects qui peuvent aussi être améliorés: documentation, architecture, logs, CI, version des librairies, ...
+\end{hiddenitems}
+
+\section{Gestion de projet}
+\begin{hiddenitems}
+    \item Il y a une réunion par semaine entre M. Bapst et M. Tâche.
+    \item Les communications sont essentiellement réalisés par Teams et parfois par email.
+    \item Il y a un dépôt GitLab qui contient tout le code et la documentation (PV compris).
+    \item Seul M. Tâche travaille sur ce dépôt GitLab.
+    \item Une branche \textit{dev} existe et est majoritairement utilisée. Elle sera ajoutée au \textit{master} lorsque la partie des nombres complexes sera terminée.
+    \item Un CI qui créer le JAR de Maven (et qui exécutent les tests) a été ajouté sur le GitLab.
+\end{hiddenitems}
+
+\section{Démonstration}
+\begin{hiddenitems}
+    \item La démonstration permet de montrer l'utilité des nombres complexes conformément aux spécifications.
+    \item Une deuxième démonstration est en cours de réalisation pour montrer les méthodes magiques.
+\end{hiddenitems}
+
+\section{Etat du projet}
+\begin{hiddenitems}
+    \item L'implémentation est presque terminée.
+    \item Des tests unitaires ont déjà été réalisés.
+    \item La démonstration fonctionne comme prévu.
+\end{hiddenitems}
+
+\section{Problèmes}
+\begin{hiddenitems}
+    \item La méthode \textit{Double.isNaN} appelle la méthode du wrapper, mais provoque un cast en double également. Ce qui bloque le fonctionnement d'un mode de comparaison stricte.
+\end{hiddenitems}
+
+\section{Améliorations possibles}
+\begin{hiddenitems}
+    \item Les avantages et inconvénients des wrappers et behaviours peuvent être détaillés conformément à un des objectifs secondaires.
+    \item Dire explicitement que la librairie analysée a été utilisée pour gérer les nombres complexes.
+    \item Les références peuvent être citées que la première fois.
+    \item Lorsqu'on référence les figures, on l'écrit normalement avec une majuscule.
+    \item Le cahier des charges n'a pas besoin d'être en annexe. Il faut le voir avec M. Bapst.
+    \item Les tests de performance pourraient aussi être exécutés automatiquement par le CI (objectif secondaire).
+    \item Pour les unums, au lieu d'utiliser JNI, il pourrait être avantageux d'utiliser JNA.
+\end{hiddenitems}
+
+
+\section{Planification}
+\begin{hiddenitems}
+    \item Le projet est en accord avec la planification.
+    \item Le problème au début pour la compilation de COJAC a retardé le projet d'environ 1 à 2 jours.
+    \item Deux objectifs secondaires ont déjà été planifiés. La mise à jour des librairies est très probable. Les tests de performance sont un bon objectif secondaire, mais un autre objectif pourrait être réalisé à la place.
+\end{hiddenitems}
+
+\vspace{1em}
+\par \noindent \textbf {Prochaine visite:} Le lundi 12 juillet 2021 à 17h00
+
+\end{document}
+%% 
+%% Copyright (C) 2011-2013 by Brian D. Beitzel <brian@beitzel.com>
+%% 
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL), either
+%% version 1.3c of this license or (at your option) any later
+%% version.  The latest version of this license is in the file:
+%% 
+%% http://www.latex-project.org/lppl.txt
+%% 
+%% Users may freely modify these files without permission, as long as the
+%% copyright line and this statement are maintained intact.
+%% 
+%% This work is "maintained" (as per LPPL maintenance status) by
+%% Brian D. Beitzel.
+%% 
+%% This work consists of the file  meetingmins.dtx
+%% and the derived files           meetingmins.cls,
+%%                                 sampleminutes.tex,
+%%                                 department.min,
+%%                                 README.txt, and
+%%                                 meetingmins.pdf.
+%% 
+%%
+%% End of file `./samples/minutes.tex'.

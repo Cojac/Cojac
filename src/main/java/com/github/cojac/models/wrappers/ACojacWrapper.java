@@ -46,6 +46,11 @@ public abstract class ACojacWrapper implements Comparable<ACojacWrapper>{
     public int  d2i() { return (int)  toDouble();}
     public long d2l() { return (long) toDouble();}
     public abstract ACojacWrapper math_sqrt();
+
+    public ACojacWrapper math_cbrt() {
+        return math_pow(fromDouble(1d/3, false));
+    }
+
     public abstract ACojacWrapper math_abs();
     public abstract ACojacWrapper math_sin();
     public abstract ACojacWrapper math_cos();
@@ -82,6 +87,10 @@ public abstract class ACojacWrapper implements Comparable<ACojacWrapper>{
     //-------------------------------------------------------------------------
     /** wasFromFloat can be used to distinguish two kinds of numbers */
     public abstract ACojacWrapper fromDouble(double a, boolean wasFromFloat);
+    // TODO make this abstract and implement it for all wrappers
+    public ACojacWrapper fromString(String a, boolean wasFromFloat){
+        return fromDouble(Double.parseDouble(a), wasFromFloat);
+    }
     
     
     //-------------------------------------------------------------------------

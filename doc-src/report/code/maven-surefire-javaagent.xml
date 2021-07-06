@@ -1,0 +1,3 @@
+<argLine>
+    -javaagent:"${basedir}/src/test/resources/cojac-agent-test.jar"
+</argLine>

@@ -18,7 +18,7 @@
 
 package com.github.cojac;
 
-import com.github.cojac.models.wrappers.WrapperSymbolic;
+import com.github.cojac.models.wrappers.*;
 import com.github.cojac.profiler.NumericalProfiler;
 import org.objectweb.asm.ClassWriter;
 
@@ -30,9 +30,6 @@ import com.github.cojac.models.behaviours.DoubleIntervalBehaviour;
 import com.github.cojac.models.behaviours.PseudoRoundingBehaviour;
 import com.github.cojac.models.behaviours.ConversionBehaviour.Conversion;
 import com.github.cojac.models.behaviours.PseudoRoundingBehaviour.Rounding;
-import com.github.cojac.models.wrappers.CommonDouble;
-import com.github.cojac.models.wrappers.CommonFloat;
-import com.github.cojac.models.wrappers.WrapperBigDecimalWithNaN;
 import com.github.cojac.utils.BehaviourLoader;
 import com.github.cojac.utils.InstructionWriter;
 import com.github.cojac.utils.PolyBehaviourLoader;
@@ -359,6 +356,11 @@ public final class CojacReferences {
                 numericalProfiler = NumericalProfiler.getInstance();
                 numericalProfiler.setThrowRecommendations(args.isSpecified(Arg.EXCEPTION));
                 numericalProfiler.setVerbose(args.isOperationEnabled(Arg.VERBOSE));
+            }
+
+            if (args.isSpecified(Arg.COMPLEX_NUMBER)) {
+                args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperComplexNumber");
+                WrapperComplexNumber.setStrictMode(args.getValue(Arg.COMPLEX_NUMBER) != null);
             }
 
             if (args.isSpecified(Arg.NG_WRAPPER)) {
