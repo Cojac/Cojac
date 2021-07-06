@@ -1,0 +1,40 @@
+\section{Format de stockage des nombres réels}
+
+Il y a deux types principaux de nombres à utiliser: les nombres entiers et les nombres réels. Les nombres entiers sont simplement stockés en base binaire. Quant-à-eux, les nombres réels peuvent être stockés sous plusieurs formes.
+
+Un format peut être évalué selon plusieurs critères:
+\begin{itemize}
+    \item Nombre de bits utilisés
+    \item Précision de la représentation d'un nombre
+    \item Gamme dynamique (rapport entre les valeurs maximales et minimales qui peuvent être représentées avec ce format)
+    \item Précision des calculs
+    \item Complexité de l'implémentation hardware
+\end{itemize}
+
+Quelques formats sont expliqués dans cette section, cependant d'autres formats existent également.
+
+\subsection{Virgule fixe}
+
+Le principe des nombres à virgule fixe est de stocker les nombres en tant qu'entiers et d'y appliquer un facteur d'ajustement constant. Ainsi, on peut décider que le nombre représenté est égal à l'entier divisé par 10'000. Lorsqu'on veut avoir plus de chiffres après la virgule, on réduit également la valeur maximale que peut stocker ce type. Ce format a ainsi des limites importantes. La virgule fixe est utilisée lorsque le processeur ne possède pas de d'unité de calcul pour la virgule flottante.
+
+\subsection{Virgule flottante}
+
+Le principal problème de la virgule fixe est qu'il est impossible de stocker à la fois un nombre très grand et un nombre très petit dans le même format. Il est cependant possible d'utiliser les bits à disposition de façon plus intelligente. Les nombres réels peuvent aussi être stockées sous la forme d'une notation scientifique tel que: $-2.568 * 10^{-6}$. Ainsi, les nombres peuvent être représentés sous la forme suivante: $signe * mantisse * base^{exposant}$. Parmi ces quatre éléments, la base n'est pas stockée. La base est souvent égale à 2.
+
+Les ordinateurs actuels utilisent tous les nombres à virgule flottante et la spécification a été révisée en 2019 \cite{ieee-754-2019}.
+
+\subsection{Unums}
+
+Les \textbf{universal numbers} (\textbf{unums}) sont un nouveau format de stockage dont la première version a été publié en 2015 par M. John L. Gustafson. Durant les années suivantes, les unums ont été modifiés a deux reprises. La liste des versions des unums sont visibles dans l'introduction de l'arithmétique des posits (unums III) \cite{posit-arithmetic}.
+
+Le créateur des unums comparent les différents versions des unums avec la virgule flottante et affirme qu'ils sont meilleurs dans tous les cas dans sa présentation lors d'un séminaire à Stanford \cite{youtube-beyond-floating-point}. D'après lui, les unums offrent, entre autres, :
+
+\begin{itemize}
+    \item Une meilleure précision
+    \item Une gamme dynamique plus large
+    \item Meilleures réponses avec le même nombre de bits
+    \item Réduction de la consommation d'énergie et de la latence
+\end{itemize}
+
+Beaucoup plus d'informations sur les unums sont également disponibles sur le site \url{posithub.org} \cite{posithub}.
+

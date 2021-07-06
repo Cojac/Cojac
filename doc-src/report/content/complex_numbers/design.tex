@@ -27,7 +27,7 @@ if (a == 0) {
 }
 \end{minted}
 
-Si la variable \textit{a} est purement réel, ce code doit fonctionner. Cependant il y a un problème si la variable \textit{a} est complexe. Pour cet exemple, la valeur de \textit{a} sera \textit{2i}. Lorsque le remplacement de cet opération est faite, la méthode doit comparer ces deux nombres (\textit{2i} et 0) et retourner une valeur parmi les trois suivantes:
+Si la variable \textit{a} est purement réelle, ce code doit fonctionner. Cependant il y a un problème si la variable \textit{a} est complexe. Pour cet exemple, la valeur de \textit{a} sera \textit{2i}. Lorsque le remplacement de cette opération est faite, la méthode doit comparer ces deux nombres (\textit{2i} et 0) et retourner une valeur parmi les trois suivantes:
 
 \begin{itemize}
     \item \textit{2i} < 0
@@ -71,7 +71,7 @@ Quant à lui, le mode strict offrira une comparaison mathématiquement correcte.
 
 Lors du cast d'un nombre complexe en nombre réel, la présence d'une partie imaginaire générera une erreur. S'il n'y a qu'une partie réelle, le cast fonctionnera.
 
-De plus, une méthode magique permettra de vérifier l'égalité de deux nombres complexes. Elle retournera un booléen même en cas d'inégalité. Deux méthodes magiques permettant de garder que la partie réelle ou imaginaire d'un nombre complexe sera aussi disponible et permettra à l'utilisateur d'implémenter lui-même la comparaison entre les nombres complexes.
+De plus, une méthode magique permettra de vérifier l'égalité de deux nombres complexes. Elle retournera un booléen même en cas d'inégalité. Deux méthodes magiques permettant de garder seulement la partie réelle ou imaginaire d'un nombre complexe sera aussi disponible et permettra à l'utilisateur d'implémenter lui-même la comparaison entre les nombres complexes.
 
 Ce mode offre les avantages suivants:
 \begin{itemize}
