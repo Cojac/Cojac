@@ -1,0 +1,148 @@
+%%
+%% This is file `./samples/minutes.tex',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% meetingmins.dtx  (with options: `minutes')
+%% ----------------------------------------------------------------------
+%% 
+%% meetingmins - A LaTeX class for formatting minutes of meetings
+%% 
+%% Copyright (C) 2011-2013 by Brian D. Beitzel <brian@beitzel.com>
+%% 
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL), either
+%% version 1.3c of this license or (at your option) any later
+%% version.  The latest version of this license is in the file:
+%% 
+%% http://www.latex-project.org/lppl.txt
+%% 
+%% Users may freely modify these files without permission, as long as the
+%% copyright line and this statement are maintained intact.
+%% 
+%% ----------------------------------------------------------------------
+%% 
+\documentclass[11pt]{meetingmins}
+
+
+\usepackage{hyperref}
+\usepackage{tabularx}
+
+% To include images
+\usepackage{graphicx}
+
+% text color
+\usepackage{xcolor}
+
+
+%% CONFIG %%
+% Default image directory
+\graphicspath{{images/}}
+
+
+\setcommittee{Intégration des nombres complexes et des Unums en Java avec COJAC}
+
+\setmembers{
+    Frédéric Bapst (Superviseur),
+    Cédric Tâche (Etudiant)
+}
+
+\setpresent{
+    Frédéric Bapst (Superviseur),
+    Cédric Tâche (Etudiant)
+}
+
+\setlength{\headheight}{13.6pt}
+
+\date{7 juillet 2021}
+
+\begin{document}
+
+\begin {center} {
+    \large \textbf {Intégration des nombres complexes et des Unums en Java avec COJAC}
+}
+\vspace {0.5ex}
+
+PV de la séance du 7 juillet 2021 (9h30 - 10h15) via Teams
+\end {center} \vspace {1.5em}
+
+\noindent
+\textbf{Présents:} Frédéric Bapst, Cédric Tâche
+
+\section{Ordre du jour}
+Les points suivants ont été abordés durant la séance:
+\begin{hiddenitems}
+    \item Validation du PV du 30 juin 2021
+    \item Rapport v0.6
+    \item Intégration des unums
+    \item Planification
+\end{hiddenitems}
+
+\section{PV}
+\begin{hiddenitems}
+    \item Le PV du 30 juin a été validé
+\end{hiddenitems}
+
+\section{Rapport}
+\begin{hiddenitems}
+    \item Des parenthèses sont manquantes dans la formule à propos de la démonstration des unums.
+    \item Le premier exemple de la démonstration est intéressant, mais il n'est pas certain que les posits 32 bits suffisent.
+    \item Le deuxième exemple ne montre pas d'amélioration avec les unums. Cependant, vu que des posits 32 bits sont utilisés, ils peuvent être comparés avec des floats, qui sont incapables d'obtenir le résultat correct.
+\end{hiddenitems}
+
+\section{Intégration des unums}
+\begin{hiddenitems}
+    \item L'approche choisie est d'utiliser les posits 32 bits de la librairie \textit{SoftPosit} avec une passerelle JNI pour utiliser les unums.
+    \item Le chargement de la librairie fonctionne avec la librairie \textit{System.load}, mais pas avec la méthode \textit{System.loadLibrary}.
+    \item Une classe \textit{NativeUtils} existe et pourrait être utilisée pour charger la librairie native.
+    \item Le fonctionnement exact des unums ne pourra pas être vérifier, mais la librairie est censée être testée.
+    \item L'intégration des unums pourra être testée. Le résultat du programme instrumenté sera comparé avec le résultat de la librairie native.
+\end{hiddenitems}
+
+\section{Résumé}
+\begin{hiddenitems}
+    \item Le résumé en allemand est obligatoire. Une version en français peut aussi être ajoutée, mais elle est facultative.
+    \item Le modèle des années précédentes pouvait ne pas fonctionner sur certaines plateformes ou avec Libroffice. Ce n'est pas forcément le cas avec celui de cette année.
+\end{hiddenitems}
+
+\section{Planification}
+\begin{hiddenitems}
+    \item Le projet a actuellement environ 2 jours de retard sur la planification.
+\end{hiddenitems}
+
+\section{Prochaines tâches}
+\begin{hiddenitems}
+    \item Implémentation du wrapper pour les unums et de la passerelle
+    \item Tests de l'intégration des unums
+\end{hiddenitems}
+
+\vspace{1em}
+\par \noindent \textbf {Prochaine séance:} Le mercredi 14 juillet 2021 à 9h30
+
+\end{document}
+%% 
+%% Copyright (C) 2011-2013 by Brian D. Beitzel <brian@beitzel.com>
+%% 
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL), either
+%% version 1.3c of this license or (at your option) any later
+%% version.  The latest version of this license is in the file:
+%% 
+%% http://www.latex-project.org/lppl.txt
+%% 
+%% Users may freely modify these files without permission, as long as the
+%% copyright line and this statement are maintained intact.
+%% 
+%% This work is "maintained" (as per LPPL maintenance status) by
+%% Brian D. Beitzel.
+%% 
+%% This work consists of the file  meetingmins.dtx
+%% and the derived files           meetingmins.cls,
+%%                                 sampleminutes.tex,
+%%                                 department.min,
+%%                                 README.txt, and
+%%                                 meetingmins.pdf.
+%% 
+%%
+%% End of file `./samples/minutes.tex'.
