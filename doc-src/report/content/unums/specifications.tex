@@ -6,7 +6,7 @@ Les calculs seront réalisé avec les unums autant que possible. Les \textit{flo
 
 La démonstration se base sur deux exemples donnés par M. John L. Gustafson.
 
-En utilisant les formules suivantes: $E(0) = 1, E(z) = {e^z - 1}/z, Q(x) = |x - \sqrt{x^2 + 1}| - 1/{x+\sqrt{x^2 + 1}}$, la fonction suivante $H(x) = E(Q(x)^2)$ évaluée avec les valeurs 15, 16, 17 et 9999 doit valoir 1.
+En utilisant les formules suivantes: $E(0) = 1, E(z) = \frac{e^z - 1}{z}, Q(x) = |x - \sqrt{x^2 + 1}| - \frac{1}{x+\sqrt{x^2 + 1}}$, la fonction suivante $H(x) = E(Q(x)^2)$ évaluée avec les valeurs 15, 16, 17 et 9999 doit valoir 1.
 
 Lorsque ce calcul est réalisé en \textit{double precision}, le résultat est toujours 0. Le code utilisé est le suivant:
 
@@ -41,20 +41,20 @@ Le deuxième exemple est un produit scalaire de 2 vecteurs particuliers. Lors de
 Le produit scalaire est implémenté de la manière suivante:
 
 \begin{minted}{Java}
-public static double scalarProduct(double[] a, double[] b) {
+public static float scalarProduct(float[] a, float[] b) {
     assert (a.length == b.length);
-    double result = 0.;
+    float result = 0f;
     for (int i = 0; i < a.length; i++) {
-        result += a[i] * b[i];
+        result = Math.fma(a[i], b[i], result);
     }
     return result;
 }
 
 public static void main(String[] args) {
     // example from https://youtu.be/aP0Y1uAA-2Y?t=104
-    double[] a = new double[]{3.2e7, 1, -1, 8.0e7};
-    double[] b = new double[]{4.0e7, 1, -1, -1.6e7};
-    double result = scalarProduct(a, b);
+    float[] a = new float[]{3.2e7f, 1, -1, 8.0e7f};
+    float[] b = new float[]{4.0e7f, 1, -1, -1.6e7f};
+    float result = scalarProduct(a, b);
     System.out.println(result + " should be 2.0");
 }
 \end{minted}

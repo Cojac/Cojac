@@ -4,19 +4,25 @@ Ce chapitre contient la conception de l'intégration des unums dans COJAC.
 
 \subsection{Librairie}
 
-Plusieurs librairies existantes permettent de gérer des unums. Cependant, aucune librairie n'a été trouvée pour Java. La librairie, qui est de loin la plus complète et documentée, est une librairie C++ nommée \textbf{universal} \cite{universal-github}.
+Plusieurs librairies existantes permettent de gérer des unums. Cependant, aucune librairie n'a été trouvée pour Java.
+
+Deux librairies avancées différentes ont été trouvées:
+\begin{itemize}
+    \item \textbf{Universal} \cite{universal-github}, une librairie C++
+    \item \textbf{SoftPosit} \cite{softposit-github}, une librairie C
+\end{itemize}
 
 \subsection{Approche}
 
 Deux approches principales sont disponibles:
 \begin{itemize}
-    \item Créer une passerelle vers la librairie universal native \cite{universal-github}.
+    \item Créer une passerelle vers une librairie native.
     \item Implémenter les unums en Java.
 \end{itemize}
 
 Ces approches sont très différentes et possèdent chacune des avantages et inconvénients différents.
 
-\subsubsection{Passerelle vers une librairie native}
+\subsubsection{Passerelle vers la librairie native \textit{universal}}
 
 Avantages:
 \begin{itemize}
@@ -29,6 +35,21 @@ Inconvénients:
     \item Il faut également écrire du code natif pour faire la passerelle.
     \item Il est aussi nécessaire de libérer la mémoire lorsqu'il n'y a plus besoin de la classe.
     \item Des problèmes peuvent survenir en cas de concurrence.
+\end{itemize}
+
+\subsubsection{Passerelle vers la librairie native \textit{SoftPosit}}
+
+Avantages:
+\begin{itemize}
+    \item Les posits 8 et 16 bits ont beaucoup de tests. Le posit 32 bits est aussi testé, mais il peut encore y avoir des problèmes.
+    \item Pas besoin d'alouer et libérer de la mémoire
+\end{itemize}
+
+Inconvénients:
+\begin{itemize}
+    \item Cette option ne fonctionnera que sur certaines plateformes.
+    \item Il faut également écrire du code natif pour faire la passerelle.
+    \item La librairie ne contient pas de posit 64 bits.
 \end{itemize}
 
 \subsubsection{Implémenter les unums en Java}
@@ -50,6 +71,24 @@ La passerelle vers la librairie native a deux défauts importants:
 \begin{itemize}
     \item Il n'est pas possible de supporter toutes les plateformes. Cependant, le plugin NAR \cite{nar-maven-plugin} peut aider à supporter plus de plateformes.
     \item La librairie \textit{universal} fonctionne avec une classe C++. Ainsi, il est nécessaire de créer un objet et de garder cette instance. Cependant, la libération de la mémoire est un problème parce que la méthode \textit{finalize} qui pourrait être utilisée est dépréciée depuis Java 9 \cite{java-finalize-documentation}. Il est aussi possible de recréer une classe à chaque fois, mais cela réduira largement les performances.
+    \item La librairie \textit{SoftPosit}
 \end{itemize}
 
-Ainsi, cette fonctionnalité sera implémentée en Java dans une classe dédiée afin de pouvoir l'extraire dans un nouveau dépôt dans le futur. L'implémentation se basera sur l'implémentation de la librairie \textit{universal} qui possède une license MIT et sur les spécifications des unums.
+Bien que la librairie \textit{SoftPosit} ne contienne pas de posit 64 bits, elle sera tout de même utilisé pour plusieurs raisons:
+\begin{itemize}
+    \item L'implémentation a été testée et les bugs devraient être rares.
+    \item Une meilleure implémentation avec ses tests nécessiterait plus de temps qu'il reste d'ici la fin du projet.
+    \item Si une implémentation 64 bits est ajoutée dans la librairie, elle pourra facilement être intégrée à COJAC.
+    \item En cas de bugs ou de modifications de la spécification, il est assez probable que d'autres personnes mettent à jour la librairie
+    \item La précision des posits 32 bits pourront tout de même être comparés avec les \textit{floats}.
+\end{itemize}
+
+\subsection{Passerelle vers le code natif}
+
+Plusieurs alternatives existent pour faire la passerelle depuis le code Java vers le code natif en C:
+\begin{itemize}
+    \item JNI
+    \item JNA
+    \item SWIG
+\end{itemize}
+
