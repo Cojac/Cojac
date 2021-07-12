@@ -1,0 +1,146 @@
+%%
+%% This is file `./samples/minutes.tex',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% meetingmins.dtx  (with options: `minutes')
+%% ----------------------------------------------------------------------
+%% 
+%% meetingmins - A LaTeX class for formatting minutes of meetings
+%% 
+%% Copyright (C) 2011-2013 by Brian D. Beitzel <brian@beitzel.com>
+%% 
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL), either
+%% version 1.3c of this license or (at your option) any later
+%% version.  The latest version of this license is in the file:
+%% 
+%% http://www.latex-project.org/lppl.txt
+%% 
+%% Users may freely modify these files without permission, as long as the
+%% copyright line and this statement are maintained intact.
+%% 
+%% ----------------------------------------------------------------------
+%% 
+\documentclass[11pt]{meetingmins}
+
+
+\usepackage{hyperref}
+\usepackage{tabularx}
+
+% text color
+\usepackage{xcolor}
+
+
+\setcommittee{Intégration des nombres complexes et des Unums en Java avec COJAC}
+
+\setmembers{
+    Baptiste Wicht (Expert),
+    Cédric Tâche (Etudiant)
+}
+
+\setpresent{
+    Baptise Wicht (Expert),
+    Cédric Tâche (Etudiant)
+}
+
+\setlength{\headheight}{13.6pt}
+
+\date{12 juillet 2021}
+
+\begin{document}
+
+\begin {center} {
+    \large \textbf {Intégration des nombres complexes et des Unums en Java avec COJAC}
+}
+\vspace {0.5ex}
+
+PV de la séance du 12 juillet 2021 (17h00 - 17h30) via Teams
+\end {center} \vspace {1.5em}
+
+\noindent
+\textbf{Présents:} Cédric Tâche (Etudiant), Baptise Wicht (Expert)
+
+\section{Ordre du jour}
+Les points suivants ont été abordés durant la séance:
+\begin{hiddenitems}
+    \item Rapport
+    \item Intégration des nombres complexes
+    \item Intégration des unums
+    \item Planification
+    \item Fin du projet
+\end{hiddenitems}
+
+\section{Intégration des nombres complexes}
+\begin{hiddenitems}
+    \item Quelques bugs étaient encore présents dans les nombres complexes.
+    \item Des tests ont été ajoutés pour assurer le fonctionnement des nombres complexes. Les tests unitaires couvrent 100\% du wrapper.
+    \item Des tests d'intégration sont également présents.
+\end{hiddenitems}
+
+\section{Intégration des unums}
+\begin{hiddenitems}
+    \item Les spécifications des Posits listent les fonctions qui doivent être implémentées, mais ne donnent pas d'information sur la manière dont elles peuvent être implémentées.
+    \item Les Posits (Unum III) sont implémentés avec une passerelle vers la librairie native SoftPosit. Cependant, elle ne supporte que des posits 8, 16 et 32 bits.
+    \item Les Posits sont utilisés autant que possibles pour le stockage des nombres et les calculs. Les autres méthodes  qui ne sont pas implémentées par la librairie sont effectuées avec des nombres à virgule flottante.
+    \item JNI est utilisé pour réaliser la passerelle vers le code natif pour des raisons de documentation et de performances.
+    \item Les tests unitaires couvrent 100\% du wrapper. Les tests d'intégration vérifient que l'instrumentation donne effectivement le même résultat que la librairie native.
+    \item La démonstration donne des résultats égaux ou pires avec les Posits qu'avec les nombres à virgule flottante.
+\end{hiddenitems}
+
+\section{Planification}
+\begin{hiddenitems}
+    \item L'intégration des nombres complexes à pris 2 jours de plus que prévu, à cause des bugs et des tests supplémentaires ajoutés.
+    \item La correction d'un bug dans COJAC qui faisait échouer le GitLab CI a retardé le projet d'environ 0.5 jour.
+    \item La mise à jour des librairies n'a pas été faite pour rattraper 1 jour.
+    \item Un jour de retard est aussi dû au décès et à l'enterrement de l'oncle de M. Tâche.
+    \item Finalement, le projet est à nouveau en accord avec la planification.
+\end{hiddenitems}
+
+\section{Problèmes restants}
+\begin{itemize}
+    \item La librairie native doit encore être compilée pour plusieurs plateformes.
+    \item La compilation de la librairie native pourrait aussi être inclue dans la configuration Maven, mais il est difficile de compiler les librairies pour d'autres plateformes depuis Windows.
+\end{itemize}
+
+\section{Autres}
+\begin{itemize}
+    \item M. Bapst et M. Wicht seront notifiés lorsque le rapport sera rendu.
+    \item Il faut aussi faire le résumé.
+\end{itemize}
+
+\section{Rapport}
+\begin{itemize}
+    \item L'implémentation et les tests des unums doivent être documentés.
+    \item Des corrections mentionnées dans des précédents PV doivent encore être effectuées.
+    \item Il manque aussi la conclusion.
+    \item Certaines parties du rapport devraient encore être améliorées.
+\end{itemize}
+
+\end{document}
+%% 
+%% Copyright (C) 2011-2013 by Brian D. Beitzel <brian@beitzel.com>
+%% 
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL), either
+%% version 1.3c of this license or (at your option) any later
+%% version.  The latest version of this license is in the file:
+%% 
+%% http://www.latex-project.org/lppl.txt
+%% 
+%% Users may freely modify these files without permission, as long as the
+%% copyright line and this statement are maintained intact.
+%% 
+%% This work is "maintained" (as per LPPL maintenance status) by
+%% Brian D. Beitzel.
+%% 
+%% This work consists of the file  meetingmins.dtx
+%% and the derived files           meetingmins.cls,
+%%                                 sampleminutes.tex,
+%%                                 department.min,
+%%                                 README.txt, and
+%%                                 meetingmins.pdf.
+%% 
+%%
+%% End of file `./samples/minutes.tex'.
