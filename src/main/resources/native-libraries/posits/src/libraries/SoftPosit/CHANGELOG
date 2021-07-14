@@ -1,0 +1,50 @@
+V0.4RC
+1) Added support for P32
+2) Fixed Quire32 bugs (for both fdp add and sub)
+3) Multiple Python bug fixes.
+4) Added support of PX_2 (where X=2 to 32). NaR will be returned for X>32 and X<2. C++ support is still missing.
+
+
+V0.3.2
+
+1) Fixed lt, le and eq. int_fast16_t types cannot represent negative numbers 
+correctly. Use int16_t type instead. Thanks Shinyee for finding the bug.
+2) Minor fixes
+3) Added CPP wrapper with operator overloading
+3) Updated to support python
+
+V0.3.1:
+
+Changes:
+1) Update include files.
+
+V0.3:
+
+Full posit16_t (es=1) and posit8_t (es=0) support.
+es: exponential size
+
+Changes:
+1) convertQ16ToP16 will be deprecated. New function name: q16_to_p16
+2) New cast type support. 
+   To cast posit binary expressed in unsigned integer into positx_t type:
+	posit16_t castP16(uint16_t)
+	posit8_t castP8(uint8_t)
+   To cast positx_t to posit binary expressed in unsigned integer
+	uint16_t castUI16(posit16_t)
+	uint8_t castUI8(posit8_t)
+3) Helper functions renamed:
+	convertP16ToDec_f to convertP16ToDouble
+	convertdoubleToP16 to convertDoubleToP16
+4) Full P8 support
+
+V0.2:
+
+Full posit16_t (16-bit posit with 1 exponent bit) support
+Added four functions:
+1) convert unsigned int to posit16_t
+2) convert unsigned long int to posit16_t
+3) convert int to posit16_t
+4) convert long int to posit16_t
+
+Bug fix:
+1) Fixed p16_mulAdd bug (https://gitlab.com/cerlane/SoftPosit/issues/1) 
