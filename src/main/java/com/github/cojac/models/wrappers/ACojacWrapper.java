@@ -26,7 +26,7 @@ public abstract class ACojacWrapper implements Comparable<ACojacWrapper>{
     // public ACojacWrapper(ACojacWrapper v) { }
 
     //-------------------------------------------------------------------------
-    
+
     public abstract ACojacWrapper dadd(ACojacWrapper b);
     public abstract ACojacWrapper dsub(ACojacWrapper b);
     public abstract ACojacWrapper dmul(ACojacWrapper b);
@@ -34,7 +34,7 @@ public abstract class ACojacWrapper implements Comparable<ACojacWrapper>{
     public abstract ACojacWrapper drem(ACojacWrapper b);
     public abstract ACojacWrapper dneg();
     public abstract double toDouble();
-    
+
     public int dcmpl(ACojacWrapper b) {
         if (this.isNaN() || b.isNaN()) return -1;
         return this.compareTo(b);
@@ -80,6 +80,10 @@ public abstract class ACojacWrapper implements Comparable<ACojacWrapper>{
     public abstract ACojacWrapper math_pow(ACojacWrapper b);
     // TODO make this abstract and implement it for all wrappers
     public ACojacWrapper math_hypot(ACojacWrapper b) { throw new UnsupportedOperationException();}
+
+    public ACojacWrapper math_fma(ACojacWrapper a, ACojacWrapper b) {
+        return this.dmul(a).dadd(b);
+    }
     
     public boolean isNaN() {
         return Double.isNaN(toDouble());
@@ -87,7 +91,7 @@ public abstract class ACojacWrapper implements Comparable<ACojacWrapper>{
     //-------------------------------------------------------------------------
     /** wasFromFloat can be used to distinguish two kinds of numbers */
     public abstract ACojacWrapper fromDouble(double a, boolean wasFromFloat);
-    // TODO make this abstract and implement it for all wrappers
+
     public ACojacWrapper fromString(String a, boolean wasFromFloat){
         return fromDouble(Double.parseDouble(a), wasFromFloat);
     }
@@ -119,5 +123,4 @@ public abstract class ACojacWrapper implements Comparable<ACojacWrapper>{
 
     // Only 2 magic methods are common; the others will be specific...
     public abstract String wrapperName();
-
 }
