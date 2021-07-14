@@ -22,12 +22,17 @@ public class Posit32Utils {
     public static void loadLibrary() {
         String libRoot = "/native-libraries/posits/";
         String winLib64 = libRoot + "posits_jni.dll";
+        String linLib64 = libRoot + "libposits_jni.so";
         String OSName = System.getProperty("os.name");
         int arch = Integer.parseInt(System.getProperty("sun.arch.data.model"));
         try {
             if (OSName.startsWith("Windows")) {
                 if (arch == 64) {
                     NativeUtils.loadLibraryFromJar(winLib64);
+                }
+            } else if (OSName.startsWith("Linux")) {
+                if (arch == 64) {
+                    NativeUtils.loadLibraryFromJar(linLib64);
                 }
             } else {
                 throw new UnsupportedOperationException("This operation is not supported on this platform");
