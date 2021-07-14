@@ -1,0 +1,144 @@
+%%
+%% This is file `./samples/minutes.tex',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% meetingmins.dtx  (with options: `minutes')
+%% ----------------------------------------------------------------------
+%% 
+%% meetingmins - A LaTeX class for formatting minutes of meetings
+%% 
+%% Copyright (C) 2011-2013 by Brian D. Beitzel <brian@beitzel.com>
+%% 
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL), either
+%% version 1.3c of this license or (at your option) any later
+%% version.  The latest version of this license is in the file:
+%% 
+%% http://www.latex-project.org/lppl.txt
+%% 
+%% Users may freely modify these files without permission, as long as the
+%% copyright line and this statement are maintained intact.
+%% 
+%% ----------------------------------------------------------------------
+%% 
+\documentclass[11pt]{meetingmins}
+
+
+\usepackage{hyperref}
+\usepackage{tabularx}
+
+% To include images
+\usepackage{graphicx}
+
+% text color
+\usepackage{xcolor}
+
+
+%% CONFIG %%
+% Default image directory
+\graphicspath{{images/}}
+
+
+\setcommittee{Intégration des nombres complexes et des Unums en Java avec COJAC}
+
+\setmembers{
+    Frédéric Bapst (Superviseur),
+    Cédric Tâche (Etudiant)
+}
+
+\setpresent{
+    Frédéric Bapst (Superviseur),
+    Cédric Tâche (Etudiant)
+}
+
+\setlength{\headheight}{13.6pt}
+
+\date{14 juillet 2021}
+
+\begin{document}
+
+\begin {center} {
+    \large \textbf {Intégration des nombres complexes et des Unums en Java avec COJAC}
+}
+\vspace {0.5ex}
+
+PV de la séance du 14 juillet 2021 (9h30 - 10h00) via Teams
+\end {center} \vspace {1.5em}
+
+\noindent
+\textbf{Présents:} Frédéric Bapst, Cédric Tâche
+
+\section{Ordre du jour}
+Les points suivants ont été abordés durant la séance:
+\begin{hiddenitems}
+    \item Validation du PV du 7 juillet 2021
+    \item Intégration des unums
+    \item Planification
+    \item Fin du projet
+\end{hiddenitems}
+
+\section{PV}
+\begin{hiddenitems}
+    \item Le PV du 7 juillet a été validé
+\end{hiddenitems}
+
+\section{Visite d'expert}
+\begin{hiddenitems}
+    \item Il n'y a pas de gros problèmes avec le projet, car les fonctionnalités sont implémentées même si le résultat n'est pas celui espéré.
+    \item M. Bapst et M. Wicht seront notifiés lorsque les documents seront rendus sur le Git.
+\end{hiddenitems}
+
+\section{Intégration des unums}
+\begin{hiddenitems}
+    \item JNI est utilisé pour réaliser la passerelle vers le code natif pour des raisons de documentation et de performances.
+    \item Les tests unitaires couvrent 100\% du wrapper. Les tests d'intégration vérifient que l'instrumentation donne effectivement le même résultat que la librairie native.
+    \item La démonstration donne des résultats égaux ou pires avec les Posits qu'avec les nombres à virgule flottante.
+    \item Ce serait bien que la démonstration puisse montrer un exemple où les posits sont meilleurs.
+    \item Il est possible de demander aux développeurs de SoftPosit s'ils connaissent un exemple où les Posits seraient meilleurs.
+    \item Ce serait bien de push le code rapidement afin que M. Bapst puisse y jeter un oeil.
+    \item Les arguments des méthodes de la classe \textit{Posit32Utils} pourraient être expliqués en commentaire.
+\end{hiddenitems}
+
+\section{Planification}
+\begin{hiddenitems}
+    \item Le projet est en accord avec la planification.
+    \item Le rapport, le résumé et le code doivent être rendus avant le vendredi 16 juillet 17h00.
+    \item Le poster est à rendre au plus tard le 27 août.
+\end{hiddenitems}
+
+\section{Prochaines tâches}
+\begin{itemize}
+    \item Finir le résumé en français
+    \item Ecrire le résumé en allemand
+    \item Push le code sur le dépôt Gi
+    \item Finir le rapport
+\end{itemize}
+
+\end{document}
+%% 
+%% Copyright (C) 2011-2013 by Brian D. Beitzel <brian@beitzel.com>
+%% 
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL), either
+%% version 1.3c of this license or (at your option) any later
+%% version.  The latest version of this license is in the file:
+%% 
+%% http://www.latex-project.org/lppl.txt
+%% 
+%% Users may freely modify these files without permission, as long as the
+%% copyright line and this statement are maintained intact.
+%% 
+%% This work is "maintained" (as per LPPL maintenance status) by
+%% Brian D. Beitzel.
+%% 
+%% This work consists of the file  meetingmins.dtx
+%% and the derived files           meetingmins.cls,
+%%                                 sampleminutes.tex,
+%%                                 department.min,
+%%                                 README.txt, and
+%%                                 meetingmins.pdf.
+%% 
+%%
+%% End of file `./samples/minutes.tex'.
