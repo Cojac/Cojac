@@ -4,7 +4,7 @@ import java.io.IOException;
 
 /*
 Generate header:
-- cojac\src\main\java>javac -h ..\..\native\include\ com\github\cojac\\utils\Posit32Utils.java
+- src\main\java> javac -h ..\resources\native-libraries\posits\src\include com\github\cojac\\utils\Posit32Utils.java
  */
 
 /**
