@@ -183,6 +183,10 @@ public class CommonDouble extends Number implements Comparable<CommonDouble>{
     public static CommonDouble math_hypot(CommonDouble a, CommonDouble b) {
         return new CommonDouble(a.val.math_hypot(b.val));
     }
+
+    public static CommonDouble math_fma(CommonDouble a, CommonDouble b, CommonDouble c){
+        return new CommonDouble(a.val.math_fma(b.val, c.val));
+    }
     	
     //-------------------------------------------------------------------------
     //----------------- Necessarily static methods ----------------------------
