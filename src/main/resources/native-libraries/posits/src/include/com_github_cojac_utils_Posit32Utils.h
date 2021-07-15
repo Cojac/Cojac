@@ -9,6 +9,22 @@ extern "C" {
 #endif
 /*
  * Class:     com_github_cojac_utils_Posit32Utils
+ * Method:    toFloat
+ * Signature: (F)F
+ */
+JNIEXPORT jfloat JNICALL Java_com_github_cojac_utils_Posit32Utils_toFloat
+  (JNIEnv *, jclass, jfloat);
+
+/*
+ * Class:     com_github_cojac_utils_Posit32Utils
+ * Method:    toPosit
+ * Signature: (F)F
+ */
+JNIEXPORT jfloat JNICALL Java_com_github_cojac_utils_Posit32Utils_toPosit
+  (JNIEnv *, jclass, jfloat);
+
+/*
+ * Class:     com_github_cojac_utils_Posit32Utils
  * Method:    add
  * Signature: (FF)F
  */
@@ -41,27 +57,19 @@ JNIEXPORT jfloat JNICALL Java_com_github_cojac_utils_Posit32Utils_divide
 
 /*
  * Class:     com_github_cojac_utils_Posit32Utils
- * Method:    toFloat
- * Signature: (F)F
- */
-JNIEXPORT jfloat JNICALL Java_com_github_cojac_utils_Posit32Utils_toFloat
-  (JNIEnv *, jclass, jfloat);
-
-/*
- * Class:     com_github_cojac_utils_Posit32Utils
- * Method:    toPosit
- * Signature: (F)F
- */
-JNIEXPORT jfloat JNICALL Java_com_github_cojac_utils_Posit32Utils_toPosit
-  (JNIEnv *, jclass, jfloat);
-
-/*
- * Class:     com_github_cojac_utils_Posit32Utils
  * Method:    sqrt
  * Signature: (F)F
  */
 JNIEXPORT jfloat JNICALL Java_com_github_cojac_utils_Posit32Utils_sqrt
   (JNIEnv *, jclass, jfloat);
+
+/*
+ * Class:     com_github_cojac_utils_Posit32Utils
+ * Method:    fma
+ * Signature: (FFF)F
+ */
+JNIEXPORT jfloat JNICALL Java_com_github_cojac_utils_Posit32Utils_fma
+  (JNIEnv *, jclass, jfloat, jfloat, jfloat);
 
 /*
  * Class:     com_github_cojac_utils_Posit32Utils
@@ -86,14 +94,6 @@ JNIEXPORT jboolean JNICALL Java_com_github_cojac_utils_Posit32Utils_isLess
  */
 JNIEXPORT jboolean JNICALL Java_com_github_cojac_utils_Posit32Utils_isLessOrEquals
   (JNIEnv *, jclass, jfloat, jfloat);
-
-/*
- * Class:     com_github_cojac_utils_Posit32Utils
- * Method:    fma
- * Signature: (FFF)F
- */
-JNIEXPORT jfloat JNICALL Java_com_github_cojac_utils_Posit32Utils_fma
-  (JNIEnv *, jclass, jfloat, jfloat, jfloat);
 
 #ifdef __cplusplus
 }
