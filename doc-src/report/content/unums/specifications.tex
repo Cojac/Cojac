@@ -1,6 +1,6 @@
 \section{Spécifications}
 
-Les calculs seront réalisé avec les unums autant que possible. Les \textit{floats} et les \textit{doubles} auront le même comportement pour les autres méthodes (\textit{toString}, \textit{parseDouble}, etc.). Les unums doivent fonctionner au moins sur une plateforme. Si seulement quelques plateformes sont supportés, il est nécessaire de décrire la procédure pour porter cette fonctionnalité sur une nouvelle plateforme.
+Les calculs seront réalisé avec les \glspl{Unums} autant que possible. Les \textit{floats} et les \textit{doubles} auront le même comportement pour les autres méthodes (\textit{toString}, \textit{parseDouble}, etc.). Les \glspl{Unums} doivent fonctionner au moins sur une plateforme. Si seulement quelques plateformes sont supportés, il est nécessaire de décrire la procédure pour porter cette fonctionnalité sur une nouvelle plateforme.
 
 \section{Démonstration}
 
@@ -38,6 +38,7 @@ public static void main(String[] args) {
 
 Le deuxième exemple est un produit scalaire de 2 vecteurs particuliers. Lors des tests, le \textit{double precision} est suffisant pour obtenir le bon résultat contrairement aux résultats obtenus par M. John L. Gustafson. Ceci peut s'expliquer par le fait que les calculs ne sont pas forcément identiques entre des machines différentes et que la norme IEEE-754 \cite{ieee-754-2019} a de nombreuses options facultatives.
 
+\begin{minipage2}
 Le produit scalaire est implémenté de la manière suivante:
 
 \begin{minted}{Java}
@@ -58,3 +59,6 @@ public static void main(String[] args) {
     System.out.println(result + " should be 2.0");
 }
 \end{minted}
+\end{minipage2}
+
+La longueur minimale pour que ces exemples fonctionnent n'est pas connue.

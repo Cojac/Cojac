@@ -1,10 +1,10 @@
 \section{Spécifications}
 
-L'intégration des nombres complexes doit permettre de pouvoir réaliser toutes les opérations arithmétiques standards comme l'addition ou la multiplication. Les comparaisons doivent pouvoir fonctionner avec les nombres réels. Il y aura deux méthodes magiques pour obtenir la partie réelle et imaginaire des nombres complexes. Lorsqu'un nombre complexe sera converti en string, il sera affichée sous sa forme algébrique. Les opérations communes de la librairie standard telles que \textit{Math.sqrt}, \textit{Math.sin}, etc. devront aussi être adaptées.
+L'intégration des \glspl{Complex-number} doit permettre de pouvoir réaliser toutes les opérations arithmétiques standards comme l'addition ou la multiplication. Les comparaisons doivent pouvoir fonctionner avec les nombres réels. Il y aura deux méthodes magiques pour obtenir la partie réelle et imaginaire des \glspl{Complex-number}. Lorsqu'un \gls{Complex-number} sera converti en string, il sera affichée sous sa forme algébrique. Les opérations communes de la librairie standard telles que \textit{Math.sqrt}, \textit{Math.sin}, etc. devront aussi être adaptées.
 
 \section{Démonstration}
 
-Le code suivant sera utilisé pour montrer l'intérêt des nombres complexes. Il permettra aussi de vérifier que l'implémentation des nombres complexes est correcte. Le code suivant permet de trouver une racine d'un polynôme du 3e degré. Les 2 polynômes ont des racines réelles et pourtant, le polynôme $x^3 - 2x^2 - 13x - 10$ produit un \textit{NaN} (not a number) lors du calcul de la racine. Si le calcul est effectué avec des nombres complexes, une des racines devrait être trouvée.
+Le code suivant sera utilisé pour montrer l'intérêt des \glspl{Complex-number}. Il permettra aussi de vérifier que l'implémentation des \glspl{Complex-number} est correcte. Le code suivant permet de trouver une racine d'un polynôme du 3e degré. Les 2 polynômes ont des racines réelles et pourtant, le polynôme $x^3 - 2x^2 - 13x - 10$ produit un \textit{NaN} (not a number) lors du calcul de la racine. Si le calcul est effectué avec des \glspl{Complex-number}, une des racines devrait être trouvée.
 \begin{minted}[breaklines]{Java}
 // Find a root of a cubic equation of the form ax^3 + bx^2 + cx + d = 0 with the general cubic formula
 // This formula can be found on wikipedia: https://en.wikipedia.org/wiki/Cubic_equation#General_cubic_formula

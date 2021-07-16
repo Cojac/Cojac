@@ -33,14 +33,15 @@
 \usepackage{lmodern}
 % For Landscape
 \usepackage{pdflscape}
-% For appendices
-\usepackage[toc,page]{appendix}
 % For glossaries
 \usepackage[nopostdot,section=chapter,numberedsection]{glossaries}
 \usepackage{caption}
 \usepackage{subcaption}
 % because of babel with biblatex
 \usepackage{csquotes}
+% header/footer
+\usepackage{lastpage}
+\usepackage{fancyhdr}
 
 
 %% COMANDS %%
@@ -50,14 +51,11 @@
     \PackageError{Document}{TODO}{#1!}
 }
 % display the inline code with a background and a border
-\newcommand{\inputmintedcolor}[3][firstline=1]{\begin{tcolorbox}\inputminted[breaklines,xleftmargin=20pt,linenos,#1]{#2}{#3}\end{tcolorbox}}
+\newcommand{\inputmintedcolor}[3][firstline=1]{\begin{tcolorbox}\inputminted[breaklines,linenos,xleftmargin=20pt,breakanywhere,#1]{#2}{#3}\end{tcolorbox}}
 % get the type of a section and its number where a label has been defined
 \newcommand*{\fullref}[1]{\hyperref[{#1}]{\autoref*{#1} \nameref*{#1}}}
 % format a title to use in subsection
 \newcommand{\subtitle}[1]{\vspace{5mm}{\large\textsc{\textbf{#1}}} \par}
-% Rename chapter for appendices
-\renewcommand{\appendixpagename}{Annexes}
-\renewcommand{\appendixtocname}{Annexes}
 
 
 %% ENVIRONNMENT %%
@@ -98,6 +96,33 @@
 \clubpenalty10000
 
 
+% header/footer
+\fancypagestyle{toc}{
+    \fancyhf{}
+    
+    \lhead{\projectname}
+    
+    \rhead{Rapport}
+    
+    \cfoot{\thepage}
+    \setlength{\headheight}{15pt}
+    
+    \renewcommand{\headrulewidth}{1.0pt}
+}
+
+\fancypagestyle{content}{
+    \fancyhf{}
+    
+    \lhead{\projectname}
+    
+    \rhead{Rapport}
+    
+    \cfoot{\thepage\ / \pageref{LastPage}}
+    \setlength{\headheight}{15pt}
+    
+    \renewcommand{\headrulewidth}{1.0pt}
+}
+
 %% DOCUMENT INFO %%
 \input{config}
 
@@ -115,6 +140,8 @@
 
 
 %% TABLE OF VERSIONS %%
+
+\pagestyle{toc}
 \pagenumbering{Roman}
 \section *{Table des versions}
 \vspace*{0.5 cm}
@@ -133,6 +160,9 @@
         0.5 & 29.06.2021 & Cédric Tâche & Implémentation et tests des nombres complexes \\
         0.6 & 06.07.2021 & Cédric Tâche & Analyse et Conception des unums \\
         0.7 & 11.07.2021 & Cédric Tâche & Description d'une nouvelle alternative pour l'implémentation des unums \\
+        1.0 & 16.07.2021 & Cédric Tâche & Finalisation de l'intégration des unums \\
+         & & & Ajout d'un glossaire, d'une liste des versions et d'une conclusion \\
+         & & & Amélioration de la mise en page \\
         \hline
     \end{tabularx}
 \end{table}
@@ -152,7 +182,10 @@
 
 
 %% CONTENT %%
+
+\fancypagestyle{plain}{}
 \pagenumbering{arabic}
+\pagestyle{content}
 
 \input{main_content}
 

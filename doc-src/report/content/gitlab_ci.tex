@@ -1,3 +1,19 @@
 \chapter{GitLab CI}
 
-Un fichier \textit{.gitlab-ci.yml} a été ajouté pour configurer le CI sur GitLab. Ce fichier permet d'exécuter les tests et de compiler le JAR.
+Un fichier \textit{.gitlab-ci.yml} a été ajouté pour configurer le CI sur GitLab. Ce fichier permet d'exécuter les tests et de compiler le \gls{JAR}. Il est affiché ci-dessous:
+
+\inputmintedcolor[lastline=14,breakanywhere]{Yaml}{code/.gitlab-ci.yml}
+
+\inputmintedcolor[firstline=15]{Yaml}{code/.gitlab-ci.yml}
+
+Les lignes importantes sont expliquées ci-dessous:
+
+\begin{itemize}
+    \item Ligne 1: Openjdk 11 et \gls{Maven} sont déjà installés dans cette image.
+    \item Lignes 3 à 6: Ces variables sont écrites par défaut lors de la création de ce fichier via l'interface de GitLab pour un projet \gls{Maven}.
+    \item Lignes 8 à 10: Ces lignes permettent de garder les plugins en cache et d'éviter de tous les télécharger à chaque fois.
+    \item Ligne 12: Il n'y a qu'un seul stage exécuté actuellement.
+    \item Lignes 17 à 18: Cette commande va exécuter toutes les étapes du cycle de vie de \gls{Maven} jusqu'au \textit{verify}. Ceci inclus, entre autres, l'exécution des tests, la compilation du \gls{JAR} et la vérification de celui-ci.
+    \item Lignes 21 à 22: Les \gls{JAR} générés sont gardés et peuvent être accédés depuis GitLab.
+    \item Lignes 23 à 36: Les rapports de Surefire sont également gardés. Ils peuvent être utilisés pour comprendre les erreurs lorsque l'exécution des tests échouent.
+\end{itemize}
