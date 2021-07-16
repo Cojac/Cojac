@@ -13,9 +13,7 @@ Generate header:
 public class Posit32Utils {
 
     /*
-     * Loads native libraries for changing the rounding mode.
      * Should be in a "static{}" bloc, but then it would be called even when not needed (I/O -> slowdown).
-     * Therefore, should be called only if native rounding is needed and isNativeLibLoaded == false.
      *
      * Adapted from ConversionBehaviour.loadLibrary()
      * */
