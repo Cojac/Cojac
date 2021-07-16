@@ -1,0 +1,101 @@
+\section{Conception}
+
+Ce chapitre contient la conception de l'intégration des \glspl{Unums} dans \gls{COJAC}.
+
+\subsection{Librairie}
+
+Plusieurs librairies existantes permettent de gérer des \glspl{Unums}. Cependant, aucune librairie n'a été trouvée pour Java.
+
+Deux librairies avancées différentes ont été trouvées:
+\begin{itemize}
+    \item \textbf{\textit{Universal}} \cite{universal-github}, une librairie C++
+    \item \textbf{\Gls{SoftPosit}} \cite{softposit-gitlab}, une librairie C
+\end{itemize}
+
+\subsection{Approche}
+
+Deux approches principales sont disponibles:
+\begin{itemize}
+    \item Créer une passerelle vers une librairie native.
+    \item Implémenter les \glspl{Unums} en Java.
+\end{itemize}
+
+Ces approches sont très différentes et possèdent chacune des avantages et inconvénients différents.
+
+\subsubsection{Passerelle vers la librairie native \textit{universal}}
+
+Avantages:
+\begin{itemize}
+    \item La librairie est complète et testée.
+\end{itemize}
+
+Inconvénients:
+\begin{itemize}
+    \item Cette option ne fonctionnera que sur certaines plateformes.
+    \item Il faut également écrire du code natif pour faire la passerelle.
+    \item Il est aussi nécessaire de libérer la mémoire lorsqu'il n'y a plus besoin de la classe.
+    \item Des problèmes peuvent survenir en cas de concurrence.
+\end{itemize}
+
+\subsubsection{Passerelle vers la librairie native \textit{SoftPosit}}
+
+Avantages:
+\begin{itemize}
+    \item Les \glspl{Posit} 8 et 16 bits ont beaucoup de tests. Le \gls{Posit} 32 bits est aussi testé, mais il peut encore y avoir des problèmes.
+    \item Pas besoin d'alouer et libérer de la mémoire
+\end{itemize}
+
+Inconvénients:
+\begin{itemize}
+    \item Cette option ne fonctionnera que sur certaines plateformes.
+    \item Il faut également écrire du code natif pour faire la passerelle.
+    \item La librairie ne contient pas de \gls{Posit} 64 bits.
+\end{itemize}
+
+\subsubsection{Implémenter les \glspl{Unums} en Java}
+
+Avantages:
+\begin{itemize}
+    \item Le support de toutes les plateformes est gardée.
+\end{itemize}
+
+Inconvénients:
+\begin{itemize}
+    \item La librairie doit être entièrement implémentée, mais la librairie native peut servir de modèle.
+    \item La librairie doit être maintenue. Il est possible de créer un dépôt public séparé afin de laisser d'autres personnes y contribuer.
+\end{itemize}
+
+\subsubsection{Choix}
+
+La passerelle vers la librairie native a deux défauts importants:
+\begin{itemize}
+    \item Il n'est pas possible de supporter toutes les plateformes. Cependant, le plugin NAR \cite{nar-maven-plugin} peut aider à supporter plus de plateformes.
+    \item La librairie \textit{universal} fonctionne avec une classe C++. Ainsi, il est nécessaire de créer un objet et de garder cette instance. Cependant, la libération de la mémoire est un problème parce que la méthode \textit{finalize} qui pourrait être utilisée est dépréciée depuis Java 9 \cite{java-finalize-documentation}. Il est aussi possible de recréer une classe à chaque fois, mais cela réduira largement les performances.
+    \item La librairie \gls{SoftPosit}
+\end{itemize}
+
+Bien que la librairie \gls{SoftPosit} ne contienne pas de \gls{Posit} 64 bits, elle sera tout de même utilisé pour plusieurs raisons:
+\begin{itemize}
+    \item L'implémentation a été testée et les bugs devraient être rares.
+    \item Une meilleure implémentation avec ses tests nécessiterait plus de temps qu'il reste d'ici la fin du projet.
+    \item Si une implémentation 64 bits est ajoutée dans la librairie, elle pourra facilement être intégrée à \gls{COJAC}.
+    \item En cas de bugs ou de modifications de la spécification, il est assez probable que d'autres personnes mettent à jour la librairie
+    \item La précision des \glspl{Posit} 32 bits pourront tout de même être comparés avec les \textit{floats}.
+\end{itemize}
+
+\subsection{Passerelle vers le code natif}
+
+Plusieurs alternatives existent pour faire la passerelle depuis le code Java vers le code natif en C:
+
+\begin{itemize}
+    \item \Gls{JNI}
+    \item JNA
+    \item SWIG
+\end{itemize}
+
+\Gls{JNI} sera utilisé pour effectuer la passerelle vers le code natif pour plusieurs raisons:
+
+\begin{itemize}
+    \item L'invocation des méthodes est plus lente avec JNA. Vu le nombre extrêmement important d'appels devant être effectués, les performances de l'invocation sont critiques.
+    \item SWIG possède peu d'analyse, de documentation et d'exemples pour Java. Il est ainsi difficile d'évaluer l'efficacité de cette alternative.
+\end{itemize}

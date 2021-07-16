@@ -15,7 +15,7 @@
 
 	<groupId>com.github.cojac</groupId>
 	<artifactId>cojac</artifactId>
-	<version>1.5.1</version>
+	<version>1.6.0</version>
 	<name>COJAC</name>
 	<description>a tool that leverages in new ways the arithmetic capabilities of the Java programming language.</description>
 	<url>https://github.com/Cojac/</url>

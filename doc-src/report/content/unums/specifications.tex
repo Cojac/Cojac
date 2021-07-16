@@ -1,0 +1,64 @@
+\section{Spécifications}
+
+Les calculs seront réalisé avec les \glspl{Unums} autant que possible. Les \textit{floats} et les \textit{doubles} auront le même comportement pour les autres méthodes (\textit{toString}, \textit{parseDouble}, etc.). Les \glspl{Unums} doivent fonctionner au moins sur une plateforme. Si seulement quelques plateformes sont supportés, il est nécessaire de décrire la procédure pour porter cette fonctionnalité sur une nouvelle plateforme.
+
+\section{Démonstration}
+
+La démonstration se base sur deux exemples donnés par M. John L. Gustafson.
+
+En utilisant les formules suivantes: $E(0) = 1, E(z) = \frac{e^z - 1}{z}, Q(x) = |x - \sqrt{x^2 + 1}| - \frac{1}{x+\sqrt{x^2 + 1}}$, la fonction suivante $H(x) = E(Q(x)^2)$ évaluée avec les valeurs 15, 16, 17 et 9999 doit valoir 1.
+
+Lorsque ce calcul est réalisé en \textit{double precision}, le résultat est toujours 0. Le code utilisé est le suivant:
+
+\begin{minted}{Java}
+private static double func1E(double a) {
+    if (a == 0) return 1;
+    return (Math.exp(a) - 1) / a;
+}
+
+private static double func1Q(double a) {
+    double sqrt = Math.sqrt(a * a + 1);
+    return Math.abs(a - sqrt) - 1 / (a + sqrt);
+}
+
+public static double func1H(double a) {
+    double q = func1Q(a);
+    return func1E(q * q);
+}
+
+public static void main(String[] args) {
+    // example from https://youtu.be/jN9L7TpMxeA?t=1994
+    double[] inputs = new double[]{15, 16, 17, 9999};
+    for (double input : inputs) {
+        double result = func1H(input);
+        System.out.println(result + " should be 1.0");
+    }
+}
+\end{minted}
+
+Le deuxième exemple est un produit scalaire de 2 vecteurs particuliers. Lors des tests, le \textit{double precision} est suffisant pour obtenir le bon résultat contrairement aux résultats obtenus par M. John L. Gustafson. Ceci peut s'expliquer par le fait que les calculs ne sont pas forcément identiques entre des machines différentes et que la norme IEEE-754 \cite{ieee-754-2019} a de nombreuses options facultatives.
+
+\begin{minipage2}
+Le produit scalaire est implémenté de la manière suivante:
+
+\begin{minted}{Java}
+public static float scalarProduct(float[] a, float[] b) {
+    assert (a.length == b.length);
+    float result = 0f;
+    for (int i = 0; i < a.length; i++) {
+        result = Math.fma(a[i], b[i], result);
+    }
+    return result;
+}
+
+public static void main(String[] args) {
+    // example from https://youtu.be/aP0Y1uAA-2Y?t=104
+    float[] a = new float[]{3.2e7f, 1, -1, 8.0e7f};
+    float[] b = new float[]{4.0e7f, 1, -1, -1.6e7f};
+    float result = scalarProduct(a, b);
+    System.out.println(result + " should be 2.0");
+}
+\end{minted}
+\end{minipage2}
+
+La longueur minimale pour que ces exemples fonctionnent n'est pas connue.

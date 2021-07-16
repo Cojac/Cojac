@@ -201,6 +201,8 @@ public class ReplaceFloatsMethods {
                 new InvokableMethod(CDW_N, "math_pow", dwBinOp, INVOKESTATIC));
         invocations.put(new MethodSignature(MATH_NAME, "hypot", "(DD)D"),
                 new InvokableMethod(CDW_N, "math_hypot", dwBinOp, INVOKESTATIC));
+        invocations.put(new MethodSignature(MATH_NAME, "fma", "(DDD)D"),
+                new InvokableMethod(CDW_N, "math_fma", "(" + CDW + CDW + CDW + ")" + CDW, INVOKESTATIC));
 
         // math functions put in FloatWrapper
         // WRAPPER SPEC: FW.min/max(FW,FW) -> FW

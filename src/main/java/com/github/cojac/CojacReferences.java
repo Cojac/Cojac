@@ -20,6 +20,7 @@ package com.github.cojac;
 
 import com.github.cojac.models.wrappers.*;
 import com.github.cojac.profiler.NumericalProfiler;
+import com.github.cojac.utils.*;
 import org.objectweb.asm.ClassWriter;
 
 import com.github.cojac.instrumenters.ClassLoaderInstrumenterFactory;
@@ -30,11 +31,6 @@ import com.github.cojac.models.behaviours.DoubleIntervalBehaviour;
 import com.github.cojac.models.behaviours.PseudoRoundingBehaviour;
 import com.github.cojac.models.behaviours.ConversionBehaviour.Conversion;
 import com.github.cojac.models.behaviours.PseudoRoundingBehaviour.Rounding;
-import com.github.cojac.utils.BehaviourLoader;
-import com.github.cojac.utils.InstructionWriter;
-import com.github.cojac.utils.PolyBehaviourLoader;
-import com.github.cojac.utils.PolyBehaviourLogger;
-import com.github.cojac.utils.ReflectionUtils;
 
 
 import javax.management.*;
@@ -361,6 +357,11 @@ public final class CojacReferences {
             if (args.isSpecified(Arg.COMPLEX_NUMBER)) {
                 args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperComplexNumber");
                 WrapperComplexNumber.setStrictMode(args.getValue(Arg.COMPLEX_NUMBER) != null);
+            }
+
+            if (args.isSpecified(Arg.POSIT)) {
+                args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperPosit32");
+                Posit32Utils.loadLibrary();
             }
 
             if (args.isSpecified(Arg.NG_WRAPPER)) {
