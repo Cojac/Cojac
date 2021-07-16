@@ -58,6 +58,8 @@ public final class Agent implements ClassFileTransformer {
         //       we try to discover the "enclosing class" from classfileBuffer, 
         //       to decide if we should instrument or not.
 
+        // TODO: correct this method. If no change is done, it should return null
+
 //        if (VERBOSE && className==null) {
 //            System.out.println("null className... "+extractedClassname(classfileBuffer));
 //            //dumpIt(classfileBuffer);
