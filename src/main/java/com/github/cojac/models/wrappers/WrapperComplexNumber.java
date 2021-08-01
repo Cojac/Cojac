@@ -24,7 +24,7 @@ import org.apache.commons.math3.complex.Complex;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class WrapperComplexNumber extends ACojacWrapper {
+public class WrapperComplexNumber extends ACojacWrapper<WrapperComplexNumber> {
     private static final String NUMBER_PATTERN = "(?:.*[^E])";
     private static final Pattern COMPLEX_PATTERN =
             Pattern.compile("((?:[+-]?)" + NUMBER_PATTERN + ")((?:[+-])" + NUMBER_PATTERN + "?)[ij]");
@@ -50,12 +50,12 @@ public class WrapperComplexNumber extends ACojacWrapper {
     //-------------------------------------------------------------------------
     //----------------- Necessary constructor  -------------------------------
     //-------------------------------------------------------------------------
-    public WrapperComplexNumber(ACojacWrapper w) {
+    public WrapperComplexNumber(WrapperComplexNumber w) {
         // CommonDouble can call this constructor with a null wrapper
         if (w == null) {
             this.complex = new Complex(0, 0);
         } else {
-            Complex value = castWrapper(w).complex;
+            Complex value = w.complex;
             this.complex = new Complex(value.getReal(), value.getImaginary());
         }
     }
@@ -114,32 +114,32 @@ public class WrapperComplexNumber extends ACojacWrapper {
     }
 
     @Override
-    public WrapperComplexNumber dadd(ACojacWrapper wrapper) {
-        Complex complex = castWrapper(wrapper).complex;
+    public WrapperComplexNumber dadd(WrapperComplexNumber wrapper) {
+        Complex complex = wrapper.complex;
         return new WrapperComplexNumber(this.complex.add(complex));
     }
 
     @Override
-    public WrapperComplexNumber dsub(ACojacWrapper wrapper) {
-        Complex complex = castWrapper(wrapper).complex;
+    public WrapperComplexNumber dsub(WrapperComplexNumber wrapper) {
+        Complex complex = wrapper.complex;
         return new WrapperComplexNumber(this.complex.subtract(complex));
     }
 
     @Override
-    public WrapperComplexNumber dmul(ACojacWrapper wrapper) {
-        Complex complex = castWrapper(wrapper).complex;
+    public WrapperComplexNumber dmul(WrapperComplexNumber wrapper) {
+        Complex complex = wrapper.complex;
         return new WrapperComplexNumber(this.complex.multiply(complex));
     }
 
     @Override
-    public WrapperComplexNumber ddiv(ACojacWrapper wrapper) {
-        Complex complex = castWrapper(wrapper).complex;
+    public WrapperComplexNumber ddiv(WrapperComplexNumber wrapper) {
+        Complex complex = wrapper.complex;
         return new WrapperComplexNumber(this.complex.divide(complex));
     }
 
     @Override
-    public WrapperComplexNumber drem(ACojacWrapper b) {
-        Complex complex = castWrapper(b).complex;
+    public WrapperComplexNumber drem(WrapperComplexNumber b) {
+        Complex complex = b.complex;
         Complex quotient = this.complex.divide(complex);
         quotient = new Complex(Math.round(quotient.getReal()), Math.round(quotient.getImaginary()));
         Complex remainder = this.complex.subtract(quotient.multiply(complex));
@@ -154,11 +154,6 @@ public class WrapperComplexNumber extends ACojacWrapper {
     @Override
     public WrapperComplexNumber math_sqrt() {
         return new WrapperComplexNumber(this.complex.sqrt());
-    }
-
-    @Override
-    public WrapperComplexNumber math_cbrt() {
-        return (WrapperComplexNumber) super.math_cbrt();
     }
 
     @Override
@@ -245,17 +240,17 @@ public class WrapperComplexNumber extends ACojacWrapper {
     }
 
     @Override
-    public WrapperComplexNumber math_pow(ACojacWrapper wrapper) {
-        Complex complex = castWrapper(wrapper).complex;
+    public WrapperComplexNumber math_pow(WrapperComplexNumber wrapper) {
+        Complex complex = wrapper.complex;
         return new WrapperComplexNumber(this.complex.pow(complex));
     }
 
     @Override
-    public int compareTo(ACojacWrapper wrapper) {
-        if (!(wrapper instanceof WrapperComplexNumber)) {
+    public int compareTo(WrapperComplexNumber wrapper) {
+        if (wrapper == null) {
             throw new IllegalArgumentException();
         }
-        Complex complex = castWrapper(wrapper).complex;
+        Complex complex = wrapper.complex;
         if (this.complex.equals(complex)) {
             return 0;
         }
@@ -276,11 +271,11 @@ public class WrapperComplexNumber extends ACojacWrapper {
     }
 
     @Override
-    public WrapperComplexNumber math_hypot(ACojacWrapper wrapper) {
+    public WrapperComplexNumber math_hypot(WrapperComplexNumber wrapper) {
         // TODO - improve this naive implementation
         // it is prone to overflow and underflow
         Complex x2 = this.complex.multiply(this.complex);
-        Complex y = castWrapper(wrapper).complex;
+        Complex y = wrapper.complex;
         Complex y2 = y.multiply(y);
         return new WrapperComplexNumber(x2.add(y2).sqrt());
     }
@@ -299,20 +294,6 @@ public class WrapperComplexNumber extends ACojacWrapper {
         return real + sign + Math.abs(imaginary) + "i";
     }
 
-    @Override
-    public WrapperComplexNumber math_min(ACojacWrapper b) {
-        return (WrapperComplexNumber) super.math_min(b);
-    }
-
-    @Override
-    public WrapperComplexNumber math_max(ACojacWrapper b) {
-        return (WrapperComplexNumber) super.math_max(b);
-    }
-
-    private static WrapperComplexNumber castWrapper(ACojacWrapper wrapper) {
-        return (WrapperComplexNumber) wrapper;
-    }
-
     protected double getReal() {
         return this.complex.getReal();
     }
@@ -325,19 +306,19 @@ public class WrapperComplexNumber extends ACojacWrapper {
         WrapperComplexNumber.strictMode = strictMode;
     }
 
-    public static CommonDouble COJAC_MAGIC_getReal(CommonDouble d) {
-        double real = castWrapper(d.val).complex.getReal();
-        return new CommonDouble(new WrapperComplexNumber(real));
+    public static CommonDouble<WrapperComplexNumber> COJAC_MAGIC_getReal(CommonDouble<WrapperComplexNumber> d) {
+        double real = d.val.complex.getReal();
+        return new CommonDouble<>(new WrapperComplexNumber(real));
     }
 
-    public static CommonDouble COJAC_MAGIC_getImaginary(CommonDouble d) {
-        double imaginary = castWrapper(d.val).complex.getImaginary();
-        return new CommonDouble(new WrapperComplexNumber(imaginary));
+    public static CommonDouble<WrapperComplexNumber> COJAC_MAGIC_getImaginary(CommonDouble<WrapperComplexNumber> d) {
+        double imaginary = d.val.complex.getImaginary();
+        return new CommonDouble<>(new WrapperComplexNumber(imaginary));
     }
 
-    public static boolean COJAC_MAGIC_equals(CommonDouble a, CommonDouble b) {
-        Complex c1 = castWrapper(a.val).complex;
-        Complex c2 = castWrapper(b.val).complex;
+    public static boolean COJAC_MAGIC_equals(CommonDouble<WrapperComplexNumber> a, CommonDouble<WrapperComplexNumber> b) {
+        Complex c1 = a.val.complex;
+        Complex c2 = b.val.complex;
         return c1.equals(c2);
     }
 }

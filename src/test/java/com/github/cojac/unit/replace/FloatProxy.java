@@ -23,12 +23,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Assert;
 
 public class FloatProxy {
-	
+
+	static void assertEquals(double expected, double observed) {
+		org.junit.Assert.assertEquals(expected, observed, 0.0);
+	}
+
     public static void staticFieldDoubleAccess() throws Exception {
 		FloatProxyNotInstrumented.staticDouble = 25.5;
 		double r = FloatProxyNotInstrumented.staticDouble;
@@ -99,23 +103,23 @@ public class FloatProxy {
 	}
 	
 	public static void oneDimArrayPassingByMethod() throws Exception{
-		float array[] = new float[] {12.413f, 6.5f, 8.12f, 654.5f};
+		float[] array = new float[] {12.413f, 6.5f, 8.12f, 654.5f};
 		FloatProxyNotInstrumented fpni = new FloatProxyNotInstrumented();
-		float r[] = fpni.oneDimArrayPassing(array);
+		float[] r = fpni.oneDimArrayPassing(array);
 		Assert.assertTrue(Arrays.equals(r, array));
 		
-		double darray[] = new double[] {12.413, 6.5, 8.12, 654.5};
-		double dr[] = fpni.oneDimArrayPassing(darray);
+		double[] darray = new double[] {12.413, 6.5, 8.12, 654.5};
+		double[] dr = fpni.oneDimArrayPassing(darray);
 		Assert.assertTrue(Arrays.equals(dr, darray));
 	}
 	
 	public static void multiDimArrayPassingByMethod() throws Exception{
-		float array[][] = new float[][] {{12.413f, 6.5f}, {54.212f, 53.123f}};
+		float[][] array = new float[][] {{12.413f, 6.5f}, {54.212f, 53.123f}};
 		FloatProxyNotInstrumented fpni = new FloatProxyNotInstrumented();
 		float[][] r = fpni.multiDimArrayPassing(array);
 		Assert.assertTrue(Arrays.deepEquals(r, array));
 		
-		double darray[][] = new double[][] {{12.413, 6.5}, {54.212, 53.123}};
+		double[][] darray = new double[][] {{12.413, 6.5}, {54.212, 53.123}};
 		double[][] dr = fpni.multiDimArrayPassing(darray);
 		Assert.assertTrue(Arrays.deepEquals(dr, darray));
 	}
@@ -137,7 +141,7 @@ public class FloatProxy {
 	}
 	
 	public static void castedObjectPassingByMethod() throws Exception{
-		Float f1 = new Float(5243.132);
+		Float f1 = Float.valueOf(5243.132f);
 		FloatProxyNotInstrumented fpni = new FloatProxyNotInstrumented();
 		@SuppressWarnings("unused")
         Float f2 = (Float) fpni.castedObjectPassing(f1);

@@ -23,7 +23,7 @@ import java.util.function.DoubleUnaryOperator;
 import java.util.Comparator;
 
 //TODO: finalize this class... or remove it!
-public class WrapperKasu extends ACompactWrapper {
+public class WrapperKasu extends ACompactWrapper<WrapperKasu> {
     private final double value;
     private final double dust;
 
@@ -35,26 +35,25 @@ public class WrapperKasu extends ACompactWrapper {
     //-------------------------------------------------------------------------
     //----------------- Necessary constructor  -------------------------------
     //-------------------------------------------------------------------------
-    public WrapperKasu(ACojacWrapper w) {
-        this(w==null ? 0.0 : der(w).value, 
-             w==null ? 0.0 : der(w).dust);
+    public WrapperKasu(WrapperKasu w) {
+        this(w==null ? 0.0 : w.value,
+             w==null ? 0.0 : w.dust);
     }
     
     //-------------------------------------------------------------------------
     @Override
-    public ACojacWrapper applyUnaryOp(DoubleUnaryOperator op) {
+    public WrapperKasu applyUnaryOp(DoubleUnaryOperator op) {
         return new WrapperKasu(op.applyAsDouble(value), 0.0);
     }
 
     @Override
-    public ACojacWrapper applyBinaryOp(DoubleBinaryOperator op, ACojacWrapper b) {
-        WrapperKasu bb=(WrapperKasu)b;
-        return new WrapperKasu(op.applyAsDouble(value, bb.value), 0.0);
+    public WrapperKasu applyBinaryOp(DoubleBinaryOperator op, WrapperKasu b) {
+        return new WrapperKasu(op.applyAsDouble(value, b.value), 0.0);
     }
     //-------------------------------------------------------------------------
 
-    public ACojacWrapper dadd(ACojacWrapper b) {
-        return addKah(this.value, this.dust, der(b).value, der(b).dust);
+    public WrapperKasu dadd(WrapperKasu b) {
+        return addKah(this.value, this.dust, b.value, b.dust);
 //        double sum=this.value;
 //        double c=this.dust;
 //        double y, t, input=der(b).value;
@@ -64,8 +63,8 @@ public class WrapperKasu extends ACompactWrapper {
 //        return new WrapperKasu(sum, c);
     }
     
-    public ACojacWrapper dsub(ACojacWrapper b) {
-        return addKah(this.value, this.dust, -der(b).value, -der(b).dust);
+    public WrapperKasu dsub(WrapperKasu b) {
+        return addKah(this.value, this.dust, -b.value, -b.dust);
     }
 
     static WrapperKasu addKah(double a, double aC, double b, double bC) {
@@ -84,8 +83,8 @@ public class WrapperKasu extends ACompactWrapper {
         return new WrapperKasu(sum, c); 
     }
 
-    public ACojacWrapper dmul(ACojacWrapper b) {
-        return mulKah(this.value, this.dust, -der(b).value, -der(b).dust);
+    public WrapperKasu dmul(WrapperKasu b) {
+        return mulKah(this.value, this.dust, -b.value, -b.dust);
     }
 //    
 //    public ACojacWrapper ddiv(ACojacWrapper b) {
@@ -212,11 +211,11 @@ public class WrapperKasu extends ACompactWrapper {
 //        return new WrapperKasu(value, dValue); 
 //    }
     
-    @Override public int compareTo(ACojacWrapper o) {
+    @Override public int compareTo(WrapperKasu o) {
         return Comparator.comparingDouble(((WrapperKasu b) -> b.value))
                 .thenComparingDouble(((WrapperKasu b) -> b.dust))
-                .compare(this, der(o));
-    };
+                .compare(this, o);
+    }
     
     @Override public double toDouble() {
         return value;
@@ -224,7 +223,7 @@ public class WrapperKasu extends ACompactWrapper {
 
     @SuppressWarnings("unused")
     @Override
-    public ACojacWrapper fromDouble(double a, boolean wasFromFloat) {
+    public WrapperKasu fromDouble(double a, boolean wasFromFloat) {
         return new WrapperKasu(a, 0.0);
     }
 
@@ -236,8 +235,4 @@ public class WrapperKasu extends ACompactWrapper {
         return "KaSu";
     }
     
-    //-------------------------------------------------------------------------
-    private static WrapperKasu der(ACojacWrapper w) {
-        return (WrapperKasu)w;
-    }
 }

@@ -28,7 +28,7 @@ import java.util.function.DoubleUnaryOperator;
 
 import com.github.cojac.models.Reactions;
 
-public class WrapperStochastic extends ACompactWrapper {
+public class WrapperStochastic extends ACompactWrapper<WrapperStochastic> {
     private static final int nbrParallelNumber = 3;
 
     private final static Random random = new Random();
@@ -54,13 +54,13 @@ public class WrapperStochastic extends ACompactWrapper {
     //-------------------------------------------------------------------------
     //----------------- Necessary constructor  -------------------------------
     //-------------------------------------------------------------------------
-    public WrapperStochastic(ACojacWrapper w) {
-        this(w==null ? 0.0 : ((WrapperStochastic) w).value);
+    public WrapperStochastic(WrapperStochastic w) {
+        this(w==null ? 0.0 : w.value);
     }
     
     //-------------------------------------------------------------------------
     @Override
-    public ACojacWrapper applyUnaryOp(DoubleUnaryOperator op) {
+    public WrapperStochastic applyUnaryOp(DoubleUnaryOperator op) {
         double[] t=new double[nbrParallelNumber];
         for (int i = 0; i < nbrParallelNumber; i++)
             t[i] = rndRound(op.applyAsDouble(this.stochasticValue[i]));
@@ -69,11 +69,11 @@ public class WrapperStochastic extends ACompactWrapper {
     }
 
     @Override
-    public ACojacWrapper applyBinaryOp(DoubleBinaryOperator op, ACojacWrapper b) {
+    public WrapperStochastic applyBinaryOp(DoubleBinaryOperator op, WrapperStochastic b) {
         double[] t=new double[nbrParallelNumber];
         for (int i = 0; i < nbrParallelNumber; i++)
-            t[i] = rndRound(op.applyAsDouble(this.stochasticValue[i], c(b).stochasticValue[i]));
-        double v=op.applyAsDouble(this.value, c(b).value);
+            t[i] = rndRound(op.applyAsDouble(this.stochasticValue[i], b.stochasticValue[i]));
+        double v=op.applyAsDouble(this.value, b.value);
         return new WrapperStochastic(v, t, this.isUnStable);
     }
     
@@ -83,18 +83,18 @@ public class WrapperStochastic extends ACompactWrapper {
 
     @SuppressWarnings("unused")
     @Override
-    public ACojacWrapper fromDouble(double a, boolean wasFromFloat) {
+    public WrapperStochastic fromDouble(double a, boolean wasFromFloat) {
         return new WrapperStochastic(a);
     }
 
     @Override public String asInternalString() {
         String res = "" + value + " : [%s]";
-        String tmp = "";
-        for (int i = 0; i < nbrParallelNumber; i++) {
-            tmp += ("" + stochasticValue[i]);
+        StringBuilder tmp = new StringBuilder();
+        for (int i = 0; true; i++) {
+            tmp.append(stochasticValue[i]);
             if (i == nbrParallelNumber - 1)
                 break;
-            tmp += ";";
+            tmp.append(";");
         }
         return String.format(res, tmp);
     }
@@ -103,31 +103,28 @@ public class WrapperStochastic extends ACompactWrapper {
         return "Stochastic";
     }
     
-    @Override public int compareTo(ACojacWrapper oo) {
-        WrapperStochastic o = c(oo);
+    @Override public int compareTo(WrapperStochastic o) {
         if (COJAC_CHECK_UNSTABLE_COMPARISONS) {
             if (value==o.value && Arrays.equals(stochasticValue, o.stochasticValue)) return 0;
             if (this.overlaps(o))
                 reportBadComparison();
         }
-        if (this.value > o.value)  return +1;
-        if (this.value < o.value)  return -1;
-        return 0;
+        return Double.compare(this.value, o.value);
     }
 
-    public static CommonDouble COJAC_MAGIC_relativeError(CommonDouble d) {
-       WrapperStochastic res=new WrapperStochastic(c(d.val).relativeError());
-        return new CommonDouble(res);
+    public static CommonDouble<WrapperStochastic> COJAC_MAGIC_relativeError(CommonDouble<WrapperStochastic> d) {
+       WrapperStochastic res=new WrapperStochastic(d.val.relativeError());
+        return new CommonDouble<>(res);
     }
     
-    public static CommonDouble COJAC_MAGIC_relativeError(CommonFloat d) {
-        WrapperStochastic res=new WrapperStochastic(c(d.val).relativeError());
-         return new CommonDouble(res);
+    public static CommonDouble<WrapperStochastic> COJAC_MAGIC_relativeError(CommonFloat<WrapperStochastic> d) {
+        WrapperStochastic res=new WrapperStochastic(d.val.relativeError());
+         return new CommonDouble<>(res);
      }
      
     //-------------------------------------------------------------------------
     private boolean checkedStability(boolean wasUnstable) {
-        if (wasUnstable) return wasUnstable;
+        if (wasUnstable) return true;
         if (COJAC_STABILITY_THRESHOLD < relativeError()) {
             Reactions.react("WrapperStochastic detects unstability... "+asInternalString()+" ");
             return true;
@@ -190,9 +187,5 @@ public class WrapperStochastic extends ACompactWrapper {
         default:return value;                   // default rounding mode in Java
             
         }
-    }
-
-    private static WrapperStochastic c(ACojacWrapper w) {
-        return (WrapperStochastic)w;
     }
 }

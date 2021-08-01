@@ -23,7 +23,7 @@ import java.util.function.DoubleUnaryOperator;
 
 import com.github.cojac.utils.PolyBehaviourLoader;
 
-public class WrapperPolyBehavioural extends ACompactWrapper {
+public class WrapperPolyBehavioural extends ACompactWrapper<WrapperPolyBehavioural> {
 
     private final double value;
 
@@ -34,13 +34,13 @@ public class WrapperPolyBehavioural extends ACompactWrapper {
     // -------------------------------------------------------------------------
     // ----------------- Necessary constructor -------------------------------
     // -------------------------------------------------------------------------
-    public WrapperPolyBehavioural(ACojacWrapper w) {
-        this(w == null ? 0.0 : ((WrapperPolyBehavioural) w).value);
+    public WrapperPolyBehavioural(WrapperPolyBehavioural w) {
+        this(w == null ? 0.0 : w.value);
     }
 
     // -------------------------------------------------------------------------
     @Override
-    public ACojacWrapper applyUnaryOp(DoubleUnaryOperator op) {
+    public WrapperPolyBehavioural applyUnaryOp(DoubleUnaryOperator op) {
         if (isSpecifiedBehaviour())
             switch (getSpecifiedBehaviour()) {
             case "FLOAT":
@@ -52,16 +52,15 @@ public class WrapperPolyBehavioural extends ACompactWrapper {
     }
 
     @Override
-    public ACojacWrapper applyBinaryOp(DoubleBinaryOperator op, ACojacWrapper b) {
-        WrapperPolyBehavioural bb = (WrapperPolyBehavioural) b;
+    public WrapperPolyBehavioural applyBinaryOp(DoubleBinaryOperator op, WrapperPolyBehavioural b) {
         if (isSpecifiedBehaviour())
             switch (getSpecifiedBehaviour()) {
             case "FLOAT":
-                return new WrapperPolyBehavioural((float) op.applyAsDouble((float) value, (float) bb.value));
+                return new WrapperPolyBehavioural((float) op.applyAsDouble((float) value, (float) b.value));
             default:
                 break;
             }
-        return new WrapperPolyBehavioural(op.applyAsDouble(value, bb.value));
+        return new WrapperPolyBehavioural(op.applyAsDouble(value, b.value));
     }
 
     @Override
@@ -71,7 +70,7 @@ public class WrapperPolyBehavioural extends ACompactWrapper {
 
     @SuppressWarnings("unused")
     @Override
-    public ACojacWrapper fromDouble(double a, boolean wasFromFloat) {
+    public WrapperPolyBehavioural fromDouble(double a, boolean wasFromFloat) {
         return new WrapperPolyBehavioural(a);
     }
 
@@ -95,7 +94,7 @@ public class WrapperPolyBehavioural extends ACompactWrapper {
         return PolyBehaviourLoader.getinstance().getSpecifiedBehaviour(ste.getClassName(), ste.getLineNumber());
     }
 
-    // @Override public int compareTo(ACojacWrapper o) {
+    // @Override public int compareTo(WrapperPolyBehavioural o) {
     // System.out.println("@@@ WrapperBasic.compareTo");
     // return Double.compare(toDouble(), o.toDouble());
     // }

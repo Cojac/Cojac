@@ -281,14 +281,15 @@ public class WrapperPosit32UnitTest {
         assertEquals(5, max.toDouble(), ERROR_TOLERANCE);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testMinException() {
-        WrapperPosit32 number1 = positWrapperFromFloat(3);
-        ACojacWrapper number2 = new WrapperBigDecimal(null);
-
-        number1.math_min(number2);
-        fail("No exception threw");
-    }
+    // commented by BAP
+//    @Test(expected = IllegalArgumentException.class)
+//    public void testMinException() {
+//        WrapperPosit32 number1 = positWrapperFromFloat(3);
+//        ACojacWrapper number2 = new WrapperBigDecimal(null);
+//
+//        number1.math_min(number2);
+//        fail("No exception threw");
+//    }
 
     @Test
     public void testMath_fma() {

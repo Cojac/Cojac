@@ -23,7 +23,7 @@ import java.util.function.DoubleUnaryOperator;
 
 import com.github.cojac.utils.PolyBehaviourLogger;
 
-public class WrapperPolyBehaviouralLogger extends ACompactWrapper {
+public class WrapperPolyBehaviouralLogger extends ACompactWrapper<WrapperPolyBehaviouralLogger> {
     private final double value;
 
     private WrapperPolyBehaviouralLogger(double v) {
@@ -33,8 +33,8 @@ public class WrapperPolyBehaviouralLogger extends ACompactWrapper {
     // -------------------------------------------------------------------------
     // ----------------- Necessary constructor -------------------------------
     // -------------------------------------------------------------------------
-    public WrapperPolyBehaviouralLogger(ACojacWrapper w) {
-        this(w == null ? 0.0 : ((WrapperPolyBehaviouralLogger) w).value);
+    public WrapperPolyBehaviouralLogger(WrapperPolyBehaviouralLogger w) {
+        this(w == null ? 0.0 : w.value);
         System.out.println("-----");
         for (StackTraceElement ste : Thread.currentThread().getStackTrace()) {
             System.out.println(ste);
@@ -44,16 +44,15 @@ public class WrapperPolyBehaviouralLogger extends ACompactWrapper {
 
     // -------------------------------------------------------------------------
     @Override
-    public ACojacWrapper applyUnaryOp(DoubleUnaryOperator op) {
+    public WrapperPolyBehaviouralLogger applyUnaryOp(DoubleUnaryOperator op) {
         log();
         return new WrapperPolyBehaviouralLogger(op.applyAsDouble(value));
     }
 
     @Override
-    public ACojacWrapper applyBinaryOp(DoubleBinaryOperator op, ACojacWrapper b) {
+    public WrapperPolyBehaviouralLogger applyBinaryOp(DoubleBinaryOperator op, WrapperPolyBehaviouralLogger b) {
         log();
-        WrapperPolyBehaviouralLogger bb = (WrapperPolyBehaviouralLogger) b;
-        return new WrapperPolyBehaviouralLogger(op.applyAsDouble(value, bb.value));
+        return new WrapperPolyBehaviouralLogger(op.applyAsDouble(value, b.value));
     }
 
     @Override
@@ -63,7 +62,7 @@ public class WrapperPolyBehaviouralLogger extends ACompactWrapper {
 
     @SuppressWarnings("unused")
     @Override
-    public ACojacWrapper fromDouble(double a, boolean wasFromFloat) {
+    public WrapperPolyBehaviouralLogger fromDouble(double a, boolean wasFromFloat) {
         return new WrapperPolyBehaviouralLogger(a);
     }
 

@@ -24,7 +24,7 @@ import static com.github.cojac.models.FloatReplacerClasses.COJAC_STABILITY_THRES
 import com.github.cojac.interval.DoubleInterval;
 import com.github.cojac.models.Reactions;
 
-public class WrapperInterval extends ACojacWrapper {
+public class WrapperInterval extends ACojacWrapper<WrapperInterval> {
     protected final double value;
     protected final DoubleInterval interval;
     protected final boolean isUnStable;
@@ -42,10 +42,10 @@ public class WrapperInterval extends ACojacWrapper {
     //-------------------------------------------------------------------------
     //----------------- Necessary constructor  -------------------------------
     //-------------------------------------------------------------------------
-    public WrapperInterval(ACojacWrapper w) {
-        this(w==null ? 0.0 : c(w).value,
-             w==null ? new DoubleInterval(0,0): c(w).interval,
-             w==null ? false : c(w).isUnStable);
+    public WrapperInterval(WrapperInterval w) {
+        this(w==null ? 0.0 : w.value,
+             w==null ? new DoubleInterval(0,0): w.interval,
+                w != null && w.isUnStable);
     }
     
     //-------------------------------------------------------------------------    
@@ -55,7 +55,7 @@ public class WrapperInterval extends ACojacWrapper {
 
     @SuppressWarnings("unused")
     @Override
-    public ACojacWrapper fromDouble(double a, boolean wasFromFloat) {
+    public WrapperInterval fromDouble(double a, boolean wasFromFloat) {
         return new WrapperInterval(a);
     }
 
@@ -67,205 +67,198 @@ public class WrapperInterval extends ACojacWrapper {
         return "Interval";
     }
 
-    @Override public ACojacWrapper dadd(ACojacWrapper b) {
+    @Override public WrapperInterval dadd(WrapperInterval b) {
         return new WrapperInterval(
-                value + c(b).value, 
-                DoubleInterval.add(interval, c(b).interval), 
-                isUnStable || c(b).isUnStable);
+                value + b.value,
+                DoubleInterval.add(interval, b.interval),
+                isUnStable || b.isUnStable);
     }
 
-    @Override public ACojacWrapper dsub(ACojacWrapper b) {
+    @Override public WrapperInterval dsub(WrapperInterval b) {
         return new WrapperInterval(
-                value - c(b).value, 
-                DoubleInterval.sub(interval, c(b).interval), 
-                isUnStable || c(b).isUnStable);
+                value - b.value,
+                DoubleInterval.sub(interval, b.interval),
+                isUnStable || b.isUnStable);
     }
 
-    @Override public ACojacWrapper dmul(ACojacWrapper b) {
+    @Override public WrapperInterval dmul(WrapperInterval b) {
         return new WrapperInterval(
-                value * c(b).value, 
-                DoubleInterval.mul(interval, c(b).interval), 
-                isUnStable || c(b).isUnStable);
+                value * b.value,
+                DoubleInterval.mul(interval, b.interval),
+                isUnStable || b.isUnStable);
     }
 
-    @Override public ACojacWrapper ddiv(ACojacWrapper b) {
+    @Override public WrapperInterval ddiv(WrapperInterval b) {
         return new WrapperInterval(
-                value / c(b).value, 
-                DoubleInterval.div(interval, c(b).interval), 
-                isUnStable || c(b).isUnStable);
+                value / b.value,
+                DoubleInterval.div(interval, b.interval),
+                isUnStable || b.isUnStable);
     }
 
-    @Override  public ACojacWrapper drem(ACojacWrapper b) {
+    @Override  public WrapperInterval drem(WrapperInterval b) {
         return new WrapperInterval(
-                value % c(b).value, 
-                DoubleInterval.modulo(interval, c(b).interval), 
-                isUnStable || c(b).isUnStable);
+                value % b.value,
+                DoubleInterval.modulo(interval, b.interval),
+                isUnStable || b.isUnStable);
     }
 
-    @Override public ACojacWrapper dneg() {
+    @Override public WrapperInterval dneg() {
         return new WrapperInterval(
                 -value, 
                 DoubleInterval.neg(interval), 
                 isUnStable);
     }
 
-    @Override public ACojacWrapper math_sqrt() {
+    @Override public WrapperInterval math_sqrt() {
         return new WrapperInterval(
                 Math.sqrt(value), 
                 DoubleInterval.sqrt(interval), 
                 isUnStable);
     }
 
-    @Override public ACojacWrapper math_abs() {
+    @Override public WrapperInterval math_abs() {
         return new WrapperInterval(
                 Math.abs(value), 
                 DoubleInterval.abs(interval), 
                 isUnStable);
     }
 
-    @Override public ACojacWrapper math_sin() {
+    @Override public WrapperInterval math_sin() {
         return new WrapperInterval(
                 Math.sin(value), 
                 DoubleInterval.sin(interval), 
                 isUnStable);
     }
 
-    @Override public ACojacWrapper math_cos() {
+    @Override public WrapperInterval math_cos() {
         return new WrapperInterval(
                 Math.cos(value), 
                 DoubleInterval.cos(interval), 
                 isUnStable);
     }
 
-    @Override public ACojacWrapper math_tan() {
+    @Override public WrapperInterval math_tan() {
         return new WrapperInterval(
                 Math.tan(value), 
                 DoubleInterval.tan(interval), 
                 isUnStable);
     }
 
-    @Override public ACojacWrapper math_asin() {
+    @Override public WrapperInterval math_asin() {
         return new WrapperInterval(
                 Math.asin(value), 
                 DoubleInterval.asin(interval), 
                 isUnStable);
     }
 
-    @Override public ACojacWrapper math_acos() {
+    @Override public WrapperInterval math_acos() {
         return new WrapperInterval(
                 Math.acos(value), 
                 DoubleInterval.acos(interval), 
                 isUnStable);
     }
 
-    @Override public ACojacWrapper math_atan() {
+    @Override public WrapperInterval math_atan() {
         return new WrapperInterval(
                 Math.atan(value), 
                 DoubleInterval.atan(interval), 
                 isUnStable);
     }
 
-    @Override public ACojacWrapper math_sinh() {
+    @Override public WrapperInterval math_sinh() {
         return new WrapperInterval(
                 Math.sinh(value), 
                 DoubleInterval.sinh(interval), 
                 isUnStable);
     }
 
-    @Override public ACojacWrapper math_cosh() {
+    @Override public WrapperInterval math_cosh() {
         return new WrapperInterval(
                 Math.cosh(value), 
                 DoubleInterval.cosh(interval), 
                 isUnStable);
     }
 
-    @Override public ACojacWrapper math_tanh() {
+    @Override public WrapperInterval math_tanh() {
         return new WrapperInterval(
                 Math.tanh(value), 
                 DoubleInterval.tanh(interval), 
                 isUnStable);
     }
 
-    @Override public ACojacWrapper math_exp() {
+    @Override public WrapperInterval math_exp() {
         return new WrapperInterval(
                 Math.exp(value), 
                 DoubleInterval.exp(interval), 
                 isUnStable);
     }
 
-    @Override public ACojacWrapper math_log() {
+    @Override public WrapperInterval math_log() {
         return new WrapperInterval(
                 Math.log(value), 
                 DoubleInterval.log(interval), 
                 isUnStable);
     }
 
-    @Override  public ACojacWrapper math_log10() {
+    @Override  public WrapperInterval math_log10() {
         return new WrapperInterval(
                 Math.log10(value), 
                 DoubleInterval.log10(interval), 
                 isUnStable);
     }
 
-    @Override public ACojacWrapper math_toRadians() {
+    @Override public WrapperInterval math_toRadians() {
         return new WrapperInterval(
                 Math.toRadians(value), 
                 DoubleInterval.toRadians(interval), 
                 isUnStable);
     }
 
-    @Override  public ACojacWrapper math_toDegrees() {
+    @Override  public WrapperInterval math_toDegrees() {
         return new WrapperInterval(
                 Math.toDegrees(value), 
                 DoubleInterval.toDegrees(interval), 
                 isUnStable);
     }
 
-    @Override public ACojacWrapper math_pow(ACojacWrapper b) {
+    @Override public WrapperInterval math_pow(WrapperInterval b) {
         return new WrapperInterval(
-                Math.pow(value, c(b).value), 
-                DoubleInterval.pow(interval, c(b).interval), 
+                Math.pow(value, b.value),
+                DoubleInterval.pow(interval, b.interval),
                 isUnStable);
     }
     
-    @Override public int compareTo(ACojacWrapper oo) {
-        WrapperInterval o=(WrapperInterval)oo;
-        int compResult = this.interval.compareTo(o.interval);
+    @Override public int compareTo(WrapperInterval oo) {
+        int compResult = this.interval.compareTo(oo.interval);
         if (COJAC_CHECK_UNSTABLE_COMPARISONS) {
-            if (this.interval.strictlyEquals(o.interval)) return 0;
-            if (this.interval.overlaps(o.interval))
+            if (this.interval.strictlyEquals(oo.interval)) return 0;
+            if (this.interval.overlaps(oo.interval))
                 reportBadComparison();
         }
         if (compResult != 0) {
             return compResult;
         }
-        if (this.value < o.value) {
-            return -1;
-        }
-        if (this.value > o.value) {
-            return 1;
-        }
-        return 0;
+        return Double.compare(this.value, oo.value);
     }
 
-    public static CommonDouble COJAC_MAGIC_relativeError(CommonDouble d) {
-        WrapperInterval res=new WrapperInterval(c(d.val).relativeError());
-         return new CommonDouble(res);
+    public static CommonDouble<WrapperInterval> COJAC_MAGIC_relativeError(CommonDouble<WrapperInterval> d) {
+        WrapperInterval res=new WrapperInterval(d.val.relativeError());
+         return new CommonDouble<>(res);
      }
     
-    public static CommonDouble COJAC_MAGIC_relativeError(CommonFloat d) {
-        WrapperInterval res=new WrapperInterval(c(d.val).relativeError());
-        return new CommonDouble(res);
+    public static CommonDouble<WrapperInterval> COJAC_MAGIC_relativeError(CommonFloat<WrapperInterval> d) {
+        WrapperInterval res=new WrapperInterval(d.val.relativeError());
+        return new CommonDouble<>(res);
      }
     
-    public static CommonDouble COJAC_MAGIC_width(CommonDouble d) {
-        WrapperInterval res=new WrapperInterval(DoubleInterval.width(c(d.val).interval));
-         return new CommonDouble(res);
+    public static CommonDouble<WrapperInterval> COJAC_MAGIC_width(CommonDouble<WrapperInterval> d) {
+        WrapperInterval res=new WrapperInterval(DoubleInterval.width(d.val.interval));
+         return new CommonDouble<>(res);
      }
 
-    public static CommonDouble COJAC_MAGIC_width(CommonFloat d) {
-        WrapperInterval res=new WrapperInterval(DoubleInterval.width(c(d.val).interval));
-        return new CommonDouble(res);
+    public static CommonDouble<WrapperInterval> COJAC_MAGIC_width(CommonFloat<WrapperInterval> d) {
+        WrapperInterval res=new WrapperInterval(DoubleInterval.width(d.val.interval));
+        return new CommonDouble<>(res);
      }
     //-------------------------------------------------------------------------
     private boolean checkedStability(boolean wasUnstable) {
@@ -303,10 +296,5 @@ public class WrapperInterval extends ACojacWrapper {
     private void reportBadComparison() {
         Reactions.react("Interval wrapper detects dangerous comparison (overlap)... ");
     }
-
-    private static WrapperInterval c(ACojacWrapper a) {
-        return (WrapperInterval) a;
-    }
-
 
 }

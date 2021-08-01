@@ -39,7 +39,7 @@ public class DoubleNumbers {
     }
 
 	public static Object initializeMultiArray(Object array, int dimensions) throws Exception {
-        Object a[] = (Object[]) array;
+        Object[] a = (Object[]) array;
         if(dimensions == 1){
             return newarray(a.length);
         }
@@ -60,7 +60,7 @@ public class DoubleNumbers {
     private static Object[] cojacFromJWrapper1D(Double[] array) throws Exception{
         Object[] a = (Object[]) Array.newInstance(COJAC_DOUBLE_WRAPPER_CLASS, array.length);
         for (int i = 0; i < a.length; i++)
-            a[i] = COJAC_DOUBLE_WRAPPER_CLASS.getConstructor(double.class).newInstance(array[i].doubleValue());
+            a[i] = COJAC_DOUBLE_WRAPPER_CLASS.getConstructor(double.class).newInstance(array[i]);
         // WRAPPER SPEC: DW(double)
         return a;
     }
@@ -68,7 +68,7 @@ public class DoubleNumbers {
     private static Double[] jWrapperFromCojac1D(Object[] array) throws Exception{
         Double[] a = new Double[array.length];
         for (int i = 0; i < a.length; i++){
-            Method m = COJAC_DOUBLE_WRAPPER_CLASS.getMethod("toRealDoubleWrapper", new Class[] {COJAC_DOUBLE_WRAPPER_CLASS});
+            Method m = COJAC_DOUBLE_WRAPPER_CLASS.getMethod("toRealDoubleWrapper", COJAC_DOUBLE_WRAPPER_CLASS);
             a[i] = (Double)m.invoke(COJAC_DOUBLE_WRAPPER_CLASS, array[i]);
             // WRAPPER SPEC: DW.toRealDoubleWrapper(DW) -> Double
         }
@@ -78,7 +78,7 @@ public class DoubleNumbers {
     private static double[] primitiveFromCojac1D(Object[] array) throws Exception{
         double[] a = new double[array.length];
         for (int i = 0; i < a.length; i++){
-			Method m = COJAC_DOUBLE_WRAPPER_CLASS.getMethod("toDouble", new Class[] {COJAC_DOUBLE_WRAPPER_CLASS});
+			Method m = COJAC_DOUBLE_WRAPPER_CLASS.getMethod("toDouble", COJAC_DOUBLE_WRAPPER_CLASS);
 			a[i] = (double)m.invoke(COJAC_DOUBLE_WRAPPER_CLASS, array[i]);
 	        // WRAPPER SPEC: DW.toDouble(DW) -> double
 		}
@@ -176,7 +176,7 @@ public class DoubleNumbers {
 	
 	public static Object convertFromObjectToReal(Object obj) throws Exception {
 		if(obj == null)
-			return obj;
+			return null;
 		if(obj.getClass().isArray()){
 			Class<?> type = getArrayElementType(obj);
 			if(type.equals(COJAC_FLOAT_WRAPPER_CLASS)){
@@ -209,7 +209,7 @@ public class DoubleNumbers {
 	
 	public static Object convertFromObjectToCojac(Object obj) throws Exception{
 		if(obj == null)
-			return obj;
+			return null;
 		if(obj.getClass().isArray()){
 			Class<?> type = getArrayElementType(obj);
 			if(type.equals(float.class)){
@@ -345,11 +345,11 @@ public class DoubleNumbers {
 	
     public static Object myInvoke(Method m, Object target, Object[] prms) {
         try {
-            if (!m.isAccessible()) {
+            if (!m.canAccess(target)) {
 //                System.out.println("ACH, not accessible: "+m);
                 m.setAccessible(true);
             }
-            return m.invoke(target,  prms);
+            return m.invoke(target, prms);
         } catch (IllegalAccessException | 
                 IllegalArgumentException | 
                 InvocationTargetException |

@@ -24,7 +24,7 @@ import com.github.cojac.utils.Posit32Utils;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public class WrapperPosit32 extends ACojacWrapper {
+public class WrapperPosit32 extends ACojacWrapper<WrapperPosit32> {
     protected final float posit32;
 
     protected WrapperPosit32(float posit32) {
@@ -34,12 +34,12 @@ public class WrapperPosit32 extends ACojacWrapper {
     //-------------------------------------------------------------------------
     //----------------- Necessary constructor  -------------------------------
     //-------------------------------------------------------------------------
-    public WrapperPosit32(ACojacWrapper w) {
+    public WrapperPosit32(WrapperPosit32 w) {
         // CommonDouble can call this constructor with a null wrapper
         if (w == null) {
             this.posit32 = Posit32Utils.toPosit(0);
         } else {
-            this.posit32 = castWrapper(w).posit32;
+            this.posit32 = w.posit32;
         }
     }
 
@@ -70,23 +70,23 @@ public class WrapperPosit32 extends ACojacWrapper {
     }
 
     @Override
-    public WrapperPosit32 dadd(ACojacWrapper wrapper) {
-        return new WrapperPosit32(Posit32Utils.add(this.posit32, castWrapper(wrapper).posit32));
+    public WrapperPosit32 dadd(WrapperPosit32 wrapper) {
+        return new WrapperPosit32(Posit32Utils.add(this.posit32, wrapper.posit32));
     }
 
     @Override
-    public WrapperPosit32 dsub(ACojacWrapper wrapper) {
-        return new WrapperPosit32(Posit32Utils.substract(this.posit32, castWrapper(wrapper).posit32));
+    public WrapperPosit32 dsub(WrapperPosit32 wrapper) {
+        return new WrapperPosit32(Posit32Utils.substract(this.posit32, wrapper.posit32));
     }
 
     @Override
-    public WrapperPosit32 dmul(ACojacWrapper wrapper) {
-        return new WrapperPosit32(Posit32Utils.multiply(this.posit32, castWrapper(wrapper).posit32));
+    public WrapperPosit32 dmul(WrapperPosit32 wrapper) {
+        return new WrapperPosit32(Posit32Utils.multiply(this.posit32, wrapper.posit32));
     }
 
     @Override
-    public WrapperPosit32 ddiv(ACojacWrapper wrapper) {
-        return new WrapperPosit32(Posit32Utils.divide(this.posit32, castWrapper(wrapper).posit32));
+    public WrapperPosit32 ddiv(WrapperPosit32 wrapper) {
+        return new WrapperPosit32(Posit32Utils.divide(this.posit32, wrapper.posit32));
     }
 
     private float floatRemainder(float a, float b) {
@@ -94,9 +94,9 @@ public class WrapperPosit32 extends ACojacWrapper {
     }
 
     @Override
-    public WrapperPosit32 drem(ACojacWrapper b) {
+    public WrapperPosit32 drem(WrapperPosit32 b) {
         return new WrapperPosit32(
-                applyOperationWithFloatingPoints(this.posit32, castWrapper(b).posit32, this::floatRemainder));
+                applyOperationWithFloatingPoints(this.posit32, b.posit32, this::floatRemainder));
     }
 
     @Override
@@ -191,17 +191,17 @@ public class WrapperPosit32 extends ACojacWrapper {
     }
 
     @Override
-    public WrapperPosit32 math_pow(ACojacWrapper wrapper) {
-        return new WrapperPosit32(applyOperationWithFloatingPoints(this.posit32, castWrapper(wrapper).posit32,
+    public WrapperPosit32 math_pow(WrapperPosit32 wrapper) {
+        return new WrapperPosit32(applyOperationWithFloatingPoints(this.posit32, wrapper.posit32,
                 Math::pow));
     }
 
     @Override
-    public int compareTo(ACojacWrapper wrapper) {
-        if (!(wrapper instanceof WrapperPosit32)) {
+    public int compareTo(WrapperPosit32 wrapper) {
+        if (wrapper == null) {
             throw new IllegalArgumentException();
         }
-        float posit32 = castWrapper(wrapper).posit32;
+        float posit32 = wrapper.posit32;
         if (Posit32Utils.equals(this.posit32, posit32)) {
             return 0;
         }
@@ -209,30 +209,15 @@ public class WrapperPosit32 extends ACojacWrapper {
     }
 
     @Override
-    public WrapperPosit32 math_hypot(ACojacWrapper wrapper) {
-        return new WrapperPosit32(applyOperationWithFloatingPoints(this.posit32, castWrapper(wrapper).posit32,
+    public WrapperPosit32 math_hypot(WrapperPosit32 wrapper) {
+        return new WrapperPosit32(applyOperationWithFloatingPoints(this.posit32, wrapper.posit32,
                 Math::hypot));
     }
 
     @Override
-    public WrapperPosit32 math_fma(ACojacWrapper a, ACojacWrapper b) {
-        return new WrapperPosit32(Posit32Utils.fma(this.posit32, castWrapper(a).posit32, castWrapper(b).posit32));
+    public WrapperPosit32 math_fma(WrapperPosit32 a, WrapperPosit32 b) {
+        return new WrapperPosit32(Posit32Utils.fma(this.posit32, a.posit32, b.posit32));
     }
-
-    @Override
-    public WrapperPosit32 math_min(ACojacWrapper b) {
-        return (WrapperPosit32) super.math_min(b);
-    }
-
-    @Override
-    public WrapperPosit32 math_max(ACojacWrapper b) {
-        return (WrapperPosit32) super.math_max(b);
-    }
-
-    private static WrapperPosit32 castWrapper(ACojacWrapper wrapper) {
-        return (WrapperPosit32) wrapper;
-    }
-
 
     // TODO - replace all calls to this method by implementing it using posit directly
     private static float applyOperationWithFloatingPoints(float posit32, Function<Float, Number> operation) {
