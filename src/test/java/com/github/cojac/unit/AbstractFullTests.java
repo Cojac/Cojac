@@ -301,7 +301,7 @@ public abstract class AbstractFullTests {
     @Test
     public void dadd1() throws Exception {
         double r = getTests().dadd(5555.5555, 77777.7777);
-        assertEquals(5555.5555 + 77777.7777, r);
+        assertEquals(5555.5555 + 77777.7777, r, 0.0);
     }
 
     @Test

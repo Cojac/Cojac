@@ -301,7 +301,7 @@ public class CommonDouble<T extends ACojacWrapper<T>> extends Number implements 
 
     protected static <T extends ACojacWrapper<T>> T newInstance(T w) {
         try {
-            Constructor<?> c=COJAC_WRAPPER_NG_CLASS.getConstructor(ACojacWrapper.class);
+            Constructor<?> c=COJAC_WRAPPER_NG_CLASS.getConstructor(COJAC_WRAPPER_NG_CLASS);
             return (T)c.newInstance(w);
         } catch(Exception e) {
             throw new RuntimeException(e);

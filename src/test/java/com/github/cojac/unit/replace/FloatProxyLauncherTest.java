@@ -32,7 +32,7 @@ import com.github.cojac.unit.AgentTest;
 
 public class FloatProxyLauncherTest {
 	
-	protected AgentTest dummyAgentTest=new AgentTest(); // just to ensure AgentTest is loaded
+	protected AgentTest dummyAgentTest = new AgentTest(); // just to ensure AgentTest is loaded
 
     Class<?> floatProxyTest;
     
@@ -195,7 +195,6 @@ public class FloatProxyLauncherTest {
 	private void invokeMethod(String methodName) throws Exception{
 		if (floatProxyTest==null) return;
         Method m = floatProxyTest.getMethod(methodName);
-        if (m==null) return;
         m.invoke(null);
 	}
 }

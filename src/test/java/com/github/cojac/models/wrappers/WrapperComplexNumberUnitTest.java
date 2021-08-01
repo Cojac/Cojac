@@ -395,16 +395,4 @@ public class WrapperComplexNumberUnitTest extends TestCase {
         assertEquals(0, max.getImaginary(), ERROR_TOLERANCE);
     }
 
-    public void testMinException() {
-        WrapperComplexNumber.setStrictMode(false);
-        WrapperComplexNumber number1 = new WrapperComplexNumber(3, -2);
-        WrapperComplexNumber number2 = new WrapperComplexNumber(null);
-
-        try {
-            number1.math_min(number2);
-            fail("No exception threw");
-        } catch (IllegalArgumentException exception) {
-            // success
-        }
-    }
 }
