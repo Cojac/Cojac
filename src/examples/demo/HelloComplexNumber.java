@@ -31,7 +31,8 @@ public class HelloComplexNumber {
     }
 
     static double realPartOnly(double a) {
-        return (a + conjugate(a))/2;
+        double realPart = (a + conjugate(a))/2;
+        return Math.abs(realPart); // just to ensure a possible tiny img part disappears
     }
 
     static double imaginaryPartOnly(double a) {
@@ -39,7 +40,8 @@ public class HelloComplexNumber {
     }
 
     static double imaginaryCoefficient(double a) {
-        return imaginaryPartOnly(a) * (-Math.sqrt(-1));
+        double c = imaginaryPartOnly(a) * (-Math.sqrt(-1));
+        return Math.abs(c); // just to ensure a possible tiny img part disappears
     }
 
     static void tinyDemo() {
@@ -50,7 +52,7 @@ public class HelloComplexNumber {
         System.out.println(y + " …should be '4 + 3i'");
         System.out.println(" conjugate: "+ conjugate(y) + " …should be '4 - 3i'");
         System.out.println("  realPart: "+ realPartOnly(y) + " …should be '4'");
-        System.out.println("   imgPart: "+ imaginaryPartOnly(y) + " …hould be '3i'");
+        System.out.println("   imgPart: "+ imaginaryPartOnly(y) + " …should be '3i'");
         System.out.println("   imgCoef: "+ imaginaryCoefficient(y) + " …should be '3'");
     }
 
