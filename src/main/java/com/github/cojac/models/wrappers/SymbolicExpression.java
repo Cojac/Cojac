@@ -100,7 +100,7 @@ public class SymbolicExpression {
     // Example: ADD(ADD(a,b),NEG(ADD(c,SUB(d,e))))
     //        -> [a,b,-c,-d,e]
     public ArrayList<SymbolicExpression> flattenedTermList() {
-        ArrayList<SymbolicExpression> listOfSE = new ArrayList<SymbolicExpression>();
+        ArrayList<SymbolicExpression> listOfSE = new ArrayList<>();
         if (oper == OP.ADD) {
             listOfSE.addAll(left.flattenedTermList());
             listOfSE.addAll(right.flattenedTermList());
@@ -154,7 +154,7 @@ public class SymbolicExpression {
     
     private double evaluateTermsSmarter(double x) {
         ArrayList<SymbolicExpression> terms = this.flattenedTermList();
-        ArrayList<Double> termsValues = new ArrayList<Double>();
+        ArrayList<Double> termsValues = new ArrayList<>();
         for (SymbolicExpression se : terms)
             termsValues.add(se.evaluate(x));
         return smartSum(termsValues);
@@ -207,7 +207,7 @@ public class SymbolicExpression {
     // TODO: consider refactoring symbOP as an abstract OP.derivate() method.
     public static enum OP {
         NOP(((x, y) -> Double.NaN), SymbUtils::derivateNOP),
-        ADD(((x, y) -> x + y), SymbUtils::derivateADD, true),
+        ADD((Double::sum), SymbUtils::derivateADD, true),
         SUB(((x, y) -> x - y), SymbUtils::derivateSUB),
         MUL(((x, y) -> x * y), SymbUtils::derivateMUL, true),
         DIV(((x, y) -> x / y), SymbUtils::derivateDIV),
@@ -229,9 +229,9 @@ public class SymbolicExpression {
         LOG10((x, y) -> Math.log10(x), SymbUtils::derivateLOG10),
         RAD((x, y) -> Math.toRadians(x), SymbUtils::derivateRAD),
         DEG((x, y) -> Math.toDegrees(x), SymbUtils::derivateDEG),
-        MIN((x, y) -> Math.min(x, y), SymbUtils::derivateMIN),
-        MAX((x, y) -> Math.max(x, y), SymbUtils::derivateMAX),
-        POW((x, y) -> Math.pow(x, y), SymbUtils::derivatePOW),
+        MIN(Math::min, SymbUtils::derivateMIN),
+        MAX(Math::max, SymbUtils::derivateMAX),
+        POW(Math::pow, SymbUtils::derivatePOW),
         HYPOT(Math::hypot, SymbUtils::derivateHYPOT, true),
         // profiler
         ANY(null, null);

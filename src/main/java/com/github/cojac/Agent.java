@@ -18,7 +18,7 @@
 
 package com.github.cojac;
 
-import java.io.PrintWriter;
+//import java.io.PrintWriter;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
@@ -28,7 +28,7 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.util.*;
+//import org.objectweb.asm.util.*;
 
 import static com.github.cojac.CojacCommonConstants.ASM_VERSION;
 
@@ -97,7 +97,7 @@ public final class Agent implements ClassFileTransformer {
             }
 
             trackForDebuggingPurposes(className, instrumented);
-            if (VERBOSE) {
+            //if (VERBOSE) {
 				/*
 				The interfaces are loaded by this class, the loading of a class 
 				by the agent is done without the instrumentation.
@@ -109,7 +109,7 @@ public final class Agent implements ClassFileTransformer {
                 // not yet defined... So better turn this off!
                 // if (! REPLACE_FLOATS)
                 //    CheckClassAdapter.verify(new ClassReader(instrumented), PRINT_INSTR_RESULT, new PrintWriter(System.out));
-			}
+			//}
 			
             return instrumented;
             

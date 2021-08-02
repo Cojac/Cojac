@@ -7,9 +7,7 @@ public class Buggy01 {
 
     private static void fffff(double x) {
 
-      runit(() -> {
-        System.out.println("aa "+x);
-      });
+      runit(() -> System.out.println("aa "+x));
     }
 
     private static void runit(Runnable r) {

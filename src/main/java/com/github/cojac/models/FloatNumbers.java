@@ -173,7 +173,7 @@ public class FloatNumbers {
 
 	public static Object castFromObject(Object obj) throws Exception{
 		if(obj instanceof Double)
-			return COJAC_FLOAT_WRAPPER_CLASS.getConstructor(float.class).newInstance((Double)obj);
+			return COJAC_FLOAT_WRAPPER_CLASS.getConstructor(float.class).newInstance(obj);
         // WRAPPER SPEC: FW(float)
 		return obj;
 	}

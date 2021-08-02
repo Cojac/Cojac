@@ -137,7 +137,7 @@ public class COJACBenchmark {
 
         Method m = cls.getMethod("setArray", int[].class);
 
-        m.invoke(instrumented, array);
+        m.invoke(instrumented, (Object) array);
     }
 
     private static void setImage(BufferedImage image, Object instrumented) throws Exception {
@@ -256,7 +256,7 @@ public class COJACBenchmark {
         Agent agent = benchAgent();
         Runnable run=null;
         Callable<?> callable = null;
-        Object runnableOrCallable=null;
+        Object runnableOrCallable;
         if (runnable){
             runnableOrCallable = run = getFromAgentClassLoader(cls);   //COJACBenchmark.<Runnable> getFromAgentClassLoader(cls)
         } else {

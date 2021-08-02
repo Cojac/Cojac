@@ -78,11 +78,7 @@ public class BehaviourLoader {
             Document document = docBuilder.parse(filePath);
             // initialize the structure (
             classMap = classMapFromXML(document);
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
+        } catch (SAXException | IOException | ParserConfigurationException e) {
             e.printStackTrace();
         }
     }

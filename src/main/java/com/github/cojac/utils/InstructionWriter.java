@@ -95,10 +95,7 @@ public class InstructionWriter {
             // write the XML document to XML file
             transformer.transform(source, result);
             // ----------------------------------------------------------------------
-        } catch (ParserConfigurationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (TransformerException e) {
+        } catch (ParserConfigurationException | TransformerException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

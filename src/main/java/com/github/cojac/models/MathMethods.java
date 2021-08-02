@@ -27,7 +27,7 @@ import java.util.Map;
 
 import org.objectweb.asm.Opcodes;
 public class MathMethods {
-    private final static Map<Class<?>, String> types = new HashMap<Class<?>, String>();
+    private final static Map<Class<?>, String> types = new HashMap<>();
     static{
         types.put(int.class, "I");
         types.put(float.class, "F");
@@ -38,7 +38,7 @@ public class MathMethods {
         types.put(byte.class, "B");
         types.put(String.class, "Ljava/lang/String;");
     }
-    public static ArrayList<Operation> operations = new ArrayList<Operation>();
+    public static ArrayList<Operation> operations = new ArrayList<>();
     static{
         Method[] methods = Math.class.getMethods();//could be a generic class
         for(Method method:methods){
@@ -54,7 +54,8 @@ public class MathMethods {
         
         signature += "(";
         for (Type c: m.getParameterTypes()) {
-            signature += types.get(c);
+            if(types.containsKey(c))
+              signature += types.get(c);
         }
         signature += ")";
         signature += types.get(m.getReturnType());

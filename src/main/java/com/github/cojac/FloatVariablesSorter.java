@@ -107,6 +107,7 @@ public class FloatVariablesSorter extends MethodVisitor {
 		while(nDummySlotsToAdd>0) {
             newLocal.add(Opcodes.TOP); // or maybe Opcodes.NULL marker?
             nLocal++;
+            nDummySlotsToAdd--;
 		}
         
 		ArrayList<Object> newStack = new ArrayList<>();

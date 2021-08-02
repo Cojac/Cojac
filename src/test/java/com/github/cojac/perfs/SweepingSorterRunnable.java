@@ -25,7 +25,7 @@ import java.util.*;
 public final class SweepingSorterRunnable implements Runnable {
     private final Point[] points = rndPointSet(new Random(), 50000, 100000);
 
-    private static final Comparator<Point2D> VERTICAL_COMPARATOR = new Comparator<Point2D>() {
+    private static final Comparator<Point2D> VERTICAL_COMPARATOR = new Comparator<>() {
         @Override
         public int compare(Point2D a, Point2D b) {
             if (a.getY() < b.getY()) {
@@ -36,19 +36,12 @@ public final class SweepingSorterRunnable implements Runnable {
                 return 1;
             }
 
-            if (a.getX() < b.getX()) {
-                return -1;
-            }
+            return Double.compare(a.getX(), b.getX());
 
-            if (a.getX() > b.getX()) {
-                return 1;
-            }
-
-            return 0;
         }
     };
 
-    private static final Comparator<Point2D> HORIZONTAL_COMPARATOR = new Comparator<Point2D>() {
+    private static final Comparator<Point2D> HORIZONTAL_COMPARATOR = new Comparator<>() {
         @Override
         public int compare(Point2D a, Point2D b) {
             if (a.getX() < b.getX()) {
@@ -59,15 +52,8 @@ public final class SweepingSorterRunnable implements Runnable {
                 return 1;
             }
 
-            if (a.getY() < b.getY()) {
-                return -1;
-            }
+            return Double.compare(a.getY(), b.getY());
 
-            if (a.getY() > b.getY()) {
-                return 1;
-            }
-
-            return 0;
         }
     };
 
@@ -86,7 +72,7 @@ public final class SweepingSorterRunnable implements Runnable {
         int leftMostCandidateIndex = 0;
 
         //Vertically sorted set of candidates
-        SortedSet<Point2D> candidates = new TreeSet<Point2D>(VERTICAL_COMPARATOR);
+        SortedSet<Point2D> candidates = new TreeSet<>(VERTICAL_COMPARATOR);
 
         //For each point from left to right
         for (Point current : sorted) {
@@ -122,7 +108,7 @@ public final class SweepingSorterRunnable implements Runnable {
     public static Point[] rndPointSet(Random r, int n, int maxCoord) {
         Point[] t = new Point[n];
         Point p;
-        HashSet<Point> h = new HashSet<Point>();
+        HashSet<Point> h = new HashSet<>();
         Iterator<Point> itr;
         while (h.size() < n) {
             p = new Point(r.nextInt(maxCoord), r.nextInt(maxCoord));

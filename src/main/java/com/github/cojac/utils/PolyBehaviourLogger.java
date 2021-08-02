@@ -94,9 +94,7 @@ public class PolyBehaviourLogger {
             // write the XML document to XML file
             transformer.transform(source, result);
             // ----------------------------------------------------------------------
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (TransformerException e) {
+        } catch (ParserConfigurationException | TransformerException e) {
             e.printStackTrace();
         }
 

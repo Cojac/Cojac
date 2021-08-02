@@ -129,6 +129,7 @@ public class CheckedDoubleBehaviour {
 
     public static int DCMPL(double a, double b) {
         if (Double.isNaN(a) || Double.isNaN(b)) return -1;
+        // do not replace by: Double.compare(a, b);
         int r = a == b ? 0 : a < b ? -1 : 1;
         if (a == 2.0 * a || b == 2.0 * b)  // means here: isInfinite(r) (can't be 0 on NaN)
             return r;

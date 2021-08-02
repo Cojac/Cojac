@@ -37,6 +37,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * This class instruments code with methods defined in the classes given by an instance of arg 
@@ -56,8 +57,8 @@ import java.util.Map;
 public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
 
     private final InstrumentationStats stats;
-    private final Map<Integer, InvokableMethod> invocations = new HashMap<Integer, InvokableMethod>(50);
-    private final Map<String, InvokableMethod> methods = new HashMap<String, InvokableMethod>(50);
+    private final Map<Integer, InvokableMethod> invocations = new HashMap<>(50);
+    private final Map<String, InvokableMethod> methods = new HashMap<>(50);
     // private boolean instrumentDouble = false;
     
     private final String[] BEHAVIOURS;
@@ -67,8 +68,6 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
     /**
      * Constructor, private because only a singleton is available. 
      * Use {@link #getInstance(Args, InstrumentationStats)} to get the instance. 
-     * @param args
-     * @param stats
      */
     private BehaviourInstrumenter(Args args, InstrumentationStats stats) {
         super();
@@ -96,8 +95,8 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
      * Method used to get the singleton instance. If not already constructed, the params given will be used.
      * 
      * @param args the arguments with which Cojac has been run.
-     * @param stats
-     * @return
+     * @param stats the instrumentationStats gadget
+     * @return the instance of that singleton
      */
     public static BehaviourInstrumenter getInstance(Args args, InstrumentationStats stats){
         if(instance == null){
@@ -111,7 +110,7 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
     private void checkMethods() {
         try {
             for (int i = 0; i < BEHAVIOURS.length; i++) {
-                for(Method m:behaviorClass(i).getMethods()) {
+                for(Method m: Objects.requireNonNull(behaviorClass(i)).getMethods()) {
                     //Operation op = MathMethods.toStaticOperation(m);
                     if (m.isAnnotationPresent(UtilityMethod.class)){
                         continue;
@@ -155,9 +154,7 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
                     }
                 }
             }
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (SecurityException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }

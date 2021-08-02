@@ -121,7 +121,7 @@ public class DoubleIntervalTest
         v1 = rndDouble();
         v2 = getBiggerRndDouble(v1);
         b = new DoubleInterval(v1,v2);
-        assertTrue(String.format("Test a <=> b : %s <=> %s",a,b),a.compareTo(b) == -1);
+        assertTrue(String.format("Test a <=> b : %s <=> %s",a,b), a.compareTo(b) < 0);
 
         // nothing special with infinity, min or max value
     }
@@ -154,20 +154,20 @@ public class DoubleIntervalTest
         DoubleInterval a = new DoubleInterval(v1,v2);
 
         double v3 = DoubleUtils.getSmallerRndDouble(v1);
-        assertTrue(String.format("Test v3 > a : %f > %s",v3,a),a.compareTo(v3) == 1);
+        assertTrue(String.format("Test v3 > a : %f > %s",v3,a), a.compareTo(v3) > 0);
         v3 = getBiggerRndDouble(v2);
-        assertTrue(String.format("Test v3 < a : %f < %s",v3,a),a.compareTo(v3) == -1);
+        assertTrue(String.format("Test v3 < a : %f < %s",v3,a), a.compareTo(v3) < 0);
         v3 = (v1/2.0 + v2/2.0); // if we do (v1 + v2) / 2, there could be overflow...
         assertTrue(String.format("Test v3 == a : %f == %s", v3, a),a.compareTo(v3) == 0);
 
         // NaN
         a = new DoubleInterval(NaN, rndDouble());
         v1 = rndDouble();
-        assertTrue(String.format("Test a <=> v1 : %s == %f", a, v1),a.compareTo(v1) == -1);
+        assertTrue(String.format("Test a <=> v1 : %s == %f", a, v1), a.compareTo(v1) < 0);
         v1 = NaN;
         assertTrue(String.format("Test a <=> v1 : %s == %f",a,v1),a.compareTo(v1) == 0);
         a = new DoubleInterval(-rndDouble(), rndDouble());
-        assertTrue(String.format("Test a <=> v1 : %s == %f",a,v1),a.compareTo(v1) == 1);
+        assertTrue(String.format("Test a <=> v1 : %s == %f",a,v1), a.compareTo(v1) > 0);
 
         // Positive infinity and negative infinity
         a = new DoubleInterval(NEGATIVE_INFINITY,POSITIVE_INFINITY);
@@ -683,11 +683,11 @@ public class DoubleIntervalTest
         DoubleInterval acRes = new DoubleInterval(0.0,5.0);
         DoubleInterval caRes = new DoubleInterval(-5.0,0.0);
 
-        assertTrue(String.format("Test a %% b : NaN",a,b),ab.isNan());
-        assertTrue(String.format("Test a %% d : NaN",a,d),ad.isNan());
-        assertTrue(String.format("Test b %% a : %s %% %s = %s ; res : %s",b,a,baRes,ba), ba.contains(baRes));
-        assertTrue(String.format("Test a %% c : %s %% %s = %s ; res : %s",a,c,acRes,ac), ac.contains(acRes));
-        assertTrue(String.format("Test c %% a : %s %% %s = %s ; res : %s",c,a,caRes,ca), ca.contains(caRes));
+        assertTrue(String.format("Test a %s %s b : NaN",a,b),ab.isNan());
+        assertTrue(String.format("Test a %s %s d : NaN",a,d),ad.isNan());
+        assertTrue(String.format("Test b %% a : %s  %s = %s ; res : %s",b,a,baRes,ba), ba.contains(baRes));
+        assertTrue(String.format("Test a %% c : %s  %s = %s ; res : %s",a,c,acRes,ac), ac.contains(acRes));
+        assertTrue(String.format("Test c %% a : %s  %s = %s ; res : %s",c,a,caRes,ca), ca.contains(caRes));
     }
 
     @Test

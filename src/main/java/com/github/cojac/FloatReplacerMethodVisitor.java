@@ -42,7 +42,9 @@ import com.github.cojac.instrumenters.ReplaceFloatsMethods;
 import com.github.cojac.models.DoubleNumbers;
 import com.github.cojac.models.FloatNumbers;
 
-import java.util.Set;
+//import java.util.Set;
+
+import java.util.Objects;
 
 import static com.github.cojac.CojacCommonConstants.ASM_VERSION;
 
@@ -306,10 +308,10 @@ public final class FloatReplacerMethodVisitor extends MethodVisitor {
 
         Type cojacType = afterFloatReplacement(myType);
 
-        if(opcode == CHECKCAST && myType.equals(cojacType) == false) {
+        if(opcode == CHECKCAST && !myType.equals(cojacType)) {
             Type objType = Type.getType(Object.class);  // maybe with bootstrap loader(?)
             if(stackTop() != null && objType != null) {
-                if(stackTop().equals(objType.getInternalName())){
+                if(Objects.equals(stackTop(), objType.getInternalName())){
                     if(cojacType.equals(COJAC_FLOAT_WRAPPER_TYPE)){
                         mv.visitMethodInsn(INVOKESTATIC, FN_NAME, "castFromObject", "("+Type.getType(Object.class).getDescriptor()+")"+Type.getType(Object.class).getDescriptor(), false);
                     }

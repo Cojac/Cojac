@@ -298,7 +298,7 @@ public final class Args {
         }
         
         String result = args.stream()
-                .map(a -> behaviours.get(a))
+                .map(behaviours::get)
                 .map(s -> BEHAVIOUR_PACKAGE + s)
                 .collect(Collectors.joining(";"));
         return result;

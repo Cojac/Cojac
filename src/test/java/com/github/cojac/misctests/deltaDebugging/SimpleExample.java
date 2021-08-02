@@ -44,9 +44,9 @@ public class SimpleExample {
         // --------------------------------------------------
         // Validation
         // --------------------------------------------------
-        if (!(new BigDecimal(d) == new BigDecimal("3.0")))
+        if (!(new BigDecimal(d).equals(new BigDecimal("3.0"))))
             System.exit(-1);
-        if (!(new BigDecimal(e) == new BigDecimal("1.0")))
+        if (!(new BigDecimal(e).equals(new BigDecimal("1.0"))))
             System.exit(-1);
         else
             System.exit(0);

@@ -197,12 +197,14 @@ public class SimpleOperations implements MathOperations {
     @Override
     public int dcmpg(double a, double b) throws Exception {
         if (Double.isNaN(a) || Double.isNaN(b)) return +1;
+        // do not replace by: Double.compare(a, b);
         return a == b ? 0 : a < b ? -1 : 1;
     }
 
     @Override
     public int dcmpl(double a, double b) throws Exception {
         if (Double.isNaN(a) || Double.isNaN(b)) return -1;
+        // do not replace by: Double.compare(a, b);
         return a == b ? 0 : a < b ? -1 : 1;
     }
 

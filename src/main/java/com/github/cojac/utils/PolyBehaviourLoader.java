@@ -79,11 +79,7 @@ public class PolyBehaviourLoader {
                 }
                 classMap.put(className, lineMap);
             }
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
+        } catch (SAXException | IOException | ParserConfigurationException e) {
             e.printStackTrace();
         }
     }

@@ -25,7 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class WrapperComplexNumber extends ACojacWrapper<WrapperComplexNumber> {
-    private static final String NUMBER_PATTERN = "(?:.*[^E])";
+    private static final String NUMBER_PATTERN = ".*[^E]";
     private static final Pattern COMPLEX_PATTERN =
             Pattern.compile("((?:[+-]?)" + NUMBER_PATTERN + ")((?:[+-])" + NUMBER_PATTERN + "?)[ij]");
     private static final Pattern REAL_PATTERN =

@@ -119,7 +119,7 @@ public class CheckedFloatBehaviour {
 
     public static int FCMPG(float a, float b) {
         if (Float.isNaN(a) || Float.isNaN(b)) return +1;
-        int r = a == b ? 0 : a < b ? -1 : 1;
+        int r = Float.compare(a, b);
         if (a == 2.0f * a || b == 2.0f * b)  // means here: isInfinite(a) (can't be 0 on NaN)
             return r;
         if (r != 0 && Math.abs(a - b) <= CLOSENESS_ULP_FACTOR_FLOAT * Math.ulp(a)) {
@@ -130,7 +130,7 @@ public class CheckedFloatBehaviour {
 
     public static int FCMPL(float a, float b) {
         if (Float.isNaN(a) || Float.isNaN(b)) return -1;
-        int r = a == b ? 0 : a < b ? -1 : 1;
+        int r = Float.compare(a, b);
         if (a == 2.0f * a || b == 2.0f * b)  // means here: isInfinite(a) (can't be 0 on NaN)
             return r;
         if (r != 0 && Math.abs(a - b) <= CLOSENESS_ULP_FACTOR_FLOAT * Math.ulp(a)) {

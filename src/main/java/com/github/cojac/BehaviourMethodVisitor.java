@@ -21,11 +21,6 @@ package com.github.cojac;
 import static org.objectweb.asm.util.Printer.OPCODES;
 import static com.github.cojac.CojacCommonConstants.ASM_VERSION;
 
-/**
- * Class called for each instrumented method, which can change a variable for another, 
- * and change the method's behaviour.
- * @author Valentin
- */
 
 import java.util.BitSet;
 
@@ -41,6 +36,11 @@ import com.github.cojac.models.Operations;
 import com.github.cojac.utils.BehaviourLoader;
 import com.github.cojac.utils.InstructionWriter;
 
+/**
+ * Class called for each instrumented method, which can change a variable for another,
+ * and change the method's behaviour.
+ * @author Valentin
+ */
 final class BehaviourMethodVisitor extends LocalVariablesSorter {
     private final IOpcodeInstrumenterFactory factory;
     private static BitSet constLoadInst = new BitSet(255);// there are 255
@@ -56,7 +56,7 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
     private final Args args;
     private final String classPath;
     private final CojacReferences references;
-    private boolean instrumentMethod = false;
+    private boolean instrumentMethod;
     private int lineNb = 0;
     private int insnNb = 0;
     private String methodName;

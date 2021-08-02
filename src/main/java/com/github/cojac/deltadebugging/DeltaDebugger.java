@@ -43,10 +43,6 @@ public class DeltaDebugger {
 
 	/**
 	 * Finds one local minimum set that still valid.
-	 * 
-	 * @param set
-	 * @param n
-	 * @return
 	 */
 	private BitSet ddMin(BitSet set, int n) {
 		if (n <= 0) throw new IllegalArgumentException("Parameter (n) must be greater than zero");
@@ -111,9 +107,6 @@ public class DeltaDebugger {
 
 	/**
 	 * Check if the configuration is valid
-	 * 
-	 * @param set
-	 * @return
 	 */
 	public boolean isSetValid(BitSet set) {
 		be.editBehaviours(set);

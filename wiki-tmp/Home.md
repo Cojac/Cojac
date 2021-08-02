@@ -1,46 +1,46 @@
-<p align="center">
+﻿<p align="center">
 <img src="https://github.com/Cojac/Cojac/wiki/images/logo-cojac-512.png"
    width=196" />
 <h1 align="center">******* COJAC User Guide *******  <a href="https://github.com/Cojac/Cojac/wiki/CojacWiki.pdf">(PDF)</a> </h1>
 </p>
 
-1. [Introduction](home#1---introduction)  
-    1.1 [Overview](home#11---overview)  
-    1.2 [Launching an application with COJAC](home#12---launching-an-application-with-cojac)  
-    1.3 [Links and notes](home#13---links-and-notes)
+1. [Introduction](Home#1---introduction)  
+    1.1 [Overview](Home#11---overview)  
+    1.2 [Launching an application with COJAC](Home#12---launching-an-application-with-cojac)  
+    1.3 [Links and notes](Home#13---links-and-notes)
   
-2. [COJAC: the numerical sniffer](home#2---cojac-the-numerical-sniffer)  
-    2.1 [What COJAC considers suspicious](home#21---what-cojac-considers-suspicious)  
-    2.2 [Configuring what COJAC will detect](home#22---configuring-what-cojac-will-detect)    
-    2.3 [Configuring where COJAC will be applied](home#23---configuring-where-cojac-will-be-applied)      
-    2.4 [Configuring how COJAC will signal the detected problems](home#24---configuring-how-cojac-will-signal-the-detected-problems)      
-    2.5 [Instrumenting without executing](home#25---instrumenting-without-executing)    
-    2.6 [Example](home#26---example)    
-    2.7 [JMX feature](home#27---jmx-feature)
+2. [COJAC: the numerical sniffer](Home#2---cojac-the-numerical-sniffer)  
+    2.1 [What COJAC considers suspicious](Home#21---what-cojac-considers-suspicious)  
+    2.2 [Configuring what COJAC will detect](Home#22---configuring-what-cojac-will-detect)    
+    2.3 [Configuring where COJAC will be applied](Home#23---configuring-where-cojac-will-be-applied)      
+    2.4 [Configuring how COJAC will signal the detected problems](Home#24---configuring-how-cojac-will-signal-the-detected-problems)      
+    2.5 [Instrumenting without executing](Home#25---instrumenting-without-executing)    
+    2.6 [Example](Home#26---example)    
+    2.7 [JMX feature](Home#27---jmx-feature)
   
-3. [COJAC: the arithmetic behavior toolkit ](home#3---cojac-the-arithmetic-behavior-toolkit)  
-    3.1 ["Double-as-float" behavior](home#31---double-as-float-behavior)  
-    3.2 ["Rounding mode" behavior](home#32---rounding-mode-behavior)    
-    3.3 ["Epsilon-fuzzer" behavior](home#33---epsilon-fuzzer-behavior)      
+3. [COJAC: the arithmetic behavior toolkit ](Home#3---cojac-the-arithmetic-behavior-toolkit)  
+    3.1 ["Double-as-float" behavior](Home#31---double-as-float-behavior)  
+    3.2 ["Rounding mode" behavior](Home#32---rounding-mode-behavior)    
+    3.3 ["Epsilon-fuzzer" behavior](Home#33---epsilon-fuzzer-behavior)      
 
-4. [COJAC: the enriching wrapper](home#4---cojac-the-enriching-wrapper)  
-    4.1 [Our wrapping mechanism](home#41---our-wrapping-mechanism)  
-    4.2 [Wrapper "BigDecimal"](home#42---wrapper-bigdecimal)  
-    4.3 [Wrapper "Interval computation"](home#43---wrapper-interval-computation)  
-    4.4 [Wrapper "Discrete stochastic arithmetic"](home#44---wrapper-discrete-stochastic-arithmetic)  
-    4.5 [Wrapper "Automatic differentiation (forward mode)"](home#45---wrapper-automatic-differentiation-forward-mode)  
-    4.6 [Wrapper "Automatic differentiation (reverse mode)"](home#46---wrapper-automatic-differentiation-reverse-mode)  
-    4.7 [Wrapper "Symbolic expressions" (and functions)](home#47---wrapper-symbolic-expressions-and-functions)  
-    4.8 [Wrapper "Chebfun"](home#48---wrapper-chebfun)  
-    4.9 [Wrapper "ComplexNumber"](#49-wrapper-complex-number)  
+4. [COJAC: the enriching wrapper](Home#4---cojac-the-enriching-wrapper)  
+    4.1 [Our wrapping mechanism](Home#41---our-wrapping-mechanism)  
+    4.2 [Wrapper "BigDecimal"](Home#42---wrapper-bigdecimal)  
+    4.3 [Wrapper "Interval computation"](Home#43---wrapper-interval-computation)  
+    4.4 [Wrapper "Discrete stochastic arithmetic"](Home#44---wrapper-discrete-stochastic-arithmetic)  
+    4.5 [Wrapper "Automatic differentiation (forward mode)"](Home#45---wrapper-automatic-differentiation-forward-mode)  
+    4.6 [Wrapper "Automatic differentiation (reverse mode)"](Home#46---wrapper-automatic-differentiation-reverse-mode)  
+    4.7 [Wrapper "Symbolic expressions" (and functions)](Home#47---wrapper-symbolic-expressions-and-functions)  
+    4.8 [Wrapper "Chebfun"](Home#48---wrapper-chebfun)  
+    4.9 [Wrapper "ComplexNumber"](Home#49-wrapper-complex-number)  
 
-5. [Detailed usage](home#5---detailed-usage)  
+5. [Detailed usage](Home#5---detailed-usage)  
 
-6. [Limitations and known issues](home#6---limitations-and-known-issues)    
-    6.1 [Issues with the sniffer](home#61---issues-with-the-sniffer)  
-    6.2 [Issues with the wrapper](home#62---issues-with-the-wrapper)
+6. [Limitations and known issues](Home#6---limitations-and-known-issues)    
+    6.1 [Issues with the sniffer](Home#61---issues-with-the-sniffer)  
+    6.2 [Issues with the wrapper](Home#62---issues-with-the-wrapper)
 
-7. [And now...](home#7---and-now)  
+7. [And now...](Home#7---and-now)  
 
 --------------------------------------------------
 # 1 - Introduction

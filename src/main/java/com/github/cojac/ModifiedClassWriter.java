@@ -139,13 +139,13 @@ public class ModifiedClassWriter extends ClassWriter {
             throws IOException {
         while (!"java/lang/Object".equals(type)) {
             String[] itfs = info.getInterfaces();
-            for (int i = 0; i < itfs.length; ++i) {
-                if (itfs[i].equals(itf)) {
+            for (String s : itfs) {
+                if (s.equals(itf)) {
                     return true;
                 }
             }
-            for (int i = 0; i < itfs.length; ++i) {
-                if (typeImplements(itfs[i], typeInfo(itfs[i]), itf)) {
+            for (String s : itfs) {
+                if (typeImplements(s, typeInfo(s), itf)) {
                     return true;
                 }
             }
@@ -165,12 +165,8 @@ public class ModifiedClassWriter extends ClassWriter {
      *             if the bytecode of 'type' cannot be loaded.
      */
     private ClassReader typeInfo(final String type) throws IOException {
-        InputStream is = theLoader.getResourceAsStream(type + ".class");
-        try {
+        try (InputStream is = theLoader.getResourceAsStream(type + ".class")) {
             return new ClassReader(is);
-        } finally {
-			if(is != null)
-	            is.close();
         }
     }
 }

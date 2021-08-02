@@ -147,7 +147,7 @@ public enum Opt {
 	 */
 	public static void paseArgs(String[] args) throws ParseException {
 		CommandLineParser parser = new BasicParser();
-		CommandLine cmdLine = null;
+		CommandLine cmdLine;
 
 		cmdLine = parser.parse(opts, args);
 

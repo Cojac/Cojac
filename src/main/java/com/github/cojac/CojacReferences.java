@@ -411,11 +411,7 @@ public final class CojacReferences {
                 // get the path to XML file
                 // String filePath = args.getValue(Arg.LISTING_INSTRUCTIONS);
                 String filePath = args.getValue(Arg.POLY_BEHAVIOURAL_LOGGING);
-                Runtime.getRuntime().addShutdownHook(new Thread() {
-                    @Override public void run() {
-                        PolyBehaviourLogger.getinstance().writeLogs(filePath);
-                    }
-                });
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> PolyBehaviourLogger.getinstance().writeLogs(filePath)));
             }
             
             if (args.isSpecified(Arg.POLY_BEHAVIOURAL_LOAD)) {
@@ -452,11 +448,7 @@ public final class CojacReferences {
             }
 
             if (args.isSpecified(Arg.INSTRUMENTATION_STATS)) {
-                Runtime.getRuntime().addShutdownHook(new Thread() {
-                    @Override public void run() {
-                        stats.printInstrumentationStats(args);
-                    }
-                });
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> stats.printInstrumentationStats(args)));
             }
 
             if (args.isSpecified(Arg.BYPASS) &&
@@ -468,12 +460,7 @@ public final class CojacReferences {
             bypassList = splitter.split(sbBypassList.toString());
 
             if (args.isSpecified(Arg.RUNTIME_STATS)) {
-                Runtime.getRuntime().addShutdownHook(new Thread() {
-                    @Override
-                    public void run() {
-                        InstrumentationStats.printRuntimeStats(args, ReflectionUtils.<Map<String, Long>> getStaticFieldValue(loader, "com.github.cojac.models.Reactions", "EVENTS"));
-                    }
-                });
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> InstrumentationStats.printRuntimeStats(args, ReflectionUtils.<Map<String, Long>> getStaticFieldValue(loader, "com.github.cojac.models.Reactions", "EVENTS"))));
             }
             if(args.isSpecified(Arg.INSTRUMENT_SELECTIVELY)){
                 System.out.println("CojacReferences.CojacReferencesBuilder.build() : " + args.getValue(Arg.INSTRUMENT_SELECTIVELY));
@@ -483,11 +470,7 @@ public final class CojacReferences {
             if(args.isSpecified(Arg.LISTING_INSTRUCTIONS)){
                 // get the path to XML file
                 String filePath = args.getValue(Arg.LISTING_INSTRUCTIONS);
-                Runtime.getRuntime().addShutdownHook(new Thread() {
-                    @Override public void run() {
-                        InstructionWriter.getinstance().writeInstructionDocumentToFile(filePath);   
-                    }
-                });
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> InstructionWriter.getinstance().writeInstructionDocumentToFile(filePath)));
             }
             
             if(args.isSpecified(Arg.LOAD_BEHAVIOUR_MAP)) {
@@ -509,7 +492,7 @@ public final class CojacReferences {
             }
             if(args.isSpecified(Arg.ARBITRARY_PRECISION)){
                 ConversionBehaviour.setConversion(Conversion.Arbitrary);
-                ConversionBehaviour.setSignificativeBits(Integer.valueOf(args.getValue(Arg.ARBITRARY_PRECISION)));
+                ConversionBehaviour.setSignificativeBits(Integer.parseInt(args.getValue(Arg.ARBITRARY_PRECISION)));
             }
             if(args.isSpecified(Arg.ROUND_NATIVELY_UP)){
                 ConversionBehaviour.setConversion(Conversion.NativeRounding);
@@ -566,12 +549,12 @@ public final class CojacReferences {
             clazz.getMethod("setNgWrapper", String.class).invoke(clazz, ngWrapper);
 
             if (args.isSpecified(Arg.BIG_DECIMAL_WR)) {
-                bigDecimalPrecision = Integer.valueOf(args.getValue(Arg.BIG_DECIMAL_WR));
+                bigDecimalPrecision = Integer.parseInt(args.getValue(Arg.BIG_DECIMAL_WR));
                 clazz.getMethod("setBigDecimalPrecision", int.class).invoke(clazz, bigDecimalPrecision);
             }
             
             if (args.isSpecified(Arg.STABILITY_THRESHOLD)) {
-                stabilityThreshold = Double.valueOf(args.getValue(Arg.STABILITY_THRESHOLD));
+                stabilityThreshold = Double.parseDouble(args.getValue(Arg.STABILITY_THRESHOLD));
                 clazz.getMethod("setStabilityThreshold", double.class).invoke(clazz, stabilityThreshold);
             }
 
@@ -619,7 +602,7 @@ public final class CojacReferences {
         }
         
         private static HashMap<String, PartiallyInstrumentable> parseClassesIndices(String arg){
-            HashMap<String, PartiallyInstrumentable> classesToInstrument = new HashMap<String, PartiallyInstrumentable>();
+            HashMap<String, PartiallyInstrumentable> classesToInstrument = new HashMap<>();
             CojacClassToInstrumentSplitter sp = new CojacClassToInstrumentSplitter();
             if(arg == null) return classesToInstrument;
             String[] classes = sp.split(arg.replaceAll("\\s+",""));
@@ -714,7 +697,7 @@ public final class CojacReferences {
     
     public static class ClassPartiallyInstrumented implements PartiallyInstrumentable{
         private String name;
-        private HashSet<String> methods = new HashSet<String>();
+        private HashSet<String> methods = new HashSet<>();
         private BitSet lines = new BitSet(256);
         private BitSet instructions = new BitSet(256);
         public ClassPartiallyInstrumented(String className,String methodsOrLines,String instructions) {
