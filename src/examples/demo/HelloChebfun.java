@@ -14,6 +14,7 @@
  *    limitations under the License.
  */
 
+// Run with "ChebFun" Wrapper: ... cojac.jar="-Rcheb"
 // Run with "Symbolic" Wrapper: ... cojac.jar="-Rsymb"
 
 

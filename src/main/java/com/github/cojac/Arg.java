@@ -75,8 +75,8 @@ public enum Arg {
     CMPFUZZER             ("Bfuz"), 
     INSTRUMENT_SELECTIVELY("Only"),     // was: Oi
     /* Tâche - complex numbers and unums */
-    COMPLEX_NUMBER    ("Rc"),
-    POSIT    ("Rp"),
+    COMPLEX_NUMBER  ("Rc"),
+    POSIT           ("Rp"),
     
     ALL    ("Ca"),
     NONE   ("Cn"),

@@ -16,13 +16,19 @@
 
 /*
  * To be run: with AutoDiff-reverse wrapper:
- *     java -javaagent:cojac.jar="-Rar" demo.HelloAutodiffReverse
+ *     java -javaagent:cojac.jar="-Rc" demo.HelloComplexNumber
  */
-// TODO - update command above
 
 package demo;
 
 public class HelloComplexNumber {
+
+    static void tinyDemo() {
+        double val = Math.sqrt(-9); // = 3i
+        val = 5 * val * val;        // = 5*9*i^2 = -45
+        System.out.print(val);    // -45.0 (with COJAC!)
+        System.out.println(" should be -45.0 (with COJAC!)");
+    }
 
     // Find a root of a cubic equation of the form ax^3 + bx^2 + cx + d = 0 with the general cubic formula
     // This formula can be found on wikipedia: https://en.wikipedia.org/wiki/Cubic_equation#General_cubic_formula
@@ -46,6 +52,7 @@ public class HelloComplexNumber {
     }
 
     public static void main(String[] args) {
+        tinyDemo();
         System.out.println(solveCubicEquation(2, 1, 3, 1) + " should be ≈ -0.34563");
         System.out.println(solveCubicEquation(1, -2, -13, -10) + " should be -1, -2 or 5");
     }

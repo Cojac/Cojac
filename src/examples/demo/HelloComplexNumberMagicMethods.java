@@ -16,22 +16,19 @@
 
 /*
  * To be run: with AutoDiff-reverse wrapper:
- *     java -javaagent:cojac.jar="-Rar" demo.HelloAutodiffReverse
+ *     java -javaagent:cojac.jar="-Rc" demo.HelloComplexNumberMagicMethods
  */
-// TODO - update command above
 
 package demo;
 
-public class HelloComplexNumber2 {
+public class HelloComplexNumberMagicMethods {
 
-
-    public static double COJAC_MAGIC_getReal(double d){
-        return d;
-    }
-
-    public static double COJAC_MAGIC_getImaginary(double d){
-        return 0;
-    }
+//    public static double COJAC_MAGIC_getReal(double d){
+//        return d;
+//    }
+//    public static double COJAC_MAGIC_getImaginary(double d){
+//        return 0;
+//    }
 
     public static boolean COJAC_MAGIC_equals(double a, double b) {
         return a == b;

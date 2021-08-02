@@ -23,7 +23,7 @@ public abstract class ACojacWrapper<T extends ACojacWrapper<T>> implements Compa
     //----------------- Necessary constructor  -------------------------------
     //-------------------------------------------------------------------------
 
-    // public ACojacWrapper(ACojacWrapper v) { }
+    // public ConcreteWrapper(ConcreteWrapper v) { }
 
     //-------------------------------------------------------------------------
 
@@ -67,11 +67,13 @@ public abstract class ACojacWrapper<T extends ACojacWrapper<T>> implements Compa
     public abstract T math_toRadians();
     public abstract T math_toDegrees();
 
+    @SuppressWarnings("unchecked")
     public T math_min(T b) {
         if (this.compareTo(b)<0) return (T)this;
         return b;
     }
-    
+
+    @SuppressWarnings("unchecked")
     public T math_max(T b) {
         if (this.compareTo(b)>0) return (T)this;
         return b;
@@ -104,12 +106,14 @@ public abstract class ACojacWrapper<T extends ACojacWrapper<T>> implements Compa
 	@Override public int compareTo(T o) {
 	    return Double.compare(toDouble(), o.toDouble());
 	}
-	
+
+    @SuppressWarnings("unchecked")
     @Override public boolean equals(Object obj) {
         if (obj == null) return false;
         if (! (obj instanceof ACojacWrapper)) return false;
-        ACojacWrapper<T> ow = (ACojacWrapper<T>)obj;
-        return Double.valueOf(toDouble()).equals(Double.valueOf(ow.toDouble()));
+        ACojacWrapper<T> ow;
+        ow = (ACojacWrapper<T>)obj;
+        return Double.valueOf(toDouble()).equals(ow.toDouble());
     }
 
 	@Override public int hashCode()       { return Double.hashCode(toDouble()); }

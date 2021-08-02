@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="HelloBigDecimal without-Cojac" type="Application" factoryName="Application">
+    <option name="ALTERNATIVE_JRE_PATH" value="11" />
+    <option name="MAIN_CLASS_NAME" value="demo.HelloBigDecimal" />
+    <module name="cojac" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="demo.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

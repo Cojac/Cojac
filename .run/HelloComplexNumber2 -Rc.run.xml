@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="HelloComplexNumber2 -Rc" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="demo.HelloComplexNumber2" />
+  <configuration default="false" name="HelloComplexNumberMagicMethods -Rc" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="demo.HelloComplexNumberMagicMethods" />
     <module name="cojac" />
     <option name="VM_PARAMETERS" value="-javaagent:target/cojac.jar=&quot;-Rc&quot;" />
     <method v="2">

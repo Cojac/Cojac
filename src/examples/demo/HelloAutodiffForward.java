@@ -16,7 +16,7 @@
 
 /* 
  * To be run: with AutoDiff-reverse wrapper:   
- *     java -javaagent:cojac.jar="-Rar" demo.HelloAutodiffReverse
+ *     java -javaagent:cojac.jar="-Ra" demo.HelloAutodiffForward
  */
 
 package demo;

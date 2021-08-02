@@ -160,7 +160,8 @@ public class CommonFloat<T extends ACojacWrapper<T>> extends Number implements C
     @Override public int compareTo(CommonFloat<T> o) {
         return this.val.compareTo(o.val);
 	}
-	
+
+    @SuppressWarnings("unchecked")
 	@Override public boolean equals(Object obj) {
         if (obj == null) return false;
         if (! (obj instanceof CommonFloat)) return false;
@@ -200,15 +201,6 @@ public class CommonFloat<T extends ACojacWrapper<T>> extends Number implements C
         return this.val.toDouble();
 	}
 
-	// TODO: remove once we switch to the NG wrapper
-	public static String COJAC_MAGIC_FLOAT_wrapper() {
-        return newInstance(null).wrapperName();
-    } 
-
-    // TODO: remove once we switch to the NG wrapper
-    public static <T extends ACojacWrapper<T>> String COJAC_MAGIC_FLOAT_toStr(CommonFloat<T> n) {
-        return n.val.asInternalString();
-    }
     //-------------------------------------------------------------------------
     //--------------------- Auxiliary methods ---------------------------------
     //------------ (not required for the Wrapper mechanism) -------------------

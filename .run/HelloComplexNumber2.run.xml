@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="HelloComplexNumber2" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="demo.HelloComplexNumber2" />
+    <option name="MAIN_CLASS_NAME" value="demo.HelloComplexNumberMagicMethods" />
     <module name="cojac" />
     <method v="2">
       <option name="Make" enabled="true" />

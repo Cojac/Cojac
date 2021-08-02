@@ -219,7 +219,8 @@ public class CommonDouble<T extends ACojacWrapper<T>> extends Number implements 
 	@Override public int compareTo(CommonDouble<T> o) {
         return this.val.compareTo(o.val);
 	}
-	
+
+    @SuppressWarnings("unchecked")
     @Override public boolean equals(Object obj) {
         if (obj == null) return false;
         if (! (obj instanceof CommonDouble)) return false;
@@ -279,26 +280,13 @@ public class CommonDouble<T extends ACojacWrapper<T>> extends Number implements 
         return n.val.asInternalString();
     }
 
-    // TODO: remove once we switch to the NG wrapper
-    public static <T extends ACojacWrapper<T>> String COJAC_MAGIC_DOUBLE_wrapper() {
-        return newInstance((T)null).wrapperName();
-    }
 
-    // TODO: remove once we switch to the NG wrapper
-    public static <T extends ACojacWrapper<T>> String COJAC_MAGIC_DOUBLE_toStr(CommonDouble<T> n) {
-        return n.val.asInternalString();
-    }
-    
-    // TODO: remove once we switch to the NG wrapper
-    public static <T extends ACojacWrapper<T>> String COJAC_MAGIC_DOUBLE_toStr(CommonFloat<T> n) {
-        return n.val.asInternalString();
-    }
-    
     //-------------------------------------------------------------------------
     //--------------------- Auxiliary methods ---------------------------------
 	//------------ (not required for the Wrapper mechanism) -------------------
     //-------------------------------------------------------------------------
 
+    @SuppressWarnings("unchecked")
     protected static <T extends ACojacWrapper<T>> T newInstance(T w) {
         try {
             Constructor<?> c=COJAC_WRAPPER_NG_CLASS.getConstructor(COJAC_WRAPPER_NG_CLASS);
