@@ -22,7 +22,6 @@
 package demo;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class HelloComplexNumber {
@@ -58,6 +57,7 @@ public class HelloComplexNumber {
 
     // Find a root of a cubic equation of the form ax^3 + bx^2 + cx + d = 0 with the general cubic formula
     // This formula can be found on wikipedia: https://en.wikipedia.org/wiki/Cubic_equation#General_cubic_formula
+    // (we could also return a Double[] array...)
     static List<Double> cubicEquationSolutions(double a, double b, double c, double d) {
         List<Double> sols = new ArrayList<>();
         double det0 = b * b - 3 * a * c;
