@@ -176,7 +176,7 @@ public class PseudoRoundingBehaviour {
         UP,
         DOWN,
         RANDOM,
-        NO_ROUNDING;
+        NO_ROUNDING
     }
 }
 

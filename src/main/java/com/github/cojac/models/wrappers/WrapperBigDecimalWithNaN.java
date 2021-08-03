@@ -27,7 +27,7 @@ import java.util.function.DoubleUnaryOperator;
 
 public class WrapperBigDecimalWithNaN extends ACompactWrapper<WrapperBigDecimalWithNaN> {
     //=======================================================
-    static enum NumberKind {
+    enum NumberKind {
         NORMAL(0), 
         NAN(Double.NaN), 
         POS_INF(Double.POSITIVE_INFINITY), 
@@ -61,8 +61,8 @@ public class WrapperBigDecimalWithNaN extends ACompactWrapper<WrapperBigDecimalW
     //----------------- Necessary constructor  -------------------------------
     //-------------------------------------------------------------------------
     public WrapperBigDecimalWithNaN(WrapperBigDecimalWithNaN w) {
-        this(w==null ? BigDecimal.ZERO : c(w).value,
-             w==null ? NumberKind.NORMAL : c(w).kind);
+        this(w==null ? BigDecimal.ZERO : w.value,
+             w==null ? NumberKind.NORMAL : w.kind);
     }
     
     //-------------------------------------------------------------------------
@@ -95,7 +95,7 @@ public class WrapperBigDecimalWithNaN extends ACompactWrapper<WrapperBigDecimalW
     }
     
     @Override public WrapperBigDecimalWithNaN ddiv(WrapperBigDecimalWithNaN b) {
-        if (kind!=NumberKind.NORMAL || c(b).kind !=NumberKind.NORMAL 
+        if (kind!=NumberKind.NORMAL || b.kind !=NumberKind.NORMAL
                 || big(b).equals(BigDecimal.ZERO))
             return super.ddiv(b); // so via applyOp()
         return new WrapperBigDecimalWithNaN(value.divide(big(b), mathContext), NumberKind.NORMAL);
@@ -108,7 +108,7 @@ public class WrapperBigDecimalWithNaN extends ACompactWrapper<WrapperBigDecimalW
     }
     
     @Override public WrapperBigDecimalWithNaN drem(WrapperBigDecimalWithNaN b) {
-        if (kind!=NumberKind.NORMAL || c(b).kind !=NumberKind.NORMAL 
+        if (kind!=NumberKind.NORMAL || b.kind !=NumberKind.NORMAL
                 || big(b).equals(BigDecimal.ZERO))
             return super.drem(b); // so via applyOp()
         BigDecimal rem=value.remainder(big(b), mathContext);
@@ -149,20 +149,16 @@ public class WrapperBigDecimalWithNaN extends ACompactWrapper<WrapperBigDecimalW
     }
     
     @Override public int compareTo(WrapperBigDecimalWithNaN w) {
-        if (kind != NumberKind.NORMAL || c(w).kind != NumberKind.NORMAL)
-            return Double.compare(kind.asDouble, c(w).kind.asDouble);
-        return value.compareTo(c(w).value);
+        if (kind != NumberKind.NORMAL || w.kind != NumberKind.NORMAL)
+            return Double.compare(kind.asDouble, w.kind.asDouble);
+        return value.compareTo(w.value);
     }
 
     //-------------------------------------------------------------------------
-    private static BigDecimal big(ACojacWrapper a) {
-        return c(a).value;
+    private static BigDecimal big(WrapperBigDecimalWithNaN a) {
+        return a.value;
     }
 
-    private static WrapperBigDecimalWithNaN c(ACojacWrapper a) {
-        return (WrapperBigDecimalWithNaN) a;
-    }
-    
     private static BigDecimal sqrtHeron(BigDecimal x) {
         BigDecimal epsilon = new BigDecimal(10.0).pow(-COJAC_BIGDECIMAL_PRECISION, mathContext); // precision
         BigDecimal root = new BigDecimal(1.0, mathContext);

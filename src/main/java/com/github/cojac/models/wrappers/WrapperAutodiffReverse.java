@@ -151,37 +151,33 @@ public class WrapperAutodiffReverse extends ACojacWrapper<WrapperAutodiffReverse
     }
 
     // ------------------------------------------------------------------------
-    public static CommonDouble COJAC_MAGIC_partialDerivativeIn(CommonDouble d) {
-        WrapperAutodiffReverse res=new WrapperAutodiffReverse(der(d.val).adjoint, null, 0);
-        return new CommonDouble(res);
+    public static CommonDouble<WrapperAutodiffReverse> COJAC_MAGIC_partialDerivativeIn(CommonDouble<WrapperAutodiffReverse> d) {
+        WrapperAutodiffReverse res=new WrapperAutodiffReverse(d.val.adjoint, null, 0);
+        return new CommonDouble<>(res);
     }
     
-    public static CommonFloat COJAC_MAGIC_partialDerivativeIn(CommonFloat d) {
-        WrapperAutodiffReverse res=new WrapperAutodiffReverse(der(d.val).adjoint,null, 0);
-        return new CommonFloat(res);
+    public static CommonFloat<WrapperAutodiffReverse> COJAC_MAGIC_partialDerivativeIn(CommonFloat<WrapperAutodiffReverse> d) {
+        WrapperAutodiffReverse res=new WrapperAutodiffReverse(d.val.adjoint,null, 0);
+        return new CommonFloat<>(res);
     }
     
-    public static void COJAC_MAGIC_computePartialDerivatives(CommonDouble d) {
-        WrapperAutodiffReverse w=der(d.val);
+    public static void COJAC_MAGIC_computePartialDerivatives(CommonDouble<WrapperAutodiffReverse> d) {
+        WrapperAutodiffReverse w=d.val;
         w.backPropagate(1.0);
     }
     
-    public static void COJAC_MAGIC_computePartialDerivatives(CommonFloat d) {
-        WrapperAutodiffReverse w=der(d.val);
+    public static void COJAC_MAGIC_computePartialDerivatives(CommonFloat<WrapperAutodiffReverse> d) {
+        WrapperAutodiffReverse w=d.val;
         w.backPropagate(1.0);
     }
 
-    public static void COJAC_MAGIC_resetPartialDerivatives(CommonDouble d) {
-        WrapperAutodiffReverse w=der(d.val);
+    public static void COJAC_MAGIC_resetPartialDerivatives(CommonDouble<WrapperAutodiffReverse> d) {
+        WrapperAutodiffReverse w=d.val;
         w.backReset();
     }
     
-    public static void COJAC_MAGIC_resetPartialDerivatives(CommonFloat d) {
-        WrapperAutodiffReverse w=der(d.val);
+    public static void COJAC_MAGIC_resetPartialDerivatives(CommonFloat<WrapperAutodiffReverse> d) {
+        WrapperAutodiffReverse w=d.val;
         w.backReset();
-    }
-    //-------------------------------------------------------------------------
-    private static WrapperAutodiffReverse der(ACojacWrapper w) {
-        return (WrapperAutodiffReverse)w;
     }
 }

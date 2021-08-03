@@ -135,8 +135,10 @@ public enum Arg {
     static String allOpcodes="";
 
     static {
+        StringBuilder all = new StringBuilder();
         for (Arg arg : Arg.values())
-            if (arg.isOperator()) allOpcodes+=arg.name+",";
+            if (arg.isOperator()) all.append(arg.name + ",");
+        allOpcodes = all.toString();
         // options.addOption(arg.shortOpt(), false, "Instrument the " + arg.shortOpt() + " operation");
         allOpcodes=allOpcodes.substring(0, allOpcodes.length()-1);
     }

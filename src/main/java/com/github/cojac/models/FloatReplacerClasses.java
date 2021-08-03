@@ -18,10 +18,7 @@
 
 package com.github.cojac.models;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -93,7 +90,7 @@ public class FloatReplacerClasses {
         String internalName = Type.getType(clazz).getInternalName();
         SPECIFIC_MAGIC_METHODS.putIfAbsent(internalName, new HashSet<>());
         Set<String> ms = SPECIFIC_MAGIC_METHODS.get(internalName);
-        for(String m: methods) ms.add(m);
+        Collections.addAll(ms, methods);
     }
     
     public static boolean isGeneralMagicMethod(String methodName) {

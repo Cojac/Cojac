@@ -24,7 +24,7 @@ public class TinyFloatExample2 {
 
     static Double testDoubleWrapper(Double a, Double b){
         Double d1 = 1.5;
-        Double d2 = new Double(d1);
+        Double d2 = Double.valueOf(d1);
         d1.compareTo(d2);
         return a;
     }

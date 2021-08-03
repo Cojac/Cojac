@@ -107,12 +107,12 @@ public class TinyFloatExample {
         double dval = 7.91;
         // Float creation
         Float f1 = 1.5f;
-        Float f2 = new Float(f1);
+        Float f2 = Float.valueOf(f1);
         Float f3 = val;
-        Float f4 = new Float(val);
-        Float f5 = new Float("521.235");
-        Float f6 = new Float(5.21);
-        Float f7 = new Float(dval);
+        Float f4 = Float.valueOf(val);
+        Float f5 = Float.valueOf("521.235");
+        Float f6 = Float.valueOf((float)5.21);
+        Float f7 = Float.valueOf((float)dval);
  
         Float f8 = Float.parseFloat("76.654");
         
@@ -144,12 +144,12 @@ public class TinyFloatExample {
         float fval = 7.91f;
         // Float creation
         Double d1 = 1.5;
-        Double d2 = new Double(d1);
+        Double d2 = Double.valueOf(d1);
         Double d3 = val;
-        Double d4 = new Double(val);
-        Double d5 = new Double("521.235");
-        Double d6 = new Double(5.21);
-        Double d7 = new Double(fval);
+        Double d4 = Double.valueOf(val);
+        Double d5 = Double.valueOf("521.235");
+        Double d6 = Double.valueOf(5.21);
+        Double d7 = Double.valueOf(fval);
  
         Double f8 = Double.parseDouble("76.654");
         

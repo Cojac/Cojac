@@ -23,6 +23,7 @@ import com.github.cojac.Arg;
 import com.github.cojac.Args;
 import com.github.cojac.CojacReferences.CojacReferencesBuilder;
 import com.github.cojac.models.wrappers.CommonDouble;
+import com.github.cojac.models.wrappers.WrapperComplexNumber;
 import com.github.cojac.unit.AgentTest;
 import org.junit.After;
 import org.junit.Assert;
@@ -152,9 +153,10 @@ public class WrapperComplexNumberNormalModeTest {
         assertDoubleComparison("testToDouble", 6, ERROR_TOLERANCE);
     }
 
+    @SuppressWarnings("unchecked")
     private void assertDoubleComparison(String methodName, double expected, double errorTolerance) throws
             NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        CommonDouble result = (CommonDouble) invokeMethod(methodName);
+        CommonDouble<WrapperComplexNumber> result = (CommonDouble<WrapperComplexNumber>) invokeMethod(methodName);
         String out = "On \"" + methodName + "\", Got: " + result + ", Expected: " + expected;
         Assert.assertEquals(out, expected, result.doubleValue(), errorTolerance);
     }

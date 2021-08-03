@@ -120,7 +120,7 @@ public enum Operations {
      * @param signature (A String signature described in @see com.github.cojac.models.Signatures
      * @param parameters (A Class<?> array representing the classes of the parameters @see com.github.cojac.models.Parameters
      */
-    private Operations(int opCodeVal, String signature, Class<?>[] parameters ) {
+    Operations(int opCodeVal, String signature, Class<?>[] parameters ) {
        this.opCodeVal=opCodeVal;
        //this.opCodeName=opCodeName;
        this.signature = signature;
@@ -136,7 +136,7 @@ public enum Operations {
      * @param parameters A Class<?> array representing the classes of the parameters @see com.github.cojac.models.Parameters
      * @param loadsConst true if instruction loads a constant
      */
-    private Operations(int opCodeVal, String signature, Class<?>[] parameters , boolean loadsConst, Class<?> returnType) {
+    Operations(int opCodeVal, String signature, Class<?>[] parameters , boolean loadsConst, Class<?> returnType) {
        this.opCodeVal=opCodeVal;
        //this.opCodeName=opCodeName;
        this.signature = signature;

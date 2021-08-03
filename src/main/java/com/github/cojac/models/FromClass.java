@@ -27,5 +27,5 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 @Retention(RUNTIME)//so the annotation can be used reflexively
 public @interface FromClass {
-    public String value();
+    String value();
 }

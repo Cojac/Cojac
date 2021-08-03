@@ -233,7 +233,7 @@ public class ConversionBehaviour {
         if(c == Conversion.Double2Float){
             return Math.nextDown((float) a);
         }else if(c== Conversion.Arbitrary){
-            Long la = Double.doubleToRawLongBits(a);
+            long la = Double.doubleToRawLongBits(a);
             la -= ((1L<<(52-significativeBits)));
             return Double.longBitsToDouble(la&mask);
         }
@@ -244,7 +244,7 @@ public class ConversionBehaviour {
         if(c == Conversion.Double2Float){
             return Math.nextUp((float) a);
         }else if(c== Conversion.Arbitrary){
-            Long la = Double.doubleToRawLongBits(a);
+            long la = Double.doubleToRawLongBits(a);
             la += ((1L<<(52-significativeBits)));
             return Double.longBitsToDouble(la&mask);
         }
@@ -285,8 +285,8 @@ public class ConversionBehaviour {
         if(c == Conversion.Double2Float){//necessary to redirect to the float method
             return Math.ulp((float) a);
         }else if(c== Conversion.Arbitrary){
-            Long la = Double.doubleToRawLongBits(a);
-            Long expa = la & DOUBLE_EXP_MASK;
+            long la = Double.doubleToRawLongBits(a);
+            long expa = la & DOUBLE_EXP_MASK;
             expa += ((1L<<(52-significativeBits)));
             return Double.longBitsToDouble(expa&mask)-1;
         }
@@ -378,7 +378,7 @@ public class ConversionBehaviour {
         Double2Float,
         Arbitrary,
         NoConversion,
-        NativeRounding;
+        NativeRounding
     }
     @UtilityMethod
     public static void setSignificativeBits(int nb){

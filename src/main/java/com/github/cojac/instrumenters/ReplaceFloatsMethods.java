@@ -291,7 +291,7 @@ public class ReplaceFloatsMethods {
             return true;
         }
 
-        if (references.hasToBeInstrumented(owner) == false) {
+        if (!references.hasToBeInstrumented(owner)) {
             ConversionContext cc = new ConversionContext(opcode, owner, name, desc);
             if (!fpm.needsConversion(cc)) return false;
             fpm.proxyCall(mv, cc, true);

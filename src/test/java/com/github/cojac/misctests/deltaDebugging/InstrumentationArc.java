@@ -29,6 +29,7 @@
 package com.github.cojac.misctests.deltaDebugging;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class InstrumentationArc {
 
@@ -59,7 +60,11 @@ public class InstrumentationArc {
         }
         System.out.println("s1 -> " + s1 + " should be 5.79577632241304 ");
 
-        System.out.println(BigDecimal.valueOf(5.79577632241304).subtract(BigDecimal.valueOf(s1)).divide(BigDecimal.valueOf(5.79577632241304), 10, BigDecimal.ROUND_HALF_UP).abs());
+        System.out.println(BigDecimal
+                .valueOf(5.79577632241304)
+                .subtract(BigDecimal.valueOf(s1))
+                .divide(BigDecimal.valueOf(5.79577632241304), 10, RoundingMode.HALF_UP)
+                .abs());
         if (!isValid(s1, "5.79577632241304", "1e-4")) {
             System.out.println("too inaccurate...");
             System.exit(-1);
@@ -73,7 +78,7 @@ public class InstrumentationArc {
         BigDecimal expB = new BigDecimal(exp);
         BigDecimal resB = new BigDecimal(res);
         BigDecimal tolB = new BigDecimal(tol);
-        return (expB.subtract(resB).divide(expB, 16, BigDecimal.ROUND_HALF_UP).abs().compareTo(tolB) <= 0);
+        return (expB.subtract(resB).divide(expB, 16, RoundingMode.HALF_UP).abs().compareTo(tolB) <= 0);
     }
 }
 //

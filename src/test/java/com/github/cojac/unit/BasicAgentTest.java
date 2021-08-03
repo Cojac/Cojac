@@ -17,6 +17,7 @@
 package com.github.cojac.unit;
 
 import java.lang.instrument.ClassFileTransformer;
+import java.lang.reflect.InvocationTargetException;
 
 import com.github.cojac.Agent;
 import com.github.cojac.Arg;
@@ -24,7 +25,7 @@ import com.github.cojac.Args;
 import com.github.cojac.CojacReferences.CojacReferencesBuilder;
 
 public class BasicAgentTest extends AbstractAgentTest {
-	public BasicAgentTest() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+	public BasicAgentTest() throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
 		super();
 
 		super.loadOperationsWithAgent(getClassFileTransformer());

@@ -24,6 +24,7 @@ import com.github.cojac.Args;
 import com.github.cojac.CojacReferences.CojacReferencesBuilder;
 //import com.github.cojac.models.wrappers.CommonDouble;
 import com.github.cojac.models.wrappers.CommonFloat;
+import com.github.cojac.models.wrappers.WrapperPosit32;
 import com.github.cojac.unit.AgentTest;
 import com.github.cojac.utils.Posit32Utils;
 import org.junit.After;
@@ -141,9 +142,10 @@ public class WrapperPosit32Test {
         assertBooleanComparison("testComparison", true);
     }
 
+    @SuppressWarnings("unchecked")
     private void assertFloatComparison(String methodName, float expected, float errorTolerance) throws
             NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        CommonFloat result = (CommonFloat) invokeMethod(methodName);
+        CommonFloat<WrapperPosit32> result = (CommonFloat<WrapperPosit32>) invokeMethod(methodName);
         String out = "On \"" + methodName + "\", Got: " + result + ", Expected: " + expected;
         Assert.assertEquals(out, expected, result.doubleValue(), errorTolerance);
     }

@@ -34,17 +34,17 @@ import org.w3c.dom.Element;
 
 public class PolyBehaviourLogger {
 
-    private static String ROOT_ELT = "classes";
-    private static String CLASS_ELT = "class";
-    private static String LINE_ELT = "line";
-    private static String CLASS_NAME_ATTR = "className";
-    private static String LINE_NUMBER_ATTR = "lineNumber";
-    private static String BEHAVIOUR_ATTR = "behaviour";
+    private static final String ROOT_ELT = "classes";
+    private static final String CLASS_ELT = "class";
+    private static final String LINE_ELT = "line";
+    private static final String CLASS_NAME_ATTR = "className";
+    private static final String LINE_NUMBER_ATTR = "lineNumber";
+    private static final String BEHAVIOUR_ATTR = "behaviour";
 
     private static PolyBehaviourLogger INSTANCE;
 
     // classeName, lineNumber, behaviours
-    private HashMap<String, HashMap<Integer, String>> classMap;
+    private final HashMap<String, HashMap<Integer, String>> classMap;
 
     private PolyBehaviourLogger() {
         classMap = new HashMap<>();

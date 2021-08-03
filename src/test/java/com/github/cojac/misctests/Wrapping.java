@@ -75,7 +75,7 @@ public class Wrapping {
     double a=1.0, b=3.0;
     double c=a/b;
     System.out.printf("with printf %4.4f\n", c);
-    System.out.println(String.format("with printf %4.4f\n", c));
+    System.out.printf("with printf %4.4f\n%n", c);
   }
   
   public static void playWithPrimitiveFloats() {
@@ -193,7 +193,7 @@ public class Wrapping {
     final float a=1.0f;
     Float f=a; ok(f==a);
     f= a; ok(f==a);
-    f=new Float(""+a); ok(f==a);
+    f=Float.valueOf(""+a); ok(f==a);
     f= (float) (double) f; ok(f==a);
     f= (float) f.doubleValue(); ok(f==a);
     f= f.floatValue(); ok(f==a);
@@ -211,7 +211,7 @@ public class Wrapping {
     final double a=1.0f;
     Double d=a; ok(d==a);
     d= a; ok(d==a);
-    d=new Double(""+a); ok(d==a);
+    d=Double.valueOf(""+a); ok(d==a);
     d= (double) d; ok(d==a);
     d= d.doubleValue(); ok(d==a);
     d= (double) d.floatValue(); ok(d==a);
@@ -450,7 +450,7 @@ public class Wrapping {
 //    MyWrapper(double d) {dValue=d; fValue=(float)d;}
 //  }
   
-  static interface IGizmo {
+  interface IGizmo {
       double gizgiz(double x);
   }
   //======================================================================

@@ -159,9 +159,6 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
         return replaceFloatsOpcodes.contains(opcode);
     }
 
-    //==========================================
-    private static String RFL;
-    private static String RDL;
     private static String REPLACED_FLOAT_BINARY;
     private static String REPLACED_FLOAT_UNARY;
     private static String REPLACED_FLOAT_CMP;
@@ -183,27 +180,28 @@ final class ReplaceFloatsInstrumenter implements IOpcodeInstrumenter {
 	private static String REPLACED_FROM_DOUBLE;
 	
 	public void fillDescriptors(){
-		RFL=COJAC_FLOAT_WRAPPER_TYPE_DESCR;
-		RDL=COJAC_DOUBLE_WRAPPER_TYPE_DESCR;
-		REPLACED_FLOAT_BINARY = "("+RFL+RFL+")"+RFL;
-		REPLACED_FLOAT_UNARY  = "("+RFL+")"+RFL;
-		REPLACED_FLOAT_CMP    = "("+RFL+RFL+")I";
-		REPLACED_I2F          = "(I)"+RFL;
-		REPLACED_L2F          = "(J)"+RFL;
-		REPLACED_D2F          = "("+RDL+")"+RFL;
-		REPLACED_F2I          = "("+RFL+")I";
-		REPLACED_F2L          = "("+RFL+")J";
-		REPLACED_F2D          = "("+RFL+")"+RDL;
-		REPLACED_FROM_FLOAT   = "(F)"+RFL;
+        //==========================================
+        String RFL = COJAC_FLOAT_WRAPPER_TYPE_DESCR;
+        String RDL = COJAC_DOUBLE_WRAPPER_TYPE_DESCR;
+		REPLACED_FLOAT_BINARY = "("+ RFL + RFL +")"+ RFL;
+		REPLACED_FLOAT_UNARY  = "("+ RFL +")"+ RFL;
+		REPLACED_FLOAT_CMP    = "("+ RFL + RFL +")I";
+		REPLACED_I2F          = "(I)"+ RFL;
+		REPLACED_L2F          = "(J)"+ RFL;
+		REPLACED_D2F          = "("+ RDL +")"+ RFL;
+		REPLACED_F2I          = "("+ RFL +")I";
+		REPLACED_F2L          = "("+ RFL +")J";
+		REPLACED_F2D          = "("+ RFL +")"+ RDL;
+		REPLACED_FROM_FLOAT   = "(F)"+ RFL;
 
-		REPLACED_DOUBLE_BINARY= "("+RDL+RDL+")"+RDL;
-		REPLACED_DOUBLE_UNARY  = "("+RDL+")"+RDL;
-		REPLACED_DOUBLE_CMP    = "("+RDL+RDL+")I";
-		REPLACED_I2D          = "(I)"+RDL;
-		REPLACED_L2D          = "(J)"+RDL;
-		REPLACED_D2I          = "("+RDL+")I";
-		REPLACED_D2L          = "("+RDL+")J";
-		REPLACED_FROM_DOUBLE  = "(D)"+RDL;
+		REPLACED_DOUBLE_BINARY= "("+ RDL + RDL +")"+ RDL;
+		REPLACED_DOUBLE_UNARY  = "("+ RDL +")"+ RDL;
+		REPLACED_DOUBLE_CMP    = "("+ RDL + RDL +")I";
+		REPLACED_I2D          = "(I)"+ RDL;
+		REPLACED_L2D          = "(J)"+ RDL;
+		REPLACED_D2I          = "("+ RDL +")I";
+		REPLACED_D2L          = "("+ RDL +")J";
+		REPLACED_FROM_DOUBLE  = "(D)"+ RDL;
 	}
 	
 }

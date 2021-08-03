@@ -28,6 +28,7 @@
 package com.github.cojac.misctests.deltaDebugging;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class Simpsons {
     public static double pi2;
@@ -64,7 +65,10 @@ public class Simpsons {
         s1 = h * s1 / 3.0;
         System.out.println("s1->" + s1 + " sould be 0.636619772367581");
 
-        System.out.println(BigDecimal.valueOf(0.636619772367581).subtract(BigDecimal.valueOf(s1)).divide(BigDecimal.valueOf(0.636619772367581), 16, BigDecimal.ROUND_HALF_UP).abs());
+        System.out.println(BigDecimal
+                .valueOf(0.636619772367581)
+                .subtract(BigDecimal.valueOf(s1))
+                .divide(BigDecimal.valueOf(0.636619772367581), 16, RoundingMode.HALF_UP).abs());
 
         if (!isValid(s1, "0.636619772367581", "1e-6")) {
             System.out.println("Simpsons too inaccurate");
@@ -84,7 +88,7 @@ public class Simpsons {
         BigDecimal expB = new BigDecimal(exp);
         BigDecimal resB = new BigDecimal(res);
         BigDecimal tolB = new BigDecimal(tol);
-        return (expB.subtract(resB).divide(expB, 16, BigDecimal.ROUND_HALF_UP).abs().compareTo(tolB) <= 0);
+        return (expB.subtract(resB).divide(expB, 16, RoundingMode.HALF_UP).abs().compareTo(tolB) <= 0);
     }
 }
 

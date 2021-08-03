@@ -35,7 +35,7 @@ public enum Parameters {
    
     
     public Class<?>[] params;
-    private Parameters(Class<?>... params) {
+    Parameters(Class<?>... params) {
         this.params = params;
     }
 }

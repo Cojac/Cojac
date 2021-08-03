@@ -189,7 +189,7 @@ public class DoubleNumbers {
 			}
 			if(isPrimitiveType(type))
 				return obj;
-			Object array[] = (Object[]) obj;
+			Object[] array = (Object[]) obj;
 			for (int i = 0; i < array.length; i++) 
 				array[i] = convertFromObjectToReal(array[i]);
 			return array;
@@ -226,7 +226,7 @@ public class DoubleNumbers {
             }
 			if(isPrimitiveType(type))
 				return obj;
-			Object array[] = (Object[]) obj;
+			Object[] array = (Object[]) obj;
 			for (int i = 0; i < array.length; i++) 
 				array[i] = convertFromObjectToCojac(array[i]);
 			return array;

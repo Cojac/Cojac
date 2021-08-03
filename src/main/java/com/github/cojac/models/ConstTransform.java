@@ -44,7 +44,7 @@ public enum ConstTransform {
             LONG_BINARY_PARAMS.params), long.class);
     public final Operation operation; //method called for each constant transformation
     public final Class<?> constType; //type of the constant
-    private ConstTransform(Operation operation, Class<?> constType) {
+    ConstTransform(Operation operation, Class<?> constType) {
         this.operation = operation;
         this.constType = constType;
     }

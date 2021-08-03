@@ -76,7 +76,7 @@ public enum Opt {
 	 * 
 	 * @param name The option name.
 	 */
-	private Opt(String name) {
+	Opt(String name) {
 		this.name = name;
 	}
 

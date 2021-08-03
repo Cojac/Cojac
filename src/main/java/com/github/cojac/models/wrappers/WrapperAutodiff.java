@@ -199,31 +199,26 @@ public class WrapperAutodiff extends ACompactWrapper<WrapperAutodiff> {
     }
     
     // ------------------------------------------------------------------------
-    public static CommonDouble COJAC_MAGIC_derivative(CommonDouble d) {
-        WrapperAutodiff res=new WrapperAutodiff(der(d.val).deriv, 0);
-        return new CommonDouble(res);
+    public static CommonDouble<WrapperAutodiff> COJAC_MAGIC_derivative(CommonDouble<WrapperAutodiff> d) {
+        WrapperAutodiff res=new WrapperAutodiff(d.val.deriv, 0);
+        return new CommonDouble<>(res);
     }
     
     // TODO: consider renaming COJAC_MAGIC_derivative(d)
-    public static CommonFloat COJAC_MAGIC_derivative(CommonFloat d) {
-        WrapperAutodiff res=new WrapperAutodiff(der(d.val).deriv, 0);
-        return new CommonFloat(res);
+    public static CommonFloat<WrapperAutodiff> COJAC_MAGIC_derivative(CommonFloat<WrapperAutodiff> d) {
+        WrapperAutodiff res=new WrapperAutodiff(d.val.deriv, 0);
+        return new CommonFloat<>(res);
     }
     
     // consider renaming.. but how? asDerivativeVar
     // asDifferentiationVar asIndependentVar? asDerivativeFocus?
-    public static CommonDouble COJAC_MAGIC_asDerivativeVar(CommonDouble d) {
-        WrapperAutodiff res=new WrapperAutodiff(der(d.val).value, 1.0);
-        return new CommonDouble(res);
+    public static CommonDouble<WrapperAutodiff> COJAC_MAGIC_asDerivativeVar(CommonDouble<WrapperAutodiff> d) {
+        WrapperAutodiff res=new WrapperAutodiff(d.val.value, 1.0);
+        return new CommonDouble<>(res);
     }
     
-    public static CommonFloat COJAC_MAGIC_asDerivativeVar(CommonFloat d) {
-        WrapperAutodiff res=new WrapperAutodiff(der(d.val).value, 1.0);
-        return new CommonFloat(res);
-    }
-
-    //-------------------------------------------------------------------------
-    private static WrapperAutodiff der(ACojacWrapper w) {
-        return (WrapperAutodiff)w;
+    public static CommonFloat<WrapperAutodiff> COJAC_MAGIC_asDerivativeVar(CommonFloat<WrapperAutodiff> d) {
+        WrapperAutodiff res=new WrapperAutodiff(d.val.value, 1.0);
+        return new CommonFloat<>(res);
     }
 }

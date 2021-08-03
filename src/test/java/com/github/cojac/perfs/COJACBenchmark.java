@@ -241,7 +241,7 @@ public class COJACBenchmark {
         Class<?> instanceClass = ClassLoader.getSystemClassLoader().loadClass(cls);
         // TODO: retransforming classes fails with our Wrapping mechanism, which modifies signatures...
         AgentTest.instrumentation.retransformClasses(instanceClass);
-        return (T) instanceClass.newInstance();
+        return (T) instanceClass.getDeclaredConstructor().newInstance();
     }
 
     private static Agent benchAgent() throws Exception {

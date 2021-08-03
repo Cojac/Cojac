@@ -72,7 +72,7 @@ public final class FloatReplaceClassVisitor extends CojacClassVisitor {
         boolean isNative = (access & Opcodes.ACC_NATIVE) > 0;
 		//boolean isAbstrac = (access & Opcodes.ACC_ABSTRACT) > 0;
 		//boolean isInterface = (access & Opcodes.ACC_INTERFACE) > 0;   
-        if(isNative && desc.equals(oldDesc) == false){
+        if(isNative && !desc.equals(oldDesc)){
 			/*  If the native method has not the same descriptor, create a 
 			     method to transform types and call the good native method. */
             cv.visitMethod(access, name, oldDesc, signature, exceptions);
@@ -162,12 +162,12 @@ public final class FloatReplaceClassVisitor extends CojacClassVisitor {
     }
 
     static String arrayDescriptor(int dimensions, String eltType) {
-        String desc = "";
+        StringBuilder desc = new StringBuilder();
         for(int i=0 ; i <dimensions ; i++) {
-            desc += "[";
+            desc.append("[");
         }
-        desc += eltType;
-        return desc;
+        desc.append(eltType);
+        return desc.toString();
     }
     
 //    private FieldVisitor instrumentField(FieldVisitor parentFv, int arg0, String arg1, String arg2, String arg3, Object arg4) {

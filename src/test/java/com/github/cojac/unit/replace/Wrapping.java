@@ -152,7 +152,7 @@ public class Wrapping implements DoubleUnaryOperator {
         final float a=1.0f;
         Float f=a; ok(f==a);
         f= a; ok(f==a);
-        f=new Float(""+a); ok(f==a);
+        f=Float.valueOf(""+a); ok(f==a);
         f= (float) (double) f; ok(f==a);
         f= (float) f.doubleValue(); ok(f==a);
         f= f.floatValue(); ok(f==a);
@@ -180,8 +180,8 @@ public class Wrapping implements DoubleUnaryOperator {
         final double a=1.0f;
         Double d=a; ok(d==a);
         d= a; ok(d==a);
-        d=new Double(""+a); ok(d==a);
-        d=new Double(d); ok(d==a);
+        d=Double.valueOf(""+a); ok(d==a);
+        d=Double.valueOf(d); ok(d==a);
         d= d.doubleValue(); ok(d==a);
         d= (double) d.floatValue(); ok(d==a);
         d= (double) d.intValue(); ok(d==a);

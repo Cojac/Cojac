@@ -20,7 +20,6 @@ package com.github.cojac.unit.replace;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 
 //import static org.junit.Assert.assertEquals;

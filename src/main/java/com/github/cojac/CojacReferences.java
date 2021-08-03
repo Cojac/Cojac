@@ -284,7 +284,6 @@ public final class CojacReferences {
         private InstrumentationStats stats;
         private IOpcodeInstrumenterFactory factory;
         private MBeanServer mbServer;
-        private StringBuilder sbBypassList;
         private String[] bypassList;
         private Splitter splitter;
         private String floatWrapper;
@@ -339,7 +338,7 @@ public final class CojacReferences {
 
         public CojacReferences build() {
             this.stats = new InstrumentationStats();
-            this.sbBypassList = new StringBuilder(PACKAGES_NOT_TO_INSTRUMENT);
+            StringBuilder sbBypassList = new StringBuilder(PACKAGES_NOT_TO_INSTRUMENT);
             args.setValue(Arg.FLOAT_WRAPPER,  "com.github.cojac.models.wrappers.CommonFloat");
             args.setValue(Arg.DOUBLE_WRAPPER, "com.github.cojac.models.wrappers.CommonDouble");
 
@@ -736,15 +735,15 @@ public final class CojacReferences {
             }
         }
         public String toString(){
-            String s = ""+name;
+            StringBuilder s = new StringBuilder("" + name);
             Iterator<String> itr = methods.iterator();
             int i = 0;
             while(itr.hasNext()){
-                s = s + "Method "+ (++i)+"= \""+  itr.next()+"\"\n"; 
+                s.append("Method ").append(++i).append("= \"").append(itr.next()).append("\"\n");
             }
-            s = s + "Lines: "+ lines.toString();
-            s = s + "\nInstructions: "+ instructions.toString();
-            return s;
+            s.append("Lines: ").append(lines.toString());
+            s.append("\nInstructions: ").append(instructions.toString());
+            return s.toString();
         }
         @Override
         public boolean instrumentMethod(String methodName) {

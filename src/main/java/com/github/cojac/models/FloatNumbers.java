@@ -36,7 +36,7 @@ public class FloatNumbers {
     }
     
     public static Object initializeMultiArray(Object array, int dimensions) throws Exception {
-        Object a[] = (Object[]) array;
+        Object[] a = (Object[]) array;
         if(dimensions == 1)
             return newarray(a.length);
         for (int i = 0; i < a.length; i++)

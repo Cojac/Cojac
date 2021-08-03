@@ -117,11 +117,11 @@ public class DeltaDebugger {
 	}
 	
 	private String toStr(BitSet s) {
-	    String r="";
+	    StringBuilder r= new StringBuilder();
 	    for(int i=0; i<be.getNbrOfInstructions(); i++)
-	        r += s.get(i) ? "1":"0";
+	        r.append(s.get(i) ? "1" : "0");
         //return s.toString();
-        return r;
+        return r.toString();
 	}
 
 }

@@ -174,9 +174,7 @@ public final class FloatReplacerMethodVisitor extends MethodVisitor {
             return;
         }
         Object[] bsmArgsAfter=new Object[bsmArgs.length];
-        for(int i=0; i<bsmArgs.length; i++) {
-            bsmArgsAfter[i]=bsmArgs[i];
-        }
+        System.arraycopy(bsmArgs, 0, bsmArgsAfter, 0, bsmArgs.length);
         String a0Before=a0.getInternalName(), a2Before=a2.getInternalName();
         String a0After=replaceFloatMethodDescription(a0Before), a2After=replaceFloatMethodDescription(a2Before);
         bsmArgsAfter[0]=Type.getType(a0After);
@@ -215,10 +213,10 @@ public final class FloatReplacerMethodVisitor extends MethodVisitor {
 
     @Override
     public void visitFieldInsn(int opcode, String owner, String name, String desc) {
-        if(references.hasToBeInstrumented(owner) == false){ // proxy for fields
+        if(!references.hasToBeInstrumented(owner)){ // proxy for fields
             Type type = Type.getType(desc);
             Type cojacType = afterFloatReplacement(type);
-            if(type.equals(cojacType) == false) {  // the type is being changed
+            if(!type.equals(cojacType)) {  // the type is being changed
                 if(opcode == GETFIELD || opcode == GETSTATIC){
                     mv.visitFieldInsn(opcode, owner, name, desc);
                     FloatProxyMethod.convertRealToCojacType(type, mv);

@@ -78,8 +78,7 @@ public class SymbolicExpression {
         // pre-compute the value of the tree
         this.value = oper.apply(left.value, (right != null) ? right.value
                 : Double.NaN);
-        this.containsUnknown = left.containsUnknown || ((right != null)
-                ? right.containsUnknown : false);
+        this.containsUnknown = left.containsUnknown || (right != null && right.containsUnknown);
         if (this.containsUnknown || keep_constant_subtrees_mode) {
             this.oper = oper;
             this.left = left;
@@ -205,7 +204,7 @@ public class SymbolicExpression {
     //=======================================================================
     // Define all the operators managed by the wrapper
     // TODO: consider refactoring symbOP as an abstract OP.derivate() method.
-    public static enum OP {
+    public enum OP {
         NOP(((x, y) -> Double.NaN), SymbUtils::derivateNOP),
         ADD((Double::sum), SymbUtils::derivateADD, true),
         SUB(((x, y) -> x - y), SymbUtils::derivateSUB),

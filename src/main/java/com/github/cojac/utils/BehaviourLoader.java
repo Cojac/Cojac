@@ -140,7 +140,7 @@ public class BehaviourLoader {
     }
 
     private InstructionMeta instructionMetaFromXML(Element instructionElement) {
-        Integer opCode = Integer.parseInt(instructionElement.getAttributeNode(OP_CODE_ATTR).getValue());
+        int opCode = Integer.parseInt(instructionElement.getAttributeNode(OP_CODE_ATTR).getValue());
         String opName = instructionElement.getAttributeNode(OP_NAME_ATTR).getValue();
         String invokedMethod = instructionElement.getAttributeNode(INVOKED_METHOD).getValue();
         String behaviour = instructionElement.getAttributeNode(BEHAVIOUR_ATTR).getValue();

@@ -50,17 +50,18 @@ public class MathMethods {
     }
     
     public static Operation toStaticOperation(Method m){   
-        String signature ="";
+        StringBuilder signature = new StringBuilder();
         
-        signature += "(";
+        signature.append("(");
         for (Type c: m.getParameterTypes()) {
-            if(types.containsKey(c))
-              signature += types.get(c);
+            if (! (c instanceof Class)) continue;
+            Class<?> cz = (Class<?>) c;
+            signature.append(types.get(cz));
         }
-        signature += ")";
-        signature += types.get(m.getReturnType());
+        signature.append(")");
+        signature.append(types.get(m.getReturnType()));
         //System.out.println("Name: "+method.getName()+" signature: " + signature);
-       return new Operation(Opcodes.INVOKESTATIC,m.getName(), signature, m.getParameterTypes());
+       return new Operation(Opcodes.INVOKESTATIC,m.getName(), signature.toString(), m.getParameterTypes());
         
     }
     

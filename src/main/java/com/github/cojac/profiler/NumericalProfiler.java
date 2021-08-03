@@ -20,7 +20,7 @@ public class NumericalProfiler {
    private final SortedMap<StackTraceElement, Recommendation> directMatches;
    private boolean throwRecommendations = false;
    private boolean verbose = false;
-   private final String VERBOSE_PREFIX = "|\t";
+   private static final String VERBOSE_PREFIX = "|\t";
 
    private static final Comparator<StackTraceElement> compareByFilenameAndLine =
            Comparator.comparing(StackTraceElement::getFileName).thenComparingInt(StackTraceElement::getLineNumber);

@@ -320,7 +320,7 @@ public class WrapperComplexNumberUnitTest extends TestCase {
 
     public void testCOJAC_MAGIC_getReal() {
         WrapperComplexNumber number = new WrapperComplexNumber(3, -2);
-        CommonDouble realCommonDouble = WrapperComplexNumber.COJAC_MAGIC_getReal(new CommonDouble(number));
+        CommonDouble<WrapperComplexNumber> realCommonDouble = WrapperComplexNumber.COJAC_MAGIC_getReal(new CommonDouble<>(number));
         WrapperComplexNumber real = (WrapperComplexNumber) realCommonDouble.val;
         assertEquals(3, real.getReal(), ERROR_TOLERANCE);
         assertEquals(0, real.getImaginary(), ERROR_TOLERANCE);
@@ -328,8 +328,8 @@ public class WrapperComplexNumberUnitTest extends TestCase {
 
     public void testCOJAC_MAGIC_getImaginary() {
         WrapperComplexNumber number = new WrapperComplexNumber(3, -2);
-        CommonDouble realCommonDouble = WrapperComplexNumber.COJAC_MAGIC_getImaginary(new CommonDouble(number));
-        WrapperComplexNumber imaginary = (WrapperComplexNumber) realCommonDouble.val;
+        CommonDouble<WrapperComplexNumber>  realCommonDouble = WrapperComplexNumber.COJAC_MAGIC_getImaginary(new CommonDouble<>(number));
+        WrapperComplexNumber imaginary = realCommonDouble.val;
         assertEquals(-2, imaginary.getReal(), ERROR_TOLERANCE);
         assertEquals(0, imaginary.getImaginary(), ERROR_TOLERANCE);
     }
@@ -337,13 +337,13 @@ public class WrapperComplexNumberUnitTest extends TestCase {
     public void testCOJAC_MAGIC_equals_equality() {
         WrapperComplexNumber number1 = new WrapperComplexNumber(3, -2);
         WrapperComplexNumber number2 = new WrapperComplexNumber(3, -2);
-        assertTrue(WrapperComplexNumber.COJAC_MAGIC_equals(new CommonDouble(number1), new CommonDouble(number2)));
+        assertTrue(WrapperComplexNumber.COJAC_MAGIC_equals(new CommonDouble<>(number1), new CommonDouble<>(number2)));
     }
 
     public void testCOJAC_MAGIC_equals_inequality() {
         WrapperComplexNumber number1 = new WrapperComplexNumber(3, 2);
         WrapperComplexNumber number2 = new WrapperComplexNumber(3, -2);
-        assertFalse(WrapperComplexNumber.COJAC_MAGIC_equals(new CommonDouble(number1), new CommonDouble(number2)));
+        assertFalse(WrapperComplexNumber.COJAC_MAGIC_equals(new CommonDouble<>(number1), new CommonDouble<>(number2)));
     }
 
     public void testFromString_toString() {

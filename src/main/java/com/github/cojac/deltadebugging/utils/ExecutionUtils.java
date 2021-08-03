@@ -48,7 +48,7 @@ public enum ExecutionUtils implements Executor {
 	/**
 	 * Class constructor.
 	 */
-	private ExecutionUtils() {
+	ExecutionUtils() {
 		initCmdExecuteWithBehaviours();
 		initCmdExecuteListing();
 	}
@@ -105,7 +105,7 @@ public enum ExecutionUtils implements Executor {
         l.add(Opt.JAR.getValue());
       }
 	  l.add(Opt.MAINCLASS.getValue());
-	  cmdExecuteListing = l.toArray(new String[l.size()]);
+	  cmdExecuteListing = l.toArray(new String[0]);
 	}
 
 	/**

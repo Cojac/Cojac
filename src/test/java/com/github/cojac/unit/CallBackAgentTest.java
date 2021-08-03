@@ -48,7 +48,7 @@ public class CallBackAgentTest {
         Class<?> classz = ClassLoader.getSystemClassLoader().loadClass("com.github.cojac.unit.SimpleOverflows");
         AgentTest.instrumentation.retransformClasses(classz);
         
-        Object object = classz.newInstance();
+        Object object = classz.getDeclaredConstructor().newInstance();
         Method m = classz.getMethod("test");
         m.invoke(object);
 
