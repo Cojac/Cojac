@@ -68,7 +68,7 @@ public final class Agent implements ClassFileTransformer {
         if (className==null) 
             className=extractedClassname(classfileBuffer);
         if(loader==null || loader==ClassLoader.getSystemClassLoader().getParent()) 
-            return classfileBuffer;  // maybe the bootstrapLoader??
+            return null;  // maybe the bootstrapLoader??
         try {
             if("com/github/cojac/models/FloatReplacerClasses".equals(className)) {
                 if (VERBOSE) {
@@ -80,13 +80,13 @@ public final class Agent implements ClassFileTransformer {
                 if (VERBOSE) {
                     System.out.println("Agent NOT instrumenting  PolyBehaviourLogger");
                 }
-                return classfileBuffer;
+                return null;
             }
             if (!references.hasToBeInstrumented(className)) {
                 if (VERBOSE) {
                     System.out.println("Agent NOT instrumenting "+className +" under "+loader);
                 }
-                return classfileBuffer;
+                return null;
             }
             if (VERBOSE) {
                 System.out.println("Agent     instrumenting "+className +" under "+loader);

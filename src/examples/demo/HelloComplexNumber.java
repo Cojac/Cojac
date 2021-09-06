@@ -56,9 +56,8 @@ public class HelloComplexNumber {
         System.out.println("   imgCoef: "+ imaginaryCoefficient(y) + " …should be '3'");
     }
 
-
-    // Find a root of a cubic equation of the form ax^3 + bx^2 + cx + d = 0 with the general cubic formula
-    // This formula can be found on wikipedia: https://en.wikipedia.org/wiki/Cubic_equation#General_cubic_formula
+    // Solve a cubic equation of the form ax^3 + bx^2 + cx + d = 0 with the general cubic formula
+    // This formula can be found on: https://en.wikipedia.org/wiki/Cubic_equation#General_cubic_formula
     // (we could also return a Double[] array...)
     static List<Double> cubicEquationSolutions(double a, double b, double c, double d) {
         List<Double> sols = new ArrayList<>();
@@ -86,27 +85,6 @@ public class HelloComplexNumber {
         sols.add(res2);
         sols.add(res3);
         return sols;
-    }
-
-    // Find a root of a cubic equation of the form ax^3 + bx^2 + cx + d = 0 with the general cubic formula
-    // This formula can be found on wikipedia: https://en.wikipedia.org/wiki/Cubic_equation#General_cubic_formula
-    static double solveCubicEquation(double a, double b, double c, double d) {
-        double det0 = b * b - 3 * a * c;
-        double det1 = 2 * b * b * b - 9 * a * b * c + 27 * a * a * d;
-
-        double sqrt = Math.sqrt(det1 * det1 - 4 * det0 * det0 * det0);
-        if (Double.isNaN(sqrt))
-            // the root can't be calculated if this value is not available.
-            return Double.NaN;
-        double coef = Math.cbrt((det1 + sqrt) / 2);
-
-        if (coef == 0) {
-            coef = Math.cbrt((det1 - sqrt) / 2);
-        }
-        if (coef == 0) {
-            return -b / (3 * a);
-        }
-        return -(b + coef + det0 / coef) / (3 * a);
     }
 
     public static void main(String[] args) {
