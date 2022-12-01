@@ -21,7 +21,7 @@ package com.github.cojac.models.wrappers;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
 
-public class WrapperBasicFloatDouble extends ACompactWrapper {
+public class WrapperBasicFloatDouble extends ACompactWrapper<WrapperBasicFloatDouble> {
     private final boolean isFloat;
     private final double value;
     private final float fValue;
@@ -42,24 +42,23 @@ public class WrapperBasicFloatDouble extends ACompactWrapper {
     //-------------------------------------------------------------------------
     //----------------- Necessary constructor  -------------------------------
     //-------------------------------------------------------------------------
-    public WrapperBasicFloatDouble(ACojacWrapper w) {
-        this(w==null ? 0.0 : (w(w).isFloat ? w(w).fValue : w(w).value));
+    public WrapperBasicFloatDouble(WrapperBasicFloatDouble w) {
+        this(w==null ? 0.0 : (w.isFloat ? w.fValue : w.value));
     }
     
     //-------------------------------------------------------------------------
     @Override
-    public ACojacWrapper applyUnaryOp(DoubleUnaryOperator op) {
+    public WrapperBasicFloatDouble applyUnaryOp(DoubleUnaryOperator op) {
         if (isFloat) 
             return new WrapperBasicFloatDouble((float)op.applyAsDouble(fValue));
         return new WrapperBasicFloatDouble(op.applyAsDouble(value));
     }
 
     @Override
-    public ACojacWrapper applyBinaryOp(DoubleBinaryOperator op, ACojacWrapper b) {
-        WrapperBasicFloatDouble bb=w(b);
-        if (isFloat) 
-            return new WrapperBasicFloatDouble((float)op.applyAsDouble(fValue, bb.fValue));
-        return new WrapperBasicFloatDouble(op.applyAsDouble(value, bb.value));
+    public WrapperBasicFloatDouble applyBinaryOp(DoubleBinaryOperator op, WrapperBasicFloatDouble b) {
+        if (isFloat)
+            return new WrapperBasicFloatDouble((float)op.applyAsDouble(fValue, b.fValue));
+        return new WrapperBasicFloatDouble(op.applyAsDouble(value, b.value));
     }
     
     @Override public double toDouble() {
@@ -67,7 +66,7 @@ public class WrapperBasicFloatDouble extends ACompactWrapper {
     }
 
     @Override
-    public ACojacWrapper fromDouble(double a, boolean wasFromFloat) {
+    public WrapperBasicFloatDouble fromDouble(double a, boolean wasFromFloat) {
        if(wasFromFloat)
            return new WrapperBasicFloatDouble((float)a);
        return new WrapperBasicFloatDouble(a);
@@ -81,8 +80,4 @@ public class WrapperBasicFloatDouble extends ACompactWrapper {
         return "BasicFloatDouble";
     }
     
-    //-------------------------------------------------------------------------
-    private static WrapperBasicFloatDouble w(ACojacWrapper a) {
-        return (WrapperBasicFloatDouble) a;
-    }
 }

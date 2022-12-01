@@ -19,6 +19,7 @@ package com.github.cojac.unit;
 import static com.github.cojac.unit.AgentTest.*;
 
 import java.lang.instrument.ClassFileTransformer;
+import java.lang.reflect.InvocationTargetException;
 
 public abstract class AbstractAgentTest extends AbstractFullTests {
 
@@ -36,11 +37,11 @@ public abstract class AbstractAgentTest extends AbstractFullTests {
 	}
 
 	public void loadOperationsWithAgent(ClassFileTransformer classFileTransformer) throws ClassNotFoundException,
-			InstantiationException, IllegalAccessException {
+			InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 		instrumentation.addTransformer(classFileTransformer, true);
 		ClassLoader classLoader = ClassLoader.getSystemClassLoader();
 		Class<?> operations = classLoader.loadClass("com.github.cojac.unit.SimpleOperations");
-		tests = new Tests(operations.newInstance());
+		tests = new Tests(operations.getDeclaredConstructor().newInstance());
 		instrumentation.removeTransformer(classFileTransformer);
 	}
 }

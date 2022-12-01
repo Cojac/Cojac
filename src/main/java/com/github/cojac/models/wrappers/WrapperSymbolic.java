@@ -26,7 +26,7 @@ import com.github.cojac.CojacReferences;
 import com.github.cojac.models.wrappers.SymbolicExpression.OP;
 
 
-public class WrapperSymbolic extends ACojacWrapper {
+public class WrapperSymbolic extends ACojacWrapper<WrapperSymbolic> {
     // In "smart" mode, terms are reordered (slower, but often more precise) 
     public static boolean smart_evaluation_mode = true;
     // If constant subtrees are dropped, we lose an opportunity to improve precision (via smart mode)
@@ -62,158 +62,158 @@ public class WrapperSymbolic extends ACojacWrapper {
     // -------------------------------------------------------------------------
     // ----------------- Necessary constructor ---------------------------------
     // -------------------------------------------------------------------------
-    public WrapperSymbolic(ACojacWrapper w) {
-        this(w == null ? null : asSymbWrapper(w).expr);
+    public WrapperSymbolic(WrapperSymbolic w) {
+        this(w == null ? null : w.expr);
     }
 
     // -------------------------------------------------------------------------
     // ----------------- Override operators ------------------------------------
     // -------------------------------------------------------------------------
     @Override
-    public ACojacWrapper dadd(ACojacWrapper w) {
-        return new WrapperSymbolic(OP.ADD, this.expr, asSymbWrapper(w).expr);
+    public WrapperSymbolic dadd(WrapperSymbolic w) {
+        return new WrapperSymbolic(OP.ADD, this.expr, w.expr);
     }
 
     @Override
-    public ACojacWrapper dsub(ACojacWrapper w) {
-        return new WrapperSymbolic(OP.SUB, this.expr, asSymbWrapper(w).expr);
+    public WrapperSymbolic dsub(WrapperSymbolic w) {
+        return new WrapperSymbolic(OP.SUB, this.expr, w.expr);
     }
 
     @Override
-    public ACojacWrapper dmul(ACojacWrapper w) {
-        return new WrapperSymbolic(OP.MUL, this.expr, asSymbWrapper(w).expr);
+    public WrapperSymbolic dmul(WrapperSymbolic w) {
+        return new WrapperSymbolic(OP.MUL, this.expr, w.expr);
     }
 
     @Override
-    public ACojacWrapper ddiv(ACojacWrapper w) {
-        return new WrapperSymbolic(OP.DIV, this.expr, asSymbWrapper(w).expr);
+    public WrapperSymbolic ddiv(WrapperSymbolic w) {
+        return new WrapperSymbolic(OP.DIV, this.expr, w.expr);
     }
 
     @Override
-    public ACojacWrapper drem(ACojacWrapper w) {
-        return new WrapperSymbolic(OP.REM, this.expr, asSymbWrapper(w).expr);
+    public WrapperSymbolic drem(WrapperSymbolic w) {
+        return new WrapperSymbolic(OP.REM, this.expr, w.expr);
     }
 
     @Override
-    public ACojacWrapper dneg() {
+    public WrapperSymbolic dneg() {
         return new WrapperSymbolic(OP.NEG, this.expr, null);
     }
 
     @Override
-    public ACojacWrapper math_sqrt() {
+    public WrapperSymbolic math_sqrt() {
         return new WrapperSymbolic(OP.SQRT, this.expr, null);
     }
 
     @Override
-    public ACojacWrapper math_abs() {
+    public WrapperSymbolic math_abs() {
         return new WrapperSymbolic(OP.ABS, this.expr, null);
     }
 
     @Override
-    public ACojacWrapper math_sin() {
+    public WrapperSymbolic math_sin() {
         return new WrapperSymbolic(OP.SIN, this.expr, null);
     }
 
     @Override
-    public ACojacWrapper math_cos() {
+    public WrapperSymbolic math_cos() {
         return new WrapperSymbolic(OP.COS, this.expr, null);
     }
 
     @Override
-    public ACojacWrapper math_tan() {
+    public WrapperSymbolic math_tan() {
         return new WrapperSymbolic(OP.TAN, this.expr, null);
     }
 
     @Override
-    public ACojacWrapper math_asin() {
+    public WrapperSymbolic math_asin() {
         return new WrapperSymbolic(OP.ASIN, this.expr, null);
     }
 
     @Override
-    public ACojacWrapper math_acos() {
+    public WrapperSymbolic math_acos() {
         return new WrapperSymbolic(OP.ACOS, this.expr, null);
     }
 
     @Override
-    public ACojacWrapper math_atan() {
+    public WrapperSymbolic math_atan() {
         return new WrapperSymbolic(OP.ATAN, this.expr, null);
     }
 
     @Override
-    public ACojacWrapper math_sinh() {
+    public WrapperSymbolic math_sinh() {
         return new WrapperSymbolic(OP.SINH, this.expr, null);
     }
 
     @Override
-    public ACojacWrapper math_cosh() {
+    public WrapperSymbolic math_cosh() {
         return new WrapperSymbolic(OP.COSH, this.expr, null);
     }
 
     @Override
-    public ACojacWrapper math_tanh() {
+    public WrapperSymbolic math_tanh() {
         return new WrapperSymbolic(OP.TANH, this.expr, null);
     }
 
     @Override
-    public ACojacWrapper math_exp() {
+    public WrapperSymbolic math_exp() {
         return new WrapperSymbolic(OP.EXP, this.expr, null);
     }
 
     @Override
-    public ACojacWrapper math_log() {
+    public WrapperSymbolic math_log() {
         return new WrapperSymbolic(OP.LOG, this.expr, null);
     }
 
     @Override
-    public ACojacWrapper math_log10() {
+    public WrapperSymbolic math_log10() {
         return new WrapperSymbolic(OP.LOG10, this.expr, null);
     }
 
     @Override
-    public ACojacWrapper math_toRadians() {
+    public WrapperSymbolic math_toRadians() {
         return new WrapperSymbolic(OP.RAD, this.expr, null);
     }
 
     @Override
-    public ACojacWrapper math_toDegrees() {
+    public WrapperSymbolic math_toDegrees() {
         return new WrapperSymbolic(OP.DEG, this.expr, null);
     }
 
     @Override
-    public ACojacWrapper math_min(ACojacWrapper w) {
-        return new WrapperSymbolic(OP.MIN, this.expr, asSymbWrapper(w).expr);
+    public WrapperSymbolic math_min(WrapperSymbolic w) {
+        return new WrapperSymbolic(OP.MIN, this.expr, w.expr);
     }
 
     @Override
-    public ACojacWrapper math_max(ACojacWrapper w) {
-        return new WrapperSymbolic(OP.MAX, this.expr, asSymbWrapper(w).expr);
+    public WrapperSymbolic math_max(WrapperSymbolic w) {
+        return new WrapperSymbolic(OP.MAX, this.expr, w.expr);
     }
 
     @Override
-    public ACojacWrapper math_pow(ACojacWrapper w) {
-        return new WrapperSymbolic(OP.POW, this.expr, asSymbWrapper(w).expr);
+    public WrapperSymbolic math_pow(WrapperSymbolic w) {
+        return new WrapperSymbolic(OP.POW, this.expr, w.expr);
     }
 
     @Override
-    public ACojacWrapper math_hypot(ACojacWrapper w) {
-        return new WrapperSymbolic(OP.HYPOT, this.expr, asSymbWrapper(w).expr);
+    public WrapperSymbolic math_hypot(WrapperSymbolic w) {
+        return new WrapperSymbolic(OP.HYPOT, this.expr, w.expr);
     }
 
     // -------------------------------------------------------------------------
     // ----------------- Comparison operator _----------------------------------
     // -------------------------------------------------------------------------
     @Override
-    public int dcmpl(ACojacWrapper w) {
+    public int dcmpl(WrapperSymbolic w) {
         // Averti que l'on ne peut pas comparer des fonctions
-        if (this.expr.containsUnknown || asSymbWrapper(w).expr.containsUnknown)
+        if (this.expr.containsUnknown || w.expr.containsUnknown)
             pkgLogger().log(Level.WARNING, "Can not compare symbolic expressions containing unknowns");
         return super.dcmpl(w);
     }
 
     @Override
-    public int dcmpg(ACojacWrapper w) {
+    public int dcmpg(WrapperSymbolic w) {
         // Averti que l'on ne peut pas comparer des fonctions
-        if (this.expr.containsUnknown || asSymbWrapper(w).expr.containsUnknown)
+        if (this.expr.containsUnknown || w.expr.containsUnknown)
             pkgLogger().log(Level.WARNING, "Can not compare symbolic expressions containing unknowns");
         return super.dcmpg(w);
     }
@@ -227,7 +227,7 @@ public class WrapperSymbolic extends ACojacWrapper {
     }
 
     @Override
-    public ACojacWrapper fromDouble(double a, @SuppressWarnings("unused") boolean wasFromFloat) {
+    public WrapperSymbolic fromDouble(double a, @SuppressWarnings("unused") boolean wasFromFloat) {
         return new WrapperSymbolic(a);
     }
 
@@ -245,24 +245,24 @@ public class WrapperSymbolic extends ACojacWrapper {
     // ----------------- Magic methods -----------------------------------------
     // -------------------------------------------------------------------------
 
-    public static boolean COJAC_MAGIC_isSymbolicFunction(CommonDouble d) {
-        return asSymbWrapper(d.val).expr.containsUnknown;
+    public static boolean COJAC_MAGIC_isSymbolicFunction(CommonDouble<WrapperSymbolic> d) {
+        return d.val.expr.containsUnknown;
     }
 
-    public static CommonDouble COJAC_MAGIC_identityFct() {
+    public static CommonDouble<WrapperSymbolic> COJAC_MAGIC_identityFct() {
         WrapperSymbolic res = new WrapperSymbolic();
-        return new CommonDouble(res);
+        return new CommonDouble<>(res);
     }
 
-    public static CommonDouble COJAC_MAGIC_evaluateAt(CommonDouble d, CommonDouble x) {
-        double result = asSymbWrapper(d.val).expr.evaluate(asSymbWrapper(x.val).expr.evaluate());
+    public static CommonDouble<WrapperSymbolic> COJAC_MAGIC_evaluateAt(CommonDouble<WrapperSymbolic> d, CommonDouble<WrapperSymbolic> x) {
+        double result = d.val.expr.evaluate(x.val.expr.evaluate());
         WrapperSymbolic res = new WrapperSymbolic(result);
-        return new CommonDouble(res);
+        return new CommonDouble<>(res);
     }
 
-    public static CommonDouble COJAC_MAGIC_derivative(CommonDouble d) {
-        WrapperSymbolic res = new WrapperSymbolic(asSymbWrapper(d.val).expr.derivate());
-        return new CommonDouble(res);
+    public static CommonDouble<WrapperSymbolic> COJAC_MAGIC_derivative(CommonDouble<WrapperSymbolic> d) {
+        WrapperSymbolic res = new WrapperSymbolic(d.val.expr.derivate());
+        return new CommonDouble<>(res);
     }
 
     public static void COJAC_MAGIC_setSymbolicEvaluationMode(boolean smartMode) {
@@ -279,10 +279,6 @@ public class WrapperSymbolic extends ACojacWrapper {
 
     private static Logger pkgLogger() {
         return Logger.getLogger(WrapperChebfun.class.getPackage().getName());
-    }
-
-    private static WrapperSymbolic asSymbWrapper(ACojacWrapper w) {
-        return (WrapperSymbolic) w;
     }
 
     //==========================================================================

@@ -1,0 +1,138 @@
+\section{Implémentation}
+
+Cette section détaille les points importants nécessaires à l'implémentation des \glspl{Posit} dans \gls{COJAC}.
+
+\subsection{Passerelle JNI}
+
+\begin{minipage2}
+Tout d'abord, la classe \textit{Posit32Utils} a été écrite avec tous les appels de méthodes natifs.
+
+\begin{minted}{Java}
+/* ====================
+ * Arithmetic methods
+ * ====================
+ *
+ * All the methods below take one or multiple posit32 as inputs.
+ *
+ * Use #toPosit to convert a float in a posit.
+ */
+public native static float add(float a, float b);
+
+public native static float substract(float a, float b);
+\end{minted}
+\end{minipage2}
+
+\begin{minipage2}
+Ensuite, il faut générer le header correspondant avec la commande suivante:
+
+\begin{minted}[breaklines]{Shell}
+src\main\java> javac -h ..\resources\native-libraries\posits\src\include com\github\cojac\utils\Posit32Utils.java
+\end{minted}
+
+Il faut garder le fichier généré tel quel. Le nom des méthodes est important pour pouvoir réaliser la passerelle entre Java et le code natif.
+\end{minipage2}
+
+Dans le fichier source qui contient l'implémentation des méthodes déclarées dans le fichier header généré précédemment. Une ligne a été ajoutée pour redéfinir un type qui n'est pas connu de tous les compilateurs:
+
+\begin{minted}{C}
+#define __int64 long long
+
+#include "com_github_cojac_utils_Posit32Utils.h"
+\end{minted}
+
+Deux macros et une union ont également été écrits afin de pouvoir changer le type des données:
+
+\begin{minted}{C}
+#define F2P(VALUE) (((float_posit32_t) {.jfloat = (VALUE)}).posit)
+#define P2F(VALUE) (((float_posit32_t) {.posit = (VALUE)}).jfloat)
+
+typedef union float_posit32 {
+    jfloat jfloat;
+    posit32_t posit;
+} float_posit32_t;
+\end{minted}
+
+Voici un exemple qui montre l'implémentation d'une méthode et son utilisation de ces macros.
+
+\begin{minted}{C}
+JNIEXPORT jfloat JNICALL Java_com_github_cojac_utils_Posit32Utils_add
+        (JNIEnv *env, jclass positClass, jfloat a, jfloat b) {
+    return P2F(p32_add(F2P(a), F2P(b)));
+}
+\end{minted}
+
+\subsection{Build de la librairie}
+
+\begin{minipage2}
+Des fichiers de configurations sont disponibles pour pouvoir créer la librairie. La librairie \gls{SoftPosit} possède déjà un \gls{Makefile} même si des modifications ont dû être effectuées comme mentionné dans les sections \ref{sec:problem_softposit_compilation} et \ref{sec:problem_softposit_include}. Un CMakeLists.txt a été créé pour la compilation de la librairie qui fait la liaison avec \gls{JNI}.
+
+\inputmintedcolor{CMake}{code/CMakeLists.txt}
+\end{minipage2}
+
+\begin{minipage2}
+Les lignes importantes sont décrites ci-dessous:
+
+\begin{itemize}
+    \item Lignes 5-7: Cmake peut ne pas réussir à trouver certains éléments de Java et \gls{JNI}, qui ne sont pas nécessaires pour ce projet. Ainsi, ces lignes indiquent qu'il n'a pas besoin de les chercher.
+    \item Lignes 9-10: Il faut trouver Java, puis \gls{JNI} afin de pouvoir inclure les headers nécessaires pour la compilation de la librairie.
+    \item Lignes 13 et 24: Ces lignes indiquent les dossiers qui contiennent les headers nécessaire à \gls{JNI}.
+    \item Ligne 19: Cette ligne spécifie qu'une librairie doit être créée.
+    \item Ligne 26: Cette ligne permet d'ajouter la librairie \gls{SoftPosit} à l'intérieur de la librairie générée.
+\end{itemize}
+\end{minipage2}
+
+\begin{minipage2}
+Tout d'abord, il faut compiler la librairie \gls{SoftPosit} avec les commandes suivantes:
+\begin{minted}{Shell}
+cd libraries/SoftPosit/build/Linux-x86_64-GCC
+make
+cd ../../../..
+\end{minted}
+\end{minipage2}
+
+Ensuite, les commande suivantes permettent de compiler la librairie qui sert de passerelle avec \gls{JNI}:
+\begin{minted}{Shell}
+cd ..
+cmake src
+make
+\end{minted}
+
+Windows 10 avec mingw64 a été utilisé pour compiler la librairie pour Windows 64 bits (.dll). L'application Ubuntu 20.04 sur Windows 10 a été utilisée avec le compilateur gcc pour compiler pour Linux 64 bits (.so).
+
+\subsection{Chargement de la librairie}
+
+Le chargement de la librairie est effectuée en se basant sur la classe \textit{ConversionBehaviour} qui doit déjà charger une librairie native. Ainsi, les librairies natives sont compilées et ajoutées dans le \gls{JAR}. Ensuite, une méthode est créée pour charger la librairie correspondant à la plateforme sur laquelle le \gls{JAR} est exécuté:
+
+\begin{minted}[breaklines]{Java}
+public static void loadLibrary() {
+    String libRoot = "/native-libraries/posits/";
+    String winLib64 = libRoot + "posits_jni.dll";
+    String linLib64 = libRoot + "libposits_jni.so";
+    String OSName = System.getProperty("os.name");
+    int arch = Integer.parseInt(System.getProperty("sun.arch.data.model"));
+    try {
+        if (OSName.startsWith("Windows")) {
+            if (arch == 64) {
+                NativeUtils.loadLibraryFromJar(winLib64);
+            }
+        } else if (OSName.startsWith("Linux")) {
+            if (arch == 64) {
+                NativeUtils.loadLibraryFromJar(linLib64);
+            }
+        } else {
+            throw new UnsupportedOperationException("This operation is not supported on this platform");
+        }
+    } catch (IOException e) {
+        throw new RuntimeException(e);
+    }
+}
+\end{minted}
+
+Cette méthode est chargée lorsque l'option indiquant l'utilisation des \glspl{Posit} est traitée afin de charger la librairie uniquement si elle est nécessaire.
+
+\subsection{Autres}
+
+Un nouveau \gls{Wrapper} a été implémenté pour les \glspl{Posit} 32 de manière similaire aux \glspl{Complex-number}. Cette étape est décrite dans la section \ref{sec:complex_implementation_wrapper}.
+
+Une nouvelle méthode la librairie standard, \textit{Math.fma()}, est désormais aussi remplacée par une méthode du \gls{Wrapper}. Le processus utilisé est identique à celui détaillé dans la section \ref{sec:complex_implementation_methods} sur les \glspl{Complex-number}.
+

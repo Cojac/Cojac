@@ -14,11 +14,12 @@
  *    limitations under the License.
  */
 
-/* For simplicity, we don't use JUnit here (only the idea)...
- * To be run: 
- * - without Cojac:        java demo.HelloSniffer
- * - with Cojac:           java -javaagent:cojac.jar demo.HelloSniffer
- * - with Cojac filtered:  java -javaagent:cojac.jar="-Xs -Xf" demo.HelloSniffer
+/* To be run:
+ * - without Cojac:        java demo.HelloRounding
+ * - round-up     (native):  java -javaagent:cojac.jar="-Bnroundu" demo.HelloRounding
+ * - round-down (emulated):  java -javaagent:cojac.jar="-Beroundd" demo.HelloRounding
+ * - round-up   (emulated):  java -javaagent:cojac.jar="-Beroundu" demo.HelloRounding
+ * - round-down   (native):  java -javaagent:cojac.jar="-Bnroundd" demo.HelloRounding
  */
 
 package demo;
@@ -45,10 +46,10 @@ public class HelloRounding {
   }
 
   /*
-  Normal Java: 3.1415928535897395
-  RoundUp:     3.1415928546998697
-  RoundDown:   3.141592852479425
-  RoundDownEm: 3.141592851369279
-  RoundUpEm:   3.1415928558101998
+  Normal Java:        3.1415928535897395
+  RoundUp   native:   3.1415928546998697
+  RoundDown native:   3.141592852479425   -Bnroundd
+  RoundUp   emulated: 3.1415928558101998  -Beroundu
+  RoundDown emulated: 3.141592851369279
  */
 }

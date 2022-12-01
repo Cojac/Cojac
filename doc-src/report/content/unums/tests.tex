@@ -1,0 +1,26 @@
+\section{Tests}
+
+Cette section décrit l'ensemble des tests unitaires et d'intégration réalisés pour vérifier le fonctionnement du \gls{Wrapper} et de la passerelle \gls{JNI}. Tous les tests écrits se terminent avec succès.
+
+\subsection{Tests unitaires}
+
+Toutes les méthodes ont été testées avec au moins un cas général. Les cas particuliers n'ont pas été testés. Ceci inclut les grands nombres, les nombres tout petits et autres valeurs spéciales (NaN, null, etc.).
+
+49 tests unitaires ont été réalisés. De plus, ces tests couvrent 100\% de la classe \textit{WrapperPosit32}. Les détails sont visibles dans le tableau suivant:
+
+\begin{table}[h]
+    \begin{tabularx}{\columnwidth}{ | p{12em} | X | X | X |}
+        \hline
+        \textbf{Élément} & \textbf{Classe} & \textbf{Méthodes} & \textbf{Lignes} \\
+        \hline
+        WrapperPosit32 & 100\% (1/1) & 100\% (40/40) & 100\% (55/55) \\
+        Posit32Utils & 100\% (1/1) & 100\% (1/1) & 62\% (10/16) \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+Les 11 méthodes natives de la librairie, appelées par Posit32Utils ne s'affichent pas dans la couverture. Les lignes de la classe \textit{Posit32Utils} qui n'ont pas été couvertes par les tests sont des lignes qui ne s'exécutent que sur d'autres plateformes. Cependant, les tests fonctionnent en local (Windows) et sur le GitLab CI (Linux) qui correspondent à l'ensemble des plateformes supportées actuellement.
+
+\subsection{Tests d'intégration}
+
+Des tests d'intégrations ont aussi été réalisés. Une classe de test est instrumentée et le retour de ces méthodes sont vérifiées. 9 tests vérifient que l'instrumentation du code donne le résultat exact donné par la librairie.

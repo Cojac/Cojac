@@ -91,11 +91,7 @@ public class BehaviourEditor implements Editor {
 			NodeList intructionNodes = document.getDocumentElement().getElementsByTagName(tagName);
 			nbrOfInstructions = intructionNodes.getLength();
 			System.out.println("new BehaviourEditor, #instructions="+nbrOfInstructions);
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
+		} catch (SAXException | IOException | ParserConfigurationException e) {
 			e.printStackTrace();
 		}
 	}

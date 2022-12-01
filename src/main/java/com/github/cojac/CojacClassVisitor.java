@@ -19,7 +19,7 @@
 package com.github.cojac;
 
 import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.Opcodes;
+//import org.objectweb.asm.Opcodes;
 
 import com.github.cojac.instrumenters.IOpcodeInstrumenterFactory;
 import static com.github.cojac.CojacCommonConstants.ASM_VERSION;

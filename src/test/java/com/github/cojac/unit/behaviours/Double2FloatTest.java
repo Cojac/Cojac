@@ -42,7 +42,8 @@ public class Double2FloatTest {
      * initialization method, instrumenting "Double2FloatTests" with Arg.DOUBLE2FLOAT
      */
     @Before
-    public void instrument() throws ClassNotFoundException, UnmodifiableClassException, InstantiationException, IllegalAccessException{
+    public void instrument() throws ClassNotFoundException, UnmodifiableClassException,
+            InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         
         Assert.assertTrue(methods.length == expectedResults.length);
         Args args = new Args();
@@ -57,7 +58,7 @@ public class Double2FloatTest {
         classz = ClassLoader.getSystemClassLoader().loadClass("com.github.cojac.unit.behaviours.Double2FloatTests");
         AgentTest.instrumentation.retransformClasses(classz);
 
-        object = classz.newInstance();
+        object = classz.getDeclaredConstructor().newInstance();
     }
     /*
      * Post-test method removing instrumentation on "Double2FloatTests"

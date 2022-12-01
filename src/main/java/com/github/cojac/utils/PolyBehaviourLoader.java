@@ -31,11 +31,11 @@ import org.xml.sax.SAXException;
 
 public class PolyBehaviourLoader {
     //private static String ROOT_ELT = "classes";
-    private static String CLASS_ELT = "class";
-    private static String LINE_ELT = "line";
-    private static String CLASS_NAME_ATTR = "className";
-    private static String LINE_NUMBER_ATTR = "lineNumber";
-    private static String BEHAVIOUR_ATTR = "behaviour";
+    private static final String CLASS_ELT = "class";
+    private static final String LINE_ELT = "line";
+    private static final String CLASS_NAME_ATTR = "className";
+    private static final String LINE_NUMBER_ATTR = "lineNumber";
+    private static final String BEHAVIOUR_ATTR = "behaviour";
 
     private static PolyBehaviourLoader INSTANCE;
 
@@ -79,11 +79,7 @@ public class PolyBehaviourLoader {
                 }
                 classMap.put(className, lineMap);
             }
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
+        } catch (SAXException | IOException | ParserConfigurationException e) {
             e.printStackTrace();
         }
     }

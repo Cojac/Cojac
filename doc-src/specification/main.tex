@@ -1,0 +1,106 @@
+\documentclass[french,11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage{lmodern}                        % Police utiliser pour
+\usepackage{textcomp}                       % la prise en charge des °
+\usepackage{graphicx}               		% pour inclure des images
+\usepackage[square, numbers]{natbib}         % Ajout de references et de citations
+\usepackage[ddmmyyyy]{datetime}             % Utilisation de la date
+\usepackage{geometry}
+\usepackage{xcolor}
+% For code syntax highlighter
+\usepackage{minted}
+% For code background and border
+\usepackage{tcolorbox}
+\usepackage{etoolbox}
+
+\usepackage{pdflscape}
+\usepackage[all]{nowidow}
+\usepackage{vhistory}
+\usepackage{tabularx}
+\pagenumbering{gobble}
+\usepackage{hyperref}
+\usepackage{babel}
+    \frenchbsetup{StandardLists=true}
+
+\bibliographystyle{plainnat}
+
+%% ENVIRONNMENT %%
+\newlength{\currentparskip}
+\newenvironment{minipage2} % keep the same space between paragraphs
+    {\setlength{\currentparskip}{\parskip} % save the parskip
+    \begin{minipage}{\linewidth}
+    % parskip is reset to 0 inside a minipage environment
+    \setlength{\parskip}{\currentparskip} % restore the parskip
+    }
+    {\end{minipage}}
+
+%% CONFIG %%
+% Default image directory
+\graphicspath{{images/}}
+
+% Set minted background and border
+\input{minted_config}
+
+\setlength{\parindent}{0em}
+\setlength{\parskip}{1em}
+
+\input{config}
+
+\newgeometry{left=3cm, right=3cm, top=3cm, bottom=3cm}
+
+%% COMANDS %%
+% print todo and the text in red
+\newcommand{\todo}[1]{
+    \textcolor{red}{\textbf{TODO: #1}}
+    \PackageError{Document}{TODO}{#1!}
+}
+
+\begin{document}
+\include{title}
+
+\section *{Table des versions}
+\vspace*{0.5 cm}
+
+\begin{table}[h]
+    \begin{tabularx}{\columnwidth}{ | p{1.5cm} | p{1.7cm} | p{2.5cm} | X |}
+        \hline
+        \textbf{Version} & \textbf{Date} & \textbf{Auteur} & \textbf{Description} \\
+        \hline
+        0.1 & 01.06.2021 & Cédric Tâche & Création \\
+        1.0 & 07.06.2021 & Cédric Tâche & Description plus précise du projet et des objectifs \\
+        1.1 & 11.06.2021 & Cédric Tâche & Précision des tâches \\
+         & & & Correction de la planification \\
+         & & & Ajout d'objectifs secondaires \\
+        1.2 & 14.06.2021 & Cédric Tâche & Ajout de code pour les nombres complexes \\
+         & & & Correction de la mise en page \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+\pagenumbering{Roman}
+
+\newpage
+
+\hypersetup{
+	hidelinks,
+	allcolors=black,
+	linktocpage,
+	linktoc=all
+}
+
+\tableofcontents
+
+\newpage
+
+\pagenumbering{arabic}
+
+\input{content}
+
+\section{Références}
+
+\renewcommand{\bibsection}{}
+\bibliography{biblio.bib}
+
+\end{document}

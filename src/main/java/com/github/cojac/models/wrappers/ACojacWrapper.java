@@ -18,85 +18,102 @@
 
 package com.github.cojac.models.wrappers;
 
-public abstract class ACojacWrapper implements Comparable<ACojacWrapper>{
+public abstract class ACojacWrapper<T extends ACojacWrapper<T>> implements Comparable<T> {
     //-------------------------------------------------------------------------
     //----------------- Necessary constructor  -------------------------------
     //-------------------------------------------------------------------------
 
-    // public ACojacWrapper(ACojacWrapper v) { }
+    // public ConcreteWrapper(ConcreteWrapper v) { }
 
     //-------------------------------------------------------------------------
-    
-    public abstract ACojacWrapper dadd(ACojacWrapper b);
-    public abstract ACojacWrapper dsub(ACojacWrapper b);
-    public abstract ACojacWrapper dmul(ACojacWrapper b);
-    public abstract ACojacWrapper ddiv(ACojacWrapper b);
-    public abstract ACojacWrapper drem(ACojacWrapper b);
-    public abstract ACojacWrapper dneg();
+
+    public abstract T dadd(T b);
+    public abstract T dsub(T b);
+    public abstract T dmul(T b);
+    public abstract T ddiv(T b);
+    public abstract T drem(T b);
+    public abstract T dneg();
     public abstract double toDouble();
-    
-    public int dcmpl(ACojacWrapper b) {
+
+    public int dcmpl(T b) {
         if (this.isNaN() || b.isNaN()) return -1;
         return this.compareTo(b);
     }
-    public int dcmpg(ACojacWrapper b) {
+    public int dcmpg(T b) {
         if (this.isNaN() || b.isNaN()) return +1;
         return this.compareTo(b);
     }
     public int  d2i() { return (int)  toDouble();}
     public long d2l() { return (long) toDouble();}
-    public abstract ACojacWrapper math_sqrt();
-    public abstract ACojacWrapper math_abs();
-    public abstract ACojacWrapper math_sin();
-    public abstract ACojacWrapper math_cos();
-    public abstract ACojacWrapper math_tan();
-    public abstract ACojacWrapper math_asin();
-    public abstract ACojacWrapper math_acos();
-    public abstract ACojacWrapper math_atan();
-    public abstract ACojacWrapper math_sinh();
-    public abstract ACojacWrapper math_cosh();
-    public abstract ACojacWrapper math_tanh();
-    public abstract ACojacWrapper math_exp();
-    public abstract ACojacWrapper math_log();
-    public abstract ACojacWrapper math_log10();
-    public abstract ACojacWrapper math_toRadians();
-    public abstract ACojacWrapper math_toDegrees();
+    public abstract T math_sqrt();
 
-    public ACojacWrapper math_min(ACojacWrapper b) {
-        if (this.compareTo(b)<0) return this;
+    public T math_cbrt() {
+        return math_pow(fromDouble(1d/3, false));
+    }
+
+    public abstract T math_abs();
+    public abstract T math_sin();
+    public abstract T math_cos();
+    public abstract T math_tan();
+    public abstract T math_asin();
+    public abstract T math_acos();
+    public abstract T math_atan();
+    public abstract T math_sinh();
+    public abstract T math_cosh();
+    public abstract T math_tanh();
+    public abstract T math_exp();
+    public abstract T math_log();
+    public abstract T math_log10();
+    public abstract T math_toRadians();
+    public abstract T math_toDegrees();
+
+    @SuppressWarnings("unchecked")
+    public T math_min(T b) {
+        if (this.compareTo(b)<0) return (T)this;
+        return b;
+    }
+
+    @SuppressWarnings("unchecked")
+    public T math_max(T b) {
+        if (this.compareTo(b)>0) return (T)this;
         return b;
     }
     
-    public ACojacWrapper math_max(ACojacWrapper b) {
-        if (this.compareTo(b)>0) return this;
-        return b;
-    }
-    
-    public abstract ACojacWrapper math_pow(ACojacWrapper b);
+    public abstract T math_pow(T b);
     // TODO make this abstract and implement it for all wrappers
-    public ACojacWrapper math_hypot(ACojacWrapper b) { throw new UnsupportedOperationException();}
+    public T math_hypot(T b) { throw new UnsupportedOperationException();}
+
+    public T math_fma(T a, T b) {
+        return this.dmul(a).dadd(b);
+    }
     
     public boolean isNaN() {
         return Double.isNaN(toDouble());
     }
     //-------------------------------------------------------------------------
     /** wasFromFloat can be used to distinguish two kinds of numbers */
-    public abstract ACojacWrapper fromDouble(double a, boolean wasFromFloat);
+    public abstract T fromDouble(double a, boolean wasFromFloat);
+
+    public T fromString(String a, boolean wasFromFloat){
+        return fromDouble(Double.parseDouble(a), wasFromFloat);
+    }
     
     
     //-------------------------------------------------------------------------
     //----------------- Overridden methods ------------------------------------
     //-------------------------------------------------------------------------
     
-	@Override public int compareTo(ACojacWrapper o) {
+	@Override public int compareTo(T o) {
 	    return Double.compare(toDouble(), o.toDouble());
 	}
-	
+
+    @SuppressWarnings("unchecked")
     @Override public boolean equals(Object obj) {
         if (obj == null) return false;
         if (! (obj instanceof ACojacWrapper)) return false;
-        ACojacWrapper ow = (ACojacWrapper)obj;
-        return new Double(toDouble()).equals(new Double(ow.toDouble()));
+        ACojacWrapper<T> ow;
+        ow = (ACojacWrapper<T>)obj;
+        return Double.valueOf(toDouble()).equals(ow.toDouble());
     }
 
 	@Override public int hashCode()       { return Double.hashCode(toDouble()); }
@@ -110,5 +127,4 @@ public abstract class ACojacWrapper implements Comparable<ACojacWrapper>{
 
     // Only 2 magic methods are common; the others will be specific...
     public abstract String wrapperName();
-
 }

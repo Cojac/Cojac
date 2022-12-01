@@ -70,7 +70,7 @@ public enum Signatures {
     D2L_CAST("(D)J");
     
     public final String description;
-    private Signatures(String descr){
+    Signatures(String descr){
         description = descr;
     }
 }

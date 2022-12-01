@@ -21,7 +21,7 @@ package com.github.cojac.models.wrappers;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
 
-public class WrapperBasic extends ACompactWrapper {
+public class WrapperBasic extends ACompactWrapper<WrapperBasic> {
     private final double value;
    
     private WrapperBasic(double v) {
@@ -31,19 +31,19 @@ public class WrapperBasic extends ACompactWrapper {
     //-------------------------------------------------------------------------
     //----------------- Necessary constructor  -------------------------------
     //-------------------------------------------------------------------------
-    public WrapperBasic(ACojacWrapper w) {
-        this(w==null ? 0.0 : ((WrapperBasic) w).value);
+    public WrapperBasic(WrapperBasic w) {
+        this(w==null ? 0.0 : w.value);
     }
     
     //-------------------------------------------------------------------------
     @Override
-    public ACojacWrapper applyUnaryOp(DoubleUnaryOperator op) {
+    public WrapperBasic applyUnaryOp(DoubleUnaryOperator op) {
         return new WrapperBasic(op.applyAsDouble(value));
     }
 
     @Override
-    public ACojacWrapper applyBinaryOp(DoubleBinaryOperator op, ACojacWrapper b) {
-        WrapperBasic bb=(WrapperBasic)b;
+    public WrapperBasic applyBinaryOp(DoubleBinaryOperator op, WrapperBasic b) {
+        WrapperBasic bb = b;
         return new WrapperBasic(op.applyAsDouble(value, bb.value));
     }
     
@@ -53,7 +53,7 @@ public class WrapperBasic extends ACompactWrapper {
 
     @SuppressWarnings("unused")
     @Override
-    public ACojacWrapper fromDouble(double a, boolean wasFromFloat) {
+    public WrapperBasic fromDouble(double a, boolean wasFromFloat) {
         return new WrapperBasic(a);
     }
 

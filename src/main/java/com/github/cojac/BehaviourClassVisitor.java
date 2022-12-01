@@ -53,7 +53,7 @@ public class BehaviourClassVisitor extends CojacClassVisitor {
      */
     private MethodVisitor instrumentMethod(MethodVisitor parentMv, int access, String desc, String name) {
         // System.out.println("in NewClassVisitor.instrumentMethod");
-        MethodVisitor mv = null;
+        MethodVisitor mv;
         mv = new BehaviourMethodVisitor(access, desc, parentMv, stats, args, crtClassName, factory, references, name, this);
         return mv;
     }

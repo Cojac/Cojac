@@ -76,7 +76,7 @@ public enum Opt {
 	 * 
 	 * @param name The option name.
 	 */
-	private Opt(String name) {
+	Opt(String name) {
 		this.name = name;
 	}
 
@@ -147,7 +147,7 @@ public enum Opt {
 	 */
 	public static void paseArgs(String[] args) throws ParseException {
 		CommandLineParser parser = new BasicParser();
-		CommandLine cmdLine = null;
+		CommandLine cmdLine;
 
 		cmdLine = parser.parse(opts, args);
 

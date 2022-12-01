@@ -32,7 +32,7 @@ public final class CojacAnnotationVisitor extends EmptyVisitor {
     private boolean first = true;
     private boolean classAnnotated = false;
     private String classPath;
-    private List<String> blacklistedMethods = new ArrayList<String>(10);
+    private List<String> blacklistedMethods = new ArrayList<>(10);
     private String lastVisitedMethod;
 
     public CojacAnnotationVisitor(final InstrumentationStats stats) {

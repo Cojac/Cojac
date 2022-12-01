@@ -27,7 +27,7 @@ import java.util.Map;
 
 import org.objectweb.asm.Opcodes;
 public class MathMethods {
-    private final static Map<Class<?>, String> types = new HashMap<Class<?>, String>();
+    private final static Map<Class<?>, String> types = new HashMap<>();
     static{
         types.put(int.class, "I");
         types.put(float.class, "F");
@@ -38,7 +38,7 @@ public class MathMethods {
         types.put(byte.class, "B");
         types.put(String.class, "Ljava/lang/String;");
     }
-    public static ArrayList<Operation> operations = new ArrayList<Operation>();
+    public static ArrayList<Operation> operations = new ArrayList<>();
     static{
         Method[] methods = Math.class.getMethods();//could be a generic class
         for(Method method:methods){
@@ -50,16 +50,18 @@ public class MathMethods {
     }
     
     public static Operation toStaticOperation(Method m){   
-        String signature ="";
+        StringBuilder signature = new StringBuilder();
         
-        signature += "(";
+        signature.append("(");
         for (Type c: m.getParameterTypes()) {
-            signature += types.get(c);
+            if (! (c instanceof Class)) continue;
+            Class<?> cz = (Class<?>) c;
+            signature.append(types.get(cz));
         }
-        signature += ")";
-        signature += types.get(m.getReturnType());
+        signature.append(")");
+        signature.append(types.get(m.getReturnType()));
         //System.out.println("Name: "+method.getName()+" signature: " + signature);
-       return new Operation(Opcodes.INVOKESTATIC,m.getName(), signature, m.getParameterTypes());
+       return new Operation(Opcodes.INVOKESTATIC,m.getName(), signature.toString(), m.getParameterTypes());
         
     }
     

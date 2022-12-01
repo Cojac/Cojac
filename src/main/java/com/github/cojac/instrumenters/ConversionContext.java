@@ -79,10 +79,10 @@ public class ConversionContext {
     }
 
     private Type[] typesAfterReplacement(Type[] javArgs) {
-        Type cojArgs[] = new Type[javArgs.length];
+        Type[] cojArgs = new Type[javArgs.length];
         for (int i = 0; i < javArgs.length; i++) {
             cojArgs[i] = afterFloatReplacement(javArgs[i]);
-            if(cojArgs[i].equals(javArgs[i]) == false){
+            if(!cojArgs[i].equals(javArgs[i])){
                 typeConversions.put(i, javArgs[i]);
             }
         }

@@ -18,7 +18,7 @@
 
 package com.github.cojac;
 
-import java.io.PrintWriter;
+//import java.io.PrintWriter;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
@@ -28,7 +28,7 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.util.*;
+//import org.objectweb.asm.util.*;
 
 import static com.github.cojac.CojacCommonConstants.ASM_VERSION;
 
@@ -58,6 +58,8 @@ public final class Agent implements ClassFileTransformer {
         //       we try to discover the "enclosing class" from classfileBuffer, 
         //       to decide if we should instrument or not.
 
+        // TODO: correct this method. If no change is done, it should return null
+
 //        if (VERBOSE && className==null) {
 //            System.out.println("null className... "+extractedClassname(classfileBuffer));
 //            //dumpIt(classfileBuffer);
@@ -66,7 +68,7 @@ public final class Agent implements ClassFileTransformer {
         if (className==null) 
             className=extractedClassname(classfileBuffer);
         if(loader==null || loader==ClassLoader.getSystemClassLoader().getParent()) 
-            return classfileBuffer;  // maybe the bootstrapLoader??
+            return null;  // maybe the bootstrapLoader??
         try {
             if("com/github/cojac/models/FloatReplacerClasses".equals(className)) {
                 if (VERBOSE) {
@@ -78,13 +80,13 @@ public final class Agent implements ClassFileTransformer {
                 if (VERBOSE) {
                     System.out.println("Agent NOT instrumenting  PolyBehaviourLogger");
                 }
-                return classfileBuffer;
+                return null;
             }
             if (!references.hasToBeInstrumented(className)) {
                 if (VERBOSE) {
                     System.out.println("Agent NOT instrumenting "+className +" under "+loader);
                 }
-                return classfileBuffer;
+                return null;
             }
             if (VERBOSE) {
                 System.out.println("Agent     instrumenting "+className +" under "+loader);
@@ -95,7 +97,7 @@ public final class Agent implements ClassFileTransformer {
             }
 
             trackForDebuggingPurposes(className, instrumented);
-            if (VERBOSE) {
+            //if (VERBOSE) {
 				/*
 				The interfaces are loaded by this class, the loading of a class 
 				by the agent is done without the instrumentation.
@@ -107,7 +109,7 @@ public final class Agent implements ClassFileTransformer {
                 // not yet defined... So better turn this off!
                 // if (! REPLACE_FLOATS)
                 //    CheckClassAdapter.verify(new ClassReader(instrumented), PRINT_INSTR_RESULT, new PrintWriter(System.out));
-			}
+			//}
 			
             return instrumented;
             

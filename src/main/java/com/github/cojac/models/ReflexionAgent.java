@@ -35,11 +35,7 @@ public class ReflexionAgent {
             Field field = classz.getDeclaredField("instrumentation");
             field.setAccessible(true);
             field.set(null, inst);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
     }

@@ -1,0 +1,65 @@
+\section{Conclusion}
+
+Ce chapitre résume l'état du projet et son déroulement. Il explique si les objectifs ont été atteints, les améliorations possibles et suggère des propositions pour améliorer ce projet.
+
+\subsection{Atteinte des objectifs}
+
+Tous les objectifs primaires ont été atteints:
+
+\begin{itemize}
+    \item Intégration des \glspl{Complex-number}: Les \glspl{Complex-number} ont été intégrés, testés, documentés et une démonstration montre également l'intérêt de cette fonctionnalité.
+    \item Intégration des \glspl{Unums}: Les \glspl{Unums} ont aussi été intégrés et testés. Cependant, plus d'opérations pourraient être calculés en utilisant directement les \glspl{Unums}.
+    \item Démonstrations: Des démonstrations montrent l'utilité que ces deux fonctionnalités peuvent offrir.
+\end{itemize}
+
+Certains objectifs secondaires ont aussi été partiellement atteints:
+
+\begin{itemize}
+    \item Mise à jour des librairies: Plusieurs librairies ont été mises à jour, mais ce n'est pas le cas de tous.
+    \item Documentation: Une section a été ajoutée dans le wiki pour décrire les \glspl{Complex-number}.
+    \item GitLab CI: Un GitLab CI a été ajouté pour vérifier le fonctionnement des tests et compiler le projet.
+    \item Les \glspl{Wrapper} et \glspl{Behaviour} ont été comparés, mais l'analyse peut être approfondies.
+\end{itemize}
+
+\subsection{Perspectives d'amélioration}
+
+Il y a beaucoup de possibilité d'améliorations pour ce projet. Voici la plus importante:
+
+\begin{itemize}
+    \item Vérifier que la licence de la librairie \gls{SoftPosit} est reportée correctement et que ceci ne cause pas de conflit avec la licence de \gls{COJAC}.
+\end{itemize}
+
+D'autres améliorations seraient également les bienvenues:
+
+\begin{itemize}
+    \item Corriger la méthode \textit{Agent.transform} qui devrait retourner \textit{null} lorsqu'il n'y a pas de changement.
+    \item Mettre à jour les librairies utilisées.
+    \item Implémenter les \glspl{Posit} en Java directement ou ajouter des fonctionnalités dans la librairie \gls{SoftPosit}.
+    \item Le GitLab CI pourrait également tester le fonctionnement sous Windows et tester la compilation de la librairie native.
+\end{itemize}
+
+D'autres points d'amélioration existent également, mais ont moins d'intérêts que ceux énoncés précédemment:
+
+\begin{itemize}
+    \item La classe \textit{com.github.cojac.instrumenters.BehaviourInstrumenter} peut et devrait être améliorée. Il y a beaucoup de code commenté, certaines méthodes sont très longues, il y a jusqu'à 6 niveaux d'indentations et l'apparition d'exceptions est considérée comme un cas habituel et n'est pas signalé.
+    \item Les tests du profiler produisent une grande quantité de texte sur la sortie standard. Ce texte n'a pourtant que peu d'intérêt.
+    \item Ajouter des tests de performance pour les \glspl{Complex-number} et les \glspl{Unums}.
+    \item Créer une documentation qui détaille le fonctionnement de \gls{COJAC} pour permettre aux futurs développeurs de prendre le projet en main plus facilement.
+    \item Nettoyer le code: supprimer le code commenté, formater le code, améliorer le code, etc.
+    \item Utiliser un \textit{logger} pour tout le projet.
+    \item Améliorer l'architecture du projet.
+    \item Effectuer les \textit{TODO} présents dans le code.
+    \item Amélioration le nom des \textit{packages} et l'emplacement des tests.
+    \item Créer un dossier pour la librairie \textit{NativeRoundingMode} qui est déjà présente dans le projet.
+    \item Byte Buddy \cite{byte-buddy} peut potentiellement simplifier l'écriture du code actuel. Il reste possible d'utiliser la librairie actuelle en parallèle de Byte Buddy pendant la transition.
+\end{itemize}
+
+\subsection{Conclusion personnelle}
+
+Ce projet s'est globalement bien déroulé. J'ai planifié et pris un peu trop de temps sur les \glspl{Complex-number}, même si le retard par rapport à la planification est dû à des problèmes sur le projet. Le temps était ensuite un peu trop limité pour parfaire l'intégration des \glspl{Unums}. Malgré les problèmes qui se sont principalement produits dans la deuxième moitié du projet, j'ai pu réalisés les objectifs primaires et testés également l'implémentation de ceux-ci afin d'assurer une certaine qualité dans le travail effectué. J'aurais voulu faire quelques tâches supplémentaires, même si j'ai dû les abandonner en faveur d'autres tâches plus importantes.
+
+En résumé, même si j'aurais voulu réaliser quelques tâches supplémentaires, j'ai apprécié travailler sur ce projet et je suis satisfait du travail effectué ainsi que des résultats obtenus. Ce projet démontre également une nette amélioration par rapport au projet de semestre précédent.
+
+\subsection{Déclaration d'honneur}
+
+Je, soussigné, Cédric Tâche, déclare sur l’honneur que le travail rendu est le fruit d’un travail personnel. Je certifie ne pas avoir eu recours au plagiat ou à toute autre forme de fraude. Toutes les sources d’information utilisées et les citations d’auteur ont été clairement mentionnées.

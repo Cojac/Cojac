@@ -37,6 +37,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * This class instruments code with methods defined in the classes given by an instance of arg 
@@ -56,19 +57,17 @@ import java.util.Map;
 public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
 
     private final InstrumentationStats stats;
-    private final Map<Integer, InvokableMethod> invocations = new HashMap<Integer, InvokableMethod>(50);
-    private final Map<String, InvokableMethod> methods = new HashMap<String, InvokableMethod>(50);
+    private final Map<Integer, InvokableMethod> invocations = new HashMap<>(50);
+    private final Map<String, InvokableMethod> methods = new HashMap<>(50);
     // private boolean instrumentDouble = false;
     
     private final String[] BEHAVIOURS;
     private final String[] FULLY_QUALIFIED_BEHAVIOURS; // the same, but pkg.MyClass instead of pkg/MyClass...
     
-    private static BehaviourInstrumenter instance= null;
+    private static BehaviourInstrumenter instance = null;
     /**
      * Constructor, private because only a singleton is available. 
      * Use {@link #getInstance(Args, InstrumentationStats)} to get the instance. 
-     * @param args
-     * @param stats
      */
     private BehaviourInstrumenter(Args args, InstrumentationStats stats) {
         super();
@@ -96,8 +95,8 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
      * Method used to get the singleton instance. If not already constructed, the params given will be used.
      * 
      * @param args the arguments with which Cojac has been run.
-     * @param stats
-     * @return
+     * @param stats the instrumentationStats gadget
+     * @return the instance of that singleton
      */
     public static BehaviourInstrumenter getInstance(Args args, InstrumentationStats stats){
         if(instance == null){
@@ -106,62 +105,66 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
         return instance;
     }
     /**
-     * Check if every method in the behaviour classes correspond to an Opcode or a java.lang.Math method.
+     * Check if every method in the behaviour classes corresponds to an Opcode or a java.lang.Math method.
      */
     private void checkMethods() {
         try {
             for (int i = 0; i < BEHAVIOURS.length; i++) {
-                for(Method m:behaviorClass(i).getMethods()) {
-                    //Operation op = MathMethods.toStaticOperation(m);
-                    if (m.isAnnotationPresent(UtilityMethod.class)){
-                        break;
-                     }
-                    int modifiers = m.getModifiers();
-                    Operation methodOperation = MathMethods.toStaticOperation(m);
-                    if(!Modifier.isPublic(modifiers) || !Modifier.isStatic(modifiers)){
-                        continue;
-                    }
-                    if(m.isAnnotationPresent(FromClass.class)){
-                        String classQualifier = m.getAnnotation(FromClass.class).value();
-                        try {
-                            Class.forName(classQualifier.replace('/', '.')).getMethod(m.getName(), m.getParameterTypes());
-                            
-                        } catch (NoSuchMethodException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        boolean matches = false;
-                        for(Method mathm : Math.class.getMethods()){
-                            modifiers = mathm.getModifiers();
-                            if(!Modifier.isPublic(modifiers) || !Modifier.isStatic(modifiers)){
-                                continue;
-                            }
-                            if(mathm.getName().equals(m.getName()) && matchingParameters(mathm.getParameters(), m.getParameters())
-                                    &&mathm.getReturnType().equals(m.getReturnType())){
-                                matches = true;
-                                break;
-                            }
-                        }
-                        if(!matches)
-                        for(Operations op: Operations.values()){
-                            if(op.name().equals(m.getName()) && op.signature.equals(methodOperation.signature) ){
-                                matches = true;
-                                break;
-                            }
-                        } 
-                        if(!matches)
-                            Reactions.react(m.getName()+methodOperation.signature+
-                                    " doesn't matches any math method nor any bytecode operation.");
-                    }
-                }
+                Class<?> behaviorClass = behaviorClass(i);
+                checkMethodsOf(behaviorClass);
             }
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (SecurityException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
-    
+
+    private void checkMethodsOf(Class<?> behaviorClass) throws ClassNotFoundException {
+        for(Method m: Objects.requireNonNull(behaviorClass).getMethods()) {
+            //Operation op = MathMethods.toStaticOperation(m);
+            if (m.isAnnotationPresent(UtilityMethod.class)) {
+                continue;
+             }
+            int modifiers = m.getModifiers();
+            Operation methodOperation = MathMethods.toStaticOperation(m);
+            if(!Modifier.isPublic(modifiers) || !Modifier.isStatic(modifiers)) {
+                continue;
+            }
+            if(m.isAnnotationPresent(FromClass.class)) {
+                String classQualifier = m.getAnnotation(FromClass.class).value();
+                try {
+                    Class.forName(classQualifier.replace('/', '.')).getMethod(m.getName(), m.getParameterTypes());
+
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                boolean matches = false;
+                for(Method mathm : Math.class.getMethods()) {
+                    modifiers = mathm.getModifiers();
+                    if(!Modifier.isPublic(modifiers) || !Modifier.isStatic(modifiers)){
+                        continue;
+                    }
+                    if(mathm.getName().equals(m.getName())
+                            && matchingParameters(mathm.getParameters(), m.getParameters())
+                            && mathm.getReturnType().equals(m.getReturnType())){
+                        matches = true;
+                        break;
+                    }
+                }
+                if(!matches)
+                    for(Operations op: Operations.values()) {
+                        if(op.name().equals(m.getName()) && op.signature.equals(methodOperation.signature) ){
+                            matches = true;
+                            break;
+                        }
+                    }
+                if(!matches)
+                    Reactions.react(m.getName() + methodOperation.signature+
+                            " doesn't match any math method nor any bytecode operation.");
+            }
+        }
+    }
+
     private Class<?> behaviorClass(int i)  {
         try {
             return Class.forName(FULLY_QUALIFIED_BEHAVIOURS[i]);
@@ -178,7 +181,7 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
      * @return true if the sets are the same length, and if every parameter of set one match
      * with the corresponding in the set two 
      */
-    private boolean matchingParameters(Parameter[]a, Parameter[]b){
+    private boolean matchingParameters(Parameter[] a, Parameter[] b){
         if(a.length != b.length)
             return false;
         for(int i = 0; i < a.length; ++i){
@@ -192,91 +195,103 @@ public final class BehaviourInstrumenter implements IOpcodeInstrumenter {
      * stores that it's instrumented, and stores the InvokableMethod which will be called when executing.
      */
     private void fillMethods() {
-        /*Populate operations*/
-        for(Operations op: Operations.values()){
-            if(op.loadsConst) continue;
-            for (int i = 0; i < BEHAVIOURS.length; i++) {
-                try {
-                    //behaviourClass.getClass().getMethod(op.opCodeName, op.parameters);
-
-                    Method m = behaviorClass(i).getMethod(op.name(), op.parameters);
-                    if (m.isAnnotationPresent(UtilityMethod.class)){
-                        break;
-                    }
-
-                    //NewDoubles.class.getMethod(op.opCodeName, op.parameters);
-                    //System.out.println("method \""+op.name()+"\" modified.");
-                    invocations.put(op.opCodeVal, new InvokableMethod(BEHAVIOURS[i], op.name(), op.signature));
-                    break;
-                } catch (NoSuchMethodException e) {
-                    //Method not implemented, no problem.
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-            }            
+        /* Populate operations */
+        for(Operations op: Operations.values()) {
+            populateOperation(op);
         }
-        /*Populate Constant loading methods*/
-        for(ConstTransform ct: ConstTransform.values()){
-            Operation op = ct.operation;
-            //System.out.println("method \""+ct.name()+"\" check.");
-            for (int i = 0; i < BEHAVIOURS.length; i++) {
-                try {
-                    //behaviourClass.getClass().getMethod(op.opCodeName, op.parameters);
-                   
-                    Method m = behaviorClass(i).getMethod(op.opCodeName, op.parameters);
-                    if (m.isAnnotationPresent(UtilityMethod.class)){
-                       continue;
-                    }
-                    //NewDoubles.class.getMethod(op.opCodeName, op.parameters);
-                    //System.out.println("method \""+ct.name()+"\" modified.");
-                    for(Operations tmp: Operations.getLoadConstOp(ct.constType)){
-                       System.out.println("\tmethod \""+tmp.name()+" val: "+tmp.opCodeVal+"\" redirected toward "+ op.opCodeName);
-                        invocations.put(tmp.opCodeVal, new InvokableMethod(BEHAVIOURS[i], op.opCodeName, op.signature));
-                    }
-                    methods.put(op.opCodeName, new InvokableMethod(BEHAVIOURS[i], op.opCodeName, op.signature));
-                    break;
-                } catch (NoSuchMethodException e) {
-                    //Method not implemented, no problem.
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-            }
+        /* Populate Constant loading methods */
+        for(ConstTransform ct: ConstTransform.values()) {
+            populateConstantLoading(ct);
         }
         /* Populate methods (math and others) */
         for (int i = 0; i < BEHAVIOURS.length; i++) {
-            try {
-                for(Method m:behaviorClass(i).getMethods()){
-                    //Operation op = MathMethods.toStaticOperation(m);
-                    if (m.isAnnotationPresent(UtilityMethod.class)){
-                        break;
-                     }
-                    int modifiers = m.getModifiers();
-                    if(!Modifier.isPublic(modifiers) || !Modifier.isStatic(modifiers)){
-                        continue;
-                    }
-                    if(!m.isAnnotationPresent(FromClass.class)){
-                        try {
-                            Math.class.getMethod(m.getName(), m.getParameterTypes());
-                            Operation op = MathMethods.toStaticOperation(m);
-                            methods.put("java/lang/Math"+op.opCodeName+op.signature, new InvokableMethod(BEHAVIOURS[i], op.opCodeName, op.signature));
-                            methods.put("java/lang/StrictMath"+op.opCodeName+op.signature, new InvokableMethod(BEHAVIOURS[i], op.opCodeName, op.signature));
-                        } catch (NoSuchMethodException e) {
-                            // not a Math method.
-                        }
-                    }else{
-                        String classQualifier = m.getAnnotation(FromClass.class).value();
-                        try {
-                            Class.forName(classQualifier.replace('/', '.')).getMethod(m.getName(), m.getParameterTypes());
-                            Operation op = MathMethods.toStaticOperation(m);
-                            // System.out.println("method \""+op.opCodeName+op.signature+"\" from "+classQualifier+" modified.");
-                            methods.put(classQualifier+op.opCodeName+op.signature, new InvokableMethod(BEHAVIOURS[i], op.opCodeName, op.signature));
-                        } catch (NoSuchMethodException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    
+            Class<?> behaviorClass = behaviorClass(i);
+            String behavior = BEHAVIOURS[i];
+            populateMethod(behavior, behaviorClass);
+        }
+    }
+
+    private void populateMethod(String behavior, Class<?> behaviorClass) {
+        try {
+            for(Method m: behaviorClass.getMethods()){
+                //Operation op = MathMethods.toStaticOperation(m);
+                if (m.isAnnotationPresent(UtilityMethod.class)){
+                    continue;
+                 }
+                int modifiers = m.getModifiers();
+                if(!Modifier.isPublic(modifiers) || !Modifier.isStatic(modifiers)){
+                    continue;
                 }
-            } catch (SecurityException | ClassNotFoundException e) {
+                if(!m.isAnnotationPresent(FromClass.class)){
+                    try {
+                        Math.class.getMethod(m.getName(), m.getParameterTypes());
+                        Operation op = MathMethods.toStaticOperation(m);
+                        methods.put("java/lang/Math"+op.opCodeName+op.signature, new InvokableMethod(behavior, op.opCodeName, op.signature));
+                        methods.put("java/lang/StrictMath"+op.opCodeName+op.signature, new InvokableMethod(behavior, op.opCodeName, op.signature));
+                    } catch (NoSuchMethodException e) {
+                        // not a Math method.
+                    }
+                }else{
+                    String classQualifier = m.getAnnotation(FromClass.class).value();
+                    try {
+                        Class.forName(classQualifier.replace('/', '.')).getMethod(m.getName(), m.getParameterTypes());
+                        Operation op = MathMethods.toStaticOperation(m);
+                        // System.out.println("method \""+op.opCodeName+op.signature+"\" from "+classQualifier+" modified.");
+                        methods.put(classQualifier+op.opCodeName+op.signature, new InvokableMethod(behavior, op.opCodeName, op.signature));
+                    } catch (NoSuchMethodException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        } catch (SecurityException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void populateConstantLoading(ConstTransform ct) {
+        Operation op = ct.operation;
+        //System.out.println("method \""+ct.name()+"\" check.");
+        for (int i = 0; i < BEHAVIOURS.length; i++) {
+            try {
+                //behaviourClass.getClass().getMethod(op.opCodeName, op.parameters);
+
+                Method m = behaviorClass(i).getMethod(op.opCodeName, op.parameters);
+                if (m.isAnnotationPresent(UtilityMethod.class)){
+                   continue;
+                }
+                //NewDoubles.class.getMethod(op.opCodeName, op.parameters);
+                //System.out.println("method \""+ct.name()+"\" modified.");
+                for(Operations tmp: Operations.getLoadConstOp(ct.constType)){
+                   System.out.println("\tmethod \""+tmp.name()+" val: "+tmp.opCodeVal+"\" redirected toward "+ op.opCodeName);
+                    invocations.put(tmp.opCodeVal, new InvokableMethod(BEHAVIOURS[i], op.opCodeName, op.signature));
+                }
+                methods.put(op.opCodeName, new InvokableMethod(BEHAVIOURS[i], op.opCodeName, op.signature));
+            } catch (NoSuchMethodException e) {
+                //Method not implemented, no problem.
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void populateOperation(Operations op) {
+        if(op.loadsConst) return;
+        for (int i = 0; i < BEHAVIOURS.length; i++) {
+            try {
+                //behaviourClass.getClass().getMethod(op.opCodeName, op.parameters);
+
+                Method m = behaviorClass(i).getMethod(op.name(), op.parameters);
+                if (m.isAnnotationPresent(UtilityMethod.class)){
+                    continue;
+                }
+
+                //NewDoubles.class.getMethod(op.opCodeName, op.parameters);
+                //System.out.println("method \""+op.name()+"\" modified.");
+                invocations.put(op.opCodeVal, new InvokableMethod(BEHAVIOURS[i], op.name(), op.signature));
+            } catch (NoSuchMethodException e) {
+                //Method not implemented, no problem.
+            } catch(Exception e){
                 e.printStackTrace();
             }
         }

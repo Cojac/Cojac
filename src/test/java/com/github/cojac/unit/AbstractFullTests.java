@@ -25,8 +25,8 @@ import com.github.cojac.models.ReactionType;
 
 import static com.github.cojac.models.behaviours.CheckedBehaviourConstants.*;
 import static java.lang.Double.*;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 //import static junit.framework.Assert.fail;
 
@@ -301,13 +301,13 @@ public abstract class AbstractFullTests {
     @Test
     public void dadd1() throws Exception {
         double r = getTests().dadd(5555.5555, 77777.7777);
-        assertEquals(5555.5555 + 77777.7777, r);
+        assertEquals(5555.5555 + 77777.7777, r, 0.0);
     }
 
     @Test
     public void dadd2() throws Exception {
         double r = getTests().dadd(3456.098, 0);
-        assertEquals(3456.098, r);
+        assertEquals(3456.098, r, 0.0);
     }
 
     @Test(expected = ArithmeticException.class)
@@ -355,13 +355,13 @@ public abstract class AbstractFullTests {
     public void dadd10() throws Exception {
         double r;
         r = getTests().dadd(POSITIVE_INFINITY, 2);
-        assertEquals(POSITIVE_INFINITY, r);
+        assertEquals(POSITIVE_INFINITY, r, 0.0);
         r = getTests().dadd(NEGATIVE_INFINITY, 2);
-        assertEquals(NEGATIVE_INFINITY, r);
+        assertEquals(NEGATIVE_INFINITY, r, 0.0);
         r = getTests().dadd(2, POSITIVE_INFINITY);
-        assertEquals(POSITIVE_INFINITY, r);
+        assertEquals(POSITIVE_INFINITY, r, 0.0);
         r = getTests().dadd(2, NEGATIVE_INFINITY);
-        assertEquals(NEGATIVE_INFINITY, r);
+        assertEquals(NEGATIVE_INFINITY, r, 0.0);
         r = getTests().dadd(NaN, 2);
         assertTrue(isNaN(r));
         r = getTests().dadd(2, NaN);
@@ -372,19 +372,19 @@ public abstract class AbstractFullTests {
     public void dadd11() throws Exception {
         double r;
         r = getTests().dadd(2, -2);
-        assertEquals(0.0, r);
+        assertEquals(0.0, r, 0.0);
     }
 
     @Test
     public void dsub1() throws Exception {
         double r = getTests().dsub(5555.5555, 77777.7777);
-        assertEquals(5555.5555 - 77777.7777, r);
+        assertEquals(5555.5555 - 77777.7777, r, 0.0);
     }
 
     @Test
     public void dsub2() throws Exception {
         double r = getTests().dsub(3456.098, 0);
-        assertEquals(3456.098, r);
+        assertEquals(3456.098, r, 0.0);
     }
 
     @Test(expected = ArithmeticException.class)
@@ -430,13 +430,13 @@ public abstract class AbstractFullTests {
     public void dsub10() throws Exception {
         double r;
         r = getTests().dsub(POSITIVE_INFINITY, 2);
-        assertEquals(POSITIVE_INFINITY, r);
+        assertEquals(POSITIVE_INFINITY, r, 0.0);
         r = getTests().dsub(NEGATIVE_INFINITY, 2);
-        assertEquals(NEGATIVE_INFINITY, r);
+        assertEquals(NEGATIVE_INFINITY, r, 0.0);
         r = getTests().dsub(2, POSITIVE_INFINITY);
-        assertEquals(NEGATIVE_INFINITY, r);
+        assertEquals(NEGATIVE_INFINITY, r, 0.0);
         r = getTests().dsub(2, NEGATIVE_INFINITY);
-        assertEquals(POSITIVE_INFINITY, r);
+        assertEquals(POSITIVE_INFINITY, r, 0.0);
         r = getTests().dsub(NaN, 2);
         assertTrue(isNaN(r));
         r = getTests().dsub(2, NaN);
@@ -447,22 +447,22 @@ public abstract class AbstractFullTests {
     public void dsub11() throws Exception {
         double r;
         r = getTests().dsub(2.0, 2.0);
-        assertEquals(0.0, r);
+        assertEquals(0.0, r, 0.0);
     }
 
 
     @Test
     public void dmul1() throws Exception {
         double r = getTests().dmul(5555.5555, 77777.7777);
-        assertEquals(5555.5555 * 77777.7777, r);
-        assertEquals(0.0, getTests().dmul(0.0, 7.7));
-        assertEquals(0.0, getTests().dmul(7.7, 0.0));
+        assertEquals(5555.5555 * 77777.7777, r, 0.0);
+        assertEquals(0.0, getTests().dmul(0.0, 7.7), 0.0);
+        assertEquals(0.0, getTests().dmul(7.7, 0.0), 0.0);
     }
 
     @Test
     public void dmul2() throws Exception {
         double r = getTests().dmul(3456.098, 1);
-        assertEquals(3456.098, r);
+        assertEquals(3456.098, r, 0.0);
     }
 
     @Test(expected = ArithmeticException.class)
@@ -483,14 +483,14 @@ public abstract class AbstractFullTests {
     @Test
     public void ddiv1() throws Exception {
         double r = getTests().ddiv(5555.5555, 77777.7777);
-        assertEquals(5555.5555 / 77777.7777, r);
-        assertEquals(0.0, getTests().ddiv(0.0, 7.7));
+        assertEquals(5555.5555 / 77777.7777, r, 0.0);
+        assertEquals(0.0, getTests().ddiv(0.0, 7.7), 0.0);
     }
 
     @Test
     public void ddiv2() throws Exception {
         double r = getTests().ddiv(3456.098, 1);
-        assertEquals(3456.098, r);
+        assertEquals(3456.098, r, 0.0);
     }
 
     @Test(expected = ArithmeticException.class)
@@ -526,7 +526,7 @@ public abstract class AbstractFullTests {
     @Test
     public void drem2() throws Exception {
         double r = getTests().drem(3456.098D, 1.088D);
-        assertEquals(3456.098D % 1.088D, r);
+        assertEquals(3456.098D % 1.088D, r, 0.0);
     }
 
     @Test
@@ -534,7 +534,7 @@ public abstract class AbstractFullTests {
         double a = 1.17E+83;
         double b = 2 * Math.ulp(a);
         double r = getTests().drem(a, b);
-        assertEquals(a % b, r);
+        assertEquals(a % b, r, 0.0);
     }
 
 
@@ -547,13 +547,13 @@ public abstract class AbstractFullTests {
     @Test
     public void fadd1() throws Exception {
         float r = getTests().fadd(5555.5555F, 77777.7777F);
-        assertEquals(5555.5555F + 77777.7777F, r);
+        assertEquals(5555.5555F + 77777.7777F, r, 0.0);
     }
 
     @Test
     public void fadd2() throws Exception {
         float r = getTests().fadd(3456.098F, 0F);
-        assertEquals(3456.098F, r);
+        assertEquals(3456.098F, r, 0.0);
     }
 
     @Test(expected = ArithmeticException.class)
@@ -601,13 +601,13 @@ public abstract class AbstractFullTests {
         float r;
         float POS_INF = Float.POSITIVE_INFINITY, NEG_INF = Float.NEGATIVE_INFINITY;
         r = getTests().fadd(POS_INF, 2);
-        assertEquals(POS_INF, r);
+        assertEquals(POS_INF, r, 0.0);
         r = getTests().fadd(NEG_INF, 2);
-        assertEquals(NEG_INF, r);
+        assertEquals(NEG_INF, r, 0.0);
         r = getTests().fadd(2, POS_INF);
-        assertEquals(POS_INF, r);
+        assertEquals(POS_INF, r, 0.0);
         r = getTests().fadd(2, NEG_INF);
-        assertEquals(NEG_INF, r);
+        assertEquals(NEG_INF, r, 0.0);
         r = getTests().fadd(Float.NaN, 2);
         assertTrue(Float.isNaN(r));
         r = getTests().fadd(2, Float.NaN);
@@ -618,20 +618,20 @@ public abstract class AbstractFullTests {
     public void fadd11() throws Exception {
         float r;
         r = getTests().fadd(2f, -2f);
-        assertEquals(0.0f, r);
+        assertEquals(0.0f, r, 0.0);
     }
 
 
     @Test
     public void fsub1() throws Exception {
         float r = getTests().fsub(5555.5555F, 77777.7777F);
-        assertEquals(5555.5555F - 77777.7777F, r);
+        assertEquals(5555.5555F - 77777.7777F, r, 0.0);
     }
 
     @Test
     public void fsub2() throws Exception {
         float r = getTests().fsub(3456.098F, 0F);
-        assertEquals(3456.098F, r);
+        assertEquals(3456.098F, r, 0.0);
     }
 
     @Test(expected = ArithmeticException.class)
@@ -678,13 +678,13 @@ public abstract class AbstractFullTests {
         float r;
         float POS_INF = Float.POSITIVE_INFINITY, NEG_INF = Float.NEGATIVE_INFINITY;
         r = getTests().fsub(POS_INF, 2);
-        assertEquals(POS_INF, r);
+        assertEquals(POS_INF, r, 0.0);
         r = getTests().fsub(NEG_INF, 2);
-        assertEquals(NEG_INF, r);
+        assertEquals(NEG_INF, r, 0.0);
         r = getTests().fsub(2, POS_INF);
-        assertEquals(NEG_INF, r);
+        assertEquals(NEG_INF, r, 0.0);
         r = getTests().fsub(2, NEG_INF);
-        assertEquals(POS_INF, r);
+        assertEquals(POS_INF, r, 0.0);
         r = getTests().fsub(Float.NaN, 2);
         assertTrue(Float.isNaN(r));
         r = getTests().fsub(2, Float.NaN);
@@ -695,21 +695,21 @@ public abstract class AbstractFullTests {
     public void fsub11() throws Exception {
         float r;
         r = getTests().fsub(2f, 2f);
-        assertEquals(0.0f, r);
+        assertEquals(0.0f, r, 0.0);
     }
 
     @Test
     public void fmul1() throws Exception {
         float r = getTests().fmul(5555.5555F, 77777.7777F);
-        assertEquals(5555.5555F * 77777.7777F, r);
-        assertEquals(0.0f, getTests().fmul(0.0f, 7.7f));
-        assertEquals(0.0f, getTests().fmul(7.7f, 0.0f));
+        assertEquals(5555.5555F * 77777.7777F, r, 0.0);
+        assertEquals(0.0f, getTests().fmul(0.0f, 7.7f), 0.0);
+        assertEquals(0.0f, getTests().fmul(7.7f, 0.0f), 0.0);
     }
 
     @Test
     public void fmul2() throws Exception {
         float r = getTests().fmul(3456.098F, 1F);
-        assertEquals(3456.098F, r);
+        assertEquals(3456.098F, r, 0.0);
     }
 
     @Test(expected = ArithmeticException.class)
@@ -730,14 +730,14 @@ public abstract class AbstractFullTests {
     @Test
     public void fdiv1() throws Exception {
         float r = getTests().fdiv(5555.5555F, 77777.7777F);
-        assertEquals(5555.5555F / 77777.7777F, r);
-        assertEquals(0.0f, getTests().fdiv(0.0f, 7.7f));
+        assertEquals(5555.5555F / 77777.7777F, r, 0.0);
+        assertEquals(0.0f, getTests().fdiv(0.0f, 7.7f), 0.0);
     }
 
     @Test
     public void fdiv2() throws Exception {
         float r = getTests().fdiv(3456.098F, 1F);
-        assertEquals(3456.098F, r);
+        assertEquals(3456.098F, r, 0.0);
     }
 
     @Test(expected = ArithmeticException.class)
@@ -773,7 +773,7 @@ public abstract class AbstractFullTests {
     @Test
     public void frem2() throws Exception {
         float r = getTests().frem(3456.098F, 1.088F);
-        assertEquals(3456.098F % 1.088F, r);
+        assertEquals(3456.098F % 1.088F, r, 0.0);
     }
 
     @Test
@@ -781,7 +781,7 @@ public abstract class AbstractFullTests {
         float a = 1.17E+23f;
         float b = 2 * Math.ulp(a);
         float r = getTests().frem(a, b);
-        assertEquals(a % b, r);
+        assertEquals(a % b, r, 0.0);
     }
 
 
@@ -955,13 +955,13 @@ public abstract class AbstractFullTests {
     @Test
     public void d2f2() throws Exception {
         float i = getTests().d2f(Float.MAX_VALUE);
-        assertEquals(Float.MAX_VALUE, i);
+        assertEquals(Float.MAX_VALUE, i, 0.0);
     }
 
     @Test
     public void d2f3() throws Exception {
         float i = getTests().d2f(5555D);
-        assertEquals(5555F, i);
+        assertEquals(5555F, i, 0.0);
     }
 
     @Test
@@ -1012,7 +1012,7 @@ public abstract class AbstractFullTests {
     @Test
     public void pow() throws Exception {
         double pow = getTests().pow(10, 4);
-        assertEquals(10000D, pow);
+        assertEquals(10000D, pow, 0.0);
     }
 
     @Test(expected = ArithmeticException.class)
@@ -1023,7 +1023,7 @@ public abstract class AbstractFullTests {
     @Test
     public void asin1() throws Exception {
         double asin = getTests().asin(0.4);
-        assertEquals(StrictMath.asin(0.4), asin);
+        assertEquals(StrictMath.asin(0.4), asin, 0.0);
     }
 
     @Test(expected = ArithmeticException.class)
@@ -1034,7 +1034,7 @@ public abstract class AbstractFullTests {
     @Test
     public void exp1() throws Exception {
         double exp = getTests().exp(2);
-        assertEquals(StrictMath.exp(2), exp);
+        assertEquals(StrictMath.exp(2), exp, 0.0);
     }
 
 //    @Test(expected = ArithmeticException.class)
@@ -1045,7 +1045,7 @@ public abstract class AbstractFullTests {
     @Test
     public void log1() throws Exception {
         double log = getTests().log(2);
-        assertEquals(StrictMath.log(2), log);
+        assertEquals(StrictMath.log(2), log, 0.0);
     }
 
     @Test(expected = ArithmeticException.class)

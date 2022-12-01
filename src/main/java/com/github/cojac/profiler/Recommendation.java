@@ -5,6 +5,7 @@ import com.github.cojac.models.wrappers.SymbolicExpression;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -324,12 +325,8 @@ public class Recommendation {
       this.recommendation = recommendation;
 
       this.pattern = pattern;
-      if (profileUpdater != null) {
-         this.profileUpdater = profileUpdater;
-      } else {
-         // default updater
-         this.profileUpdater = (x, goal) -> x.update(goal.getLeftValue());
-      }
+      // default updater
+      this.profileUpdater = Objects.requireNonNullElseGet(profileUpdater, () -> (x, goal) -> x.update(goal.getLeftValue()));
       this.profileAnalyser = profileAnalyser;
       this.customStringProvider = customStringProvider;
    }

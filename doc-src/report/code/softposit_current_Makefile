@@ -1,0 +1,4 @@
+COMPILE_C = \
+  $(COMPILER) -fPIC -c -Werror-implicit-function-declaration -DSOFTPOSIT_FAST_INT64 \
+    $(SOFTPOSIT_OPTS) $(C_INCLUDES) $(OPTIMISATION) \
+    -o $@ 

@@ -35,27 +35,27 @@ import org.w3c.dom.Element;
 public class InstructionWriter {
 
     // elements tag
-    private static String ROOT_ELT = "classes";
-    private static String CLASS_ELT = "class";
-    private static String METHOD_ELT = "method";
-    private static String LINE_ELT = "line";
-    private static String INSTRUCTION_ELT = "instruction";
+    private static final String ROOT_ELT = "classes";
+    private static final String CLASS_ELT = "class";
+    private static final String METHOD_ELT = "method";
+    private static final String LINE_ELT = "line";
+    private static final String INSTRUCTION_ELT = "instruction";
 
     // attributes tag
-    private static String CLASS_NAME_ATTR = "className";
-    private static String METHOD_NAME_ATTR = "methodName";
-    private static String LINE_NUMBER_ATTR = "lineNumber";
-    private static String INSTRUCTION_NUMBER_ATTR = "instructionNumber";
-    private static String OP_CODE_ATTR = "opCode";
-    private static String OP_NAME_ATTR = "opName";
-    private static String INVOKED_METHOD = "invokedMethod";
-    private static String BEHAVIOUR_ATTR = "behaviour";
-    private static String DEFAULT_BEHAVIOUR_VALUE = "IGNORE";
+    private static final String CLASS_NAME_ATTR = "className";
+    private static final String METHOD_NAME_ATTR = "methodName";
+    private static final String LINE_NUMBER_ATTR = "lineNumber";
+    private static final String INSTRUCTION_NUMBER_ATTR = "instructionNumber";
+    private static final String OP_CODE_ATTR = "opCode";
+    private static final String OP_NAME_ATTR = "opName";
+    private static final String INVOKED_METHOD = "invokedMethod";
+    private static final String BEHAVIOUR_ATTR = "behaviour";
+    private static final String DEFAULT_BEHAVIOUR_VALUE = "IGNORE";
 
     // Structure that contains all instructions
     // classeName - methodName - lineNumber - instructionNumber -
     // instructionMeta
-    private HashMap<String, HashMap<String, HashMap<Integer, HashMap<Integer, InstructionMeta>>>> classMap;
+    private final HashMap<String, HashMap<String, HashMap<Integer, HashMap<Integer, InstructionMeta>>>> classMap;
     private static InstructionWriter INSTANCE;
 
     // constructor (private cause singleton)
@@ -95,10 +95,7 @@ public class InstructionWriter {
             // write the XML document to XML file
             transformer.transform(source, result);
             // ----------------------------------------------------------------------
-        } catch (ParserConfigurationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (TransformerException e) {
+        } catch (ParserConfigurationException | TransformerException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

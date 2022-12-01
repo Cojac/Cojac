@@ -36,11 +36,7 @@ public final class ReflectionUtils {
             Field field = classz.getDeclaredField(fieldName);
             field.setAccessible(true);
             field.set(null, value);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
     }
@@ -52,11 +48,7 @@ public final class ReflectionUtils {
             Field field = reactions.getDeclaredField(fieldName);
             field.setAccessible(true);
             return (T) field.get(null);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
 

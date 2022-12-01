@@ -21,7 +21,7 @@ package com.github.cojac.models.wrappers;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
 
-public class WrapperAutodiffReverse extends ACojacWrapper {
+public class WrapperAutodiffReverse extends ACojacWrapper<WrapperAutodiffReverse> {
     private final double value;
     private final WrapperAutodiffReverse op1, op2; // @Nullable
     private final double dop1, dop2;
@@ -47,12 +47,12 @@ public class WrapperAutodiffReverse extends ACojacWrapper {
     //-------------------------------------------------------------------------
     //----------------- Necessary constructor  -------------------------------
     //-------------------------------------------------------------------------
-    public WrapperAutodiffReverse(ACojacWrapper w) {
-        this(w==null ? 0.0 : der(w).value, 
-             w==null ? null : der(w).op1,
-             w==null ? null : der(w).op2,
-             w==null ? 0.0 : der(w).dop1,
-             w==null ? 0.0 : der(w).dop2
+    public WrapperAutodiffReverse(WrapperAutodiffReverse w) {
+        this(w==null ? 0.0 : w.value,
+             w==null ? null : w.op1,
+             w==null ? null : w.op2,
+             w==null ? 0.0 : w.dop1,
+             w==null ? 0.0 : w.dop2
             );
     }
     
@@ -60,55 +60,55 @@ public class WrapperAutodiffReverse extends ACojacWrapper {
     private WrapperAutodiffReverse unaryBuild(DoubleUnaryOperator op, double dop1) {
         return new WrapperAutodiffReverse(op.applyAsDouble(value), this, dop1);
     }
-    private WrapperAutodiffReverse binaryBuild(DoubleBinaryOperator op, double dop1, 
-                                         ACojacWrapper op2, double dop2) {
-        return new WrapperAutodiffReverse(op.applyAsDouble(value, der(op2).value), 
-                                    this, der(op2), dop1, dop2);
+    private WrapperAutodiffReverse binaryBuild(DoubleBinaryOperator op, double dop1,
+                                               WrapperAutodiffReverse op2, double dop2) {
+        return new WrapperAutodiffReverse(op.applyAsDouble(value, op2.value),
+                                    this, op2, dop1, dop2);
     }
     private WrapperAutodiffReverse unaryBuild(DoubleUnaryOperator op, DoubleUnaryOperator dop1) {
         return new WrapperAutodiffReverse(op.applyAsDouble(value), this, dop1.applyAsDouble(value) );
     }
-    private WrapperAutodiffReverse binaryBuild(DoubleBinaryOperator op, DoubleBinaryOperator dop1, 
-                                        ACojacWrapper op2, DoubleBinaryOperator dop2) {
-        return new WrapperAutodiffReverse(op.applyAsDouble(value, der(op2).value), 
-                this, der(op2), 
-                dop1.applyAsDouble(value, der(op2).value), 
-                dop2.applyAsDouble(value, der(op2).value) );
+    private WrapperAutodiffReverse binaryBuild(DoubleBinaryOperator op, DoubleBinaryOperator dop1,
+                                               WrapperAutodiffReverse op2, DoubleBinaryOperator dop2) {
+        return new WrapperAutodiffReverse(op.applyAsDouble(value, op2.value),
+                this, op2,
+                dop1.applyAsDouble(value, op2.value),
+                dop2.applyAsDouble(value, op2.value) );
     }
     
     //-------------------------------------------------------------------------
 
-    public ACojacWrapper dadd(ACojacWrapper b) { return binaryBuild(((x,y)->x+y), 1, b, 1); }
-    public ACojacWrapper dsub(ACojacWrapper b) { return binaryBuild(((x,y)->x-y), 1, b,-1); }
-    public ACojacWrapper dmul(ACojacWrapper b) { return binaryBuild(((x,y)->x*y), der(b).value, b, value); }
-    public ACojacWrapper ddiv(ACojacWrapper b) { return binaryBuild(((x,y)->x/y), 1/der(b).value, b, value); }
-    public ACojacWrapper drem(ACojacWrapper b) { return binaryBuild(((x,y)->x%y), 1, b, Double.NaN); }
-    public ACojacWrapper dneg()                { return unaryBuild((x->-x), -1); }
+    public WrapperAutodiffReverse dadd(WrapperAutodiffReverse b) { return binaryBuild(((x,y)->x+y), 1, b, 1); }
+    public WrapperAutodiffReverse dsub(WrapperAutodiffReverse b) { return binaryBuild(((x,y)->x-y), 1, b,-1); }
+    public WrapperAutodiffReverse dmul(WrapperAutodiffReverse b) { return binaryBuild(((x,y)->x*y), b.value, b, value); }
+    public WrapperAutodiffReverse ddiv(WrapperAutodiffReverse b) { return binaryBuild(((x,y)->x/y), 1/b.value, b, value); }
+    public WrapperAutodiffReverse drem(WrapperAutodiffReverse b) { return binaryBuild(((x,y)->x%y), 1, b, Double.NaN); }
+    public WrapperAutodiffReverse dneg()                { return unaryBuild((x->-x), -1); }
     
-    public ACojacWrapper math_sqrt() { return unaryBuild(Math::sqrt, x -> 0.5/Math.sqrt(x) ); }
+    public WrapperAutodiffReverse math_sqrt() { return unaryBuild(Math::sqrt, x -> 0.5/Math.sqrt(x) ); }
     
-    public ACojacWrapper math_abs() { return unaryBuild(Math::sqrt, Math::signum ); }
+    public WrapperAutodiffReverse math_abs() { return unaryBuild(Math::sqrt, Math::signum ); }
     
-    public ACojacWrapper math_sin() { return unaryBuild(Math::sin, Math::cos ); }
-    public ACojacWrapper math_cos() { return unaryBuild(Math::cos, x -> -Math.sin(x) ); }
-    public ACojacWrapper math_tan() { return unaryBuild(Math::tan, x -> 1/(Math.cos(x)*Math.cos(x)) ); }
-    public ACojacWrapper math_asin() { return unaryBuild(Math::asin, x ->  1/(Math.sqrt(1.0 - x*x)) ); }
-    public ACojacWrapper math_acos() { return unaryBuild(Math::acos, x -> -1/(Math.sqrt(1.0 - x*x)) ); }
-    public ACojacWrapper math_atan() { return unaryBuild(Math::atan, x -> 1/(1.0 + x*x) ); }
-    public ACojacWrapper math_sinh() { return unaryBuild(Math::sinh, Math::cosh ); }
-    public ACojacWrapper math_cosh() { return unaryBuild(Math::cosh, Math::sinh ); }
-    public ACojacWrapper math_tanh() { return unaryBuild(Math::tanh, x -> 1/(Math.cosh(x)*Math.cosh(x)) ); }
-    public ACojacWrapper math_exp() { return unaryBuild(Math::exp, Math::exp); }
-    public ACojacWrapper math_log() { return unaryBuild(Math::log, x -> 1/x ); }
-    public ACojacWrapper math_log10() { return unaryBuild(Math::log10, x -> 1/(x*Math.log(10.0)) ); }
-    public ACojacWrapper math_toRadians() { return unaryBuild(Math::toRadians, x -> Math.toRadians(1) ); }
-    public ACojacWrapper math_toDegrees() { return unaryBuild(Math::toDegrees, x -> Math.toDegrees(1) ); }
+    public WrapperAutodiffReverse math_sin() { return unaryBuild(Math::sin, Math::cos ); }
+    public WrapperAutodiffReverse math_cos() { return unaryBuild(Math::cos, x -> -Math.sin(x) ); }
+    public WrapperAutodiffReverse math_tan() { return unaryBuild(Math::tan, x -> 1/(Math.cos(x)*Math.cos(x)) ); }
+    public WrapperAutodiffReverse math_asin() { return unaryBuild(Math::asin, x ->  1/(Math.sqrt(1.0 - x*x)) ); }
+    public WrapperAutodiffReverse math_acos() { return unaryBuild(Math::acos, x -> -1/(Math.sqrt(1.0 - x*x)) ); }
+    public WrapperAutodiffReverse math_atan() { return unaryBuild(Math::atan, x -> 1/(1.0 + x*x) ); }
+    public WrapperAutodiffReverse math_sinh() { return unaryBuild(Math::sinh, Math::cosh ); }
+    public WrapperAutodiffReverse math_cosh() { return unaryBuild(Math::cosh, Math::sinh ); }
+    public WrapperAutodiffReverse math_tanh() { return unaryBuild(Math::tanh, x -> 1/(Math.cosh(x)*Math.cosh(x)) ); }
+    public WrapperAutodiffReverse math_exp() { return unaryBuild(Math::exp, Math::exp); }
+    public WrapperAutodiffReverse math_log() { return unaryBuild(Math::log, x -> 1/x ); }
+    public WrapperAutodiffReverse math_log10() { return unaryBuild(Math::log10, x -> 1/(x*Math.log(10.0)) ); }
+    public WrapperAutodiffReverse math_toRadians() { return unaryBuild(Math::toRadians, x -> Math.toRadians(1) ); }
+    public WrapperAutodiffReverse math_toDegrees() { return unaryBuild(Math::toDegrees, x -> Math.toDegrees(1) ); }
     
-    public ACojacWrapper math_min(ACojacWrapper b) { return binaryBuild(Math::min, (x,y) -> (x<y)?1:0, b, (x,y) -> (x<y)?0:1 ); }
+    public WrapperAutodiffReverse math_min(WrapperAutodiffReverse b) { return binaryBuild(Math::min, (x,y) -> (x<y)?1:0, b, (x,y) -> (x<y)?0:1 ); }
     
-    public ACojacWrapper math_max(ACojacWrapper b) { return binaryBuild(Math::max, (x,y) -> (x>y)?1:0, b, (x,y) -> (x>y)?0:1 ); } 
+    public WrapperAutodiffReverse math_max(WrapperAutodiffReverse b) { return binaryBuild(Math::max, (x,y) -> (x>y)?1:0, b, (x,y) -> (x>y)?0:1 ); }
     
-    public ACojacWrapper math_pow(ACojacWrapper b) { return binaryBuild(Math::pow, (x,y) -> y*Math.pow(x, y-1), b, (x,y) -> Math.log(x)*Math.pow(x,y) ); }
+    public WrapperAutodiffReverse math_pow(WrapperAutodiffReverse b) { return binaryBuild(Math::pow, (x,y) -> y*Math.pow(x, y-1), b, (x,y) -> Math.log(x)*Math.pow(x,y) ); }
     
     @Override public double toDouble() {
         return value;
@@ -116,7 +116,7 @@ public class WrapperAutodiffReverse extends ACojacWrapper {
 
     @SuppressWarnings("unused")
     @Override
-    public ACojacWrapper fromDouble(double a, boolean wasFromFloat) {
+    public WrapperAutodiffReverse fromDouble(double a, boolean wasFromFloat) {
         return new WrapperAutodiffReverse(a, null, 0.0);
     }
 
@@ -151,37 +151,33 @@ public class WrapperAutodiffReverse extends ACojacWrapper {
     }
 
     // ------------------------------------------------------------------------
-    public static CommonDouble COJAC_MAGIC_partialDerivativeIn(CommonDouble d) {
-        WrapperAutodiffReverse res=new WrapperAutodiffReverse(der(d.val).adjoint, null, 0);
-        return new CommonDouble(res);
+    public static CommonDouble<WrapperAutodiffReverse> COJAC_MAGIC_partialDerivativeIn(CommonDouble<WrapperAutodiffReverse> d) {
+        WrapperAutodiffReverse res=new WrapperAutodiffReverse(d.val.adjoint, null, 0);
+        return new CommonDouble<>(res);
     }
     
-    public static CommonFloat COJAC_MAGIC_partialDerivativeIn(CommonFloat d) {
-        WrapperAutodiffReverse res=new WrapperAutodiffReverse(der(d.val).adjoint,null, 0);
-        return new CommonFloat(res);
+    public static CommonFloat<WrapperAutodiffReverse> COJAC_MAGIC_partialDerivativeIn(CommonFloat<WrapperAutodiffReverse> d) {
+        WrapperAutodiffReverse res=new WrapperAutodiffReverse(d.val.adjoint,null, 0);
+        return new CommonFloat<>(res);
     }
     
-    public static void COJAC_MAGIC_computePartialDerivatives(CommonDouble d) {
-        WrapperAutodiffReverse w=der(d.val);
+    public static void COJAC_MAGIC_computePartialDerivatives(CommonDouble<WrapperAutodiffReverse> d) {
+        WrapperAutodiffReverse w=d.val;
         w.backPropagate(1.0);
     }
     
-    public static void COJAC_MAGIC_computePartialDerivatives(CommonFloat d) {
-        WrapperAutodiffReverse w=der(d.val);
+    public static void COJAC_MAGIC_computePartialDerivatives(CommonFloat<WrapperAutodiffReverse> d) {
+        WrapperAutodiffReverse w=d.val;
         w.backPropagate(1.0);
     }
 
-    public static void COJAC_MAGIC_resetPartialDerivatives(CommonDouble d) {
-        WrapperAutodiffReverse w=der(d.val);
+    public static void COJAC_MAGIC_resetPartialDerivatives(CommonDouble<WrapperAutodiffReverse> d) {
+        WrapperAutodiffReverse w=d.val;
         w.backReset();
     }
     
-    public static void COJAC_MAGIC_resetPartialDerivatives(CommonFloat d) {
-        WrapperAutodiffReverse w=der(d.val);
+    public static void COJAC_MAGIC_resetPartialDerivatives(CommonFloat<WrapperAutodiffReverse> d) {
+        WrapperAutodiffReverse w=d.val;
         w.backReset();
-    }
-    //-------------------------------------------------------------------------
-    private static WrapperAutodiffReverse der(ACojacWrapper w) {
-        return (WrapperAutodiffReverse)w;
     }
 }

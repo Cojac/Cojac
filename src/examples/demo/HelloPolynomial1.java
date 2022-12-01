@@ -32,7 +32,7 @@ public class HelloPolynomial1 {
 
     static double pow1(double base, int exp) {
         double r=1.0;
-        while(exp-- > 0) r*=base;
+        while(exp-- > 0) r *= base;
         return r;
     }
 
@@ -45,11 +45,12 @@ public class HelloPolynomial1 {
 
     public static void main(String[] args) {
         double r, x, y;
+        System.out.println("--- evaluating at a harmless point: ");
         x=2.0; y=3.0;
-        
         r=somePolynomial(x, y);
         System.out.println("f("+x+" , "+y+") = " + r);
         System.out.println();
+        System.out.println("--- evaluating at a dangerous point: ");
         x=77617; y=33096;
         r=somePolynomial(x, y);
         System.out.println("f("+x+" , "+y+") = " + r);

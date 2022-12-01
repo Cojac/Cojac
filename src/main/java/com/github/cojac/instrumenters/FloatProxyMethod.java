@@ -286,8 +286,7 @@ public class FloatProxyMethod {
         for (Type t:Type.getArgumentTypes(cc.jDesc))
             if (needsConversion(t)) return true;
         if (needsConversion(Type.getReturnType(cc.jDesc))) return true;
-        if (cc.shouldObjParamBeConverted) return true;
-        return false;
+        return cc.shouldObjParamBeConverted;
     }
     
     private static boolean needsConversion(Type t) {
@@ -395,7 +394,7 @@ public class FloatProxyMethod {
 	private static void convertReturnType(MethodVisitor mv, String desc) {
 		Type returnType = Type.getReturnType(desc);
 		Type cojacType = afterFloatReplacement(returnType);
-		if(returnType.equals(cojacType) == false) {
+		if(!returnType.equals(cojacType)) {
 			convertRealToCojacType(returnType, mv);
 		}
 		if(returnType.equals(OBJ_TYPE)){
@@ -569,15 +568,13 @@ public class FloatProxyMethod {
 	private static boolean isPrimitiveFloatOrDoubleArray(Type realType) {
 	    if(realType.getSort() != Type.ARRAY) return false;
 	    Type t=realType.getElementType();
-	    if(t.equals(Type.FLOAT_TYPE) || t.equals(Type.DOUBLE_TYPE)) return true;
-	    return false;
-	}
+        return t.equals(Type.FLOAT_TYPE) || t.equals(Type.DOUBLE_TYPE);
+    }
     
     private static boolean isJWrapperFloatOrDoubleArray(Type realType) {
         if(realType.getSort() != Type.ARRAY) return false;
         Type t=realType.getElementType();
-        if(t.equals(JWRAPPER_DOUBLE_TYPE) || t.equals(JWRAPPER_FLOAT_TYPE)) return true;
-        return false;
+        return t.equals(JWRAPPER_DOUBLE_TYPE) || t.equals(JWRAPPER_FLOAT_TYPE);
     }
 
     public static void convertCojacToRealType(Type realType, MethodVisitor mv){

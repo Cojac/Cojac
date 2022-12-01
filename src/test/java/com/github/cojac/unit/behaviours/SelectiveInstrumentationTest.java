@@ -60,7 +60,7 @@ public class SelectiveInstrumentationTest {
         Class<?> classz = ClassLoader.getSystemClassLoader().loadClass(testClass);
         AgentTest.instrumentation.retransformClasses(classz);
         
-        Object object = classz.newInstance();
+        Object object = classz.getDeclaredConstructor().newInstance();
         for (int i = 0; i < expectedResults.length; i++) {
             Method method = classz.getMethod(methods[i]);
             double[] res = (double[]) method.invoke(object);

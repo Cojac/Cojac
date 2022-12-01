@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="RumpPolynomialAndChebfun" type="Application" factoryName="Application" nameIsGenerated="true">
+    <option name="MAIN_CLASS_NAME" value="demo.RumpPolynomialAndChebfun" />
+    <module name="cojac" />
+    <option name="VM_PARAMETERS" value="-javaagent:target/cojac.jar=&quot;-Rcheb&quot;" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="demo.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

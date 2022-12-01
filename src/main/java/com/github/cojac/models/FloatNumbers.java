@@ -36,7 +36,7 @@ public class FloatNumbers {
     }
     
     public static Object initializeMultiArray(Object array, int dimensions) throws Exception {
-        Object a[] = (Object[]) array;
+        Object[] a = (Object[]) array;
         if(dimensions == 1)
             return newarray(a.length);
         for (int i = 0; i < a.length; i++)
@@ -173,7 +173,7 @@ public class FloatNumbers {
 
 	public static Object castFromObject(Object obj) throws Exception{
 		if(obj instanceof Double)
-			return COJAC_FLOAT_WRAPPER_CLASS.getConstructor(float.class).newInstance((Double)obj);
+			return COJAC_FLOAT_WRAPPER_CLASS.getConstructor(float.class).newInstance(obj);
         // WRAPPER SPEC: FW(float)
 		return obj;
 	}

@@ -19,6 +19,7 @@
 package com.github.cojac.unit.behaviours;
 
 import java.lang.instrument.UnmodifiableClassException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.junit.After;
@@ -96,9 +97,9 @@ public class NativeRoundingTest {
             classz = ClassLoader.getSystemClassLoader().loadClass("com.github.cojac.unit.behaviours.NativeRoundingTests");
             AgentTest.instrumentation.retransformClasses(classz);
 
-            object = classz.newInstance();
-        }catch(RuntimeException e){
-            System.err.println("Library couldn't be charged. Abording Native rounding tests.");
+            object = classz.getDeclaredConstructor().newInstance();
+        } catch(RuntimeException | NoSuchMethodException | InvocationTargetException e){
+            System.err.println("Library couldn't be charged. Aborting Native rounding tests.");
             isLibraryLoaded = false;
         }
     }

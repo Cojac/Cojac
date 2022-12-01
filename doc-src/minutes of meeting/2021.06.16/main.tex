@@ -1,0 +1,165 @@
+%%
+%% This is file `./samples/minutes.tex',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% meetingmins.dtx  (with options: `minutes')
+%% ----------------------------------------------------------------------
+%% 
+%% meetingmins - A LaTeX class for formatting minutes of meetings
+%% 
+%% Copyright (C) 2011-2013 by Brian D. Beitzel <brian@beitzel.com>
+%% 
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL), either
+%% version 1.3c of this license or (at your option) any later
+%% version.  The latest version of this license is in the file:
+%% 
+%% http://www.latex-project.org/lppl.txt
+%% 
+%% Users may freely modify these files without permission, as long as the
+%% copyright line and this statement are maintained intact.
+%% 
+%% ----------------------------------------------------------------------
+%% 
+\documentclass[11pt]{meetingmins}
+
+
+\usepackage{hyperref}
+\usepackage{tabularx}
+
+% To include images
+\usepackage{graphicx}
+
+% text color
+\usepackage{xcolor}
+
+
+%% CONFIG %%
+% Default image directory
+\graphicspath{{images/}}
+
+
+\setcommittee{Intégration des nombres complexes et des Unums en Java avec COJAC}
+
+\setmembers{
+    Frédéric Bapst (Superviseur),
+    Cédric Tâche (Etudiant)
+}
+
+\setpresent{
+    Frédéric Bapst (Superviseur),
+    Cédric Tâche (Etudiant)
+}
+
+\setlength{\headheight}{13.6pt}
+
+\date{16 juin 2021}
+
+\begin{document}
+
+\begin {center} {
+    \large \textbf {Intégration des nombres complexes et des Unums en Java avec COJAC}
+}
+\vspace {0.5ex}
+
+PV de la séance du 16 juin 2020 (9h30 - 10h20) via Teams
+\end {center} \vspace {1.5em}
+
+\noindent
+\textbf{Présents:} Frédéric Bapst, Cédric Tâche
+
+\section{Ordre du jour}
+Les points suivants ont été abordés durant la séance:
+\begin{hiddenitems}
+    \item Validation du PV du 9 juin 2021.
+    \item Cahier des charges v1.2
+    \item Rapport v0.3
+    \item Démonstration
+    \item Planification
+\end{hiddenitems}
+
+\section{PV}
+\begin{hiddenitems}
+    \item Le PV du 9 juin a été validé.
+\end{hiddenitems}
+
+\section{Général}
+\begin{hiddenitems}
+    \item Pour que M. Bapst et M. Wicht puissent avoir accès aux références, les PDF peuvent être ajoutés sur le dépôt Git dans un dossier "références".
+    \item Les derniers tests ajoutés au projet étaient le NumericalProfilerTest. Ils peuvent servir de modèles pour tester les nombres complexes et les unums.
+    \item Le fix de M. Bapst provoquait une erreur dans les tests. La branche sera push sur le dépôt afin qu'il puisse regarder les problèmes.
+\end{hiddenitems}
+
+\section{Conception des nombres complexes}
+\begin{hiddenitems}
+    \item Il faut bien réfléchir à la comparaison des nombres complexes et justifier les choix.
+    \item La comparaison entre les nombres réels doit toujours être correct.
+    \item Un warning ou une exception peut être généré si la comparaison ne fait pas de sens (ex: comparaison entre deux nombres complexes).
+    \item Il faut aussi gérer les NaN qui existent dans les doubles.
+    \item Un Wrapper sera utilisé afin de garder la précision des doubles.
+    \item Des librairies externes pour utiliser les nombres complexes seront cherchées et comparées.
+    \item M. Bapst sera averti lorsque le choix entre une librairie externe et une nouvelle implémentation pour les nombres complexes sera décidé.
+\end{hiddenitems}
+
+\section{Démonstration}
+\begin{hiddenitems}
+    \item La démonstration permet de trouver une solution d'un polynôme du 3e degré. Cependant, le calcul nécessite des nombres complexes pour trouver une solution à chaque fois et ce, même si la solution est réelle
+    \item Ainsi, elle permet de montrer l'utilité des nombres complexes.
+\end{hiddenitems}
+
+\section{Visite d'expert}
+\begin{hiddenitems}
+    \item La visite d'expert aura lieu le lundi 16 juin.
+    \item Même si les anciens rapports ne sont pas publics, ils peuvent être référencés.
+    \item Le cahier des charges sera envoyé à M. Wicht avant la visite d'expert
+\end{hiddenitems}
+
+\section{Planification}
+\begin{hiddenitems}
+    \item Le projet a environ 0.5 - 1 jour de retard par rapport à la planification.
+\end{hiddenitems}
+
+\section{Décision}
+\begin{hiddenitems}
+    \item Un Wrapper sera utilisé afin de garder la précision des doubles.
+    \item M. Bapst sera averti lorsque le choix entre une librairie externe et une nouvelle implémentation pour les nombres complexes sera décidé.
+\end{hiddenitems}
+
+\section{Prochaines tâches}
+\begin{hiddenitems}
+    \item Finir la conception des nombres complexes.
+    \item Implémenter l'intégration des nombres complexes.
+    \item Tester l'intégration des nombres complexes.
+\end{hiddenitems}
+
+\vspace{1em}
+\par \noindent \textbf {Prochaine séance:} Le mercredi 23 juin 2020 à 9h30
+
+\end{document}
+%% 
+%% Copyright (C) 2011-2013 by Brian D. Beitzel <brian@beitzel.com>
+%% 
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL), either
+%% version 1.3c of this license or (at your option) any later
+%% version.  The latest version of this license is in the file:
+%% 
+%% http://www.latex-project.org/lppl.txt
+%% 
+%% Users may freely modify these files without permission, as long as the
+%% copyright line and this statement are maintained intact.
+%% 
+%% This work is "maintained" (as per LPPL maintenance status) by
+%% Brian D. Beitzel.
+%% 
+%% This work consists of the file  meetingmins.dtx
+%% and the derived files           meetingmins.cls,
+%%                                 sampleminutes.tex,
+%%                                 department.min,
+%%                                 README.txt, and
+%%                                 meetingmins.pdf.
+%% 
+%%
+%% End of file `./samples/minutes.tex'.

@@ -86,11 +86,11 @@ public final class InvokableMethod {
             Type newType = afterFloatReplacement(type.getElementType());
             if(type.equals(newType))
                 return type;
-            String desc = "";
+            StringBuilder desc = new StringBuilder();
             for(int i=0 ; i <type.getDimensions() ; i++)
-                desc += "[";
-            desc += newType.getDescriptor();
-            return Type.getType(desc);
+                desc.append("[");
+            desc.append(newType.getDescriptor());
+            return Type.getType(desc.toString());
         }
         return type; 
     }

@@ -41,6 +41,11 @@ import com.github.cojac.instrumenters.IOpcodeInstrumenterFactory;
 import com.github.cojac.instrumenters.ReplaceFloatsMethods;
 import com.github.cojac.models.DoubleNumbers;
 import com.github.cojac.models.FloatNumbers;
+
+//import java.util.Set;
+
+import java.util.Objects;
+
 import static com.github.cojac.CojacCommonConstants.ASM_VERSION;
 
 /**
@@ -58,35 +63,35 @@ import static com.github.cojac.CojacCommonConstants.ASM_VERSION;
  * remapped in the FloatVariableSorter.
  */
 public final class FloatReplacerMethodVisitor extends MethodVisitor {
-	
-	private final CojacReferences references;
-	
+
+    private final CojacReferences references;
+
     private final IOpcodeInstrumenterFactory factory;
     private final InstrumentationStats stats;
-   
+
     private final AnalyzerAdapter aa;
     private final ReplaceFloatsMethods rfm;
     //private final FloatVariablesSorter lvs;
 
-	public static final String FN_NAME = Type.getType(FloatNumbers.class).getInternalName();
-	public static final String DN_NAME = Type.getType(DoubleNumbers.class).getInternalName();
-	
-    FloatReplacerMethodVisitor(AnalyzerAdapter aa, 
-            MethodVisitor lvs, 
-            ReplaceFloatsMethods rfm, 
-            InstrumentationStats stats, 
-            IOpcodeInstrumenterFactory factory, 
-            CojacReferences references) {
+    public static final String FN_NAME = Type.getType(FloatNumbers.class).getInternalName();
+    public static final String DN_NAME = Type.getType(DoubleNumbers.class).getInternalName();
+
+    FloatReplacerMethodVisitor(AnalyzerAdapter aa,
+                               MethodVisitor lvs,
+                               ReplaceFloatsMethods rfm,
+                               InstrumentationStats stats,
+                               IOpcodeInstrumenterFactory factory,
+                               CojacReferences references) {
         super(ASM_VERSION, lvs);
-        
+
         //this.lvs=lvs;
         this.aa = aa;
         this.rfm = rfm;
-		this.references = references;
+        this.references = references;
         this.stats = stats;
         this.factory = factory;
     }
-	
+
     @Override
     public void visitInsn(int opCode) {
         // TODO - make a junit test to check the DUP_X2 instruction...
@@ -110,7 +115,7 @@ public final class FloatReplacerMethodVisitor extends MethodVisitor {
             case DASTORE:
             case FASTORE: opCode = AASTORE; break;
         }
-        
+
         IOpcodeInstrumenter instrumenter = factory.getInstrumenter(opCode);
         if (instrumenter != null) {
             stats.incrementCounterValue(opCode);
@@ -125,9 +130,9 @@ public final class FloatReplacerMethodVisitor extends MethodVisitor {
         if(rfm.instrumentCall(mv, opcode, owner, name, desc, stackTop())){
             return;
         }
-        
+
         String descAfter=replaceFloatMethodDescription(desc);
-        if (!desc.equals(descAfter)) 
+        if (!desc.equals(descAfter))
             stats.incrementCounterValue(opcode);
 
         mv.visitMethodInsn(opcode, owner, name, descAfter, itf);
@@ -135,16 +140,30 @@ public final class FloatReplacerMethodVisitor extends MethodVisitor {
 
     @Override
     public void visitInvokeDynamicInsn(String name, String desc,
-                                       Handle bsm, Object... bsmArgs) {        
-        if(!bsm.getOwner().equals("java/lang/invoke/LambdaMetafactory")) {
-            mv.visitInvokeDynamicInsn(name, desc, bsm, bsmArgs);
-            return; // TODO: handle any bootstrap method in invokedynamic
+                                       Handle bsm, Object... bsmArgs) {
+        String owner = bsm.getOwner();
+        switch(owner) {
+            case "java/lang/invoke/LambdaMetafactory":
+                visitInvokeDynForLambda(name, desc, bsm, bsmArgs);
+                break;
+            case "java/lang/invoke/StringConcatFactory":
+                visitInvokeDynForStringConcat(name, desc, bsm, bsmArgs);
+                break;
+            default:
+                System.out.println("Seeing a strange invokeDyn bootstrap...");
+                mv.visitInvokeDynamicInsn(name, desc, bsm, bsmArgs);
+                // TODO: handle other potential bootstrap method in invokedynamic
         }
+    }
+
+    public void visitInvokeDynForLambda(String name, String desc,
+                                        Handle bsm, Object... bsmArgs) {
         if (!(bsmArgs[0] instanceof Type) ||
-                !(bsmArgs[1] instanceof Handle) || 
+                !(bsmArgs[1] instanceof Handle) ||
                 !(bsmArgs[2] instanceof Type)) {
-            mv.visitInvokeDynamicInsn(name, desc, bsm, bsmArgs);
-            return;
+            throw new IllegalStateException("Oops - unexpected kind of invokeDyn for lambda");
+            // mv.visitInvokeDynamicInsn(name, desc, bsm, bsmArgs);
+            // return;
         }
         Type a0=(Type)(bsmArgs[0]);
         Type a2=(Type)(bsmArgs[2]);
@@ -155,9 +174,7 @@ public final class FloatReplacerMethodVisitor extends MethodVisitor {
             return;
         }
         Object[] bsmArgsAfter=new Object[bsmArgs.length];
-        for(int i=0; i<bsmArgs.length; i++) {
-            bsmArgsAfter[i]=bsmArgs[i];
-        }
+        System.arraycopy(bsmArgs, 0, bsmArgsAfter, 0, bsmArgs.length);
         String a0Before=a0.getInternalName(), a2Before=a2.getInternalName();
         String a0After=replaceFloatMethodDescription(a0Before), a2After=replaceFloatMethodDescription(a2Before);
         bsmArgsAfter[0]=Type.getType(a0After);
@@ -168,7 +185,14 @@ public final class FloatReplacerMethodVisitor extends MethodVisitor {
         desc=replaceFloatMethodDescription(desc);
         mv.visitInvokeDynamicInsn(name, desc, bsm, bsmArgsAfter);
     }
-    
+
+    public void visitInvokeDynForStringConcat(String name, String desc,
+                                              Handle bsm, Object... bsmArgs) {
+        // Well, at first I didn't expect _that_ to work!
+        desc = replaceFloatMethodDescription(desc);
+        mv.visitInvokeDynamicInsn(name, desc, bsm, bsmArgs);
+    }
+
     @Override
     public void visitVarInsn(int opcode, int var) {
         int replacedOpcode = opcode;
@@ -181,7 +205,7 @@ public final class FloatReplacerMethodVisitor extends MethodVisitor {
         mv.visitVarInsn(replacedOpcode, var);
     }
 
-	@Override
+    @Override
     public void visitLocalVariable(String name, String desc, String signature, Label start, Label end, int index) {
         desc=afterFloatReplacement(desc);
         mv.visitLocalVariable(name, desc, signature, start, end, index);
@@ -189,40 +213,40 @@ public final class FloatReplacerMethodVisitor extends MethodVisitor {
 
     @Override
     public void visitFieldInsn(int opcode, String owner, String name, String desc) {
-		if(references.hasToBeInstrumented(owner) == false){ // proxy for fields
-			Type type = Type.getType(desc);
-			Type cojacType = afterFloatReplacement(type);
-			if(type.equals(cojacType) == false) {  // the type is being changed
-				if(opcode == GETFIELD || opcode == GETSTATIC){
-					mv.visitFieldInsn(opcode, owner, name, desc);
-					FloatProxyMethod.convertRealToCojacType(type, mv);
-					return;
-				}
-				if(opcode == PUTFIELD || opcode == PUTSTATIC){
-					FloatProxyMethod.convertCojacToRealType(type, mv);
-					mv.visitFieldInsn(opcode, owner, name, desc);
-					return;
-				}
-			}
-		}
-		
+        if(!references.hasToBeInstrumented(owner)){ // proxy for fields
+            Type type = Type.getType(desc);
+            Type cojacType = afterFloatReplacement(type);
+            if(!type.equals(cojacType)) {  // the type is being changed
+                if(opcode == GETFIELD || opcode == GETSTATIC){
+                    mv.visitFieldInsn(opcode, owner, name, desc);
+                    FloatProxyMethod.convertRealToCojacType(type, mv);
+                    return;
+                }
+                if(opcode == PUTFIELD || opcode == PUTSTATIC){
+                    FloatProxyMethod.convertCojacToRealType(type, mv);
+                    mv.visitFieldInsn(opcode, owner, name, desc);
+                    return;
+                }
+            }
+        }
+
         String descAfter=afterFloatReplacement(desc);
-        if (!desc.equals(descAfter)) 
+        if (!desc.equals(descAfter))
             stats.incrementCounterValue(opcode);
         mv.visitFieldInsn(opcode, owner, name, descAfter);
-		
-		// TODO - handle GETSTATIC & handle std_lib and already loaded classes
-		if(opcode == GETFIELD){
-			String objDesc = Type.getType(Object.class).getDescriptor();
-			if(descAfter.equals(COJAC_DOUBLE_WRAPPER_TYPE_DESCR)){
-				mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "initialize", "("+objDesc+")"+objDesc, false);
-				mv.visitTypeInsn(CHECKCAST, COJAC_DOUBLE_WRAPPER_INTERNAL_NAME);
-			}
-			if(descAfter.equals(COJAC_FLOAT_WRAPPER_TYPE_DESCR)){
-				mv.visitMethodInsn(INVOKESTATIC, FN_NAME, "initialize", "("+objDesc+")"+objDesc, false);
-				mv.visitTypeInsn(CHECKCAST, COJAC_FLOAT_WRAPPER_INTERNAL_NAME);
-			}
-		}
+
+        // TODO - handle GETSTATIC & handle std_lib and already loaded classes
+        if(opcode == GETFIELD){
+            String objDesc = Type.getType(Object.class).getDescriptor();
+            if(descAfter.equals(COJAC_DOUBLE_WRAPPER_TYPE_DESCR)){
+                mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "initialize", "("+objDesc+")"+objDesc, false);
+                mv.visitTypeInsn(CHECKCAST, COJAC_DOUBLE_WRAPPER_INTERNAL_NAME);
+            }
+            if(descAfter.equals(COJAC_FLOAT_WRAPPER_TYPE_DESCR)){
+                mv.visitMethodInsn(INVOKESTATIC, FN_NAME, "initialize", "("+objDesc+")"+objDesc, false);
+                mv.visitTypeInsn(CHECKCAST, COJAC_FLOAT_WRAPPER_INTERNAL_NAME);
+            }
+        }
     }
 
     @Override
@@ -230,32 +254,32 @@ public final class FloatReplacerMethodVisitor extends MethodVisitor {
         mv.visitLdcInsn(cst);
         if (cst instanceof Float) {
             stats.incrementCounterValue(Opcodes.LDC);
-			mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", "(F)"+COJAC_FLOAT_WRAPPER_TYPE_DESCR, false);
+            mv.visitMethodInsn(INVOKESTATIC, COJAC_FLOAT_WRAPPER_INTERNAL_NAME, "fromFloat", "(F)"+COJAC_FLOAT_WRAPPER_TYPE_DESCR, false);
         }
         if (cst instanceof Double) {
             stats.incrementCounterValue(Opcodes.LDC);
-			mv.visitMethodInsn(INVOKESTATIC, COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "fromDouble", "(D)"+COJAC_DOUBLE_WRAPPER_TYPE_DESCR, false);
+            mv.visitMethodInsn(INVOKESTATIC, COJAC_DOUBLE_WRAPPER_INTERNAL_NAME, "fromDouble", "(D)"+COJAC_DOUBLE_WRAPPER_TYPE_DESCR, false);
         }
     }
-    
+
     @Override
-    public void visitIntInsn(int opcode, int operand){		
-		if(opcode == NEWARRAY){
-			if(operand == Opcodes.T_FLOAT){
-				mv.visitMethodInsn(INVOKESTATIC, FN_NAME, "newarray", "(I)["+Type.getType(Object.class).getDescriptor(), false);
-				mv.visitTypeInsn(CHECKCAST, "["+COJAC_FLOAT_WRAPPER_TYPE_DESCR);
-				return;
-			}
-			if(operand == Opcodes.T_DOUBLE){
-				mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "newarray", "(I)["+Type.getType(Object.class).getDescriptor(), false);
-				mv.visitTypeInsn(CHECKCAST, "["+COJAC_DOUBLE_WRAPPER_TYPE_DESCR);
-				return;
-			}
-		}
-		mv.visitIntInsn(opcode, operand);
+    public void visitIntInsn(int opcode, int operand){
+        if(opcode == NEWARRAY){
+            if(operand == Opcodes.T_FLOAT){
+                mv.visitMethodInsn(INVOKESTATIC, FN_NAME, "newarray", "(I)["+Type.getType(Object.class).getDescriptor(), false);
+                mv.visitTypeInsn(CHECKCAST, "["+COJAC_FLOAT_WRAPPER_TYPE_DESCR);
+                return;
+            }
+            if(operand == Opcodes.T_DOUBLE){
+                mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "newarray", "(I)["+Type.getType(Object.class).getDescriptor(), false);
+                mv.visitTypeInsn(CHECKCAST, "["+COJAC_DOUBLE_WRAPPER_TYPE_DESCR);
+                return;
+            }
+        }
+        mv.visitIntInsn(opcode, operand);
     }
-    
-    
+
+
     @Override
     public void visitMultiANewArrayInsn(String desc, int dims){
         if(desc.endsWith("F") || desc.endsWith("D")){
@@ -274,37 +298,37 @@ public final class FloatReplacerMethodVisitor extends MethodVisitor {
             mv.visitMultiANewArrayInsn(desc, dims);
         }
     }
-    
+
     @Override
     public void visitTypeInsn(int opcode, String type){
         // BAPST: that's where we instrument NEW Double/Float...
         Type myType = Type.getObjectType(type); // get type from internal name
-		
-		Type cojacType = afterFloatReplacement(myType);
-		
-		if(opcode == CHECKCAST && myType.equals(cojacType) == false) {
-		    Type objType = Type.getType(Object.class);  // maybe with bootstrap loader(?)
-		    if(stackTop() != null && objType != null) {
-		        if(stackTop().equals(objType.getInternalName())){
-		            if(cojacType.equals(COJAC_FLOAT_WRAPPER_TYPE)){
-		                mv.visitMethodInsn(INVOKESTATIC, FN_NAME, "castFromObject", "("+Type.getType(Object.class).getDescriptor()+")"+Type.getType(Object.class).getDescriptor(), false);
-		            }
-		            if(cojacType.equals(COJAC_DOUBLE_WRAPPER_TYPE)){
-		                mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "castFromObject", "("+Type.getType(Object.class).getDescriptor()+")"+Type.getType(Object.class).getDescriptor(), false);
-		            }
-		        }
-		    }
-		}
+
+        Type cojacType = afterFloatReplacement(myType);
+
+        if(opcode == CHECKCAST && !myType.equals(cojacType)) {
+            Type objType = Type.getType(Object.class);  // maybe with bootstrap loader(?)
+            if(stackTop() != null && objType != null) {
+                if(Objects.equals(stackTop(), objType.getInternalName())){
+                    if(cojacType.equals(COJAC_FLOAT_WRAPPER_TYPE)){
+                        mv.visitMethodInsn(INVOKESTATIC, FN_NAME, "castFromObject", "("+Type.getType(Object.class).getDescriptor()+")"+Type.getType(Object.class).getDescriptor(), false);
+                    }
+                    if(cojacType.equals(COJAC_DOUBLE_WRAPPER_TYPE)){
+                        mv.visitMethodInsn(INVOKESTATIC, DN_NAME, "castFromObject", "("+Type.getType(Object.class).getDescriptor()+")"+Type.getType(Object.class).getDescriptor(), false);
+                    }
+                }
+            }
+        }
 
         mv.visitTypeInsn(opcode, cojacType.getInternalName());
     }
-    
+
     private Object stackTop(){
         if(aa.stack == null)
-			return null;
+            return null;
         if(aa.stack.isEmpty())
             return null;
         return aa.stack.get(aa.stack.size()-1);
     }
-    
+
 }

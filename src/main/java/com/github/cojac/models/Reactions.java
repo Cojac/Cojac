@@ -47,7 +47,7 @@ public final class Reactions {
     }
 
     //Public to enable to display stats at the end of the application
-    public static final ConcurrentMap<String, Long> EVENTS = new ConcurrentHashMap<String, Long>(25);
+    public static final ConcurrentMap<String, Long> EVENTS = new ConcurrentHashMap<>(25);
 
     //TODO: check whether we can get rid of first/last parameter of react()
     //      quite sure that "yes, we can"!
@@ -116,7 +116,7 @@ public final class Reactions {
 
         int i = reasonableIndex(t); // 1;
 
-        String location = "COJAC: " + instructionName + ' ' + t[i++].toString();
+        String location = "COJAC: " + instructionName + ' ' + t[i].toString();
 
         if (passesFilter(location)) {
             System.err.println(location);
@@ -172,7 +172,7 @@ public final class Reactions {
 
         int i = reasonableIndex(t);
 
-        String location = "COJAC: " + instructionName + ' ' + t[i++].toString();
+        String location = "COJAC: " + instructionName + ' ' + t[i].toString();
 
         if (passesFilter(location)) {
             BufferedWriter out = null;

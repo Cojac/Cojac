@@ -34,7 +34,7 @@ import org.apache.commons.math3.transform.DftNormalization;
 import org.apache.commons.math3.transform.FastFourierTransformer;
 import org.apache.commons.math3.transform.TransformType;
 
-public class WrapperChebfun extends ACompactWrapper {
+public class WrapperChebfun extends ACompactWrapper<WrapperChebfun> {
     // -------------------------------------------------------------------------
     // ----------------- Constants ---------------------------------------------
     // -------------------------------------------------------------------------
@@ -71,7 +71,7 @@ public class WrapperChebfun extends ACompactWrapper {
     // -------------------------------------------------------------------------
     // ----------------- Necessary constructor ---------------------------------
     // -------------------------------------------------------------------------
-    public WrapperChebfun(ACojacWrapper w) {
+    public WrapperChebfun(WrapperChebfun w) {
         this(w == null ? 0.0  : asCheb(w).value,
              w == null ? null : asCheb(w).funcValues);
     }
@@ -80,14 +80,14 @@ public class WrapperChebfun extends ACompactWrapper {
     // ----------------- Generic operators -------------------------------------
     // -------------------------------------------------------------------------
     @Override
-    public ACojacWrapper applyUnaryOp(DoubleUnaryOperator op) {
+    public WrapperChebfun applyUnaryOp(DoubleUnaryOperator op) {
         if (!this.isChebfun())
             return new WrapperChebfun(op.applyAsDouble(this.value), null);
         return new WrapperChebfun(Double.NaN, applyChebUnaryOp(this.funcValues, op));
     }
 
     @Override
-    public ACojacWrapper applyBinaryOp(DoubleBinaryOperator op, ACojacWrapper w2) {
+    public WrapperChebfun applyBinaryOp(DoubleBinaryOperator op, WrapperChebfun w2) {
 
         if (!this.isChebfun() && !asCheb(w2).isChebfun())
             return new WrapperChebfun(op.applyAsDouble(this.value, asCheb(w2).value), null);
@@ -110,28 +110,28 @@ public class WrapperChebfun extends ACompactWrapper {
     // -------------------------------------------------------------------------
 
     @Override
-    public ACojacWrapper math_abs() {
+    public WrapperChebfun math_abs() {
         if (isChebfun())
             pkgLogger().log(Level.WARNING, "The operation (abs) should not be used with a Chefun");
         return super.math_abs();
     }
 
     @Override
-    public ACojacWrapper math_min(ACojacWrapper b) {
+    public WrapperChebfun math_min(WrapperChebfun b) {
         if (isChebfun() || asCheb(b).isChebfun())
             pkgLogger().log(Level.WARNING, "The operation (min) should not be used with a Chefun");
         return super.math_min(b);
     }
 
     @Override
-    public ACojacWrapper math_max(ACojacWrapper b) {
+    public WrapperChebfun math_max(WrapperChebfun b) {
         if (isChebfun() || asCheb(b).isChebfun())
             pkgLogger().log(Level.WARNING, "The operation (max) should not be used with a Chefun");
         return super.math_max(b);
     }
 
     @Override
-    public ACojacWrapper drem(ACojacWrapper b) {
+    public WrapperChebfun drem(WrapperChebfun b) {
         if (isChebfun() || asCheb(b).isChebfun())
             pkgLogger().log(Level.WARNING, "The operation (%) should not be used with a Chefun");
         return super.drem(b);
@@ -141,7 +141,7 @@ public class WrapperChebfun extends ACompactWrapper {
     // ----------------- Comparison operators ----------------------------------
     // -------------------------------------------------------------------------
     @Override
-    public int dcmpl(ACojacWrapper w) {
+    public int dcmpl(WrapperChebfun w) {
         if (this.isChebfun() || asCheb(w).isChebfun())
             pkgLogger().log(Level.WARNING, "Can not compare Chebfuns");
         if (this.isNaN() || w.isNaN())
@@ -150,7 +150,7 @@ public class WrapperChebfun extends ACompactWrapper {
     }
 
     @Override
-    public int dcmpg(ACojacWrapper w) {
+    public int dcmpg(WrapperChebfun w) {
         if (this.isChebfun() || asCheb(w).isChebfun())
             pkgLogger().log(Level.WARNING, "Can not compare Chebfuns");
         if (this.isNaN() || w.isNaN())
@@ -159,7 +159,7 @@ public class WrapperChebfun extends ACompactWrapper {
     }
 
     @Override
-    public int compareTo(ACojacWrapper w) {
+    public int compareTo(WrapperChebfun w) {
         return Double.compare(toDouble(), w.toDouble());
     }
 
@@ -172,7 +172,7 @@ public class WrapperChebfun extends ACompactWrapper {
     }
 
     @Override
-    public ACojacWrapper fromDouble(double a, @SuppressWarnings("unused") boolean wasFromFloat) {
+    public WrapperChebfun fromDouble(double a, @SuppressWarnings("unused") boolean wasFromFloat) {
         return new WrapperChebfun(a, null);
     }
 
@@ -205,47 +205,48 @@ public class WrapperChebfun extends ACompactWrapper {
     // -------------------------------------------------------------------------
     // ----------------- Magic methods -----------------------------------------
     // -------------------------------------------------------------------------
-    public static boolean COJAC_MAGIC_isChebfun(CommonDouble d) {
+    public static boolean COJAC_MAGIC_isChebfun(CommonDouble<WrapperChebfun> d) {
         return asCheb(d.val).isChebfun();
     }
 
-    public static CommonDouble COJAC_MAGIC_identityFct() {
+    public static CommonDouble<WrapperChebfun> COJAC_MAGIC_identityFct() {
         WrapperChebfun res = new WrapperChebfun(Double.NaN, initChebun(BASE_DEGREE));
-        return new CommonDouble(res);
+        return new CommonDouble<>(res);
     }
 
-    public static CommonDouble COJAC_MAGIC_evaluateAt(CommonDouble d, CommonDouble x) {
+    public static CommonDouble<WrapperChebfun> COJAC_MAGIC_evaluateAt(CommonDouble<WrapperChebfun> d,
+                                                                      CommonDouble<WrapperChebfun> x) {
         WrapperChebfun dd = asCheb(d.val);
         WrapperChebfun xx = asCheb(x.val);
         if (!dd.isChebfun()) {
             pkgLogger().log(Level.WARNING, "Only Chefuns can be evaluate");
             WrapperChebfun res = new WrapperChebfun(Double.NaN, null);
-            return new CommonDouble(res);
+            return new CommonDouble<>(res);
         } else if (xx.value < domainMin || xx.value > domainMax) {
             pkgLogger().log(Level.WARNING, "A Chebfun can only be evaluate on [-1, 1]");
             WrapperChebfun res = new WrapperChebfun(Double.NaN, null);
-            return new CommonDouble(res);
+            return new CommonDouble<>(res);
         }
         double result = evaluateAt(dd.funcValues, xx.value);
         WrapperChebfun res = new WrapperChebfun(result, null);
-        return new CommonDouble(res);
+        return new CommonDouble<>(res);
     }
 
-    public static CommonDouble COJAC_MAGIC_derivative(CommonDouble d) {
+    public static CommonDouble<WrapperChebfun> COJAC_MAGIC_derivative(CommonDouble<WrapperChebfun> d) {
         if (!asCheb(d.val).isChebfun()) {
             pkgLogger().log(Level.WARNING, "Only Chefuns can be derivate");
             WrapperChebfun res = new WrapperChebfun(Double.NaN, null);
-            return new CommonDouble(res);
+            return new CommonDouble<>(res);
         }
         double[] result = derivate(asCheb(d.val).funcValues);
         WrapperChebfun res = new WrapperChebfun(Double.NaN, result);
-        return new CommonDouble(res);
+        return new CommonDouble<>(res);
     }
 
     /** Caution: this has a global effect, and any Chebfun computed before
      * becomes de facto invalid. Maybe it should be moved as a Cojac option. 
      */
-    public static void COJAC_MAGIC_setChebfunDomain(CommonDouble min, CommonDouble max) {
+    public static void COJAC_MAGIC_setChebfunDomain(CommonDouble<WrapperChebfun> min, CommonDouble<WrapperChebfun> max) {
         domainMin=asCheb(min.val).value;
         domainMax=asCheb(max.val).value;
     }
@@ -254,8 +255,8 @@ public class WrapperChebfun extends ACompactWrapper {
     // ----------------- Useful methods ----------------------------------------
     // -------------------------------------------------------------------------
 
-    private static WrapperChebfun asCheb(ACojacWrapper w) {
-        return (WrapperChebfun) w;
+    private static WrapperChebfun asCheb(WrapperChebfun w) {
+        return w;
     }
 
     private boolean isChebfun() {
@@ -264,7 +265,7 @@ public class WrapperChebfun extends ACompactWrapper {
 
     // Retourne les points de chebyshev de j=0 à n compris
     private static double[] initChebun(int n) {
-        double p[] = new double[n + 1];
+        double[] p = new double[n + 1];
         for (int j = 0; j <= n; j++)
             p[j] = remappedInMinMaxDomain(chebPoint(j, n));
         return p;
@@ -272,8 +273,7 @@ public class WrapperChebfun extends ACompactWrapper {
 
     // Retourne le j(ième) sur n point de chebyshev, entre -1 et +1. 
     private static double chebPoint(int j, int n) {
-        double c=Math.cos(j * Math.PI / n);
-        return c;
+        return Math.cos(j * Math.PI / n);
     }
 
     private static double remappedInMinMaxDomain(double c) {
@@ -314,22 +314,19 @@ public class WrapperChebfun extends ACompactWrapper {
     // voir page 1755 ou 13 de la référence [2]
     private static double[] fft(double[] funcValues) {
         int n = funcValues.length - 1;
-        double[] f = funcValues;
 
         // extension du vecteur pour permettre la FFT {f0,...,fn,fn-1,...,f1}
         double[][] dataRI = new double[2][2 * n];
-        for (int j = 0; j <= n; j++)
-            dataRI[0][j] = f[j];
+        System.arraycopy(funcValues, 0, dataRI[0], 0, n + 1);
         for (int j = 1; j <= n - 1; j++)
-            dataRI[0][n + j] = f[n - j];
+            dataRI[0][n + j] = funcValues[n - j];
 
         // applique la FFT le vecteur étendu
         FastFourierTransformer.transformInPlace(dataRI, FFT_NORMALIZATION, TransformType.FORWARD);
 
         // extraction des N+1 premiers éléments (de 0 à N compris)
         double[] a = new double[n + 1];
-        for (int j = 0; j <= n; j++)
-            a[j] = dataRI[0][j];
+        System.arraycopy(dataRI[0], 0, a, 0, n + 1);
 
         // applique la pondération
         a[0] /= (2 * n);
@@ -356,8 +353,7 @@ public class WrapperChebfun extends ACompactWrapper {
 
         // extension du vecteur pour permettre la IFFT {a0,...,aN,aN-1,...,a1}
         double[][] dataRI1 = new double[2][2 * n];
-        for (int j = 0; j <= n; j++)
-            dataRI1[0][j] = a[j];
+        System.arraycopy(a, 0, dataRI1[0], 0, n + 1);
         for (int j = 1; j <= n - 1; j++)
             dataRI1[0][n + j] = a[n - j];
 
@@ -366,8 +362,7 @@ public class WrapperChebfun extends ACompactWrapper {
 
         // extraction des N+1 premiers éléments (de 0 à N compris)
         double[] f = new double[n + 1];
-        for (int j = 0; j <= n; j++)
-            f[j] = dataRI1[0][j];
+        System.arraycopy(dataRI1[0], 0, f, 0, n + 1);
         return f;
     }
 
@@ -469,8 +464,7 @@ public class WrapperChebfun extends ACompactWrapper {
         int extendedDegree = (funcValues.length - 1) * 2;
         double[] extendedFft = new double[extendedDegree + 1];
         System.arraycopy(f, 0, extendedFft, 0, f.length);
-        double[] extendedValues = ifft(extendedFft);
-        return extendedValues;
+        return ifft(extendedFft);
     }
 
     // idem but with the naïve evaluation method, in O(n2)
@@ -488,8 +482,8 @@ public class WrapperChebfun extends ACompactWrapper {
     // Permet de déterminer si le degré du polynome est suffisant pour
     // représenter la fonction de manière précise
     private static boolean isDegreeGoodEnough(double[] funcValues) {
-        for (int i = 0; i < funcValues.length; i++) {
-            if (Double.isNaN(funcValues[i])) {
+        for (double funcValue : funcValues) {
+            if (Double.isNaN(funcValue)) {
                 pkgLogger().log(Level.WARNING, "Chebfun contains NaN");
                 return true;
             }

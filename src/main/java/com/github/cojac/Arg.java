@@ -74,6 +74,9 @@ public enum Arg {
     DOUBLE_INTERVAL       ("Bdai"),     // was: Di
     CMPFUZZER             ("Bfuz"), 
     INSTRUMENT_SELECTIVELY("Only"),     // was: Oi
+    /* Tâche - complex numbers and unums */
+    COMPLEX_NUMBER  ("Rc"),
+    POSIT           ("Rp"),
     
     ALL    ("Ca"),
     NONE   ("Cn"),
@@ -132,8 +135,10 @@ public enum Arg {
     static String allOpcodes="";
 
     static {
+        StringBuilder all = new StringBuilder();
         for (Arg arg : Arg.values())
-            if (arg.isOperator()) allOpcodes+=arg.name+",";
+            if (arg.isOperator()) all.append(arg.name + ",");
+        allOpcodes = all.toString();
         // options.addOption(arg.shortOpt(), false, "Instrument the " + arg.shortOpt() + " operation");
         allOpcodes=allOpcodes.substring(0, allOpcodes.length()-1);
     }
@@ -278,7 +283,15 @@ public enum Arg {
                 .withDescription("Use BigDecimal wrapping with arbitrarily high precision." +
                         "Example: -"+BIG_DECIMAL_WR.shortOpt()+" 100 will wrap with 100-significant-digit BigDecimals")
                 .create(BIG_DECIMAL_WR.shortOpt()));
-		
+
+        options.addOption(OptionBuilder
+                .withArgName("strict")
+                .hasOptionalArg()
+                .withDescription("Use complex number wrapping. Strict mode generates an exception when the imaginary " +
+                        "part is lost or when a comparison between two different complex numbers is made.")
+                .create(COMPLEX_NUMBER.shortOpt()));
+        options.addOption(Arg.POSIT.shortOpt(),
+                false,"Use posit32 wrapping");
         options.addOption(Arg.INTERVAL_WR.shortOpt(),
                 false,"Use interval computation wrapping");
         options.addOption(Arg.STOCHASTIC_WR.shortOpt(),

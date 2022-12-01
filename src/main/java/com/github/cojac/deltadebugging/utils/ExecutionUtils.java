@@ -48,7 +48,7 @@ public enum ExecutionUtils implements Executor {
 	/**
 	 * Class constructor.
 	 */
-	private ExecutionUtils() {
+	ExecutionUtils() {
 		initCmdExecuteWithBehaviours();
 		initCmdExecuteListing();
 	}
@@ -105,7 +105,7 @@ public enum ExecutionUtils implements Executor {
         l.add(Opt.JAR.getValue());
       }
 	  l.add(Opt.MAINCLASS.getValue());
-	  cmdExecuteListing = l.toArray(new String[l.size()]);
+	  cmdExecuteListing = l.toArray(new String[0]);
 	}
 
 	/**
@@ -144,9 +144,7 @@ public enum ExecutionUtils implements Executor {
 			printStream(p);
 			if (p.exitValue() == 0) success = true;
 			p.destroy();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
+		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
 		return success;
@@ -155,8 +153,6 @@ public enum ExecutionUtils implements Executor {
 	/**
 	 * Execute the program with COJAC and listing option. Used for initialize
 	 * instruction file.
-	 * 
-	 * @return
 	 */
 	public void executeWithCOJACListing() {
 		try {
@@ -166,9 +162,7 @@ public enum ExecutionUtils implements Executor {
 			p.waitFor();
 			printStream(p);
 			p.destroy();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
+		} catch (IOException | InterruptedException e) {
 			e.printStackTrace();
 		}
 	}

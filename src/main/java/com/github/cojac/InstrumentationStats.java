@@ -22,7 +22,6 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -38,15 +37,15 @@ import com.github.cojac.models.Reactions;
 import static org.objectweb.asm.util.Printer.OPCODES;
 
 public final class InstrumentationStats extends NotificationBroadcasterSupport implements ICojacMXBean {
-    private final Map<Integer, Counter> counters = new HashMap<Integer, Counter>();
+    private final Map<Integer, Counter> counters = new HashMap<>();
     private long startTime;
     private final Object BLACKLIST_LOCK = new Object();
-    private List<String> blacklist = new ArrayList<String>();
+    private final List<String> blacklist = new ArrayList<>();
     private long changes = 0;
 
     @Override
     public Map<String, Integer> getCountersMBean() {
-        Map<String, Integer> ctrs = new HashMap<String, Integer>();
+        Map<String, Integer> ctrs = new HashMap<>();
 
         synchronized (counters) {
             for (Entry<Integer, Counter> ctr : counters.entrySet()) {
@@ -152,9 +151,9 @@ public final class InstrumentationStats extends NotificationBroadcasterSupport i
         if (!events.isEmpty()) {
             builder.append("COJAC Summary: Problematic instructions: \n");
 
-            List<Entry<String, Long>> sortedEvents = new ArrayList<Entry<String, Long>>(events.entrySet());
+            List<Entry<String, Long>> sortedEvents = new ArrayList<>(events.entrySet());
 
-            Collections.sort(sortedEvents, new CounterComparator());
+            sortedEvents.sort(new CounterComparator());
 
             for (Map.Entry<String, Long> instructions : sortedEvents) {
                 builder.append('\t').append(instructions.getValue()).

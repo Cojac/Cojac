@@ -1,0 +1,191 @@
+%%
+%% This is file `./samples/minutes.tex',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% meetingmins.dtx  (with options: `minutes')
+%% ----------------------------------------------------------------------
+%% 
+%% meetingmins - A LaTeX class for formatting minutes of meetings
+%% 
+%% Copyright (C) 2011-2013 by Brian D. Beitzel <brian@beitzel.com>
+%% 
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL), either
+%% version 1.3c of this license or (at your option) any later
+%% version.  The latest version of this license is in the file:
+%% 
+%% http://www.latex-project.org/lppl.txt
+%% 
+%% Users may freely modify these files without permission, as long as the
+%% copyright line and this statement are maintained intact.
+%% 
+%% ----------------------------------------------------------------------
+%% 
+\documentclass[11pt]{meetingmins}
+
+
+\usepackage{hyperref}
+\usepackage{tabularx}
+
+\setcommittee{Intégration des nombres complexes et des Unum en Java avec COJAC}
+
+\setmembers{
+    Frédéric Bapst (Superviseur),
+    Cédric Tâche (Etudiant)
+}
+
+\setpresent{
+    Frédéric Bapst (Superviseur),
+    Cédric Tâche (Etudiant)
+}
+
+\setlength{\headheight}{13.6pt}
+
+\date{31 mai 2021}
+
+\begin{document}
+
+\begin {center} {
+    \large \textbf {Intégration des nombres complexes et des Unum en Java avec COJAC}
+}
+\vspace {0.5ex}
+
+PV de la séance du 31 mai 2020 (14h00 - 15h30) via Teams
+\end {center} \vspace {1.5em}
+
+\noindent
+\textbf{Présents:} Frédéric Bapst, Cédric Tâche
+
+\section{Ordre du jour}
+Les points suivants ont été abordés durant la séance
+\begin{hiddenitems}
+    \item L'administratif
+    \item L'expert externe
+    \item L'organisation
+    \item Les documents
+    \item COJAC
+    \item Les objectifs
+    \item L'implémentation
+\end{hiddenitems}
+
+\section{Administratif}
+\begin{hiddenitems}
+    \item Le \textbf{résumé} du travail de bachelor doit être effectué en \textbf{allemand} et être validé pour pouvoir obtenir la mention bilingue.
+    \item Si M. Tâche avait soudainement un empêchement durant les jours où ont lieu les défenses orales (du 6 au 8 septembre), il faut prévenir l'administration le plus tôt possible.
+\end{hiddenitems}
+
+\section{Expert externe}
+\begin{hiddenitems}
+    \item Contrairement aux projets de semestre précédents, un expert externe est aussi présent pour le travail de bachelor.
+    \item L'expert de ce projet est M. Baptiste Wicht.
+    \item L'étudiant, M. Tâche, doit contacter l'expert durant cette semaine pour fixer un premier rendez-vous.
+    \item La première séance devrait avoir lieu vers le milieu du projet (vers la semaine du 14 ou du 21 juin).
+    \item Les conversations entre l'expert et M. Tâche seront également envoyées, en copie, à M. Bapst.
+    \item Il faut demander à l'expert s'il veut être inclus dans l'équipe Teams.
+    \item Les rencontres avec l'expert peuvent se faire en présentiel ou à distance. Elles se feront sans M. Bapst.
+    \item Le dépôt Git peut être mis en public pour permettre à l'expert d'y accéder.
+\end{hiddenitems}
+
+\section{Organisation}
+\begin{hiddenitems}
+    \item Tous les documents et le code seront mis sur le dépôt Git.
+    \item La séance hebdomadaire aura lieu tous les mercredis matins à 9h30.
+    \item D'autres séances peuvent être organisées en cas de problèmes ou de nécessité.
+    \item Une invitation pour les séances sera envoyée.
+\end{hiddenitems}
+
+\section{Documents}
+\begin{hiddenitems}
+    \item Le PV doit contenir les faits et les décisions. Il doit donner des détails, mais il ne faut pas reporter les discussions complètes.
+    \item Le PV doit contenir la date, l'heure et les participants.
+    \item Un PV sera aussi réalisé lors des visites de l'expert.
+    \item Suite aux retour du projet de semestre, M. Tâche a demandé des exemples de bons PV. M. Bapst essaiera d'en trouver.
+    \item Le modèle utilisé pour le rapport, le PV et les autres documents est libre.
+    \item Il n'y a pas besoin d'utiliser Git LFS pour la documentation.
+\end{hiddenitems}
+
+\section{COJAC}
+\begin{hiddenitems}
+    \item COJAC est un outil qui modifie les capacités arithmétiques de JAVA.
+    \item Il peut détecter certains comportements extrêmes tels que des overflows, des NaN, ...
+    \item Il peut aussi modifier le comportement des calculs. Ceci peut inclure le choix de la précision des nombres à virgule flottante ou des calculs automatiques de dérivés.
+    \item Cet outil ne peut pas agir sur les librairies standard Java ou natives. Dans ce cas-là, les wrappers où les types spéciaux créés par COJAC doivent être transformés à nouveau en types primitifs, ce qui peut faire perdre de la précision.
+\end{hiddenitems}
+
+\section{Objectifs}
+\begin{hiddenitems}
+    \item Le projet consiste à ajouter deux nouvelles capacités à COJAC: les nombres complexes et les Unums.
+    \item Il faudra ajouter des démonstrations pour montrer les avantages de ces deux fonctionnalités (nombres complexes et unum).
+    \item Un seul type d'Unum doit être implémenté. Le choix du type implémenté est libre.
+    \item Des tests de performance pourraient aussi être faits pour les deux nouvelles fonctionnalités.
+    \item Les librairies du projet peuvent aussi être mises à jour.
+    \item Une compatibilité minimale avec Java 8 doit être maintenue.
+\end{hiddenitems}
+
+\section{Implémentations}
+\begin{hiddenitems}
+    \item Il existe peut-être déjà une implémentation des nombres complexes en Java.
+    \item L'Unum est un format pour représenter les nombres réels. C'est une alternative aux nombres à virgule flottante.
+    \item Il pourrait déjà y avoir une implémentation des Unums en Java, mais la librairie actuelle est en C++.
+    \item Il y a 2 possibilités pour implémenter ces fonctionnalités: remplacer les doubles par un wrapper ou modifier le comportement des doubles.
+    \item Des librairies locales sont présentes pour faire des tests de performance, mais maintenant, il serait possible d'utiliser JMH. Ces librairies sont présentes dans un sous-projet Maven.
+\end{hiddenitems}
+
+\section{Tâches}
+\subsection{Responsable: M. Bapst}
+
+\begin{table}[ht]
+    \begin{tabularx}{\columnwidth}{ | X | p{8em} |}
+        \hline
+        \textbf{Description} & \textbf{Date limite} \\
+        \hline
+        Chercher des bons exemples de PV. & 09.06.2021 \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+\subsection{Responsable: M. Tâche}
+
+\begin{table}[ht]
+    \begin{tabularx}{\columnwidth}{ | X | p{8em} |}
+        \hline
+        \textbf{Description} & \textbf{Date limite} \\
+        \hline
+        Contacter l'expert et fixer un rendez-vous & 04.06.2021 \\
+        Ecrire le cahier des charges & 08.06.2021 \\
+        Envoyer l'invitation aux prochaines séances & 01.06.2021 \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+\vspace{1em}
+\par \noindent \textbf {Prochaine séance:} Le mercredi 2 juin 2020 à 14:00
+
+\end{document}
+%% 
+%% Copyright (C) 2011-2013 by Brian D. Beitzel <brian@beitzel.com>
+%% 
+%% This work may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License (LPPL), either
+%% version 1.3c of this license or (at your option) any later
+%% version.  The latest version of this license is in the file:
+%% 
+%% http://www.latex-project.org/lppl.txt
+%% 
+%% Users may freely modify these files without permission, as long as the
+%% copyright line and this statement are maintained intact.
+%% 
+%% This work is "maintained" (as per LPPL maintenance status) by
+%% Brian D. Beitzel.
+%% 
+%% This work consists of the file  meetingmins.dtx
+%% and the derived files           meetingmins.cls,
+%%                                 sampleminutes.tex,
+%%                                 department.min,
+%%                                 README.txt, and
+%%                                 meetingmins.pdf.
+%% 
+%%
+%% End of file `./samples/minutes.tex'.

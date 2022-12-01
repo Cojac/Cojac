@@ -17,7 +17,7 @@
 /* 
  * To be run: 
  * - without Cojac:             java demo.HelloPolynomial2
- * - with Derivation wrapper:   java -javaagent:cojac.jar="-Ra" demo.HelloPolynomial1
+ * - with AutoDiff (forward) wrapper:   java -javaagent:cojac.jar="-Ra" demo.HelloPolynomial1
  */
 
 package demo;

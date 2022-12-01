@@ -25,9 +25,9 @@ import java.math.MathContext;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.DoubleUnaryOperator;
 
-public class WrapperBigDecimalWithNaN extends ACompactWrapper {
+public class WrapperBigDecimalWithNaN extends ACompactWrapper<WrapperBigDecimalWithNaN> {
     //=======================================================
-    static enum NumberKind {
+    enum NumberKind {
         NORMAL(0), 
         NAN(Double.NaN), 
         POS_INF(Double.POSITIVE_INFINITY), 
@@ -40,7 +40,7 @@ public class WrapperBigDecimalWithNaN extends ACompactWrapper {
             if (d==Double.NEGATIVE_INFINITY) return NEG_INF;
             return NORMAL;
         }
-    };
+    }
     //=======================================================
     private static MathContext mathContext = null;
 
@@ -60,56 +60,55 @@ public class WrapperBigDecimalWithNaN extends ACompactWrapper {
     //-------------------------------------------------------------------------
     //----------------- Necessary constructor  -------------------------------
     //-------------------------------------------------------------------------
-    public WrapperBigDecimalWithNaN(ACojacWrapper w) {
-        this(w==null ? BigDecimal.ZERO : c(w).value,
-             w==null ? NumberKind.NORMAL : c(w).kind);
+    public WrapperBigDecimalWithNaN(WrapperBigDecimalWithNaN w) {
+        this(w==null ? BigDecimal.ZERO : w.value,
+             w==null ? NumberKind.NORMAL : w.kind);
     }
     
     //-------------------------------------------------------------------------
     @Override
-    public ACojacWrapper applyUnaryOp(DoubleUnaryOperator op) {
+    public WrapperBigDecimalWithNaN applyUnaryOp(DoubleUnaryOperator op) {
         return new WrapperBigDecimalWithNaN(op.applyAsDouble(value.doubleValue()));
     }
 
     @Override
-    public ACojacWrapper applyBinaryOp(DoubleBinaryOperator op, ACojacWrapper b) {
-        WrapperBigDecimalWithNaN bb=(WrapperBigDecimalWithNaN)b;
-        return new WrapperBigDecimalWithNaN(op.applyAsDouble(value.doubleValue(), bb.value.doubleValue()));
+    public WrapperBigDecimalWithNaN applyBinaryOp(DoubleBinaryOperator op, WrapperBigDecimalWithNaN b) {
+        return new WrapperBigDecimalWithNaN(op.applyAsDouble(value.doubleValue(), b.value.doubleValue()));
     }
 
-    @Override public ACojacWrapper dadd(ACojacWrapper b) {
+    @Override public WrapperBigDecimalWithNaN dadd(WrapperBigDecimalWithNaN b) {
         if(kind!=NumberKind.NORMAL)
             return super.dadd(b); // so via applyOp()
         return new WrapperBigDecimalWithNaN(value.add(big(b), mathContext), NumberKind.NORMAL); 
     }
     
-    @Override public ACojacWrapper dsub(ACojacWrapper b) { 
+    @Override public WrapperBigDecimalWithNaN dsub(WrapperBigDecimalWithNaN b) {
         if(kind!=NumberKind.NORMAL)
             return super.dsub(b); // so via applyOp()
         return new WrapperBigDecimalWithNaN(value.subtract(big(b), mathContext), NumberKind.NORMAL);
     }
     
-    @Override public ACojacWrapper dmul(ACojacWrapper b) { 
+    @Override public WrapperBigDecimalWithNaN dmul(WrapperBigDecimalWithNaN b) {
         if(kind!=NumberKind.NORMAL)
             return super.dmul(b); // so via applyOp()
         return new WrapperBigDecimalWithNaN(value.multiply(big(b), mathContext), NumberKind.NORMAL); 
     }
     
-    @Override public ACojacWrapper ddiv(ACojacWrapper b) { 
-        if (kind!=NumberKind.NORMAL || c(b).kind !=NumberKind.NORMAL 
+    @Override public WrapperBigDecimalWithNaN ddiv(WrapperBigDecimalWithNaN b) {
+        if (kind!=NumberKind.NORMAL || b.kind !=NumberKind.NORMAL
                 || big(b).equals(BigDecimal.ZERO))
             return super.ddiv(b); // so via applyOp()
         return new WrapperBigDecimalWithNaN(value.divide(big(b), mathContext), NumberKind.NORMAL);
     }
     
-    @Override public ACojacWrapper dneg()                {
+    @Override public WrapperBigDecimalWithNaN dneg()                {
         if(kind!=NumberKind.NORMAL)
             return super.dneg(); // so via applyOp()
         return new WrapperBigDecimalWithNaN(value.negate(mathContext), NumberKind.NORMAL);
     }
     
-    @Override public ACojacWrapper drem(ACojacWrapper b) {
-        if (kind!=NumberKind.NORMAL || c(b).kind !=NumberKind.NORMAL 
+    @Override public WrapperBigDecimalWithNaN drem(WrapperBigDecimalWithNaN b) {
+        if (kind!=NumberKind.NORMAL || b.kind !=NumberKind.NORMAL
                 || big(b).equals(BigDecimal.ZERO))
             return super.drem(b); // so via applyOp()
         BigDecimal rem=value.remainder(big(b), mathContext);
@@ -117,7 +116,7 @@ public class WrapperBigDecimalWithNaN extends ACompactWrapper {
         return new WrapperBigDecimalWithNaN(rem, NumberKind.NORMAL); 
     }
     
-    public ACojacWrapper math_sqrt() {
+    public WrapperBigDecimalWithNaN math_sqrt() {
         if (kind!=NumberKind.NORMAL || value.compareTo(BigDecimal.ZERO)<0)
             return applyUnaryOp(Math::sqrt);
         return new WrapperBigDecimalWithNaN(sqrtHeron(value), NumberKind.NORMAL);
@@ -135,7 +134,7 @@ public class WrapperBigDecimalWithNaN extends ACompactWrapper {
 
     @SuppressWarnings("unused")
     @Override
-    public ACojacWrapper fromDouble(double a, boolean wasFromFloat) {
+    public WrapperBigDecimalWithNaN fromDouble(double a, boolean wasFromFloat) {
         return new WrapperBigDecimalWithNaN(a);
     }
 
@@ -149,26 +148,22 @@ public class WrapperBigDecimalWithNaN extends ACompactWrapper {
         return "BigDecimalWithNaN";
     }
     
-    @Override public int compareTo(ACojacWrapper w) {
-        if (kind != NumberKind.NORMAL || c(w).kind != NumberKind.NORMAL)
-            return Double.compare(kind.asDouble, c(w).kind.asDouble);
-        return value.compareTo(c(w).value);
-    }
-    
-    //-------------------------------------------------------------------------
-    private static BigDecimal big(ACojacWrapper a) {
-        return c(a).value;
+    @Override public int compareTo(WrapperBigDecimalWithNaN w) {
+        if (kind != NumberKind.NORMAL || w.kind != NumberKind.NORMAL)
+            return Double.compare(kind.asDouble, w.kind.asDouble);
+        return value.compareTo(w.value);
     }
 
-    private static WrapperBigDecimalWithNaN c(ACojacWrapper a) {
-        return (WrapperBigDecimalWithNaN) a;
+    //-------------------------------------------------------------------------
+    private static BigDecimal big(WrapperBigDecimalWithNaN a) {
+        return a.value;
     }
-    
+
     private static BigDecimal sqrtHeron(BigDecimal x) {
         BigDecimal epsilon = new BigDecimal(10.0).pow(-COJAC_BIGDECIMAL_PRECISION, mathContext); // precision
         BigDecimal root = new BigDecimal(1.0, mathContext);
         BigDecimal lroot = x.abs(mathContext);
-        while (root.subtract(lroot, mathContext).abs(mathContext).compareTo(epsilon) == 1) {
+        while (root.subtract(lroot, mathContext).abs(mathContext).compareTo(epsilon) > 0) {
             lroot = root.abs(mathContext);
             root = root.add(x.divide(root, mathContext)).divide(new BigDecimal(2.0, mathContext), mathContext);
         }

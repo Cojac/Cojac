@@ -27,15 +27,15 @@ import java.lang.reflect.Constructor;
  * We consider that cleaner than our first attempt.
  */
 
-public class CommonDouble extends Number implements Comparable<CommonDouble>{
+public class CommonDouble<T extends ACojacWrapper<T>> extends Number implements Comparable<CommonDouble<T>>{
     //-------------------------------------------------------------------------
     //----------------- Fields and auxiliary constructors ---------------------
     //------------ (not required for the Wrapper mechanism) -------------------
     //-------------------------------------------------------------------------
 
-    protected final ACojacWrapper val;
+    protected final T val;
     
-    protected CommonDouble(ACojacWrapper w) {
+    protected CommonDouble(T w) {
         this.val=w;
     }
     //-------------------------------------------------------------------------
@@ -43,18 +43,18 @@ public class CommonDouble extends Number implements Comparable<CommonDouble>{
     //-------------------------------------------------------------------------
 
     public CommonDouble(double v) {
-        val = newInstance(null).fromDouble(v, false);
+        val = newInstance((T)null).fromDouble(v, false);
     }
     
     public CommonDouble(String v) {
-        this(Double.valueOf(v));
+        val = newInstance((T)null).fromString(v, false);
     }
     
-    public CommonDouble(CommonFloat v) {
+    public CommonDouble(CommonFloat<T> v) {
         val=newInstance(v.val);
     }
     
-    public CommonDouble(CommonDouble v) {
+    public CommonDouble(CommonDouble<T> v) {
         val=newInstance(v.val);
     }
 
@@ -62,141 +62,153 @@ public class CommonDouble extends Number implements Comparable<CommonDouble>{
     //----------------- Methods with 1st parameter of 'this' type -------------
     //-------------------------------------------------------------------------
     
-    public static CommonDouble dadd(CommonDouble a, CommonDouble b) {
-        return new CommonDouble(a.val.dadd(b.val));
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> dadd(CommonDouble<T> a, CommonDouble<T> b) {
+        return new CommonDouble<>(a.val.dadd(b.val));
     }
     
-    public static CommonDouble dsub(CommonDouble a, CommonDouble b) {
-        return new CommonDouble(a.val.dsub(b.val));
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> dsub(CommonDouble<T> a, CommonDouble<T> b) {
+        return new CommonDouble<>(a.val.dsub(b.val));
     }
 
-    public static CommonDouble dmul(CommonDouble a, CommonDouble b) {
-        return new CommonDouble(a.val.dmul(b.val));
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> dmul(CommonDouble<T> a, CommonDouble<T> b) {
+        return new CommonDouble<>(a.val.dmul(b.val));
     }
 
-    public static CommonDouble ddiv(CommonDouble a, CommonDouble b) {
-        return new CommonDouble(a.val.ddiv(b.val));
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> ddiv(CommonDouble<T> a, CommonDouble<T> b) {
+        return new CommonDouble<>(a.val.ddiv(b.val));
     }
 
-    public static CommonDouble drem(CommonDouble a, CommonDouble b) {
-        return new CommonDouble(a.val.drem(b.val));
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> drem(CommonDouble<T> a, CommonDouble<T> b) {
+        return new CommonDouble<>(a.val.drem(b.val));
     }
     
-    public static CommonDouble dneg(CommonDouble a) {
-        return new CommonDouble(a.val.dneg());
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> dneg(CommonDouble<T> a) {
+        return new CommonDouble<>(a.val.dneg());
     }
 
-    public static double toDouble(CommonDouble a) {
+    public static <T extends ACojacWrapper<T>> double toDouble(CommonDouble<T> a) {
         return a.val.toDouble();
     }
     
-    public static Double toRealDoubleWrapper(CommonDouble a){
+    public static <T extends ACojacWrapper<T>> Double toRealDoubleWrapper(CommonDouble<T> a){
         return a.val.toDouble();
     }
     
-    public static int dcmpl(CommonDouble a, CommonDouble b) {
+    public static <T extends ACojacWrapper<T>> int dcmpl(CommonDouble<T> a, CommonDouble<T> b) {
         return a.val.dcmpl(b.val);
     }
     
-    public static int dcmpg(CommonDouble a, CommonDouble b) {
+    public static <T extends ACojacWrapper<T>> int dcmpg(CommonDouble<T> a, CommonDouble<T> b) {
         return a.val.dcmpg(b.val);
     }
     
-    public static int d2i(CommonDouble a) {
+    public static <T extends ACojacWrapper<T>> int d2i(CommonDouble<T> a) {
         return (int)a.val.toDouble();
     }
     
-    public static long d2l(CommonDouble a) {
+    public static <T extends ACojacWrapper<T>> long d2l(CommonDouble<T> a) {
         return (long)a.val.toDouble();
     }
 
-    public static CommonDouble math_sqrt(CommonDouble a){
-        return new CommonDouble(a.val.math_sqrt());
+    public static <T extends ACojacWrapper<T>> boolean double_isNaN(CommonDouble<T> a){
+        return a.val.isNaN();
+    }
+
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> math_sqrt(CommonDouble<T> a){
+        return new CommonDouble<>(a.val.math_sqrt());
+    }
+
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> math_cbrt(CommonDouble<T> a){
+        return new CommonDouble<>(a.val.math_cbrt());
     }
 	
-    public static CommonDouble math_abs(CommonDouble a){
-        return new CommonDouble(a.val.math_abs());
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> math_abs(CommonDouble<T> a){
+        return new CommonDouble<>(a.val.math_abs());
     }
-    public static CommonDouble math_sin(CommonDouble a){
-        return new CommonDouble(a.val.math_sin());
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> math_sin(CommonDouble<T> a){
+        return new CommonDouble<>(a.val.math_sin());
     }
-    public static CommonDouble math_cos(CommonDouble a){
-        return new CommonDouble(a.val.math_cos());
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> math_cos(CommonDouble<T> a){
+        return new CommonDouble<>(a.val.math_cos());
     }
-    public static CommonDouble math_tan(CommonDouble a){
-        return new CommonDouble(a.val.math_tan());
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> math_tan(CommonDouble<T> a){
+        return new CommonDouble<>(a.val.math_tan());
     }
-    public static CommonDouble math_asin(CommonDouble a){
-        return new CommonDouble(a.val.math_asin());
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> math_asin(CommonDouble<T> a){
+        return new CommonDouble<>(a.val.math_asin());
     }
-    public static CommonDouble math_acos(CommonDouble a){
-        return new CommonDouble(a.val.math_acos());
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> math_acos(CommonDouble<T> a){
+        return new CommonDouble<>(a.val.math_acos());
     }
-    public static CommonDouble math_atan(CommonDouble a){
-        return new CommonDouble(a.val.math_atan());
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> math_atan(CommonDouble<T> a){
+        return new CommonDouble<>(a.val.math_atan());
     }
-    public static CommonDouble math_sinh(CommonDouble a){
-        return new CommonDouble(a.val.math_sinh());
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> math_sinh(CommonDouble<T> a){
+        return new CommonDouble<>(a.val.math_sinh());
     }
-    public static CommonDouble math_cosh(CommonDouble a){
-        return new CommonDouble(a.val.math_cosh());
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> math_cosh(CommonDouble<T> a){
+        return new CommonDouble<>(a.val.math_cosh());
     }
-    public static CommonDouble math_tanh(CommonDouble a){
-        return new CommonDouble(a.val.math_tanh());
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> math_tanh(CommonDouble<T> a){
+        return new CommonDouble<>(a.val.math_tanh());
     }
-    public static CommonDouble math_exp(CommonDouble a){
-        return new CommonDouble(a.val.math_exp());
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> math_exp(CommonDouble<T> a){
+        return new CommonDouble<>(a.val.math_exp());
     }
-    public static CommonDouble math_log(CommonDouble a){
-        return new CommonDouble(a.val.math_log());
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> math_log(CommonDouble<T> a){
+        return new CommonDouble<>(a.val.math_log());
     }
-    public static CommonDouble math_log10(CommonDouble a){
-        return new CommonDouble(a.val.math_log10());
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> math_log10(CommonDouble<T> a){
+        return new CommonDouble<>(a.val.math_log10());
     }
-    public static CommonDouble math_toRadians(CommonDouble a){
-        return new CommonDouble(a.val.math_toRadians());
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> math_toRadians(CommonDouble<T> a){
+        return new CommonDouble<>(a.val.math_toRadians());
     }
-    public static CommonDouble math_toDegrees(CommonDouble a){
-        return new CommonDouble(a.val.math_toDegrees());
-    }
-
-    public static CommonDouble math_min(CommonDouble a, CommonDouble b) {
-        return new CommonDouble(a.val.math_min(b.val));
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> math_toDegrees(CommonDouble<T> a){
+        return new CommonDouble<>(a.val.math_toDegrees());
     }
 
-    public static CommonDouble math_max(CommonDouble a, CommonDouble b) {
-        return new CommonDouble(a.val.math_max(b.val));
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> math_min(CommonDouble<T> a, CommonDouble<T> b) {
+        return new CommonDouble<>(a.val.math_min(b.val));
     }
 
-    public static CommonDouble math_pow(CommonDouble a, CommonDouble b) {
-        return new CommonDouble(a.val.math_pow(b.val));
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> math_max(CommonDouble<T> a, CommonDouble<T> b) {
+        return new CommonDouble<>(a.val.math_max(b.val));
     }
 
-    public static CommonDouble math_hypot(CommonDouble a, CommonDouble b) {
-        return new CommonDouble(a.val.math_hypot(b.val));
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> math_pow(CommonDouble<T> a, CommonDouble<T> b) {
+        return new CommonDouble<>(a.val.math_pow(b.val));
+    }
+
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> math_hypot(CommonDouble<T> a, CommonDouble<T> b) {
+        return new CommonDouble<>(a.val.math_hypot(b.val));
+    }
+
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> math_fma(CommonDouble<T> a, CommonDouble<T> b, CommonDouble<T> c){
+        return new CommonDouble<>(a.val.math_fma(b.val, c.val));
     }
     	
     //-------------------------------------------------------------------------
     //----------------- Necessarily static methods ----------------------------
     //-------------------------------------------------------------------------
 
-    public static CommonDouble fromDouble(double a) {
-        return new CommonDouble(a);
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> fromDouble(double a) {
+        return new CommonDouble<>(a);
     }
     
-    public static CommonDouble fromRealDoubleWrapper(Double a) {
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> fromRealDoubleWrapper(Double a) {
         return fromDouble(a);
     }
 
-    public static CommonDouble fromString(String a){
-        return fromDouble(Double.valueOf(a));
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> fromString(String a){
+        return new CommonDouble<>(a);
     }
     
-    public static CommonDouble i2d(int a) {
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> i2d(int a) {
         return fromDouble(a);
     }
     
-    public static CommonDouble l2d(long a) {
+    public static <T extends ACojacWrapper<T>> CommonDouble<T> l2d(long a) {
         return fromDouble(a);
     }
 
@@ -204,14 +216,15 @@ public class CommonDouble extends Number implements Comparable<CommonDouble>{
     //----------------- Overridden methods ------------------------------------
     //-------------------------------------------------------------------------
     
-	@Override public int compareTo(CommonDouble o) {
+	@Override public int compareTo(CommonDouble<T> o) {
         return this.val.compareTo(o.val);
 	}
-	
+
+    @SuppressWarnings("unchecked")
     @Override public boolean equals(Object obj) {
         if (obj == null) return false;
         if (! (obj instanceof CommonDouble)) return false;
-        CommonDouble ow = (CommonDouble)obj;
+        CommonDouble<T> ow = (CommonDouble<T>)obj;
         return this.val.equals(ow.val);
     }
 
@@ -255,42 +268,29 @@ public class CommonDouble extends Number implements Comparable<CommonDouble>{
 	//       to the new generation wrapping (the indirection is annoying...). 
 	//       see cojac.instrumenters.ReplaceFloatsMethods.instrument()
 	
-    public static String COJAC_MAGIC_wrapperName() {
-        return newInstance(null).wrapperName();
+    public static <T extends ACojacWrapper<T>>String COJAC_MAGIC_wrapperName() {
+        return newInstance((T)null).wrapperName();
     }
 
-    public static String COJAC_MAGIC_toString(CommonDouble n) {
+    public static <T extends ACojacWrapper<T>> String COJAC_MAGIC_toString(CommonDouble<T> n) {
         return n.val.asInternalString();
     }
 
-    public static String COJAC_MAGIC_toString(CommonFloat n) {
+    public static <T extends ACojacWrapper<T>> String COJAC_MAGIC_toString(CommonFloat<T> n) {
         return n.val.asInternalString();
     }
 
-    // TODO: remove once we switch to the NG wrapper
-    public static String COJAC_MAGIC_DOUBLE_wrapper() {
-        return newInstance(null).wrapperName();
-    }
 
-    // TODO: remove once we switch to the NG wrapper
-    public static String COJAC_MAGIC_DOUBLE_toStr(CommonDouble n) {
-        return n.val.asInternalString();
-    }
-    
-    // TODO: remove once we switch to the NG wrapper
-    public static String COJAC_MAGIC_DOUBLE_toStr(CommonFloat n) {
-        return n.val.asInternalString();
-    }
-    
     //-------------------------------------------------------------------------
     //--------------------- Auxiliary methods ---------------------------------
 	//------------ (not required for the Wrapper mechanism) -------------------
     //-------------------------------------------------------------------------
 
-    protected static ACojacWrapper newInstance(ACojacWrapper w) {
+    @SuppressWarnings("unchecked")
+    protected static <T extends ACojacWrapper<T>> T newInstance(T w) {
         try {
-            Constructor<?> c=COJAC_WRAPPER_NG_CLASS.getConstructor(ACojacWrapper.class);
-            return (ACojacWrapper)c.newInstance(w);
+            Constructor<?> c=COJAC_WRAPPER_NG_CLASS.getConstructor(COJAC_WRAPPER_NG_CLASS);
+            return (T)c.newInstance(w);
         } catch(Exception e) {
             throw new RuntimeException(e);
         }

@@ -34,7 +34,7 @@ import com.github.cojac.unit.AgentTest;
 public class ArbitraryPrecisionTest {
     @Test
     public void testSamePrecisionAsFloat() throws ClassNotFoundException, IllegalAccessException, InstantiationException,
-            InvocationTargetException, UnmodifiableClassException {
+            InvocationTargetException, UnmodifiableClassException, NoSuchMethodException {
         Args args = new Args();
         
         String[] options = {"-"+Arg.ARBITRARY_PRECISION.shortOpt(), ""+23}; 
@@ -49,7 +49,7 @@ public class ArbitraryPrecisionTest {
         Class<?> classz = ClassLoader.getSystemClassLoader().loadClass("com.github.cojac.unit.behaviours.ArbitraryPrecisionTests");
         AgentTest.instrumentation.retransformClasses(classz);
         
-        Object object = classz.newInstance();
+        Object object = classz.getDeclaredConstructor().newInstance();
         float[] expectedResults = {Math.nextUp(3.0f)};
         int i = 0;
         Method[] methods = classz.getMethods();

@@ -75,7 +75,7 @@ public class Wrapping {
     double a=1.0, b=3.0;
     double c=a/b;
     System.out.printf("with printf %4.4f\n", c);
-    System.out.println(String.format("with printf %4.4f\n", c));
+    System.out.printf("with printf %4.4f\n%n", c);
   }
   
   public static void playWithPrimitiveFloats() {
@@ -192,15 +192,15 @@ public class Wrapping {
   public static void playWithJavaFloatWrapper() {
     final float a=1.0f;
     Float f=a; ok(f==a);
-    f=new Float(a); ok(f==a);
-    f=new Float(""+a); ok(f==a);
-    f=new Float((double)f); ok(f==a);
-    f=new Float(f.doubleValue()); ok(f==a);
-    f=new Float(f.floatValue()); ok(f==a);
-    f=new Float(f.intValue()); ok(f==a);
-    f=new Float(f.longValue()); ok(f==a);
-    f=new Float(f.shortValue()); ok(f==a);
-    f=new Float(f.byteValue()); ok(f==a);
+    f= a; ok(f==a);
+    f=Float.valueOf(""+a); ok(f==a);
+    f= (float) (double) f; ok(f==a);
+    f= (float) f.doubleValue(); ok(f==a);
+    f= f.floatValue(); ok(f==a);
+    f= (float) f.intValue(); ok(f==a);
+    f= (float) f.longValue(); ok(f==a);
+    f= (float) f.shortValue(); ok(f==a);
+    f= (float) f.byteValue(); ok(f==a);
     ok(f.compareTo(a)==0);
     ok(f.equals(a));
     ok(!f.isNaN());
@@ -210,18 +210,18 @@ public class Wrapping {
   public static void playWithJavaDoubleWrapper() {
     final double a=1.0f;
     Double d=a; ok(d==a);
-    d=new Double(a); ok(d==a);
-    d=new Double(""+a); ok(d==a);
-    d=new Double((double)d); ok(d==a);
-    d=new Double(d.doubleValue()); ok(d==a);
-    d=new Double(d.floatValue()); ok(d==a);
-    d=new Double(d.intValue()); ok(d==a);
-    d=new Double(d.longValue()); ok(d==a);
-    d=new Double(d.shortValue()); ok(d==a);
-    d=new Double(d.byteValue()); ok(d==a);
+    d= a; ok(d==a);
+    d=Double.valueOf(""+a); ok(d==a);
+    d= (double) d; ok(d==a);
+    d= d.doubleValue(); ok(d==a);
+    d= (double) d.floatValue(); ok(d==a);
+    d= (double) d.intValue(); ok(d==a);
+    d= (double) d.longValue(); ok(d==a);
+    d= (double) d.shortValue(); ok(d==a);
+    d= (double) d.byteValue(); ok(d==a);
     ok(d.compareTo(a)==0);
     d=2*d/2;
-    Double aa=Double.valueOf(a);
+    Double aa= a;
     ok(d.equals(aa));
     ok(!d.isNaN());
     ok(!d.isInfinite());
@@ -450,7 +450,7 @@ public class Wrapping {
 //    MyWrapper(double d) {dValue=d; fValue=(float)d;}
 //  }
   
-  static interface IGizmo {
+  interface IGizmo {
       double gizgiz(double x);
   }
   //======================================================================

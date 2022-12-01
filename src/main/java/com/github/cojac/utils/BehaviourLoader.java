@@ -78,11 +78,7 @@ public class BehaviourLoader {
             Document document = docBuilder.parse(filePath);
             // initialize the structure (
             classMap = classMapFromXML(document);
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParserConfigurationException e) {
+        } catch (SAXException | IOException | ParserConfigurationException e) {
             e.printStackTrace();
         }
     }
@@ -144,7 +140,7 @@ public class BehaviourLoader {
     }
 
     private InstructionMeta instructionMetaFromXML(Element instructionElement) {
-        Integer opCode = Integer.parseInt(instructionElement.getAttributeNode(OP_CODE_ATTR).getValue());
+        int opCode = Integer.parseInt(instructionElement.getAttributeNode(OP_CODE_ATTR).getValue());
         String opName = instructionElement.getAttributeNode(OP_NAME_ATTR).getValue();
         String invokedMethod = instructionElement.getAttributeNode(INVOKED_METHOD).getValue();
         String behaviour = instructionElement.getAttributeNode(BEHAVIOUR_ATTR).getValue();

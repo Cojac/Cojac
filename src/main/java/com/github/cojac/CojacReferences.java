@@ -18,8 +18,9 @@
 
 package com.github.cojac;
 
-import com.github.cojac.models.wrappers.WrapperSymbolic;
+import com.github.cojac.models.wrappers.*;
 import com.github.cojac.profiler.NumericalProfiler;
+import com.github.cojac.utils.*;
 import org.objectweb.asm.ClassWriter;
 
 import com.github.cojac.instrumenters.ClassLoaderInstrumenterFactory;
@@ -30,14 +31,6 @@ import com.github.cojac.models.behaviours.DoubleIntervalBehaviour;
 import com.github.cojac.models.behaviours.PseudoRoundingBehaviour;
 import com.github.cojac.models.behaviours.ConversionBehaviour.Conversion;
 import com.github.cojac.models.behaviours.PseudoRoundingBehaviour.Rounding;
-import com.github.cojac.models.wrappers.CommonDouble;
-import com.github.cojac.models.wrappers.CommonFloat;
-import com.github.cojac.models.wrappers.WrapperBigDecimalWithNaN;
-import com.github.cojac.utils.BehaviourLoader;
-import com.github.cojac.utils.InstructionWriter;
-import com.github.cojac.utils.PolyBehaviourLoader;
-import com.github.cojac.utils.PolyBehaviourLogger;
-import com.github.cojac.utils.ReflectionUtils;
 
 
 import javax.management.*;
@@ -291,7 +284,6 @@ public final class CojacReferences {
         private InstrumentationStats stats;
         private IOpcodeInstrumenterFactory factory;
         private MBeanServer mbServer;
-        private StringBuilder sbBypassList;
         private String[] bypassList;
         private Splitter splitter;
         private String floatWrapper;
@@ -346,7 +338,7 @@ public final class CojacReferences {
 
         public CojacReferences build() {
             this.stats = new InstrumentationStats();
-            this.sbBypassList = new StringBuilder(PACKAGES_NOT_TO_INSTRUMENT);
+            StringBuilder sbBypassList = new StringBuilder(PACKAGES_NOT_TO_INSTRUMENT);
             args.setValue(Arg.FLOAT_WRAPPER,  "com.github.cojac.models.wrappers.CommonFloat");
             args.setValue(Arg.DOUBLE_WRAPPER, "com.github.cojac.models.wrappers.CommonDouble");
 
@@ -359,6 +351,16 @@ public final class CojacReferences {
                 numericalProfiler = NumericalProfiler.getInstance();
                 numericalProfiler.setThrowRecommendations(args.isSpecified(Arg.EXCEPTION));
                 numericalProfiler.setVerbose(args.isOperationEnabled(Arg.VERBOSE));
+            }
+
+            if (args.isSpecified(Arg.COMPLEX_NUMBER)) {
+                args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperComplexNumber");
+                WrapperComplexNumber.setStrictMode(args.getValue(Arg.COMPLEX_NUMBER) != null);
+            }
+
+            if (args.isSpecified(Arg.POSIT)) {
+                args.setValue(Arg.NG_WRAPPER, "com.github.cojac.models.wrappers.WrapperPosit32");
+                Posit32Utils.loadLibrary();
             }
 
             if (args.isSpecified(Arg.NG_WRAPPER)) {
@@ -408,11 +410,7 @@ public final class CojacReferences {
                 // get the path to XML file
                 // String filePath = args.getValue(Arg.LISTING_INSTRUCTIONS);
                 String filePath = args.getValue(Arg.POLY_BEHAVIOURAL_LOGGING);
-                Runtime.getRuntime().addShutdownHook(new Thread() {
-                    @Override public void run() {
-                        PolyBehaviourLogger.getinstance().writeLogs(filePath);
-                    }
-                });
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> PolyBehaviourLogger.getinstance().writeLogs(filePath)));
             }
             
             if (args.isSpecified(Arg.POLY_BEHAVIOURAL_LOAD)) {
@@ -449,11 +447,7 @@ public final class CojacReferences {
             }
 
             if (args.isSpecified(Arg.INSTRUMENTATION_STATS)) {
-                Runtime.getRuntime().addShutdownHook(new Thread() {
-                    @Override public void run() {
-                        stats.printInstrumentationStats(args);
-                    }
-                });
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> stats.printInstrumentationStats(args)));
             }
 
             if (args.isSpecified(Arg.BYPASS) &&
@@ -465,12 +459,7 @@ public final class CojacReferences {
             bypassList = splitter.split(sbBypassList.toString());
 
             if (args.isSpecified(Arg.RUNTIME_STATS)) {
-                Runtime.getRuntime().addShutdownHook(new Thread() {
-                    @Override
-                    public void run() {
-                        InstrumentationStats.printRuntimeStats(args, ReflectionUtils.<Map<String, Long>> getStaticFieldValue(loader, "com.github.cojac.models.Reactions", "EVENTS"));
-                    }
-                });
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> InstrumentationStats.printRuntimeStats(args, ReflectionUtils.<Map<String, Long>> getStaticFieldValue(loader, "com.github.cojac.models.Reactions", "EVENTS"))));
             }
             if(args.isSpecified(Arg.INSTRUMENT_SELECTIVELY)){
                 System.out.println("CojacReferences.CojacReferencesBuilder.build() : " + args.getValue(Arg.INSTRUMENT_SELECTIVELY));
@@ -480,11 +469,7 @@ public final class CojacReferences {
             if(args.isSpecified(Arg.LISTING_INSTRUCTIONS)){
                 // get the path to XML file
                 String filePath = args.getValue(Arg.LISTING_INSTRUCTIONS);
-                Runtime.getRuntime().addShutdownHook(new Thread() {
-                    @Override public void run() {
-                        InstructionWriter.getinstance().writeInstructionDocumentToFile(filePath);   
-                    }
-                });
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> InstructionWriter.getinstance().writeInstructionDocumentToFile(filePath)));
             }
             
             if(args.isSpecified(Arg.LOAD_BEHAVIOUR_MAP)) {
@@ -506,7 +491,7 @@ public final class CojacReferences {
             }
             if(args.isSpecified(Arg.ARBITRARY_PRECISION)){
                 ConversionBehaviour.setConversion(Conversion.Arbitrary);
-                ConversionBehaviour.setSignificativeBits(Integer.valueOf(args.getValue(Arg.ARBITRARY_PRECISION)));
+                ConversionBehaviour.setSignificativeBits(Integer.parseInt(args.getValue(Arg.ARBITRARY_PRECISION)));
             }
             if(args.isSpecified(Arg.ROUND_NATIVELY_UP)){
                 ConversionBehaviour.setConversion(Conversion.NativeRounding);
@@ -563,12 +548,12 @@ public final class CojacReferences {
             clazz.getMethod("setNgWrapper", String.class).invoke(clazz, ngWrapper);
 
             if (args.isSpecified(Arg.BIG_DECIMAL_WR)) {
-                bigDecimalPrecision = Integer.valueOf(args.getValue(Arg.BIG_DECIMAL_WR));
+                bigDecimalPrecision = Integer.parseInt(args.getValue(Arg.BIG_DECIMAL_WR));
                 clazz.getMethod("setBigDecimalPrecision", int.class).invoke(clazz, bigDecimalPrecision);
             }
             
             if (args.isSpecified(Arg.STABILITY_THRESHOLD)) {
-                stabilityThreshold = Double.valueOf(args.getValue(Arg.STABILITY_THRESHOLD));
+                stabilityThreshold = Double.parseDouble(args.getValue(Arg.STABILITY_THRESHOLD));
                 clazz.getMethod("setStabilityThreshold", double.class).invoke(clazz, stabilityThreshold);
             }
 
@@ -616,7 +601,7 @@ public final class CojacReferences {
         }
         
         private static HashMap<String, PartiallyInstrumentable> parseClassesIndices(String arg){
-            HashMap<String, PartiallyInstrumentable> classesToInstrument = new HashMap<String, PartiallyInstrumentable>();
+            HashMap<String, PartiallyInstrumentable> classesToInstrument = new HashMap<>();
             CojacClassToInstrumentSplitter sp = new CojacClassToInstrumentSplitter();
             if(arg == null) return classesToInstrument;
             String[] classes = sp.split(arg.replaceAll("\\s+",""));
@@ -711,7 +696,7 @@ public final class CojacReferences {
     
     public static class ClassPartiallyInstrumented implements PartiallyInstrumentable{
         private String name;
-        private HashSet<String> methods = new HashSet<String>();
+        private HashSet<String> methods = new HashSet<>();
         private BitSet lines = new BitSet(256);
         private BitSet instructions = new BitSet(256);
         public ClassPartiallyInstrumented(String className,String methodsOrLines,String instructions) {
@@ -750,15 +735,15 @@ public final class CojacReferences {
             }
         }
         public String toString(){
-            String s = ""+name;
+            StringBuilder s = new StringBuilder("" + name);
             Iterator<String> itr = methods.iterator();
             int i = 0;
             while(itr.hasNext()){
-                s = s + "Method "+ (++i)+"= \""+  itr.next()+"\"\n"; 
+                s.append("Method ").append(++i).append("= \"").append(itr.next()).append("\"\n");
             }
-            s = s + "Lines: "+ lines.toString();
-            s = s + "\nInstructions: "+ instructions.toString();
-            return s;
+            s.append("Lines: ").append(lines.toString());
+            s.append("\nInstructions: ").append(instructions.toString());
+            return s.toString();
         }
         @Override
         public boolean instrumentMethod(String methodName) {

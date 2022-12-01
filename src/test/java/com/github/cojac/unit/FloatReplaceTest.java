@@ -84,7 +84,7 @@ public class FloatReplaceTest {
         
         if (tinyExample==null) return;
         Method m = tinyExample.getMethod("go");
-        if (m==null) return;
+        //if (m==null) return;
         m.invoke(null);
 	}
 }

@@ -55,7 +55,7 @@ public class LogFileTestAgent {
             File lf = new File(logFile);
             Assert.assertFalse(lf.exists());
 
-            Object object = classz.newInstance();
+            Object object = classz.getDeclaredConstructor().newInstance();
             Method m = classz.getMethod("test");
             m.invoke(object);
 
