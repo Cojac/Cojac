@@ -26,17 +26,17 @@ public class HelloAutodiffForward {
     public static double COJAC_MAGIC_asDerivativeVar(double a) { return a; }
 
     static double someFunction(double x, double a, double b) {
-        double res=a*x*x;     // the computation can be complex,
-        res = res + b*x;      // with loops, calls, recursion etc.
+        double res = a * x * x;  // the computation can be complex,
+        res = res + b * x;       // with loops, calls, recursion etc.
         res = res + 1;
         return res;     // f: a X^2 + b X + 1        f': 2aX + b
     }
 
     public static void main(String[] args) {
-        double x=2;
-        x=COJAC_MAGIC_asDerivativeVar(x);  // we'll compute df/dx
-        double y=someFunction(x, 3, 4);
-        System.out.println("f(2):  "+y);
-        System.out.println("f'(2): "+COJAC_MAGIC_derivative(y));
+        double x = 2;
+        x = COJAC_MAGIC_asDerivativeVar(x);  // we'll compute df/dx
+        double y = someFunction(x, 3, 4);
+        System.out.println("f(2):  " + y);
+        System.out.println("f'(2): " + COJAC_MAGIC_derivative(y));
     }
 }

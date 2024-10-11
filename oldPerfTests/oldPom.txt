@@ -1,0 +1,49 @@
+		<!-- System dependencies for benchmarks -->
+
+		<dependency>
+			<groupId>com.wicht.benchmark.utils</groupId>
+			<artifactId>bb</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/benchmark-utils/bb.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>com.wicht.benchmark.utils</groupId>
+			<artifactId>benchmark-utils</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/benchmark-utils/benchmark-utils.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>com.wicht.benchmark.utils</groupId>
+			<artifactId>jcommon</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/benchmark-utils/jcommon-1.0.16.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>com.wicht.benchmark.utils</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/benchmark-utils/jfreechart-1.0.13.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>com.wicht.benchmark.utils</groupId>
+			<artifactId>jsci-core</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/benchmark-utils/jsci-core.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>com.wicht.benchmark.utils</groupId>
+			<artifactId>mt-13.jar</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/benchmark-utils/mt-13.jar</systemPath>
+		</dependency>

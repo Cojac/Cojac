@@ -1,3 +1,6 @@
+---------------- A faire (11.10.24) ------------------------------------
+- commons-math3 is quite old. Consider common-math4 and other related (commons-numbers-parent?)
+- check that recent Java code is handled correctly (maybe new invokedyn sites raise problems)
 ---------------- A faire (26.05.21) ------------------------------------
 - consider removing the very old cojac.perfs benchmarks and the associated
   ugly dependencies (bb.jar, benchmark-utils.jar etc). Maybe port those

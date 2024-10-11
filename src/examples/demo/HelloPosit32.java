@@ -70,7 +70,9 @@ public class HelloPosit32 {
     }
 
     public static void main(String[] args) {
+        System.out.println("convincing demo :) :");
         convincingDemo();
+        System.out.println("not convincing demo :( :");
         lessConvincingDemo();
     }
 }
