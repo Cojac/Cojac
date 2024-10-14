@@ -14,6 +14,11 @@
  *    limitations under the License.
  */
 
+package com.github.cojac.misctests.deltaDebugging;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 /**
  *  Example adapted in Java from simpsons.f90 :
  *  http://crd.lbl.gov/~dhbailey/dhbpapers/numerical-bugs.tar.gz
@@ -25,10 +30,6 @@
  *  David H Bailey    2008-01-09
  *  ----------------------------------------------------------------------------
  */
-package com.github.cojac.misctests.deltaDebugging;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 public class Simpsons {
     public static double pi2;

@@ -66,16 +66,17 @@ public final class Args {
     
     private static final String USAGE =
              "java -javaagent:cojac.jar=\"[OPTIONS]\" YourApp [appArgs]\n"
-           + "(version 1.5.1 - 2019 Nov 7)";
+           + "(version 1.6.0 - 2024 Oct 16)";
     private static final String HEADER =
             "\nNice tools to enrich Java arithmetic capabilities, on-the-fly:"
             +"\n - Numerical Problem Sniffer: detects and signals arithmetic poisons like "
-            +"integer overflows, aborption, catastrophic cancellation, NaN or infinite results."
+            +"integer overflows, absorption, catastrophic cancellation, NaN or infinite results."
             +"\n - New float/double behaviors: double-as-floats, change rounding mode... Some known "
             +"tricks to track possible numerical instabilities."
             +"\n - Enriching Wrapper for float/double: wraps every double/float in richer objects. Current "
             +"models include BigDecimal (you choose the precision!), "
-            +"interval computation, automatic differentiation, symbolic processing, chebfun and more."
+            +"interval computation, automatic differentiation, symbolic processing, chebfun, "
+            +"complex numbers, one kind of Unum/Posit, and more."
             +"\n----------------- OPTIONS -----------------\n";
     private static final String FOOTER =
             "\n------> https://github.com/Cojac/Cojac <------";
@@ -154,13 +155,13 @@ public final class Args {
         }
 
         if (isSpecified(Arg.JMX_ENABLE)) {
-            if (values.get(Arg.JMX_HOST).getValue().equals("")) {
+            if (values.get(Arg.JMX_HOST).getValue().isEmpty()) {
                 values.get(Arg.JMX_HOST).setValue(DEFAULT_JMX_HOST);
             }
-            if (values.get(Arg.JMX_PORT).getValue().equals("")) {
+            if (values.get(Arg.JMX_PORT).getValue().isEmpty()) {
                 values.get(Arg.JMX_PORT).setValue(DEFAULT_JMX_PORT);
             }
-            if (values.get(Arg.JMX_NAME).getValue().equals("")) {
+            if (values.get(Arg.JMX_NAME).getValue().isEmpty()) {
                 values.get(Arg.JMX_NAME).setValue(DEFAULT_JMX_NAME);
             }
         }

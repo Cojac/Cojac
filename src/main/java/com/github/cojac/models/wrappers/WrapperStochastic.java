@@ -88,7 +88,7 @@ public class WrapperStochastic extends ACompactWrapper<WrapperStochastic> {
     }
 
     @Override public String asInternalString() {
-        String res = "" + value + " : [%s]";
+        String res = value + " : [%s]";
         StringBuilder tmp = new StringBuilder();
         for (int i = 0; true; i++) {
             tmp.append(stochasticValue[i]);

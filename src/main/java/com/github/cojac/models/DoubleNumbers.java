@@ -195,12 +195,12 @@ public class DoubleNumbers {
 			return array;
 		} // else...
 		if(COJAC_FLOAT_WRAPPER_CLASS.isInstance(obj)){
-		    Method m = COJAC_FLOAT_WRAPPER_CLASS.getMethod("toRealFloatWrapper", new Class[] {COJAC_FLOAT_WRAPPER_CLASS});
+		    Method m = COJAC_FLOAT_WRAPPER_CLASS.getMethod("toRealFloatWrapper", COJAC_FLOAT_WRAPPER_CLASS);
 		    return m.invoke(COJAC_FLOAT_WRAPPER_CLASS, obj);
 		    // WRAPPER SPEC: FW.toRealDoubleWrapper(FW) -> Float
 		}
 		if(COJAC_DOUBLE_WRAPPER_CLASS.isInstance(obj)){
-		    Method m = COJAC_DOUBLE_WRAPPER_CLASS.getMethod("toRealDoubleWrapper", new Class[] {COJAC_DOUBLE_WRAPPER_CLASS});
+		    Method m = COJAC_DOUBLE_WRAPPER_CLASS.getMethod("toRealDoubleWrapper", COJAC_DOUBLE_WRAPPER_CLASS);
 		    return m.invoke(COJAC_DOUBLE_WRAPPER_CLASS, obj);
 		    // WRAPPER SPEC: DW.toRealDoubleWrapper(DW) -> Double
 		}
@@ -301,7 +301,7 @@ public class DoubleNumbers {
 	
 	private static void mergeFloatArray(float[] original, Object[] cojac) throws Exception{
 		for (int i = 0; i < cojac.length; i++) {
-			Method m = COJAC_FLOAT_WRAPPER_CLASS.getMethod("toFloat", new Class[] {COJAC_FLOAT_WRAPPER_CLASS});
+			Method m = COJAC_FLOAT_WRAPPER_CLASS.getMethod("toFloat", COJAC_FLOAT_WRAPPER_CLASS);
             // WRAPPER SPEC: FW.toFloat(FW) -> float
 			float val = (float) m.invoke(COJAC_FLOAT_WRAPPER_CLASS, cojac[i]);
 			if(original[i] != val){
@@ -333,7 +333,7 @@ public class DoubleNumbers {
 	
 	private static void mergeDoubleArray(double[] original, Object[] cojac) throws Exception{
 		for (int i = 0; i < cojac.length; i++) {
-			Method m = COJAC_DOUBLE_WRAPPER_CLASS.getMethod("toDouble", new Class[] {COJAC_DOUBLE_WRAPPER_CLASS});
+			Method m = COJAC_DOUBLE_WRAPPER_CLASS.getMethod("toDouble", COJAC_DOUBLE_WRAPPER_CLASS);
 			double val = (double) m.invoke(COJAC_DOUBLE_WRAPPER_CLASS, cojac[i]);
             // WRAPPER SPEC: DW.toDouble(DW) -> double
 			if(original[i] != val){

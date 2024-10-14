@@ -51,7 +51,7 @@ public class NativeRoundingTest {
         if(agent != null )
             AgentTest.instrumentation.removeTransformer(agent);
         if(classz != null )
-        AgentTest.instrumentation.retransformClasses(classz);
+            AgentTest.instrumentation.retransformClasses(classz);
     }
     
     @Test
@@ -73,7 +73,7 @@ public class NativeRoundingTest {
      * checks one by one that expectedResult[i] equals method[i]() call, when instrumented with Arg a.
      */
     private void test(Arg a, double[] expectedResults) throws Exception{
-        Assert.assertTrue(methods.length == expectedResults.length);
+      Assert.assertEquals(methods.length, expectedResults.length);
         setRounding(a);
         Assume.assumeTrue(isLibraryLoaded);//if not, test will be skipped
         for (int i = 0; i < expectedResults.length; i++) {

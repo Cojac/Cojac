@@ -27,8 +27,8 @@ import java.lang.Math;
 public class DeltaDebugger {
     private static final boolean TRACE=true;
     
-	private Editor		be;
-	private Executor	eu;
+	private final Editor		be;
+	private final Executor	eu;
 
 	public DeltaDebugger(Editor be, Executor eu) {
 		this.be = be;

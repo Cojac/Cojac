@@ -32,33 +32,33 @@ public class FloatProxy {
 		org.junit.Assert.assertEquals(expected, (Object)observed);
 	}
 
-    public static void staticFieldDoubleAccess() throws Exception {
+    public static void staticFieldDoubleAccess() {
 		FloatProxyNotInstrumented.staticDouble = 25.5;
 		double r = FloatProxyNotInstrumented.staticDouble;
 		myAssertEquals(25.5, r);
     }
 	
-	public static void staticFieldFloatAccess() throws Exception {
+	public static void staticFieldFloatAccess() {
 		FloatProxyNotInstrumented.staticFloat = 64.6f;
 		float r = FloatProxyNotInstrumented.staticFloat;
 		myAssertEquals(64.6f, r);
     }
 	
-	public static void instanceFieldDoubleAccess() throws Exception{
+	public static void instanceFieldDoubleAccess() {
 		FloatProxyNotInstrumented fpni = new FloatProxyNotInstrumented();
 		myAssertEquals(0.0, fpni.doubleField);
 		fpni.doubleField = 25.8;
 		myAssertEquals(25.8, fpni.doubleField);
 	}
 	
-	public static void instanceFieldFloatAccess() throws Exception{
+	public static void instanceFieldFloatAccess() {
 		FloatProxyNotInstrumented fpni = new FloatProxyNotInstrumented();
 		myAssertEquals(0.0f, fpni.floatField);
 		fpni.floatField = 25.8f;
 		myAssertEquals(25.8f, fpni.floatField);
 	}
 	
-	public static void objectConstructor() throws Exception{
+	public static void objectConstructor() {
 		double d1 = 5.4;
 		long l1 = 512;
 		float f1 = 432.2f;
@@ -70,7 +70,7 @@ public class FloatProxy {
 		myAssertEquals(d2, fpni.d2);
 	}
 	
-	public static void instanceMethod() throws Exception{
+	public static void instanceMethod() {
 		FloatProxyNotInstrumented fpni = new FloatProxyNotInstrumented();
 		short s1 = 5;
 		long l1 = 5423;
@@ -86,7 +86,7 @@ public class FloatProxy {
 		myAssertEquals(d2, fpni.d2);
 	}
 	
-	public static void staticMethod() throws Exception{
+	public static void staticMethod() {
 		short s1 = 5;
 		long l1 = 5423;
 		double d1 = 54.5;
@@ -101,7 +101,7 @@ public class FloatProxy {
 		myAssertEquals(d2, FloatProxyNotInstrumented.static_d2);
 	}
 	
-	public static void oneDimArrayPassingByMethod() throws Exception{
+	public static void oneDimArrayPassingByMethod() {
 		float[] array = new float[] {12.413f, 6.5f, 8.12f, 654.5f};
 		FloatProxyNotInstrumented fpni = new FloatProxyNotInstrumented();
 		float[] r = fpni.oneDimArrayPassing(array);
@@ -112,7 +112,7 @@ public class FloatProxy {
 		Assert.assertTrue(Arrays.equals(dr, darray));
 	}
 	
-	public static void multiDimArrayPassingByMethod() throws Exception{
+	public static void multiDimArrayPassingByMethod() {
 		float[][] array = new float[][] {{12.413f, 6.5f}, {54.212f, 53.123f}};
 		FloatProxyNotInstrumented fpni = new FloatProxyNotInstrumented();
 		float[][] r = fpni.multiDimArrayPassing(array);
@@ -123,30 +123,30 @@ public class FloatProxy {
 		Assert.assertTrue(Arrays.deepEquals(dr, darray));
 	}
 	
-	public static void oneDimArrayField() throws Exception{
+	public static void oneDimArrayField() {
 		throw new UnsupportedOperationException("Not implemented yet.");
 	}
 	
-	public static void multiDimArrayField() throws Exception{
+	public static void multiDimArrayField() {
 		throw new UnsupportedOperationException("Not implemented yet.");
 	}
 	
-	public static void castedNumberPassingByMethod() throws Exception{
+	public static void castedNumberPassingByMethod() {
 		throw new UnsupportedOperationException("Not implemented yet.");
 	}
 	
-	public static void castedNumberReturningByMethod() throws Exception{
+	public static void castedNumberReturningByMethod() {
 		throw new UnsupportedOperationException("Not implemented yet.");
 	}
 	
-	public static void castedObjectPassingByMethod() throws Exception{
+	public static void castedObjectPassingByMethod() {
 		Float f1 = 5243.132f;
 		FloatProxyNotInstrumented fpni = new FloatProxyNotInstrumented();
 		@SuppressWarnings("unused")
         Float f2 = (Float) fpni.castedObjectPassing(f1);
 	}
 	
-	public static void castedObjectReturningByMethod() throws Exception{
+	public static void castedObjectReturningByMethod() {
 		throw new UnsupportedOperationException("Not implemented yet.");
 	}
 	
@@ -165,14 +165,14 @@ public class FloatProxy {
 		Assert.assertTrue(ca2.length == 3);
 	}
 	
-	public static void multiDimeArrayCastedObjectPassingByMethod() throws Exception{
+	public static void multiDimeArrayCastedObjectPassingByMethod() {
 		float[][] array = new float[][] {{4321.1f, 453.2f, 6.31f}, {432.2f, 12.1f}};
 		FloatProxyNotInstrumented fpni = new FloatProxyNotInstrumented();
 		float[][] a2 = (float[][]) fpni.multiDimeArrayCastedObject(array);
 		Assert.assertTrue(a2.length == 2 && a2[0].length == 3 && a2[1].length == 2);
 	}
 	
-	public static void arrayModifiedInMethodWithReference() throws Exception{
+	public static void arrayModifiedInMethodWithReference() {
 		float[] a = new float[] {7.8f, 2.3f, 5.89f};
 		float[] a_sorted = new float[] {2.3f, 5.89f, 7.8f};
 		Arrays.sort(a);
@@ -180,7 +180,7 @@ public class FloatProxy {
 	}
 	
 	// This test is not executed (known bug, see the test call in FloatProxyLauncherTest)
-	public static void arrayPassedInNotInstrumentedSideModifiedWithAnOtherMethod() throws Exception{
+	public static void arrayPassedInNotInstrumentedSideModifiedWithAnOtherMethod() {
 		float[] a = new float[] {7.8f, 2.3f, 5.89f};
 		FloatProxyNotInstrumented fpni = new FloatProxyNotInstrumented();
 		fpni.arrayPassing(a);
@@ -189,7 +189,7 @@ public class FloatProxy {
 	}
 	
 	// This test is not executed (known bug, see the test call in FloatProxyLauncherTest)
-	public static void arraySortedWithUserDefinedComparator() throws Exception{
+	public static void arraySortedWithUserDefinedComparator() {
 		ArrayList<Float> a = new ArrayList<>();
 		a.add(5.8f);
 		a.add(7.8f);

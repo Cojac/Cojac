@@ -29,7 +29,7 @@ import java.util.TreeMap;
 public class SymbolicDemo {
 
     private static final double epsilon = 1e-15;
-    private static Map<String, Method> methods;
+    private static final Map<String, Method> methods;
 
     static {
         methods = new TreeMap<>();

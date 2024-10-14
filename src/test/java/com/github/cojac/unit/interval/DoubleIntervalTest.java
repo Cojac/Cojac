@@ -37,13 +37,13 @@ import static org.junit.Assert.assertTrue;
  */
 public class DoubleIntervalTest
 {
-    private int nbrLoopExecution = 500;
+    private final int nbrLoopExecution = 500;
     private final double MAX_SUP = 20.0;
     private final Random rnd = new Random();
     private final double step = 0.1; // increment between two tested values for trigonometric operations
 
     @Test
-    public void testIsIn() throws Exception {
+    public void testIsIn() {
         double v1 = rndDouble();
         double v2 = getBiggerRndDouble(v1);
         DoubleInterval a = new DoubleInterval(v1,v2);
@@ -80,7 +80,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testCompareTo() throws Exception {
+    public void testCompareTo() {
         // Simple compare with non inclusive interval
         double v1 = rndDouble();
         double v2 = getBiggerRndDouble(v1);
@@ -127,7 +127,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testStrictCompareTo() throws Exception {
+    public void testStrictCompareTo() {
         DoubleInterval a = new DoubleInterval(0.0);
         DoubleInterval b = new DoubleInterval(0.0,0.0);
         assertTrue(String.format("Test a == b : %s == %s",a,b),a.strictlyEquals(b));
@@ -147,7 +147,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testCompareToDouble() throws Exception {
+    public void testCompareToDouble() {
         // Simple compare with a double...
         double v1 = rndDouble();
         double v2 = getBiggerRndDouble(v1);
@@ -311,7 +311,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testPow2() throws Exception {
+    public void testPow2() {
         DoubleInterval a = new DoubleInterval(2.0,3.0);
         DoubleInterval b = new DoubleInterval(-2.0,5.0);
         DoubleInterval c = new DoubleInterval(-10.0,-6.0);
@@ -341,7 +341,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testPow() throws Exception {
+    public void testPow() {
         // Simple pow usage
         DoubleInterval a = new DoubleInterval(4.0,5.0);
         DoubleInterval b = new DoubleInterval(0.0,9.0);
@@ -363,7 +363,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testPowWithInterval() throws Exception {
+    public void testPowWithInterval() {
         // Simple pow usage
         DoubleInterval a = new DoubleInterval(0.0,5.0);
         DoubleInterval b = new DoubleInterval(3.0,7.0);
@@ -379,7 +379,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testExp() throws Exception {
+    public void testExp() {
         DoubleInterval a = new DoubleInterval(0.0,4.5);
         DoubleInterval b = new DoubleInterval(-4.5,9.0);
 
@@ -394,7 +394,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testLog() throws Exception {
+    public void testLog() {
         DoubleInterval a = new DoubleInterval(4.0,9.0);
         DoubleInterval b = new DoubleInterval(0.00004,0.00005);
 
@@ -409,7 +409,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testLog10() throws Exception {
+    public void testLog10() {
         DoubleInterval a = new DoubleInterval(2.0,10.0);
         DoubleInterval b = new DoubleInterval(0.00004,0.00005);
 
@@ -424,7 +424,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testSin() throws Exception {
+    public void testSin() {
         double v1,v2,min = 10.0,max = -10.0;
         double itr,itrSin;
         DoubleInterval a,aRes;
@@ -456,7 +456,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testCos() throws Exception {
+    public void testCos() {
         double v1,v2,min = 20.0,max = -20.0;
         double itr,itrCos;
         DoubleInterval a,aRes;
@@ -488,7 +488,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testTan() throws Exception {
+    public void testTan() {
         double v1,v2,min = 20.0,max = -20.0;
         double itr,itrTan;
         DoubleInterval a,aRes;
@@ -520,7 +520,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testWidth() throws Exception {
+    public void testWidth() {
         DoubleInterval a;
         double v1,v2;
         for (int i = 0; i < nbrLoopExecution; i++) {
@@ -556,7 +556,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testAbs() throws Exception  {
+    public void testAbs() {
         DoubleInterval a = new DoubleInterval(3.0,4.0);
         DoubleInterval b = new DoubleInterval(-2.0,5.0);
         DoubleInterval c = new DoubleInterval(-7.0,-5.0);
@@ -571,7 +571,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testNeg() throws Exception {
+    public void testNeg() {
         DoubleInterval a = new DoubleInterval(3.0,4.0);
         DoubleInterval b = new DoubleInterval(-2.0,5.0);
         DoubleInterval c = new DoubleInterval(-7.0,-5.0);
@@ -667,7 +667,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testModulo() throws Exception {
+    public void testModulo() {
         DoubleInterval a = new DoubleInterval(4.0,5.0);
         DoubleInterval b = new DoubleInterval(-3.0,5.0);
         DoubleInterval c = new DoubleInterval(-6.0,-2.0);
@@ -691,7 +691,7 @@ public class DoubleIntervalTest
     }
 
     @Test
-    public void testSpecialCasesToBeDiscussed() throws Exception {
+    public void testSpecialCasesToBeDiscussed() {
         DoubleInterval a = new DoubleInterval(-Double.MAX_VALUE,Double.MAX_VALUE);
         DoubleInterval b = new DoubleInterval(0.0);
         DoubleInterval aPlusZero=DoubleInterval.add(a,b);
@@ -706,7 +706,7 @@ public class DoubleIntervalTest
                    zeroMinusZero.sup==0);
     }
 
-    private void testIntervalBounds(DoubleInterval a) throws Exception {
+    private void testIntervalBounds(DoubleInterval a) {
         assertTrue(String.format("DoubleInterval %s is degenerated",a),a.hasValidBounds());
     }
 }

@@ -32,8 +32,8 @@ public enum ExecutionUtils implements Executor {
 	private static final String		JAVA_DEFAULT				= "java";
 	private static final String		AGENT_OPTION				= "-javaagent:";
 	// BAPST: strange, I had to surround with ' instead of " on Windows... Why??
-	private static final String		COJAC_START_OPTION			= "=\'"; //  = "=\"";
-	private static final String		COJAC_END_OPTION			= " \'";
+	private static final String		COJAC_START_OPTION			= "='"; //  = "=\"";
+	private static final String		COJAC_END_OPTION			= " '";
 	// BAPST: strange, the initial space is mandatory on Windows... Wyy??
 	private static final String		COJAC_OPTION_BEHAVIOUR		= " -Bdaf -Bddread ";
 	private static final String		COJAC_OPTION_LISTING		= " -Bdaf -Bddwrite ";
@@ -171,7 +171,7 @@ public enum ExecutionUtils implements Executor {
 	 * Print the standard OutpoutStrem of the program.
 	 * 
 	 * @param p Process corresponding to java program.
-	 * @throws IOException
+	 * @throws IOException sometimes
 	 */
 	private void printStream(Process p) throws IOException {
 	    try(InputStream in = p.getInputStream();

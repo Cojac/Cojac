@@ -13,8 +13,8 @@ public class HelloPosit32 {
     // From [BeatingFloatingPoint] p. 14 (§4.5.1)
     static float f2() {
         float exp = 67 / 16f;
-        float num = (float) (27 / 10f - (float) Math.E);
-        float den = (float) ((float) Math.PI - ((float) Math.sqrt(2) + (float) Math.sqrt(3)));
+        float num = 27 / 10f - (float) Math.E;
+        float den = (float) Math.PI - ((float) Math.sqrt(2) + (float) Math.sqrt(3));
         return (float) Math.pow(num / den, exp);
         // correct: 302:8827196   (from paper)
         // float32: 302.9124      (from paper)

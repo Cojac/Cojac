@@ -87,8 +87,7 @@ public final class InvokableMethod {
             if(type.equals(newType))
                 return type;
             StringBuilder desc = new StringBuilder();
-            for(int i=0 ; i <type.getDimensions() ; i++)
-                desc.append("[");
+            desc.append("[".repeat(Math.max(0, type.getDimensions())));
             desc.append(newType.getDescriptor());
             return Type.getType(desc.toString());
         }

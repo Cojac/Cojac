@@ -70,7 +70,7 @@ public class FloatProxyMethod {
 			opcode = INVOKEVIRTUAL;
 		}
         ConversionContext cc=new ConversionContext(opcode, owner, name, desc);
-		Type args[] = Type.getArgumentTypes(newDesc);
+		Type[] args = Type.getArgumentTypes(newDesc);
 		for (Type type : args) {
 			newMv.visitVarInsn(getLoadOpcode(type), varIndex);
 			varIndex += type.getSize();
@@ -106,7 +106,7 @@ public class FloatProxyMethod {
         // stack >> [target] allParamsArr [newTarget] allParamsArr
         explodeOnStack(mv, cc, true); 
         // stack >> [target] allParamsArr [newTarget] nprm0 nprm1 nprm2...
-        mv.visitMethodInsn(cc.opcode, cc.owner, cc.name, cc.jDesc, (cc.opcode == INVOKEINTERFACE));
+        mv.visitMethodInsn(cc.opcode, cc.owner, cc.name, cc.jDesc, false);
         // stack >> [target] allParamsArr [possibleResult]
         checkArraysAfterCall(mv, cc.convertedArrays, cc.jDesc);
         // stack >> [target] [possibleResult]

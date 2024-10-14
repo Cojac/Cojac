@@ -163,9 +163,7 @@ public final class FloatReplaceClassVisitor extends CojacClassVisitor {
 
     static String arrayDescriptor(int dimensions, String eltType) {
         StringBuilder desc = new StringBuilder();
-        for(int i=0 ; i <dimensions ; i++) {
-            desc.append("[");
-        }
+        desc.append("[".repeat(Math.max(0, dimensions)));
         desc.append(eltType);
         return desc.toString();
     }

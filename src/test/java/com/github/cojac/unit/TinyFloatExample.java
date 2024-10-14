@@ -259,7 +259,7 @@ public class TinyFloatExample {
         Double dwres = testDoubleWrapper(dw1, dw2);
         
         testMathLib();
-		testList();
+        testList();
         
         //System.out.println("inside TinyFloatExample.go() "+res);
         //System.out.println("inside TinyFloatExample.go() "+(int)(TFEAux.myStaticFloat));

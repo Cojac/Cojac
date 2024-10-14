@@ -43,7 +43,7 @@ import com.github.cojac.utils.InstructionWriter;
  */
 final class BehaviourMethodVisitor extends LocalVariablesSorter {
     private final IOpcodeInstrumenterFactory factory;
-    private static BitSet constLoadInst = new BitSet(255);// there are 255
+    private static final BitSet constLoadInst = new BitSet(255);// there are 255
                                                           // possible opcodes
     static {
         for (Operations op : Operations.values()) {
@@ -56,14 +56,14 @@ final class BehaviourMethodVisitor extends LocalVariablesSorter {
     private final Args args;
     private final String classPath;
     private final CojacReferences references;
-    private boolean instrumentMethod;
+    private final boolean instrumentMethod;
     private int lineNb = 0;
     private int insnNb = 0;
-    private String methodName;
-    private String desc;
+    private final String methodName;
+    private final String desc;
 
-    private BehaviourClassVisitor bcv;
-    private BehaviourInstrumenter instrumenter;
+    private final BehaviourClassVisitor bcv;
+    private final BehaviourInstrumenter instrumenter;
 
     public BehaviourMethodVisitor(int access, String desc, MethodVisitor mv, InstrumentationStats stats, Args args, String classPath, IOpcodeInstrumenterFactory factory, CojacReferences references, String methodName, BehaviourClassVisitor behaviourClassVisitor) {
         super(ASM_VERSION, access, desc, mv);

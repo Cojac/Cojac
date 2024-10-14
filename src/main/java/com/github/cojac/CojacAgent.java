@@ -38,10 +38,10 @@ public final class CojacAgent {
             args.printHelpAndExit();
         }
         Class<?>[] loadedClasses = inst.getAllLoadedClasses();
-		String[] strLoadedClasses = new String[loadedClasses.length];
-		for (int i = 0; i < strLoadedClasses.length; i++)
-			strLoadedClasses[i] = Type.getType(loadedClasses[i]).getInternalName();
- 
+        String[] strLoadedClasses = new String[loadedClasses.length];
+        for (int i = 0; i < strLoadedClasses.length; i++)
+            strLoadedClasses[i] = Type.getType(loadedClasses[i]).getInternalName();
+
         CojacReferencesBuilder builder = new CojacReferencesBuilder(args, strLoadedClasses);
         
         Agent agent = new Agent(builder.build());

@@ -65,7 +65,7 @@ public enum Opt {
 	MODE("mode");
 
 	/** Contains all options that will be parse. */
-	private static Options	opts;
+	private static final Options	opts;
 	/** Option name. */
 	private final String	name;
 	/** Option value. */

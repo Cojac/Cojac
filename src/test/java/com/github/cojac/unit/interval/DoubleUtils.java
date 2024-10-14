@@ -27,14 +27,14 @@ import static java.lang.Double.*;
  */
 public class DoubleUtils
 {
-    private static Random r = new Random();
+    private static final Random rnd = new Random();
 
     /**
      * @return a random positive double that's part of the interval [0.0;Double.MAX_VALUE]
      */
     public static double rndDouble()
     {
-        return r.nextDouble() * MAX_VALUE;
+        return rnd.nextDouble() * MAX_VALUE;
     }
 
     /**
@@ -51,7 +51,7 @@ public class DoubleUtils
         assert(value < MAX_VALUE);
         if(value >= 0.0 && value < MAX_VALUE)
         {
-            return  value + r.nextDouble() * (MAX_VALUE - value);
+            return  value + rnd.nextDouble() * (MAX_VALUE - value);
         }
         return NaN;
     }
@@ -70,7 +70,7 @@ public class DoubleUtils
         assert(value < MAX_VALUE);
         if(value >= 0.0 && value < MAX_VALUE)
         {
-            return r.nextDouble() * value;
+            return rnd.nextDouble() * value;
         }
         return NaN;
     }

@@ -36,7 +36,7 @@ import com.github.cojac.deltadebugging.utils.*;
  * 
  * You have a computation code using "double" and giving accurate results.
  * You want to know if parts of the computation could be performed in "float"
- * without loosing to much accuracy.
+ * without losing too much accuracy.
  * 
  * 1) Prepare a "judge", a program that tests on some data that the computation 
  *    is accurate enough (exit code=0) or not (exit code != 0). 

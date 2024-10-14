@@ -44,8 +44,8 @@ public class Double2FloatTest {
     @Before
     public void instrument() throws ClassNotFoundException, UnmodifiableClassException,
             InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-        
-        Assert.assertTrue(methods.length == expectedResults.length);
+
+      Assert.assertEquals(methods.length, expectedResults.length);
         Args args = new Args();
 
         args.specify(Arg.DOUBLE2FLOAT);

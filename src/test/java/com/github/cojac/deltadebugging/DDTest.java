@@ -196,7 +196,7 @@ public class DDTest {
 		BitSet resultSet = deltaDebugger.launchDeltaDebugging();
 		// check the results
 		trueExpectedSet.xor(resultSet);
-		assertTrue(trueExpectedSet.cardinality() == 0);
+    assertEquals(0, trueExpectedSet.cardinality());
 	}
 
 	private void executeTestWithSpecialNoExpected(int setSize, List<BitSet> expectedSets, BitSet noExpectedSet) {
@@ -216,7 +216,7 @@ public class DDTest {
 		}
 		assertTrue(result);
 		noExpectedSet.xor(resultSet);
-		assertFalse(noExpectedSet.cardinality() == 0);
+    assertNotEquals(0, noExpectedSet.cardinality());
 	}
 
 	//	@Test(expected = IllegalArgumentException.class)

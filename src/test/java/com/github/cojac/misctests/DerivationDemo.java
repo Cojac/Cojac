@@ -30,7 +30,7 @@ import java.util.TreeMap;
 public class DerivationDemo{
     private static int nbrTestPassed = 0;
     private static final double epsilon = 0.1;
-    private static Map<String, Method> methods;
+    private static final Map<String, Method> methods;
 
     static{
         methods = new TreeMap<>();

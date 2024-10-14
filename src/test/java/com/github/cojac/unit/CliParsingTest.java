@@ -23,6 +23,7 @@ import org.junit.Test;
 import com.github.cojac.Arg;
 import com.github.cojac.Args;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 
@@ -46,8 +47,8 @@ public class CliParsingTest {
 		Args a = new Args();
 		boolean b = a.parse(args);
 		assertTrue(b);
-		assertTrue(a.getValue(Arg.JMX_HOST).equals("127.0.0.1"));
-		assertTrue(a.getValue(Arg.JMX_PORT).equals("1234"));
-		assertTrue(a.getValue(Arg.JMX_NAME).equals("COJACTEST"));
+    assertEquals("127.0.0.1", a.getValue(Arg.JMX_HOST));
+    assertEquals("1234", a.getValue(Arg.JMX_PORT));
+    assertEquals("COJACTEST", a.getValue(Arg.JMX_NAME));
 	}
 }

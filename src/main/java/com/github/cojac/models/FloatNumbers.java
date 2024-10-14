@@ -63,7 +63,7 @@ public class FloatNumbers {
     private static Float[] jWrapperFromCojac1D(Object[] array) throws Exception{
         Float[] a = new Float[array.length];
         for (int i = 0; i < a.length; i++){
-            Method m = COJAC_FLOAT_WRAPPER_CLASS.getMethod("toRealFloatWrapper", new Class[] {COJAC_FLOAT_WRAPPER_CLASS});
+            Method m = COJAC_FLOAT_WRAPPER_CLASS.getMethod("toRealFloatWrapper", COJAC_FLOAT_WRAPPER_CLASS);
             a[i] = (Float)m.invoke(COJAC_FLOAT_WRAPPER_CLASS, array[i]);
         }
         // WRAPPER SPEC: FW.toFloat(FW) -> float
@@ -73,7 +73,7 @@ public class FloatNumbers {
     private static float[] primitiveFromCojac1D(Object[] array) throws Exception{
         float[] a = new float[array.length];
         for (int i = 0; i < a.length; i++){
-			Method m = COJAC_FLOAT_WRAPPER_CLASS.getMethod("toFloat", new Class[] {COJAC_FLOAT_WRAPPER_CLASS});
+			Method m = COJAC_FLOAT_WRAPPER_CLASS.getMethod("toFloat", COJAC_FLOAT_WRAPPER_CLASS);
 			a[i] = (float)m.invoke(COJAC_FLOAT_WRAPPER_CLASS, array[i]);
 		}
         // WRAPPER SPEC: FW.toFloat(FW) -> float

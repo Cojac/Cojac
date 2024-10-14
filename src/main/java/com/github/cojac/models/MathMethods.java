@@ -53,10 +53,9 @@ public class MathMethods {
         StringBuilder signature = new StringBuilder();
         
         signature.append("(");
-        for (Type c: m.getParameterTypes()) {
-            if (! (c instanceof Class)) continue;
-            Class<?> cz = (Class<?>) c;
-            signature.append(types.get(cz));
+        for (Class<?> c: m.getParameterTypes()) {
+            if (c == null) continue;
+          signature.append(types.get(c));
         }
         signature.append(")");
         signature.append(types.get(m.getReturnType()));

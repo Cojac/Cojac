@@ -5,7 +5,7 @@ import java.util.BitSet;
 public class SimulatedEditor implements Editor {
 
 	private BitSet	crtInstructionSet;
-	private int		nbrOfInstructions;
+	private final int		nbrOfInstructions;
 
 	public SimulatedEditor(int nbrOfInstructions) {
 		this.nbrOfInstructions = nbrOfInstructions;

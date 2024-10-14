@@ -26,11 +26,10 @@ import static org.junit.Assert.assertTrue;
 
 public class DoubleUtilsTest
 {
-    private int repeat_times = 1000;
+    private final int repeat_times = 1000;
 
     @Test
-    public void testRndDouble() throws Exception
-    {
+    public void testRndDouble() {
         for (int counter = 0; counter< repeat_times; counter++)
         {
             double a = rndDouble();
@@ -40,8 +39,7 @@ public class DoubleUtilsTest
     }
 
     @Test
-    public void testGetBiggerRndDouble() throws Exception
-    {
+    public void testGetBiggerRndDouble() {
         for (int counter = 0; counter < repeat_times; counter++)
         {
             double a = rndDouble();
@@ -65,8 +63,7 @@ public class DoubleUtilsTest
     }
 
     @Test
-    public void testGetSmallerRndDouble() throws Exception
-    {
+    public void testGetSmallerRndDouble() {
         for (int counter = 0; counter < repeat_times; counter++)
         {
             double a = rndDouble();
@@ -90,8 +87,7 @@ public class DoubleUtilsTest
     }
 
     @Test
-    public void testGetBiggerNegativeRndDouble() throws Exception
-    {
+    public void testGetBiggerNegativeRndDouble() {
         for (int counter = 0; counter < repeat_times; counter++)
         {
             double a = rndDouble();
@@ -124,8 +120,7 @@ public class DoubleUtilsTest
     }
 
     @Test
-    public void testGetSmallerNegativeRndDouble() throws Exception
-    {
+    public void testGetSmallerNegativeRndDouble() {
         for (int counter = 0; counter < repeat_times; counter++)
         {
             double a = rndDouble();

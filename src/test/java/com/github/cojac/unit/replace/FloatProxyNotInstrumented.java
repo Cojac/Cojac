@@ -18,6 +18,8 @@
 
 package com.github.cojac.unit.replace;
 
+import java.util.Arrays;
+
 public class FloatProxyNotInstrumented {
 	
 	public static double staticDouble = 53.75;
@@ -122,9 +124,7 @@ public class FloatProxyNotInstrumented {
 	}
 	
 	public void resetPassedArray(){
-		for (int i = 0; i < farray.length; i++) {
-			farray[i] = 0;
-		}
+    Arrays.fill(farray, 0);
 	}
 	
 }

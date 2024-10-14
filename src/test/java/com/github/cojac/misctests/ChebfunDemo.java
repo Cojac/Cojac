@@ -28,7 +28,7 @@ import java.util.TreeMap;
 public class ChebfunDemo {
 
     private static final double epsilon = 1e-6;
-    private static Map<String, Method> methods;
+    private static final Map<String, Method> methods;
 
     static {
         methods = new TreeMap<>();

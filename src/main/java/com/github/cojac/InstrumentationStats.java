@@ -92,7 +92,7 @@ public final class InstrumentationStats extends NotificationBroadcasterSupport i
         sendNotification(notification);
     }
 
-    protected void addBlackList(String annotated) {
+    void addBlackList(String annotated) {
         synchronized (BLACKLIST_LOCK) {
             blacklist.add(annotated);
         }

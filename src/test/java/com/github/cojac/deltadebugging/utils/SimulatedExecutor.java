@@ -18,8 +18,8 @@ public class SimulatedExecutor implements Executor {
 	//	public boolean executeWithCOJACBehaviours() {
 	//		return plannedResponses.get(crtResponseIndex++);
 	//	}
-	private SimulatedEditor	editor;
-	private List<BitSet>	expectedSets;
+	private final SimulatedEditor	editor;
+	private final List<BitSet>	expectedSets;
 
 	public SimulatedExecutor(SimulatedEditor editor, BitSet expectedSet) {
 		this.editor = editor;

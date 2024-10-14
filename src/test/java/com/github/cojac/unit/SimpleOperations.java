@@ -25,147 +25,147 @@ public class SimpleOperations implements MathOperations {
     }
 
     @Override
-    public int isub(int a, int b) throws Exception {
+    public int isub(int a, int b) {
         return a - b;
     }
 
     @Override
-    public int imul(int a, int b) throws Exception {
+    public int imul(int a, int b) {
         return a * b;
     }
 
     @Override
-    public int idiv(int a, int b) throws Exception {
+    public int idiv(int a, int b) {
         return a / b;
     }
 
     @Override
-    public int iinc(int a, int b) throws Exception {
+    public int iinc(int a, int b) {
         return a + b;
     }
 
     @Override
-    public int ineg(int a) throws Exception {
+    public int ineg(int a) {
         return -a;
     }
 
     @Override
-    public long ladd(long a, long b) throws Exception {
+    public long ladd(long a, long b) {
         return a + b;
     }
 
     @Override
-    public long lsub(long a, long b) throws Exception {
+    public long lsub(long a, long b) {
         return a - b;
     }
 
     @Override
-    public long lmul(long a, long b) throws Exception {
+    public long lmul(long a, long b) {
         return a * b;
     }
 
     @Override
-    public long ldiv(long a, long b) throws Exception {
+    public long ldiv(long a, long b) {
         return a / b;
     }
 
     @Override
-    public long lneg(long a) throws Exception {
+    public long lneg(long a) {
         return -a;
     }
 
     @Override
-    public double dadd(double a, double b) throws Exception {
+    public double dadd(double a, double b) {
         return a + b;
     }
 
     @Override
-    public double dsub(double a, double b) throws Exception {
+    public double dsub(double a, double b) {
         return a - b;
     }
 
     @Override
-    public double dmul(double a, double b) throws Exception {
+    public double dmul(double a, double b) {
         return a * b;
     }
 
     @Override
-    public double ddiv(double a, double b) throws Exception {
+    public double ddiv(double a, double b) {
         return a / b;
     }
 
     @Override
-    public float fadd(float a, float b) throws Exception {
+    public float fadd(float a, float b) {
         return a + b;
     }
 
     @Override
-    public float fsub(float a, float b) throws Exception {
+    public float fsub(float a, float b) {
         return a - b;
     }
 
     @Override
-    public float fmul(float a, float b) throws Exception {
+    public float fmul(float a, float b) {
         return a * b;
     }
 
     @Override
-    public float fdiv(float a, float b) throws Exception {
+    public float fdiv(float a, float b) {
         return a / b;
     }
 
     @Override
-    public int l2i(long a) throws Exception {
+    public int l2i(long a) {
         return (int) a;
     }
 
     @Override
-    public short i2s(int a) throws Exception {
+    public short i2s(int a) {
         return (short) a;
     }
 
     @Override
-    public byte i2b(int a) throws Exception {
+    public byte i2b(int a) {
         return (byte) a;
     }
 
     @Override
-    public char i2c(int a) throws Exception {
+    public char i2c(int a) {
         return (char) a;
     }
 
     @Override
-    public int d2i(double a) throws Exception {
+    public int d2i(double a) {
         return (int) a;
     }
 
     @Override
-    public long d2l(double a) throws Exception {
+    public long d2l(double a) {
         return (long) a;
     }
 
     @Override
-    public int f2i(float a) throws Exception {
+    public int f2i(float a) {
         return (int) a;
     }
 
     @Override
-    public long f2l(float a) throws Exception {
+    public long f2l(float a) {
         return (long) a;
     }
 
     @Override
-    public float d2f(double a) throws Exception {
+    public float d2f(double a) {
         return (float) a;
     }
 
     @Override
-    public float i2f(int a) throws Exception {
+    public float i2f(int a) {
         return (float) a;
     }
 
     @Override
-    public double l2d(long a) throws Exception {
+    public double l2d(long a) {
         return (double) a;
     }
 
@@ -190,37 +190,37 @@ public class SimpleOperations implements MathOperations {
     }
 
     @Override
-    public double drem(double a, double b) throws Exception {
+    public double drem(double a, double b) {
         return a % b;
     }
 
     @Override
-    public int dcmpg(double a, double b) throws Exception {
+    public int dcmpg(double a, double b) {
         if (Double.isNaN(a) || Double.isNaN(b)) return +1;
         // do not replace by: Double.compare(a, b);
         return a == b ? 0 : a < b ? -1 : 1;
     }
 
     @Override
-    public int dcmpl(double a, double b) throws Exception {
+    public int dcmpl(double a, double b) {
         if (Double.isNaN(a) || Double.isNaN(b)) return -1;
         // do not replace by: Double.compare(a, b);
         return a == b ? 0 : a < b ? -1 : 1;
     }
 
     @Override
-    public float frem(float a, float b) throws Exception {
+    public float frem(float a, float b) {
         return a % b;
     }
 
     @Override
-    public int fcmpg(float a, float b) throws Exception {
+    public int fcmpg(float a, float b) {
         if (Float.isNaN(a) || Float.isNaN(b)) return +1;
         return a == b ? 0 : a < b ? -1 : 1;
     }
 
     @Override
-    public int fcmpl(float a, float b) throws Exception {
+    public int fcmpl(float a, float b) {
         if (Float.isNaN(a) || Float.isNaN(b)) return -1;
         return a == b ? 0 : a < b ? -1 : 1;
     }

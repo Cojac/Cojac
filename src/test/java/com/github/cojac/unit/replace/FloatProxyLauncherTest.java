@@ -194,7 +194,7 @@ public class FloatProxyLauncherTest {
 	
 	private void invokeMethod(String methodName) throws Exception{
 		if (floatProxyTest==null) return;
-        Method m = floatProxyTest.getMethod(methodName);
-        m.invoke(null);
+		Method m = floatProxyTest.getMethod(methodName);
+		m.invoke(null);
 	}
 }

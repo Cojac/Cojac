@@ -459,7 +459,7 @@ public final class CojacReferences {
             bypassList = splitter.split(sbBypassList.toString());
 
             if (args.isSpecified(Arg.RUNTIME_STATS)) {
-                Runtime.getRuntime().addShutdownHook(new Thread(() -> InstrumentationStats.printRuntimeStats(args, ReflectionUtils.<Map<String, Long>> getStaticFieldValue(loader, "com.github.cojac.models.Reactions", "EVENTS"))));
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> InstrumentationStats.printRuntimeStats(args, ReflectionUtils.getStaticFieldValue(loader, "com.github.cojac.models.Reactions", "EVENTS"))));
             }
             if(args.isSpecified(Arg.INSTRUMENT_SELECTIVELY)){
                 System.out.println("CojacReferences.CojacReferencesBuilder.build() : " + args.getValue(Arg.INSTRUMENT_SELECTIVELY));
@@ -693,7 +693,7 @@ public final class CojacReferences {
             return true;
         }
     }
-    
+
     public static class ClassPartiallyInstrumented implements PartiallyInstrumentable{
         private String name;
         private HashSet<String> methods = new HashSet<>();
@@ -702,40 +702,40 @@ public final class CojacReferences {
         public ClassPartiallyInstrumented(String className,String methodsOrLines,String instructions) {
             this.name = className;
             String[] methodOrLine = methodsOrLines.split(OPT_IN_METHOD_SEPARATOR);
-            if(!methodsOrLines.equals(""))
-            for(String s: methodOrLine){
-                if(Character.isDigit(s.charAt(0))){/*Check for lineNb or line range*/
+            if(!methodsOrLines.isEmpty())
+                for(String s: methodOrLine){
+                    if(Character.isDigit(s.charAt(0))){/*Check for lineNb or line range*/
+                        String[] lineNb = s.split(OPT_IN_INTERVALS_SEPARATOR);
+                        if(lineNb.length ==1){//line number
+                            lines.set(Integer.parseInt(lineNb[0]));
+                        }else if(lineNb.length ==2){//line range
+                            int from = Integer.parseInt(lineNb[0]);
+                            int to = Integer.parseInt(lineNb[1]);
+                            lines.set(from, to+1);
+                        }else{//what?
+                            throw new RuntimeException("Error parsing methods to instrument for class "+className);
+                        }
+                    }else{
+                        methods.add(s);
+                    }
+                }
+            String[] instr = instructions.split(OPT_IN_METHOD_SEPARATOR);
+            if(!instructions.isEmpty())
+                for(String s: instr){
                     String[] lineNb = s.split(OPT_IN_INTERVALS_SEPARATOR);
-                    if(lineNb.length ==1){//line number
-                        lines.set(Integer.parseInt(lineNb[0]));
+                    if(lineNb.length ==1){//instruction number
+                        this.instructions.set(Integer.parseInt(lineNb[0]));
                     }else if(lineNb.length ==2){//line range
                         int from = Integer.parseInt(lineNb[0]);
                         int to = Integer.parseInt(lineNb[1]);
-                        lines.set(from, to+1);
+                        this.instructions.set(from, to+1);
                     }else{//what?
-                        throw new RuntimeException("Error parsing methods to instrument for class "+className);
+                        throw new RuntimeException("Error parsing instructions to instrument for class "+className);
                     }
-                }else{
-                    methods.add(s);
                 }
-            }
-            String[] instr = instructions.split(OPT_IN_METHOD_SEPARATOR);
-            if(!instructions.equals(""))
-            for(String s: instr){
-                String[] lineNb = s.split(OPT_IN_INTERVALS_SEPARATOR);
-                if(lineNb.length ==1){//instruction number
-                    this.instructions.set(Integer.parseInt(lineNb[0]));
-                }else if(lineNb.length ==2){//line range
-                    int from = Integer.parseInt(lineNb[0]);
-                    int to = Integer.parseInt(lineNb[1]);
-                    this.instructions.set(from, to+1);
-                }else{//what?
-                    throw new RuntimeException("Error parsing instructions to instrument for class "+className);
-                }
-            }
         }
         public String toString(){
-            StringBuilder s = new StringBuilder("" + name);
+            StringBuilder s = new StringBuilder(name);
             Iterator<String> itr = methods.iterator();
             int i = 0;
             while(itr.hasNext()){

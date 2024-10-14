@@ -21,7 +21,7 @@ import java.util.Random;
 
 public class PseudoRoundingBehaviour {
    public static Rounding r  = Rounding.NO_ROUNDING;
-   private static Random rand = new Random();
+   private static final Random rand = new Random();
    public static double DADD(double a, double b) {
        return outTransform(inTransform(a) + inTransform(b));
    }

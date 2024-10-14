@@ -34,7 +34,7 @@ public enum Parameters {
     VOID_PARAM();
    
     
-    public Class<?>[] params;
+    public final Class<?>[] params;
     Parameters(Class<?>... params) {
         this.params = params;
     }

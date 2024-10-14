@@ -171,7 +171,7 @@ public enum Operations {
     /**
      * Gives the number of operations, that load a constant of the given type
      * @param returnType the type of the return
-     * @return array of operations
+     * @return number of operations
      */
     private static int countLoadConstOp(Class<?> returnType){
         int nb = 0;
