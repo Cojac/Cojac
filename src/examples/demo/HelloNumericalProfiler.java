@@ -4,17 +4,18 @@ import java.util.Random;
 
 public class HelloNumericalProfiler {
   static Random rnd = new Random();
+
   static double rp() {
     return rnd.nextDouble();
   }
+
   static double demo() {
     double a = 5.0, b = 3.0, c = 7.0;
-    double mv = Double.MAX_VALUE;
-    double d = Math.sqrt(mv)*2, e = Math.sqrt(mv);
+    double d = Math.sqrt(Double.MAX_VALUE), e = d / 2;
     double x = 1.22122E-6, y = 1.23E-11;
     double f, res = 0;
     res += c + a * b;          // →  safer FMA
-    res += a * Math.pow(2, b); // → faster SCALB
+    res += a * Math.pow(2, b); // → faster SCALB (and POW)
     res -= Math.log(1.0 + x);  // →  safer LOG1P
     res += Math.exp(x) - 1.0;  // →  safer EXPM1
     res += Math.abs(rp());     // → faster ABS(alwaysPositive)
